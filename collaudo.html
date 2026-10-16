@@ -46,6 +46,7 @@ body { font:14px/1.45 var(--sans); -webkit-font-smoothing:antialiased; }
 .icbtn { width:36px; height:36px; display:inline-grid; place-items:center; border:1px solid var(--line2); border-radius:6px; background:transparent; color:var(--fg); cursor:pointer; padding:0; }
 .icbtn:hover { border-color:var(--accent); color:var(--accent-text); }
 .icbtn svg { width:18px; height:18px; }
+.icbtn.lang { width:auto; min-width:36px; padding:0 9px; font:700 12px/1 var(--mono); letter-spacing:.06em; }
 :root[data-theme=dark] .ic-moon, :root:not([data-theme=dark]) .ic-sun { display:none; }
 
 .tools { display:flex; flex-wrap:wrap; align-items:center; gap:8px; padding:8px 16px; margin:0; background:var(--bg); background:color-mix(in srgb, var(--bg) 88%, transparent); border-bottom:1px solid var(--line); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px); }
@@ -230,39 +231,40 @@ footer.doc .firma { font-size:13px; white-space:nowrap; }
 <body>
 <div class="top" id="top">
   <header class="appbar">
-    <div class="brand" id="brand" title="Pagina costruita 2026-10-16 21:33 UTC · 8896da9"><span class="mk">Rai · NY</span><span class="nm">RAI NYC Servizi</span><span class="pg">Collaudo</span></div>
+    <div class="brand" id="brand" title="Pagina costruita 2026-10-16 21:43 UTC · 398378a"><span class="mk">Rai · NY</span><span class="nm">RAI NYC Servizi</span><span class="pg" data-i18n>Collaudo</span></div>
     <nav class="hright" id="hright" aria-label="Pagine">
       <button type="button" class="icbtn" id="theme" aria-label="Cambia tema" title="Cambia tema">
         <svg class="ic-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
         <svg class="ic-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.2M12 19.8V22M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M2 12h2.2M19.8 12H22M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6"/></svg>
       </button>
-      <a class="hlink go" href="." id="lnk-form">&larr; Nuova registrazione</a>
+      <button type="button" class="icbtn lang" id="lang" aria-label="Switch to English" title="Switch to English">EN</button>
+      <a class="hlink go" href="." id="lnk-form" data-i18n>&larr; Nuova registrazione</a>
     </nav>
   </header>
   <form class="tools" id="tools" hidden>
     <div class="grp">
-      <button type="button" class="btn sq" id="prev" title="Settimana precedente" aria-label="Settimana precedente"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M10 3L5 8l5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
-      <label class="wk">Settimana <input type="text" id="week" pattern="\d{4}-W\d{1,2}" placeholder="2026-W41"></label>
-      <button type="button" class="btn sq" id="next" title="Settimana successiva" aria-label="Settimana successiva"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M6 3l5 5-5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
-      <button type="submit" class="btn">Vai</button>
+      <button type="button" class="btn sq" id="prev" data-i18n-attr="title|aria-label" title="Settimana precedente" aria-label="Settimana precedente"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M10 3L5 8l5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <label class="wk" data-i18n>Settimana <input type="text" id="week" pattern="\d{4}-W\d{1,2}" placeholder="2026-W41"></label>
+      <button type="button" class="btn sq" id="next" data-i18n-attr="title|aria-label" title="Settimana successiva" aria-label="Settimana successiva"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M6 3l5 5-5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <button type="submit" class="btn" data-i18n>Vai</button>
     </div>
     <span class="sep" aria-hidden="true"></span>
     <div class="grp">
       <button type="button" class="btn" id="fold" aria-controls="doc"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="fold-t">Comprimi tutto</span></button>
-      <button type="button" class="btn" id="undo" disabled title="Ctrl+Z"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M5 4L2 7l3 3M2.5 7H10a4 4 0 0 1 0 8H8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="tx">Annulla ultima modifica</span></button>
+      <button type="button" class="btn" id="undo" disabled title="Ctrl+Z"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M5 4L2 7l3 3M2.5 7H10a4 4 0 0 1 0 8H8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="tx" data-i18n>Annulla ultima modifica</span></button>
     </div>
     <span class="msg" id="msg" role="status" aria-live="polite"></span>
-    <button type="button" class="btn" id="email"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M2 4h12v8H2zM2.5 4.5L8 9l5.5-4.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg><span id="email-t">Invia per e-mail</span></button>
-    <button type="button" class="btn pri" id="print"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 6V2h8v4M4 12H2.5V7h11v5H12M4.5 10h7v4h-7z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>Stampa</button>
+    <button type="button" class="btn" id="email"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M2 4h12v8H2zM2.5 4.5L8 9l5.5-4.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg><span id="email-t" data-i18n>Invia per e-mail</span></button>
+    <button type="button" class="btn pri" id="print" data-i18n><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 6V2h8v4M4 12H2.5V7h11v5H12M4.5 10h7v4h-7z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>Stampa</button>
   </form>
 </div>
 <div class="page">
   <form id="login" class="panel" hidden autocomplete="on">
-    <h1 class="ph">Accesso · collaudo settimanale</h1>
-    <p class="lead">Accedere con il proprio cognome e la password.</p>
-    <label for="login-email">Nome <span class="hint">(cognome come in elenco, es. Arzilla)</span></label><input type="text" id="login-email" name="username" required autocomplete="username" autocapitalize="none">
-    <label for="login-password">Password</label><input type="password" id="login-password" name="password" required autocomplete="current-password">
-    <button type="submit" class="btn pri">Accedi</button>
+    <h1 class="ph" data-i18n>Accesso · collaudo settimanale</h1>
+    <p class="lead" data-i18n>Accedere con il proprio cognome e la password.</p>
+    <label for="login-email" data-i18n>Nome <span class="hint" data-i18n>(cognome come in elenco, es. Arzilla)</span></label><input type="text" id="login-email" name="username" required autocomplete="username" autocapitalize="none">
+    <label for="login-password" data-i18n>Password</label><input type="password" id="login-password" name="password" required autocomplete="current-password">
+    <button type="submit" class="btn pri" data-i18n>Accedi</button>
     <div class="err" id="login-err" role="alert"></div>
   </form>
   <div id="doc" class="panel sheet"></div>
@@ -270,20 +272,20 @@ footer.doc .firma { font-size:13px; white-space:nowrap; }
 
 <div class="pop" id="tpop" role="dialog" aria-labelledby="tpop-h" hidden>
   <form id="tpop-f" novalidate>
-    <h2 class="ph" id="tpop-h">Trasferta</h2>
-    <div class="seg" role="radiogroup" aria-label="Trasferta">
-      <label><input type="radio" name="tp-si" id="tp-si" value="true"><span>Sì</span></label>
-      <label><input type="radio" name="tp-si" id="tp-no" value="false"><span>No</span></label>
+    <h2 class="ph" id="tpop-h" data-i18n>Trasferta</h2>
+    <div class="seg" role="radiogroup" data-i18n-attr="aria-label" aria-label="Trasferta">
+      <label><input type="radio" name="tp-si" id="tp-si" value="true"><span data-i18n>Sì</span></label>
+      <label><input type="radio" name="tp-si" id="tp-no" value="false"><span data-i18n>No</span></label>
     </div>
     <div id="tp-det">
-      <div class="fld"><label for="tp-g">Giornalista in trasferta</label><select id="tp-g"></select></div>
-      <div class="fld"><label for="tp-l">Destinazione</label><input type="text" id="tp-l" maxlength="200" placeholder="Washington D.C."></div>
+      <div class="fld"><label for="tp-g" data-i18n>Giornalista in trasferta</label><select id="tp-g"></select></div>
+      <div class="fld"><label for="tp-l" data-i18n>Destinazione</label><input type="text" id="tp-l" maxlength="200" placeholder="Washington D.C."></div>
       <div class="row2">
-        <div class="fld"><label for="tp-d">Dal</label><input type="date" id="tp-d"></div>
-        <div class="fld"><label for="tp-a">Al</label><input type="date" id="tp-a"></div>
+        <div class="fld"><label for="tp-d" data-i18n>Dal</label><input type="date" id="tp-d"></div>
+        <div class="fld"><label for="tp-a" data-i18n>Al</label><input type="date" id="tp-a"></div>
       </div>
     </div>
-    <div class="row"><button type="submit" class="btn pri" id="tp-save">Salva</button><button type="button" class="btn" id="tp-cancel">Annulla</button></div>
+    <div class="row"><button type="submit" class="btn pri" id="tp-save" data-i18n>Salva</button><button type="button" class="btn" id="tp-cancel" data-i18n>Annulla</button></div>
     <div class="err" id="tpop-err" role="alert"></div>
   </form>
 </div>
@@ -291,9 +293,9 @@ footer.doc .firma { font-size:13px; white-space:nowrap; }
   <form id="mpop-f" novalidate>
     <h2 class="ph" id="mpop-h">Invia per e-mail</h2>
     <p class="lead" id="mpop-lead" style="margin:0 0 10px;color:var(--dim);font-size:13px;"></p>
-    <ul class="rcp" id="rcp" aria-label="Destinatari"></ul>
-    <div class="addr"><input type="email" id="rcp-new" placeholder="aggiungi un indirizzo e-mail" autocomplete="off" aria-label="Nuovo destinatario"><button type="button" class="btn" id="rcp-add">Aggiungi</button></div>
-    <div class="row"><button type="submit" class="btn pri" id="mp-send">Invia</button><button type="button" class="btn" id="mp-cancel">Annulla</button></div>
+    <ul class="rcp" id="rcp" data-i18n-attr="aria-label" aria-label="Destinatari"></ul>
+    <div class="addr"><input type="email" id="rcp-new" data-i18n-attr="placeholder|aria-label" placeholder="aggiungi un indirizzo e-mail" autocomplete="off" aria-label="Nuovo destinatario"><button type="button" class="btn" id="rcp-add" data-i18n>Aggiungi</button></div>
+    <div class="row"><button type="submit" class="btn pri" id="mp-send">Invia</button><button type="button" class="btn" id="mp-cancel" data-i18n>Annulla</button></div>
     <div class="err" id="mpop-err" role="alert"></div>
     <div class="msg" id="mpop-msg" role="status"></div>
   </form>
@@ -305,6 +307,7 @@ footer.doc .firma { font-size:13px; white-space:nowrap; }
 // All data goes through the function's /api routes with the bearer; auth goes to /auth/v1 on
 // the same origin (locally the CLI gateway, in production <ref>.supabase.co).
 
+// Italian is the source language; English comes from the dictionary below (see "language").
 var ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind5cnRoZndya2dkb2JsbHpzc2R2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIwMjI2MDIsImV4cCI6MjEwNzU5ODYwMn0.UE8hAaDlRY5pgsMs8hUMKE5bIVF_Jc5eP1Z2e954Kd4";
 // Served by the function itself: the placeholders are empty and everything is same-origin.
 // Built as static pages (scripts/build_pages.mjs --static): absolute URLs are filled in at build time.
@@ -317,7 +320,7 @@ var AUTH_URL = ("https://wyrthfwrkgdobllzssdv.supabase.co" || location.origin) +
 var PAGE_FORM = "./" || APP_BASE;
 var PAGE_COLLAUDO = "./collaudo.html" || APP_BASE + "/collaudo";
 var PAGE_GESTIONE = "./gestione.html" || APP_BASE + "/gestione";
-var BUILD = "2026-10-16 21:33 UTC · 8896da9"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
+var BUILD = "2026-10-16 21:43 UTC · 398378a"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
 // Every place the project lives (shown in the admin's header menu and on the Gestione page).
 var LINKS = [
   ["Pagine pubbliche", "https://rainycservizi.github.io/rainyc-servizi-app/", "GitHub Pages: il sito di prova principale"],
@@ -327,6 +330,176 @@ var LINKS = [
   ["Sito (repo Pages)", "https://github.com/rainycservizi/rainyc-servizi-app", "le pagine pubblicate"],
   ["Supabase", "https://supabase.com/dashboard/project/wyrthfwrkgdobllzssdv", "database e funzione (accesso rainyc.servizi)"]
 ].filter(function (x) { return x[1]; });
+
+// ---- language (Italian source, English dictionary) ----
+// Italian is the default and the source text: t("Italian") returns the English text when the saved
+// language is "en" and the dictionary has it, else the Italian string itself (so unknown strings, such as
+// the API's own Italian error messages, pass through untouched). Static HTML text carries data-i18n
+// (its direct text nodes are translated) and data-i18n-attr="placeholder|title|aria-label" (attributes);
+// the Italian original is remembered on the node / in data-i18n-it-<attr>, so toggling back restores it.
+// Page code re-renders its dynamic parts on the "rainyc:lang" event.
+var LANG_KEY = "rainyc.lingua";
+var I18N = { en: {
+  // header, login, shared
+  "Registrazione": "Entry", "Collaudo": "Weekly report", "Collaudo →": "Weekly report →", "← Nuova registrazione": "← New entry",
+  "Gestione": "Admin", "Esci": "Sign out", "Esci ({0})": "Sign out ({0})", "Cambia password": "Change password",
+  "Pagina costruita": "Page built", "Pagina costruita {0}": "Page built {0}",
+  "Passa al tema chiaro": "Switch to light theme", "Passa al tema scuro": "Switch to dark theme",
+  "Accesso": "Login", "Accedere con il proprio cognome e la password.": "Sign in with your surname and password.",
+  "Nome": "Name", "(cognome come in elenco, es. Arzilla)": "(surname as in the list, e.g. Arzilla)", "Password": "Password", "Accedi": "Sign in",
+  "Nome o password non corretti.": "Wrong name or password.", "Accesso non riuscito ({0}). Riprovare.": "Sign-in failed ({0}). Try again.",
+  "Rete non raggiungibile.": "Network unreachable.", "Accesso richiesto.": "Sign-in required.",
+  "Sessione scaduta: accedere di nuovo.": "Session expired: sign in again.", "Servizio non disponibile.": "Service unavailable.",
+  "Nuova password": "New password", "(almeno 5 caratteri)": "(at least 5 characters)", "Conferma": "Confirm", "Salva": "Save", "Chiudi": "Close",
+  "La password deve avere almeno 5 caratteri.": "The password must have at least 5 characters.",
+  "Le due password non coincidono.": "The two passwords do not match.", "Salvataggio…": "Saving…", "Password aggiornata.": "Password updated.",
+  "La nuova password deve essere diversa da quella attuale.": "The new password must differ from the current one.",
+  "Password troppo debole: sceglierne una piu lunga o meno comune.": "Password too weak: pick a longer or less common one.",
+  "Troppi tentativi. Riprovare tra qualche minuto.": "Too many attempts. Try again in a few minutes.",
+  "Password non aggiornata ({0}). Riprovare.": "Password not updated ({0}). Try again.",
+  "Pagine pubbliche": "Public pages", "GitHub Pages: il sito di prova principale": "GitHub Pages: the main test site",
+  "Pagine in ufficio": "Office pages", "supervisor, solo http (senza s), rete dell'ufficio": "supervisor, http only (no s), office network",
+  "Stato API": "API status", "risposta {ok:true} = funzione e database raggiungibili": "reply {ok:true} = function and database reachable",
+  "codice, OPERATIONS.md, SECURITY.md (privato)": "code, OPERATIONS.md, SECURITY.md (private)",
+  "Sito (repo Pages)": "Site (Pages repo)", "le pagine pubblicate": "the published pages",
+  "database e funzione (accesso rainyc.servizi)": "database and function (rainyc.servizi login)",
+  "Caricamento…": "Loading…",
+  // form
+  "Servizio": "Story", "Data": "Date", "Giornalista": "Journalist", "Argomento / Titolo": "Topic / Title", "Rete": "Network",
+  "Richiesta": "Request", "Richiedente": "Requester", "(edizione o programma; anche testo libero)": "(edition or programme; free text also allowed)",
+  "(edizione; anche testo libero)": "(edition; free text also allowed)", "(programma; testo libero)": "(programme; free text)",
+  "(scegliere prima la rete)": "(pick the network first)", "Durata": "Duration", "(facoltativa)": "(optional)", "(facoltative)": "(optional)",
+  "Mezzo": "Delivery means", "Trasferta": "Travel",
+  "Nessuna trasferta impostata. Impostarla una volta: vale per ogni registrazione di quel giornalista finché non viene rimossa.": "No travel set. Set it once: it applies to every entry of that journalist until it is removed.",
+  "Imposta trasferta…": "Set travel…", "Modifica…": "Edit…", "Rimuovi trasferta": "Remove travel",
+  "Giornalista in trasferta": "Journalist on travel", "Destinazione": "Destination", "Dal": "From", "Al": "To", "Applica": "Apply", "Annulla": "Cancel",
+  "Operatore": "Operator", "Note": "Notes", "Invia registrazione": "Submit entry", "Ctrl+Invio": "Ctrl+Enter", "⌘+Invio": "⌘+Enter", "Svuota": "Clear",
+  "Categoria": "Category", "Registrazioni di oggi": "Today's entries", "Nessuna registrazione oggi.": "No entries today.",
+  "Mostra tutte le scelte": "Show all choices",
+  "Invio": "Enter", "Maiusc": "Shift",
+  "conferma la scelta e passa al campo successivo ·": "confirms the choice and moves to the next field ·",
+  ") invia ·": ") submits ·", "o Svuota svuota ·": "or Clear clears the form ·",
+  "tutte le scelte del Richiedente ·": "all Requester choices ·",
+  "completa il nome e passa al campo successivo; nella Rete e nel Mezzo": "completes the name and moves to the next field; in Network and Delivery means",
+  "scorre le scelte (": "steps through the choices (", "torna indietro) · frecce = scelta nella riga": "goes back) · arrow keys = choice within the row",
+  "Salvato": "Saved", "In attesa di sincronizzazione": "Waiting to sync", "Sincronizzato": "Synced", "Errore di sincronizzazione": "Sync error",
+  "{0} in attesa": "{0} waiting", "Liste dalla copia locale: {0}": "Lists from the local copy: {0}", "Liste non disponibili.": "Lists unavailable.",
+  "Dal tuo accesso": "From your sign-in", "Rilevato dall'accesso Windows": "Detected from the Windows login",
+  "scrivi il programma o l'edizione": "type the programme or edition", "Altro… (aggiungi)": "Other… (add)",
+  "Questa registrazione: SI": "This entry: YES", "Questa registrazione: NO (altro giornalista)": "This entry: NO (other journalist)",
+  "Manca: {0}.": "Missing: {0}.", "La data \"al\" precede la data \"dal\".": "The \"to\" date is before the \"from\" date.",
+  "Non accettata: {0}": "Not accepted: {0}", "Dati non validi.": "Invalid data.",
+  "Accesso scaduto: {0} registrazioni in attesa.": "Session expired: {0} entries waiting.",
+  "In attesa di sincronizzazione ({0}): {1} Nuovo tentativo tra {2} s.": "Waiting to sync ({0}): {1} Retrying in {2} s.",
+  "Registrata: {0}": "Recorded: {0}", "Registrazione annullata.": "Entry cancelled.", "Annullamento non riuscito.": "Could not cancel.",
+  "Annullamento non riuscito: {0}": "Could not cancel: {0}", "Giornalista non in elenco: {0}.": "Journalist not in the list: {0}.",
+  "Salvato: {0}": "Saved: {0}", "Caricamento degli elenchi…": "Loading the lists…",
+  "{0} Ricaricare la pagina quando la rete torna.": "{0} Reload the page when the network is back.",
+  // collaudo
+  "Settimana precedente": "Previous week", "Settimana successiva": "Next week", "Settimana": "Week", "Vai": "Go",
+  "Comprimi tutto": "Collapse all", "Espandi tutto": "Expand all", "Annulla ultima modifica": "Undo last change",
+  "Invia per e-mail": "Send by e-mail", "Stampa": "Print", "Accesso · collaudo settimanale": "Login · weekly report",
+  "Sì": "Yes", "No": "No", "Destinatari": "Recipients", "aggiungi un indirizzo e-mail": "add an e-mail address",
+  "Nuovo destinatario": "New recipient", "Aggiungi": "Add", "Invia": "Send", "Invia a {0}": "Send to {0}",
+  "Caricamento della settimana {0}…": "Loading week {0}…", "Errore.": "Error.", "Collaudo non disponibile: {0}": "Weekly report unavailable: {0}",
+  "Riprova": "Retry", "{0} registrazioni": "{0} entries", "Operazione non riuscita ({0}).": "Operation failed ({0}).",
+  "Modifica salvata.": "Change saved.", "Trasferta salvata.": "Travel saved.", "Registrazione ripristinata.": "Entry restored.",
+  "Modifica annullata.": "Change undone.", "Annullare questa registrazione?": "Cancel this entry?",
+  "Settimana non valida: usare la forma 2026-W41.": "Invalid week: use the form 2026-W41.",
+  "Modifica": "Edit", "Annulla registrazione": "Cancel entry", "Collaudo {0} · RAI NYC Servizi": "Weekly report {0} · RAI NYC Servizi",
+  "Invia per e-mail · {0}": "Send by e-mail · {0}",
+  "Il collaudo della settimana {0} (colonne di Roma, senza operatori) parte dalla casella della redazione. Scegliere i destinatari.": "The weekly report for week {0} (Rome's columns, no operators) is sent from the newsroom mailbox. Choose the recipients.",
+  "Togli dall'elenco": "Remove from the list", "Togli {0}": "Remove {0}", "Nessun destinatario: aggiungerne uno qui sotto.": "No recipients: add one below.",
+  "Indirizzo e-mail non valido.": "Invalid e-mail address.", "Invio…": "Sending…", "Inviato a {0}.": "Sent to {0}.",
+  "Collaudo {0} inviato a {1} destinatari.": "Weekly report {0} sent to {1} recipients.", "Ultimo invio ({0}): {1}": "Last sent ({0}): {1}",
+  // collaudo sheet (screen text; the print copy stays Italian)
+  "Nessuna registrazione": "No entries", "Titolo": "Title", "Pezzi": "Pieces", "Tappeti": "Carpets", "Ass. tecnica": "Tech support", "Totale": "Total",
+  "Trasferte": "Travel", "Altre": "Other", "Riepilogo": "Summary", "Collaudo settimanale": "Weekly report",
+  "RAI – Sede di corrispondenza di New York": "RAI – New York Bureau", "Trasferta:": "Travel:",
+  "sì (dettagli non registrati)": "yes (details not recorded)", "Settimana {0} ({1})": "Week {0} ({1})",
+  "Generato il {0} dal sistema RAI NYC Servizi · fonte: database · {1} registrazioni · {2}": "Generated on {0} by the RAI NYC Servizi system · source: database · {1} entries · {2}",
+  "Firma del responsabile ______________________________": "Manager's signature ______________________________",
+  "Totale {0} ({1} registrazioni)": "Total {0} ({1} entries)",
+  // gestione
+  "Accesso · gestione": "Login · admin", "Stato": "Status", "Collegamenti": "Links", "Accessi": "Logins",
+  "password: solo caruso e l'agente": "passwords: only caruso and the agent", "Ultimo accesso": "Last sign-in",
+  "Nuovo accesso": "New login", "Crea": "Create", "Elenchi": "Lists", "mai cancellati: si ritirano": "never deleted: they are retired",
+  "Giornalisti": "Journalists", "Operatori": "Operators", "Reti": "Networks", "Mezzi": "Delivery means", "Richiedenti": "Requesters",
+  "Utente Windows": "Windows user", "Nuovo giornalista": "New journalist", "Nuovo operatore": "New operator", "Nuova rete": "New network",
+  "Nuovo mezzo": "New delivery means", "Nuovo richiedente (es. Tg1 Ore 20)": "New requester (e.g. Tg1 Ore 20)",
+  "Registro": "Audit log", "Quando (NY)": "When (NY)", "Chi": "Who", "Azione": "Action", "Cosa": "What", "Dettaglio": "Detail",
+  "Progetto": "Project", "STATE.md del repository, com'era alla costruzione di questa pagina": "the repository's STATE.md, as it was when this page was built",
+  "Registrazioni {0}": "Entries {0}", "Oggi {0}": "Today {0}", "Totale valide": "Total valid", "Annullate": "Voided", "Dal foglio 2026": "From the 2026 sheet",
+  "Giornalisti attivi": "Active journalists", "Operatori attivi": "Active operators",
+  "Ultima registrazione": "Last entry", "Ultima voce del registro": "Last audit entry", "servita dalla funzione": "served by the function",
+  "aggiornato {0}": "updated {0}", "il modulo dei montatori": "the editors' form", "la settimana da stampare o inviare": "the week to print or send",
+  "E-mail del collaudo": "Weekly report e-mail", "possono inviare: erika, caruso, pippo": "allowed to send: erika, caruso, pippo",
+  "Destinatari proposti": "Suggested recipients", "(nessuno: secret COLLAUDO_TO vuoto)": "(none: secret COLLAUDO_TO is empty)",
+  "nuova password": "new password", "Nuova password per {0}": "New password for {0}", "Imposta": "Set",
+  "Cambiare la password di {0}?": "Change the password of {0}?", "Password di {0} aggiornata.": "Password of {0} updated.",
+  "Accesso {0} creato.": "Login {0} created.", "attivo": "active", "ritirato": "retired", "Ritira": "Retire", "Riattiva": "Reactivate",
+  "Ritirare \"{0}\"? Non comparirà più nel modulo; le registrazioni passate restano.": "Retire \"{0}\"? It will no longer appear in the form; past entries stay.",
+  "Ritirato: {0}": "Retired: {0}", "Riattivato: {0}": "Reactivated: {0}", "Aggiunto: {0}": "Added: {0}",
+  "registrazione": "entry", "giornalista": "journalist", "operatore": "operator", "valore": "value", "accesso": "login",
+  "{0} voci più recenti": "{0} most recent entries", "Pagina riservata.": "Restricted page."
+} };
+var langHooks = [];
+function langNow() { try { return localStorage.getItem(LANG_KEY) === "en" ? "en" : "it"; } catch (e) { return "it"; } }
+function t(s) { var d = langNow() === "en" ? I18N.en[s] : undefined; return d === undefined ? s : d; }
+/** t() with {0}, {1}... placeholders filled in (the Italian text is the same with or without the dictionary). */
+function tf(s) {
+  var a = arguments;
+  return t(s).replace(/\{(\d)\}/g, function (m, i) { return a[+i + 1] === undefined ? m : String(a[+i + 1]); });
+}
+/** Set `el`'s text to the translation of `it` and mark it so a later language change updates it. */
+function L(el, it) {
+  el.textContent = t(it); el.setAttribute("data-i18n", "");
+  if (el.firstChild) el.firstChild.__it = it;
+  return el;
+}
+function applyLang() {
+  var en = langNow() === "en";
+  document.documentElement.lang = en ? "en" : "it";
+  Array.prototype.forEach.call(document.querySelectorAll("[data-i18n]"), function (el) {
+    Array.prototype.forEach.call(el.childNodes, function (n) {
+      if (n.nodeType !== 3 || !n.nodeValue.trim()) return;
+      if (n.__it === undefined) n.__it = n.nodeValue;
+      var core = n.__it.trim(), at = n.__it.indexOf(core);
+      n.nodeValue = n.__it.slice(0, at) + t(core) + n.__it.slice(at + core.length);
+    });
+  });
+  Array.prototype.forEach.call(document.querySelectorAll("[data-i18n-attr]"), function (el) {
+    el.getAttribute("data-i18n-attr").split("|").forEach(function (a) {
+      var k = "data-i18n-it-" + a;
+      if (!el.hasAttribute(k)) el.setAttribute(k, el.getAttribute(a) || "");
+      el.setAttribute(a, t(el.getAttribute(k)));
+    });
+  });
+  var br = document.getElementById("brand");
+  if (br) br.title = t("Pagina costruita") + " " + BUILD;
+  var out = document.getElementById("lnk-esci");
+  if (out && out.getAttribute("data-user")) out.title = tf("Esci ({0})", out.getAttribute("data-user"));
+  var stamp = document.querySelector("#lnk-menu .stamp");
+  if (stamp) stamp.textContent = tf("Pagina costruita {0}", BUILD);
+  if (themeBtn) applyTheme(document.documentElement.getAttribute("data-theme") || themeNow(), themeBtn);
+  var lb = document.getElementById("lang");
+  if (lb) {
+    lb.textContent = en ? "IT" : "EN";
+    var lab = en ? "Passa all'italiano" : "Switch to English";
+    lb.setAttribute("aria-label", lab); lb.title = lab;
+  }
+  langHooks.forEach(function (f) { f(); });
+}
+/** Wire the language button (id): the other language's code on it; click toggles, saves, re-applies. */
+function initLang(id) {
+  var btn = document.getElementById(id);
+  if (btn) btn.addEventListener("click", function () {
+    try { localStorage.setItem(LANG_KEY, langNow() === "en" ? "it" : "en"); } catch (e) { /* storage blocked: this page only */ }
+    applyLang();
+    document.dispatchEvent(new Event("rainyc:lang"));
+  });
+  applyLang();
+}
 
 function ApiError(kind, message) { this.kind = kind; this.message = message; }
 ApiError.prototype = Object.create(Error.prototype);
@@ -364,10 +537,10 @@ function login(name, password) {
   }).then(function (r) {
     return r.json().catch(function () { return {}; }).then(function (b) {
       if (r.ok && b.access_token) { storeSession(b); return { ok: true }; }
-      if (r.status === 400 || r.status === 401) return { ok: false, error: "Nome o password non corretti." };
-      return { ok: false, error: "Accesso non riuscito (" + r.status + "). Riprovare." };
+      if (r.status === 400 || r.status === 401) return { ok: false, error: t("Nome o password non corretti.") };
+      return { ok: false, error: tf("Accesso non riuscito ({0}). Riprovare.", r.status) };
     });
-  }, function () { return { ok: false, error: "Rete non raggiungibile." }; });
+  }, function () { return { ok: false, error: t("Rete non raggiungibile.") }; });
 }
 
 var refreshing = null;
@@ -398,27 +571,27 @@ function logout() { Session.clear(); }
  */
 function api(path, init, retried) {
   var s = Session.get();
-  if (!s) return Promise.reject(new ApiError("auth", "Accesso richiesto."));
+  if (!s) return Promise.reject(new ApiError("auth", t("Accesso richiesto.")));
   var soon = (s.expires_at || 0) * 1000 - Date.now() < 60000;
-  var ready = soon ? refreshSession().then(function (ok) { if (!ok) throw new ApiError("auth", "Sessione scaduta: accedere di nuovo."); }) : Promise.resolve();
+  var ready = soon ? refreshSession().then(function (ok) { if (!ok) throw new ApiError("auth", t("Sessione scaduta: accedere di nuovo.")); }) : Promise.resolve();
   return ready.then(function () {
     var cur = Session.get();
-    if (!cur) throw new ApiError("auth", "Accesso richiesto.");
+    if (!cur) throw new ApiError("auth", t("Accesso richiesto."));
     var opts = Object.assign({}, init || {});
     opts.headers = Object.assign({ Authorization: "Bearer " + cur.access_token, "Content-Type": "application/json" }, (init && init.headers) || {});
-    return fetch(APP_BASE + path, opts).then(null, function () { throw new ApiError("network", "Rete non raggiungibile."); });
+    return fetch(APP_BASE + path, opts).then(null, function () { throw new ApiError("network", t("Rete non raggiungibile.")); });
   }).then(function (r) {
     if (r.status === 401 && !retried) {
       return refreshSession().then(function (ok) {
         if (ok) return api(path, init, true);
-        throw new ApiError("auth", "Sessione scaduta: accedere di nuovo.");
+        throw new ApiError("auth", t("Sessione scaduta: accedere di nuovo."));
       });
     }
     return r.text().then(function (t) {
       var body = null;
       try { body = t ? JSON.parse(t) : null; } catch (e) { body = null; }
-      if (r.status === 401) throw new ApiError("auth", "Sessione scaduta: accedere di nuovo.");
-      if (r.status >= 500 || r.status === 429) throw new ApiError("network", (body && body.error) || "Servizio non disponibile.");
+      if (r.status === 401) throw new ApiError("auth", t("Sessione scaduta: accedere di nuovo."));
+      if (r.status >= 500 || r.status === 429) throw new ApiError("network", (body && body.error) || t("Servizio non disponibile."));
       return { status: r.status, body: body };
     });
   });
@@ -466,10 +639,10 @@ function mountLinks(slot) {
   var ul = document.createElement("ul"); ul.setAttribute("role", "menu"); ul.hidden = true;
   LINKS.forEach(function (x) {
     var li = document.createElement("li"); li.setAttribute("role", "none");
-    var a = document.createElement("a"); a.href = x[1]; a.textContent = x[0]; a.title = x[2]; a.target = "_blank"; a.rel = "noopener"; a.setAttribute("role", "menuitem");
+    var a = document.createElement("a"); a.href = x[1]; L(a, x[0]); a.title = t(x[2]); a.setAttribute("data-i18n-attr", "title"); a.setAttribute("data-i18n-it-title", x[2]); a.target = "_blank"; a.rel = "noopener"; a.setAttribute("role", "menuitem");
     li.appendChild(a); ul.appendChild(li);
   });
-  if (BUILD) { var li2 = document.createElement("li"); li2.className = "stamp"; li2.textContent = "Pagina costruita " + BUILD; ul.appendChild(li2); }
+  if (BUILD) { var li2 = document.createElement("li"); li2.className = "stamp"; li2.textContent = tf("Pagina costruita {0}", BUILD); ul.appendChild(li2); }
   function close() { ul.hidden = true; b.setAttribute("aria-expanded", "false"); }
   b.addEventListener("click", function () { ul.hidden = !ul.hidden; b.setAttribute("aria-expanded", ul.hidden ? "false" : "true"); });
   document.addEventListener("click", function (ev) { if (!wrap.contains(ev.target)) close(); });
@@ -484,8 +657,8 @@ function mountLogout(slot) {
   if (old) old.parentNode.removeChild(old);
   if (!slot || !Session.get()) return;
   var a = document.createElement("a");
-  a.href = "#"; a.id = "lnk-esci"; a.className = "hlink"; a.textContent = "Esci";
-  var s = Session.get(); if (s && s.email) a.title = "Esci (" + String(s.email).split("@")[0] + ")";
+  a.href = "#"; a.id = "lnk-esci"; a.className = "hlink"; L(a, "Esci");
+  var s = Session.get(); if (s && s.email) { a.setAttribute("data-user", String(s.email).split("@")[0]); a.title = tf("Esci ({0})", a.getAttribute("data-user")); }
   a.addEventListener("click", function (ev) { ev.preventDefault(); logout(); mountPassword(null); mountLogout(null); document.dispatchEvent(new Event("rainyc:auth-lost")); });
   slot.insertBefore(a, slot.firstChild);
 }
@@ -496,12 +669,12 @@ function mountLogout(slot) {
  */
 function changePassword(newPassword, retried) {
   var s = Session.get();
-  if (!s) return Promise.resolve({ ok: false, error: "Sessione scaduta: accedere di nuovo." });
+  if (!s) return Promise.resolve({ ok: false, error: t("Sessione scaduta: accedere di nuovo.") });
   var soon = (s.expires_at || 0) * 1000 - Date.now() < 60000;
   var ready = soon ? refreshSession() : Promise.resolve(true);
   return ready.then(function (ok) {
     var cur = Session.get();
-    if (!ok || !cur) return { ok: false, error: "Sessione scaduta: accedere di nuovo." };
+    if (!ok || !cur) return { ok: false, error: t("Sessione scaduta: accedere di nuovo.") };
     return fetch(AUTH_URL + "/user", {
       method: "PUT",
       headers: { apikey: ANON_KEY, Authorization: "Bearer " + cur.access_token, "Content-Type": "application/json" },
@@ -509,15 +682,15 @@ function changePassword(newPassword, retried) {
     }).then(function (r) {
       return r.json().catch(function () { return {}; }).then(function (b) {
         if (r.ok) return { ok: true };
-        if (r.status === 401 && !retried) return refreshSession().then(function (ok2) { return ok2 ? changePassword(newPassword, true) : { ok: false, error: "Sessione scaduta: accedere di nuovo." }; });
+        if (r.status === 401 && !retried) return refreshSession().then(function (ok2) { return ok2 ? changePassword(newPassword, true) : { ok: false, error: t("Sessione scaduta: accedere di nuovo.") }; });
         var code = b.error_code || b.code || "";
-        if (code === "same_password") return { ok: false, error: "La nuova password deve essere diversa da quella attuale." };
-        if (code === "weak_password") return { ok: false, error: "Password troppo debole: sceglierne una piu lunga o meno comune." };
-        if (r.status === 401 || r.status === 403) return { ok: false, error: "Sessione scaduta: accedere di nuovo." };
-        if (r.status === 429) return { ok: false, error: "Troppi tentativi. Riprovare tra qualche minuto." };
-        return { ok: false, error: "Password non aggiornata (" + r.status + "). Riprovare." };
+        if (code === "same_password") return { ok: false, error: t("La nuova password deve essere diversa da quella attuale.") };
+        if (code === "weak_password") return { ok: false, error: t("Password troppo debole: sceglierne una piu lunga o meno comune.") };
+        if (r.status === 401 || r.status === 403) return { ok: false, error: t("Sessione scaduta: accedere di nuovo.") };
+        if (r.status === 429) return { ok: false, error: t("Troppi tentativi. Riprovare tra qualche minuto.") };
+        return { ok: false, error: tf("Password non aggiornata ({0}). Riprovare.", r.status) };
       });
-    }, function () { return { ok: false, error: "Rete non raggiungibile." }; });
+    }, function () { return { ok: false, error: t("Rete non raggiungibile.") }; });
   });
 }
 
@@ -525,20 +698,22 @@ function changePassword(newPassword, retried) {
 // The <head> of each page sets data-theme before first paint (same rule as themeNow below);
 // this wires the header button. Saved choice in localStorage "rainyc.tema"; none saved = follow the OS.
 var THEME_KEY = "rainyc.tema";
+var themeBtn = null;
 function themeSaved() { try { var t = localStorage.getItem(THEME_KEY); return t === "light" || t === "dark" ? t : null; } catch (e) { return null; } }
 function themeOs() { try { return window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"; } catch (e) { return "light"; } }
 function themeNow() { return themeSaved() || themeOs(); }
-function applyTheme(t, btn) {
-  document.documentElement.setAttribute("data-theme", t);
+function applyTheme(th, btn) {
+  document.documentElement.setAttribute("data-theme", th);
   if (btn) {
-    var label = t === "dark" ? "Passa al tema chiaro" : "Passa al tema scuro";
+    var label = t(th === "dark" ? "Passa al tema chiaro" : "Passa al tema scuro");
     btn.setAttribute("aria-label", label); btn.title = label;
-    btn.setAttribute("aria-pressed", t === "dark" ? "true" : "false");
+    btn.setAttribute("aria-pressed", th === "dark" ? "true" : "false");
   }
 }
 /** Wire the theme toggle button (id). */
 function initTheme(id) {
   var btn = document.getElementById(id);
+  themeBtn = btn;
   applyTheme(themeNow(), btn);
   if (btn) btn.addEventListener("click", function () {
     var t = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
@@ -573,23 +748,24 @@ function mountPassword(slot) {
   if (!slot || !canChangePassword()) return;
   if (!document.body.hasAttribute("data-gestione")) {
     var g = document.createElement("a");
-    g.href = PAGE_GESTIONE; g.id = "lnk-gestione"; g.className = "hlink"; g.textContent = "Gestione";
+    g.href = PAGE_GESTIONE; g.id = "lnk-gestione"; g.className = "hlink"; L(g, "Gestione");
     slot.insertBefore(g, slot.firstChild);
   }
   mountLinks(slot);
   var a = document.createElement("a");
-  a.href = "#"; a.id = "lnk-pwd"; a.className = "hlink"; a.textContent = "Cambia password";
+  a.href = "#"; a.id = "lnk-pwd"; a.className = "hlink"; L(a, "Cambia password");
   slot.insertBefore(a, slot.firstChild);
   var root = document.createElement("div");
   root.id = "pwd-root"; root.className = "pop-pwd"; root.hidden = true;
   root.innerHTML =
     '<form id="pwd" class="pwd" autocomplete="off" novalidate>' +
-    '<h2 class="ph">Cambia password</h2>' +
-    '<div class="fld"><label for="pwd-new">Nuova password <span class="hint">(almeno 5 caratteri)</span></label><input type="password" id="pwd-new" autocomplete="new-password"></div>' +
-    '<div class="fld"><label for="pwd-conf">Conferma</label><input type="password" id="pwd-conf" autocomplete="new-password"></div>' +
-    '<div class="row"><button type="submit" class="btn pri" id="pwd-save">Salva</button><button type="button" class="btn" id="pwd-close">Chiudi</button></div>' +
+    '<h2 class="ph" data-i18n>Cambia password</h2>' +
+    '<div class="fld"><label for="pwd-new" data-i18n>Nuova password <span class="hint" data-i18n>(almeno 5 caratteri)</span></label><input type="password" id="pwd-new" autocomplete="new-password"></div>' +
+    '<div class="fld"><label for="pwd-conf" data-i18n>Conferma</label><input type="password" id="pwd-conf" autocomplete="new-password"></div>' +
+    '<div class="row"><button type="submit" class="btn pri" id="pwd-save" data-i18n>Salva</button><button type="button" class="btn" id="pwd-close" data-i18n>Chiudi</button></div>' +
     '<div class="pwd-msg" id="pwd-msg" role="alert"></div></form>';
   document.body.appendChild(root);
+  applyLang();
   var $p = function (id) { return document.getElementById(id); };
   function close() { root.hidden = true; $p("pwd-new").value = ""; $p("pwd-conf").value = ""; $p("pwd-msg").textContent = ""; a.setAttribute("aria-expanded", "false"); }
   a.setAttribute("aria-expanded", "false");
@@ -603,12 +779,12 @@ function mountPassword(slot) {
     ev.preventDefault();
     var msg = $p("pwd-msg"), pa = $p("pwd-new").value, pc = $p("pwd-conf").value;
     function say(ok, t) { msg.className = "pwd-msg " + (ok ? "ok" : "ko"); msg.textContent = t; }
-    if (pa.length < 5) { say(false, "La password deve avere almeno 5 caratteri."); $p("pwd-new").focus(); return; }
-    if (pa !== pc) { say(false, "Le due password non coincidono."); $p("pwd-conf").focus(); return; }
-    var b = $p("pwd-save"); b.disabled = true; say(true, "Salvataggio…");
+    if (pa.length < 5) { say(false, t("La password deve avere almeno 5 caratteri.")); $p("pwd-new").focus(); return; }
+    if (pa !== pc) { say(false, t("Le due password non coincidono.")); $p("pwd-conf").focus(); return; }
+    var b = $p("pwd-save"); b.disabled = true; say(true, t("Salvataggio…"));
     changePassword(pa).then(function (res) {
       b.disabled = false;
-      if (res.ok) { $p("pwd-new").value = ""; $p("pwd-conf").value = ""; say(true, "Password aggiornata."); } else say(false, res.error);
+      if (res.ok) { $p("pwd-new").value = ""; $p("pwd-conf").value = ""; say(true, t("Password aggiornata.")); } else say(false, res.error);
     });
   });
   document.addEventListener("rainyc:auth-lost", function () { mountPassword(null); });
@@ -802,6 +978,48 @@ function reteBucket(rete) {
   if (r.toUpperCase().startsWith("GR")) return "GR";
   if (RETI.includes(r)) return r;
   return "Altre";
+}
+
+// Reading order inside a day (Marco, 2026-10-16): by edition — network, then the edition's time slot — so the
+// tappeto and the piece for "Tg1 Ore 20" sit together, tappeto first; then by submission time.
+const NET_ORDER = ["Tg1", "Tg2", "Tg3", "RAN", "Rainews.it", "GR", "Rai Sport", "Rai 1", "Rai 2", "Rai 3", "Tv7"];
+const PREFIXES = ["Tg1", "Tg2", "Tg3", "GR"];
+function slotMinutes(label) {
+  const m = /ore\s+(\d{1,2})(?:[:.](\d{2}))?/i.exec(label || "");
+  if (m) return Number(m[1]) * 60 + Number(m[2] || 0);
+  const l = String(label || "").toLowerCase();
+  if (l.includes("mattina")) return 7 * 60;
+  if (l.includes("notte")) return 24 * 60;
+  return 30 * 60; // Economia, Speciale, programmes: after the editions
+}
+/**
+ * Sort a week's rows for reading. `slots` = lookup_values of kind richiedente ({parent, value, sort_order}).
+ * @param {Array<Record<string, unknown>>} rows @param {Array<{parent:string|null, value:string, sort_order:number}>} slots
+ * @returns {Array<Record<string, unknown>>}
+ */
+function orderRows(rows, slots) {
+  const byValue = new Map();
+  for (const sl of slots || []) byValue.set(String(sl.value).toLowerCase(), sl);
+  const key = (r) => {
+    const rich = String(r.richiedente || "");
+    const slot = byValue.get(rich.toLowerCase());
+    let net = String(r.rete || "");
+    if (net === "Tappeto") {
+      if (slot && slot.parent) net = String(slot.parent);
+      else net = PREFIXES.find((p) => rich.toLowerCase().startsWith(p.toLowerCase() + " ")) || "RAN";
+    }
+    const n = NET_ORDER.indexOf(net);
+    return [
+      n < 0 ? NET_ORDER.length : n, net,
+      slot && slot.parent === net ? 0 : 1, slot && slot.parent === net ? Number(slot.sort_order) : slotMinutes(rich), rich.toLowerCase(),
+      String(r.categoria) === "tappeto" ? 0 : 1,
+      String(r.submitted_at || ""), String(r.record_id || ""),
+    ];
+  };
+  const cmp = (a, b) => { for (let i = 0; i < a.length; i++) { if (a[i] < b[i]) return -1; if (a[i] > b[i]) return 1; } return 0; };
+  /** @type {Array<{k: Array<string|number>, r: Record<string, unknown>}>} */
+  const keyed = rows.map((r) => ({ k: key(r), r }));
+  return keyed.sort((a, b) => cmp(a.k, b.k)).map((x) => x.r);
 }
 
 /** @param {unknown} s */
@@ -998,8 +1216,12 @@ ${groups.join("\n")}
   var loadedOnce = false;
   $("lnk-form").href = PAGE_FORM;
   initTheme("theme");
+  initLang("lang");
 
-  function setMsg(text, isErr) { var m = $("msg"); m.textContent = text; m.className = isErr ? "err" : "msg"; }
+  // text: an Italian string, or a function returning the text in the current language (repainted on a language change).
+  var msgSrc = "", msgErr = false;
+  function paintMsg() { var m = $("msg"); m.textContent = typeof msgSrc === "function" ? msgSrc() : t(msgSrc); m.className = msgErr ? "err" : "msg"; }
+  function setMsg(text, isErr) { msgSrc = text; msgErr = !!isErr; paintMsg(); }
   // The sticky table header sits right under the sticky header + tools block.
   function syncTop() { document.documentElement.style.setProperty("--toph", $("top").offsetHeight + "px"); }
   window.addEventListener("resize", syncTop);
@@ -1010,16 +1232,17 @@ ${groups.join("\n")}
     $("week").value = formatWeek(w);
     try { history.replaceState(null, "", location.pathname + "?week=" + formatWeek(w)); } catch (e) { /* ignore */ }
     setMsg("Caricamento…");
-    document.title = "Collaudo " + formatWeek(w) + " · RAI NYC Servizi";
-    if (!loadedOnce) $("doc").innerHTML = '<div class="state">Caricamento della settimana ' + esc(formatWeek(w)) + "…</div>";
+    document.title = tf("Collaudo {0} · RAI NYC Servizi", formatWeek(w));
+    if (!loadedOnce) $("doc").innerHTML = '<div class="state">' + esc(tf("Caricamento della settimana {0}…", formatWeek(w))) + "</div>";
     else $("doc").classList.add("busy");
     return api("/api/collaudo?week=" + formatWeek(w)).then(function (r) {
       $("doc").classList.remove("busy");
       if (r.status !== 200) { failState((r.body && r.body.error) || "Errore."); return; }
-      $("doc").innerHTML = renderCollaudo(w, r.body.rows, todayNewYork());
+      sheet = { w: w, rows: r.body.rows, gen: todayNewYork() };
+      paintSheet();
       loadedOnce = true;
       applyFold();
-      setMsg(note || (r.body.rows.length + " registrazioni"));
+      setMsg(note || function () { return tf("{0} registrazioni", sheet.rows.length); });
     }, function (e) {
       $("doc").classList.remove("busy");
       if (e.kind === "auth") { authLost(); return; }
@@ -1030,8 +1253,46 @@ ${groups.join("\n")}
   function failState(text) {
     setMsg(text, true);
     if (loadedOnce) return;
-    $("doc").innerHTML = '<div class="state ko">Collaudo non disponibile: ' + esc(text) +
-      '<br><button type="button" class="btn" id="retry">Riprova</button></div>';
+    $("doc").innerHTML = '<div class="state ko">' + esc(tf("Collaudo non disponibile: {0}", text)) +
+      '<br><button type="button" class="btn" id="retry">' + esc(t("Riprova")) + '</button></div>';
+  }
+
+  // ---- the sheet: rendered by lib/collaudo.js (Italian), then localized on screen only ----
+  // The sheet is also the document that is printed (to Rome): in English every translated text is
+  // <span class="scr">English</span><span class="prn">Italian</span>, so the print stays Italian.
+  var sheet = null; // {w, rows, gen} of the week on screen
+  function bi(it, en) { return '<span class="scr">' + esc(en) + '</span><span class="prn">' + esc(it) + "</span>"; }
+  function both(el, en) { var it = el.textContent; if (en !== it) el.innerHTML = bi(it, en); }
+  function localizeSheet() {
+    if (langNow() !== "en") return;
+    var doc = $("doc"), all = function (sel, fn) { Array.prototype.forEach.call(doc.querySelectorAll(sel), fn); };
+    all("thead th", function (th) {
+      var sc = th.querySelector(".scr");
+      if (sc) { sc.textContent = t(sc.textContent); return; }
+      if (th.classList.contains("np")) th.textContent = t(th.textContent); else both(th, t(th.textContent));
+    });
+    all("tr.empty td:first-child", function (td) { both(td, t(td.textContent)); });
+    all("tr.tot td:first-child", function (td) {
+      var m = /^Totale (.+) \((\d+) registrazioni\)$/.exec(td.textContent);
+      if (m) both(td, tf("Totale {0} ({1} registrazioni)", m[1], m[2]));
+    });
+    all(".counters .l", function (el) { both(el, t(el.textContent)); });
+    all(".trip", function (el) { both(el, t("Trasferta:") + el.textContent.slice("Trasferta:".length).split("sì (dettagli non registrati)").join(t("sì (dettagli non registrati)"))); });
+    all("header.doc .ente, header.doc h1, footer.doc .firma", function (el) { both(el, t(el.textContent)); });
+    all(".sett", function (el) {
+      var m = /^Settimana (\d+) \((.*)\)$/.exec(el.textContent);
+      if (m) both(el, tf("Settimana {0} ({1})", m[1], m[2]));
+    });
+    all("footer.doc .gen", function (el) {
+      var m = /^Generato il (.+) dal sistema RAI NYC Servizi · fonte: database · (\d+) registrazioni · (.+)$/.exec(el.textContent);
+      if (m) both(el, tf("Generato il {0} dal sistema RAI NYC Servizi · fonte: database · {1} registrazioni · {2}", m[1], m[2], m[3]));
+    });
+    all("button.ic", function (b) { b.title = t(b.title); b.setAttribute("aria-label", t(b.getAttribute("aria-label"))); });
+    all("section.counters", function (el) { el.setAttribute("aria-label", t(el.getAttribute("aria-label"))); });
+  }
+  function paintSheet() {
+    $("doc").innerHTML = renderCollaudo(sheet.w, sheet.rows, sheet.gen);
+    localizeSheet();
   }
 
   // ---- collapse days (per week, this browser tab) ----
@@ -1050,7 +1311,7 @@ ${groups.join("\n")}
   }
   function syncFoldBtn() {
     var gs = groups(), allShut = gs.length > 0 && gs.every(function (g) { return g.classList.contains("chiuso"); });
-    $("fold-t").textContent = allShut ? "Espandi tutto" : "Comprimi tutto";
+    $("fold-t").textContent = t(allShut ? "Espandi tutto" : "Comprimi tutto");
     $("fold").setAttribute("aria-expanded", allShut ? "false" : "true");
     $("fold").disabled = !gs.length;
   }
@@ -1097,7 +1358,7 @@ ${groups.join("\n")}
     var tr = rowOf(id), span = tr && tr.querySelector(".rowerr");
     if (span) span.textContent = text; else setMsg(text, true);
   }
-  function errText(r) { return (r.body && r.body.error) || "Operazione non riuscita (" + r.status + ")."; }
+  function errText(r) { return (r.body && r.body.error) || tf("Operazione non riuscita ({0}).", r.status); }
 
   function ensureLists() {
     if (lists) return Promise.resolve(lists);
@@ -1119,7 +1380,7 @@ ${groups.join("\n")}
     var kind = editorKind(field), el;
     if (kind === "bool") {
       el = document.createElement("select");
-      [["false", "No"], ["true", "Sì"]].forEach(function (p) {
+      [["false", t("No")], ["true", t("Sì")]].forEach(function (p) {
         var o = document.createElement("option"); o.value = p[0]; o.textContent = p[1]; el.appendChild(o);
       });
       el.value = old;
@@ -1268,7 +1529,7 @@ ${groups.join("\n")}
   });
 
   function voidRow(tr) {
-    if (busy || !window.confirm("Annullare questa registrazione?")) return;
+    if (busy || !window.confirm(t("Annullare questa registrazione?"))) return;
     var id = tr.getAttribute("data-id");
     setBusy(true);
     post("/api/void", { id: id, reason: "annullata dal collaudo" }).then(function (r) {
@@ -1344,27 +1605,31 @@ ${groups.join("\n")}
       var li = document.createElement("li"), l = document.createElement("label"), c = document.createElement("input");
       c.type = "checkbox"; c.value = x.a; c.checked = ticked ? ticked.indexOf(x.a) >= 0 : !x.own; c.id = "rcp" + k;
       l.appendChild(c); l.appendChild(document.createTextNode(x.a)); li.appendChild(l);
-      if (x.own) { var rm = document.createElement("button"); rm.type = "button"; rm.className = "rm"; rm.title = "Togli dall'elenco"; rm.setAttribute("aria-label", "Togli " + x.a); rm.textContent = "✕"; rm.setAttribute("data-rm", x.a); li.appendChild(rm); }
+      if (x.own) { var rm = document.createElement("button"); rm.type = "button"; rm.className = "rm"; rm.title = t("Togli dall'elenco"); rm.setAttribute("aria-label", tf("Togli {0}", x.a)); rm.textContent = "✕"; rm.setAttribute("data-rm", x.a); li.appendChild(rm); }
       ul.appendChild(li);
     });
-    if (!all.length) { var li0 = document.createElement("li"); li0.textContent = "Nessun destinatario: aggiungerne uno qui sotto."; li0.style.color = "var(--dim)"; ul.appendChild(li0); }
+    if (!all.length) { var li0 = document.createElement("li"); li0.textContent = t("Nessun destinatario: aggiungerne uno qui sotto."); li0.style.color = "var(--dim)"; ul.appendChild(li0); }
     syncSend();
   }
   function rcpChosen() { return Array.prototype.map.call($("rcp").querySelectorAll("input:checked"), function (c) { return c.value; }); }
-  function syncSend() { var n = rcpChosen().length; $("mp-send").textContent = n ? "Invia a " + n : "Invia"; $("mp-send").disabled = !n; }
+  function syncSend() { var n = rcpChosen().length; $("mp-send").textContent = n ? tf("Invia a {0}", n) : t("Invia"); $("mp-send").disabled = !n; }
   function addRcp() {
     var v = $("rcp-new").value.trim().toLowerCase();
-    if (!isEmail(v)) { $("mpop-err").textContent = "Indirizzo e-mail non valido."; $("rcp-new").focus(); return; }
+    if (!isEmail(v)) { $("mpop-err").textContent = t("Indirizzo e-mail non valido."); $("rcp-new").focus(); return; }
     $("mpop-err").textContent = "";
     var ticked = rcpChosen(); ticked.push(v);
     if (mail.suggested.indexOf(v) < 0 && mail.extra.indexOf(v) < 0) { mail.extra.push(v); extraSave(); }
     $("rcp-new").value = ""; renderRcp(ticked); $("rcp-new").focus();
   }
-  function openMail() {
+  function mailTexts() {
     if (!current) return;
     var wk = formatWeek(current);
-    $("mpop-h").textContent = "Invia per e-mail · " + wk;
-    $("mpop-lead").textContent = "Il collaudo della settimana " + wk + " (colonne di Roma, senza operatori) parte dalla casella della redazione. Scegliere i destinatari.";
+    $("mpop-h").textContent = tf("Invia per e-mail · {0}", wk);
+    $("mpop-lead").textContent = tf("Il collaudo della settimana {0} (colonne di Roma, senza operatori) parte dalla casella della redazione. Scegliere i destinatari.", wk);
+  }
+  function openMail() {
+    if (!current) return;
+    mailTexts();
     $("mpop-err").textContent = ""; $("mpop-msg").textContent = ""; $("rcp-new").value = "";
     mail.extra = extraLoad();
     renderRcp(null);
@@ -1387,15 +1652,15 @@ ${groups.join("\n")}
     ev.preventDefault();
     var to = rcpChosen(), wk = formatWeek(current), b = $("mp-send");
     if (!to.length) return;
-    b.disabled = true; $("mp-cancel").disabled = true; $("mpop-err").textContent = ""; $("mpop-msg").textContent = "Invio…";
+    b.disabled = true; $("mp-cancel").disabled = true; $("mpop-err").textContent = ""; $("mpop-msg").textContent = t("Invio…");
     function done() { b.disabled = false; $("mp-cancel").disabled = false; syncSend(); }
     api("/api/email-collaudo", { method: "POST", body: JSON.stringify({ week: wk, to: to }) }).then(function (r) {
       done();
       if (r.status === 200 && r.body) {
         var sent = Array.isArray(r.body.sent_to) ? r.body.sent_to : to;
-        $("mpop-msg").textContent = "Inviato a " + sent.join(", ") + ".";
-        setMsg("Collaudo " + wk + " inviato a " + sent.length + " destinatari.");
-        $("email").title = "Ultimo invio (" + wk + "): " + sent.join(", ");
+        $("mpop-msg").textContent = tf("Inviato a {0}.", sent.join(", "));
+        setMsg(function () { return tf("Collaudo {0} inviato a {1} destinatari.", wk, sent.length); });
+        $("email").title = tf("Ultimo invio ({0}): {1}", wk, sent.join(", "));
         setTimeout(closeMail, 1800);
       } else { $("mpop-msg").textContent = ""; $("mpop-err").textContent = errText(r); }
     }, function (e) {
@@ -1413,6 +1678,13 @@ ${groups.join("\n")}
     }, function () { /* no e-mail button when the check fails */ });
   }
 
+  document.addEventListener("rainyc:lang", function () {
+    paintMsg();
+    if (current) document.title = tf("Collaudo {0} · RAI NYC Servizi", formatWeek(current));
+    if (sheet && $("doc").querySelector("table")) { closeTrip(false); paintSheet(); applyFold(); } else syncFoldBtn();
+    if (!$("mpop").hidden) { mailTexts(); renderRcp(rcpChosen()); } else syncSend();
+  });
+
   requireLogin(function () {
     $("tools").hidden = false;
     syncTop();
@@ -1421,7 +1693,7 @@ ${groups.join("\n")}
     var w = parseWeek(new URLSearchParams(location.search).get("week") || "") || isoWeekOf(todayNewYork());
     load(w);
   });
-  document.addEventListener("rainyc:auth-lost", function () { $("doc").innerHTML = ""; loadedOnce = false; $("tools").hidden = true; closeTrip(false); $("mpop").hidden = true; });
+  document.addEventListener("rainyc:auth-lost", function () { $("doc").innerHTML = ""; sheet = null; loadedOnce = false; $("tools").hidden = true; closeTrip(false); $("mpop").hidden = true; });
 })();
 </script>
 </body>

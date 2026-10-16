@@ -48,6 +48,7 @@ a { color:inherit; }
 .icbtn { width:36px; height:36px; display:inline-grid; place-items:center; border:1px solid var(--line2); border-radius:6px; background:transparent; color:var(--fg); cursor:pointer; padding:0; }
 .icbtn:hover { border-color:var(--accent); color:var(--accent-text); }
 .icbtn svg { width:18px; height:18px; }
+.icbtn.lang { width:auto; min-width:36px; padding:0 9px; font:700 12px/1 var(--mono); letter-spacing:.06em; }
 :root[data-theme=dark] .ic-moon, :root:not([data-theme=dark]) .ic-sun { display:none; }
 
 /* ── panels ("little windows") ── */
@@ -242,24 +243,25 @@ kbd { font:600 11px/1 var(--mono); padding:2px 5px; border:1px solid var(--line2
 </head>
 <body>
 <header class="appbar">
-  <div class="brand" id="brand" title="Pagina costruita 2026-10-16 21:33 UTC · 8896da9"><span class="mk">Rai · NY</span><span id="t">RAI NYC Servizi</span><span class="pg">Registrazione</span></div>
+  <div class="brand" id="brand" title="Pagina costruita 2026-10-16 21:43 UTC · 398378a"><span class="mk">Rai · NY</span><span id="t">RAI NYC Servizi</span><span class="pg" data-i18n>Registrazione</span></div>
   <nav class="hright" id="hright" aria-label="Pagine">
     <span class="pend" id="pend" hidden></span>
     <button type="button" class="icbtn" id="theme" aria-label="Cambia tema" title="Cambia tema">
       <svg class="ic-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
       <svg class="ic-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.2M12 19.8V22M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M2 12h2.2M19.8 12H22M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6"/></svg>
     </button>
-    <a href="collaudo" id="lnk-collaudo" class="hlink go">Collaudo &rarr;</a>
+    <button type="button" class="icbtn lang" id="lang" aria-label="Switch to English" title="Switch to English">EN</button>
+    <a href="collaudo" id="lnk-collaudo" class="hlink go" data-i18n>Collaudo &rarr;</a>
   </nav>
 </header>
 
 <main>
   <form id="login" class="panel card" hidden autocomplete="on">
-    <h1 class="ph">Accesso</h1>
-    <p class="lead">Accedere con il proprio cognome e la password.</p>
-    <div class="fld"><label for="login-email">Nome <span class="hint">(cognome come in elenco, es. Arzilla)</span></label><input type="text" id="login-email" name="username" required autocomplete="username" autocapitalize="none"></div>
-    <div class="fld"><label for="login-password">Password</label><input type="password" id="login-password" name="password" required autocomplete="current-password"></div>
-    <button type="submit" class="btn pri">Accedi</button>
+    <h1 class="ph" data-i18n>Accesso</h1>
+    <p class="lead" data-i18n>Accedere con il proprio cognome e la password.</p>
+    <div class="fld"><label for="login-email" data-i18n>Nome <span class="hint" data-i18n>(cognome come in elenco, es. Arzilla)</span></label><input type="text" id="login-email" name="username" required autocomplete="username" autocapitalize="none"></div>
+    <div class="fld"><label for="login-password" data-i18n>Password</label><input type="password" id="login-password" name="password" required autocomplete="current-password"></div>
+    <button type="submit" class="btn pri" data-i18n>Accedi</button>
     <div class="err" id="login-err" role="alert"></div>
   </form>
 
@@ -268,79 +270,79 @@ kbd { font:600 11px/1 var(--mono); padding:2px 5px; border:1px solid var(--line2
   <div class="desk">
     <form id="f" class="entry" novalidate autocomplete="off" hidden>
       <section class="panel p-dati" aria-labelledby="h-dati">
-        <h2 class="ph" id="h-dati"><span class="n">01</span> Servizio</h2>
+        <h2 class="ph" id="h-dati" data-i18n><span class="n">01</span> Servizio</h2>
         <div class="fld">
-          <label for="data">Data</label>
+          <label for="data" data-i18n>Data</label>
           <input type="date" id="data" name="data" required>
         </div>
         <div class="fld">
-          <label for="giornalista">Giornalista</label>
+          <label for="giornalista" data-i18n>Giornalista</label>
           <input type="text" id="giornalista" name="giornalista" list="l-giornalisti" required>
           <datalist id="l-giornalisti"></datalist>
         </div>
         <div class="fld">
-          <label for="titolo">Argomento / Titolo</label>
+          <label for="titolo" data-i18n>Argomento / Titolo</label>
           <input type="text" id="titolo" name="titolo" required maxlength="500">
         </div>
       </section>
 
       <fieldset class="panel p-rete">
-        <legend class="ph"><span class="n">02</span> Rete</legend>
+        <legend class="ph" data-i18n><span class="n">02</span> Rete</legend>
         <div class="chips" id="c-rete"></div>
       </fieldset>
 
       <section class="panel p-rich" aria-labelledby="h-rich">
-        <h2 class="ph" id="h-rich"><span class="n">03</span> Richiesta</h2>
+        <h2 class="ph" id="h-rich" data-i18n><span class="n">03</span> Richiesta</h2>
         <div class="fld">
-          <label for="richiedente">Richiedente <span class="hint" id="rich-hint">(edizione o programma; anche testo libero)</span></label>
-          <div class="prefixed" id="rich-wrap"><span class="pre" id="rich-pre"></span><input type="text" id="richiedente" name="richiedente" list="l-richiedenti" maxlength="200" aria-controls="rich-list"><button type="button" class="rich-btn" id="rich-btn" tabindex="-1" aria-label="Mostra tutte le scelte" aria-haspopup="listbox" aria-expanded="false">&#9662;</button><ul class="rich-list" id="rich-list" role="listbox" aria-label="Richiedente" hidden></ul></div>
+          <label for="richiedente" data-i18n>Richiedente <span class="hint" id="rich-hint">(edizione o programma; anche testo libero)</span></label>
+          <div class="prefixed" id="rich-wrap"><span class="pre" id="rich-pre"></span><input type="text" id="richiedente" name="richiedente" list="l-richiedenti" maxlength="200" aria-controls="rich-list"><button type="button" class="rich-btn" id="rich-btn" tabindex="-1" data-i18n-attr="aria-label" aria-label="Mostra tutte le scelte" aria-haspopup="listbox" aria-expanded="false">&#9662;</button><ul class="rich-list" id="rich-list" role="listbox" data-i18n-attr="aria-label" aria-label="Richiedente" hidden></ul></div>
           <datalist id="l-richiedenti"></datalist>
         </div>
         <div class="fld">
-          <label for="durata">Durata <span class="hint">(facoltativa)</span></label>
+          <label for="durata" data-i18n>Durata <span class="hint" data-i18n>(facoltativa)</span></label>
           <input type="text" id="durata" name="durata" placeholder="5 minuti / :50 / 01:22:00" maxlength="50">
         </div>
       </section>
 
       <fieldset class="panel p-mezzo">
-        <legend class="ph"><span class="n">04</span> Mezzo</legend>
+        <legend class="ph" data-i18n><span class="n">04</span> Mezzo</legend>
         <div class="chips" id="c-mezzo"></div>
       </fieldset>
 
       <section class="panel p-trip" aria-labelledby="h-trip">
-        <h2 class="ph" id="h-trip"><span class="n">05</span> Trasferta <span class="aside" id="trip-apply"></span></h2>
+        <h2 class="ph" id="h-trip" data-i18n><span class="n">05</span> Trasferta <span class="aside" id="trip-apply"></span></h2>
         <div class="tstate">
-          <div class="tnone" id="trip-none">Nessuna trasferta impostata. Impostarla una volta: vale per ogni registrazione di quel giornalista finché non viene rimossa.</div>
+          <div class="tnone" id="trip-none" data-i18n>Nessuna trasferta impostata. Impostarla una volta: vale per ogni registrazione di quel giornalista finché non viene rimossa.</div>
           <div class="tset" id="trip-set" hidden><b id="trip-who"></b> &middot; <span id="trip-where"></span> &middot; <span class="tdates" id="trip-when"></span></div>
-          <div class="tbtns"><button type="button" class="btn" id="trip-edit" aria-haspopup="dialog" aria-expanded="false">Imposta trasferta&hellip;</button><button type="button" class="btn mini" id="trip-remove" hidden>Rimuovi trasferta</button></div>
+          <div class="tbtns"><button type="button" class="btn" id="trip-edit" aria-haspopup="dialog" aria-expanded="false">Imposta trasferta&hellip;</button><button type="button" class="btn mini" id="trip-remove" hidden data-i18n>Rimuovi trasferta</button></div>
         </div>
         <div class="tpop" id="trip" hidden role="dialog" aria-labelledby="trip-h">
-          <h3 class="ph" id="trip-h">Trasferta</h3>
+          <h3 class="ph" id="trip-h" data-i18n>Trasferta</h3>
           <div class="grid">
             <div class="fld">
-              <label for="trip-giornalista">Giornalista in trasferta</label>
+              <label for="trip-giornalista" data-i18n>Giornalista in trasferta</label>
               <select id="trip-giornalista"></select>
             </div>
             <div class="fld">
-              <label for="trip-luogo">Destinazione</label>
+              <label for="trip-luogo" data-i18n>Destinazione</label>
               <input type="text" id="trip-luogo" placeholder="Washington D.C." maxlength="200">
             </div>
-            <div class="fld"><label for="trip-dal">Dal</label><input type="date" id="trip-dal"></div>
-            <div class="fld"><label for="trip-al">Al</label><input type="date" id="trip-al"></div>
+            <div class="fld"><label for="trip-dal" data-i18n>Dal</label><input type="date" id="trip-dal"></div>
+            <div class="fld"><label for="trip-al" data-i18n>Al</label><input type="date" id="trip-al"></div>
           </div>
-          <div class="row"><button type="button" class="btn pri" id="trip-ok">Applica</button><button type="button" class="btn" id="trip-cancel">Annulla</button></div>
+          <div class="row"><button type="button" class="btn pri" id="trip-ok" data-i18n>Applica</button><button type="button" class="btn" id="trip-cancel" data-i18n>Annulla</button></div>
           <div class="err" id="trip-err" role="alert"></div>
         </div>
       </section>
 
       <section class="panel p-op" aria-labelledby="h-op">
-        <h2 class="ph" id="h-op"><span class="n">06</span> Operatore <span class="aside" id="op-note"></span></h2>
+        <h2 class="ph" id="h-op" data-i18n><span class="n">06</span> Operatore <span class="aside" id="op-note"></span></h2>
         <div class="fld">
-          <label for="operatore">Operatore</label>
+          <label for="operatore" data-i18n>Operatore</label>
           <select id="operatore" name="operatore"></select>
         </div>
         <div class="fld">
-          <label for="note">Note <span class="hint">(facoltative)</span></label>
+          <label for="note" data-i18n>Note <span class="hint" data-i18n>(facoltative)</span></label>
           <input type="text" id="note" name="note" maxlength="2000">
         </div>
       </section>
@@ -348,22 +350,22 @@ kbd { font:600 11px/1 var(--mono); padding:2px 5px; border:1px solid var(--line2
       <section class="panel p-act" aria-label="Invio">
         <div class="actions">
           <div class="btns">
-            <button type="submit" class="btn pri" id="send">Invia registrazione<kbd>Ctrl+Invio</kbd></button>
-            <button type="button" class="btn" id="clear">Svuota</button>
-            <span class="cat" aria-live="polite">Categoria <b id="categoria">–</b></span>
+            <button type="submit" class="btn pri" id="send" data-i18n>Invia registrazione<kbd>Ctrl+Invio</kbd></button>
+            <button type="button" class="btn" id="clear" data-i18n>Svuota</button>
+            <span class="cat" aria-live="polite" data-i18n>Categoria <b id="categoria">–</b></span>
           </div>
           <div class="msgs">
             <div class="err" id="err" role="alert"></div>
             <div class="status" id="status" aria-live="polite"></div>
-            <div class="last" id="last" hidden aria-live="polite"><span id="last-text"></span><button type="button" class="btn mini" id="undo">Annulla</button></div>
+            <div class="last" id="last" hidden aria-live="polite"><span id="last-text"></span><button type="button" class="btn mini" id="undo" data-i18n>Annulla</button></div>
           </div>
-          <p class="keys" id="keys"><kbd>Invio</kbd> conferma la scelta e passa al campo successivo · <kbd>Ctrl</kbd>+<kbd>Invio</kbd> (Mac <kbd>&#8984;</kbd>+<kbd>Invio</kbd>) invia · <kbd>Esc</kbd> o Svuota svuota · <kbd>&#9662;</kbd> tutte le scelte del Richiedente · <kbd>Tab</kbd> completa il nome e passa al campo successivo; nella Rete e nel Mezzo <kbd>Tab</kbd> scorre le scelte (<kbd>Maiusc</kbd>+<kbd>Tab</kbd> torna indietro) · frecce = scelta nella riga</p>
+          <p class="keys" id="keys" data-i18n><kbd data-i18n>Invio</kbd> conferma la scelta e passa al campo successivo · <kbd>Ctrl</kbd>+<kbd data-i18n>Invio</kbd> (Mac <kbd>&#8984;</kbd>+<kbd data-i18n>Invio</kbd>) invia · <kbd>Esc</kbd> o Svuota svuota · <kbd>&#9662;</kbd> tutte le scelte del Richiedente · <kbd>Tab</kbd> completa il nome e passa al campo successivo; nella Rete e nel Mezzo <kbd>Tab</kbd> scorre le scelte (<kbd data-i18n>Maiusc</kbd>+<kbd>Tab</kbd> torna indietro) · frecce = scelta nella riga</p>
         </div>
       </section>
     </form>
 
     <aside class="panel side" id="recent-box" hidden aria-labelledby="h-oggi">
-      <h2 class="ph" id="h-oggi">Registrazioni di oggi <span class="aside" id="recent-n"></span></h2>
+      <h2 class="ph" id="h-oggi" data-i18n>Registrazioni di oggi <span class="aside" id="recent-n"></span></h2>
       <ol id="recent"></ol>
     </aside>
   </div>
@@ -375,6 +377,7 @@ kbd { font:600 11px/1 var(--mono); padding:2px 5px; border:1px solid var(--line2
 // All data goes through the function's /api routes with the bearer; auth goes to /auth/v1 on
 // the same origin (locally the CLI gateway, in production <ref>.supabase.co).
 
+// Italian is the source language; English comes from the dictionary below (see "language").
 var ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind5cnRoZndya2dkb2JsbHpzc2R2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIwMjI2MDIsImV4cCI6MjEwNzU5ODYwMn0.UE8hAaDlRY5pgsMs8hUMKE5bIVF_Jc5eP1Z2e954Kd4";
 // Served by the function itself: the placeholders are empty and everything is same-origin.
 // Built as static pages (scripts/build_pages.mjs --static): absolute URLs are filled in at build time.
@@ -387,7 +390,7 @@ var AUTH_URL = ("https://wyrthfwrkgdobllzssdv.supabase.co" || location.origin) +
 var PAGE_FORM = "./" || APP_BASE;
 var PAGE_COLLAUDO = "./collaudo.html" || APP_BASE + "/collaudo";
 var PAGE_GESTIONE = "./gestione.html" || APP_BASE + "/gestione";
-var BUILD = "2026-10-16 21:33 UTC · 8896da9"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
+var BUILD = "2026-10-16 21:43 UTC · 398378a"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
 // Every place the project lives (shown in the admin's header menu and on the Gestione page).
 var LINKS = [
   ["Pagine pubbliche", "https://rainycservizi.github.io/rainyc-servizi-app/", "GitHub Pages: il sito di prova principale"],
@@ -397,6 +400,176 @@ var LINKS = [
   ["Sito (repo Pages)", "https://github.com/rainycservizi/rainyc-servizi-app", "le pagine pubblicate"],
   ["Supabase", "https://supabase.com/dashboard/project/wyrthfwrkgdobllzssdv", "database e funzione (accesso rainyc.servizi)"]
 ].filter(function (x) { return x[1]; });
+
+// ---- language (Italian source, English dictionary) ----
+// Italian is the default and the source text: t("Italian") returns the English text when the saved
+// language is "en" and the dictionary has it, else the Italian string itself (so unknown strings, such as
+// the API's own Italian error messages, pass through untouched). Static HTML text carries data-i18n
+// (its direct text nodes are translated) and data-i18n-attr="placeholder|title|aria-label" (attributes);
+// the Italian original is remembered on the node / in data-i18n-it-<attr>, so toggling back restores it.
+// Page code re-renders its dynamic parts on the "rainyc:lang" event.
+var LANG_KEY = "rainyc.lingua";
+var I18N = { en: {
+  // header, login, shared
+  "Registrazione": "Entry", "Collaudo": "Weekly report", "Collaudo →": "Weekly report →", "← Nuova registrazione": "← New entry",
+  "Gestione": "Admin", "Esci": "Sign out", "Esci ({0})": "Sign out ({0})", "Cambia password": "Change password",
+  "Pagina costruita": "Page built", "Pagina costruita {0}": "Page built {0}",
+  "Passa al tema chiaro": "Switch to light theme", "Passa al tema scuro": "Switch to dark theme",
+  "Accesso": "Login", "Accedere con il proprio cognome e la password.": "Sign in with your surname and password.",
+  "Nome": "Name", "(cognome come in elenco, es. Arzilla)": "(surname as in the list, e.g. Arzilla)", "Password": "Password", "Accedi": "Sign in",
+  "Nome o password non corretti.": "Wrong name or password.", "Accesso non riuscito ({0}). Riprovare.": "Sign-in failed ({0}). Try again.",
+  "Rete non raggiungibile.": "Network unreachable.", "Accesso richiesto.": "Sign-in required.",
+  "Sessione scaduta: accedere di nuovo.": "Session expired: sign in again.", "Servizio non disponibile.": "Service unavailable.",
+  "Nuova password": "New password", "(almeno 5 caratteri)": "(at least 5 characters)", "Conferma": "Confirm", "Salva": "Save", "Chiudi": "Close",
+  "La password deve avere almeno 5 caratteri.": "The password must have at least 5 characters.",
+  "Le due password non coincidono.": "The two passwords do not match.", "Salvataggio…": "Saving…", "Password aggiornata.": "Password updated.",
+  "La nuova password deve essere diversa da quella attuale.": "The new password must differ from the current one.",
+  "Password troppo debole: sceglierne una piu lunga o meno comune.": "Password too weak: pick a longer or less common one.",
+  "Troppi tentativi. Riprovare tra qualche minuto.": "Too many attempts. Try again in a few minutes.",
+  "Password non aggiornata ({0}). Riprovare.": "Password not updated ({0}). Try again.",
+  "Pagine pubbliche": "Public pages", "GitHub Pages: il sito di prova principale": "GitHub Pages: the main test site",
+  "Pagine in ufficio": "Office pages", "supervisor, solo http (senza s), rete dell'ufficio": "supervisor, http only (no s), office network",
+  "Stato API": "API status", "risposta {ok:true} = funzione e database raggiungibili": "reply {ok:true} = function and database reachable",
+  "codice, OPERATIONS.md, SECURITY.md (privato)": "code, OPERATIONS.md, SECURITY.md (private)",
+  "Sito (repo Pages)": "Site (Pages repo)", "le pagine pubblicate": "the published pages",
+  "database e funzione (accesso rainyc.servizi)": "database and function (rainyc.servizi login)",
+  "Caricamento…": "Loading…",
+  // form
+  "Servizio": "Story", "Data": "Date", "Giornalista": "Journalist", "Argomento / Titolo": "Topic / Title", "Rete": "Network",
+  "Richiesta": "Request", "Richiedente": "Requester", "(edizione o programma; anche testo libero)": "(edition or programme; free text also allowed)",
+  "(edizione; anche testo libero)": "(edition; free text also allowed)", "(programma; testo libero)": "(programme; free text)",
+  "(scegliere prima la rete)": "(pick the network first)", "Durata": "Duration", "(facoltativa)": "(optional)", "(facoltative)": "(optional)",
+  "Mezzo": "Delivery means", "Trasferta": "Travel",
+  "Nessuna trasferta impostata. Impostarla una volta: vale per ogni registrazione di quel giornalista finché non viene rimossa.": "No travel set. Set it once: it applies to every entry of that journalist until it is removed.",
+  "Imposta trasferta…": "Set travel…", "Modifica…": "Edit…", "Rimuovi trasferta": "Remove travel",
+  "Giornalista in trasferta": "Journalist on travel", "Destinazione": "Destination", "Dal": "From", "Al": "To", "Applica": "Apply", "Annulla": "Cancel",
+  "Operatore": "Operator", "Note": "Notes", "Invia registrazione": "Submit entry", "Ctrl+Invio": "Ctrl+Enter", "⌘+Invio": "⌘+Enter", "Svuota": "Clear",
+  "Categoria": "Category", "Registrazioni di oggi": "Today's entries", "Nessuna registrazione oggi.": "No entries today.",
+  "Mostra tutte le scelte": "Show all choices",
+  "Invio": "Enter", "Maiusc": "Shift",
+  "conferma la scelta e passa al campo successivo ·": "confirms the choice and moves to the next field ·",
+  ") invia ·": ") submits ·", "o Svuota svuota ·": "or Clear clears the form ·",
+  "tutte le scelte del Richiedente ·": "all Requester choices ·",
+  "completa il nome e passa al campo successivo; nella Rete e nel Mezzo": "completes the name and moves to the next field; in Network and Delivery means",
+  "scorre le scelte (": "steps through the choices (", "torna indietro) · frecce = scelta nella riga": "goes back) · arrow keys = choice within the row",
+  "Salvato": "Saved", "In attesa di sincronizzazione": "Waiting to sync", "Sincronizzato": "Synced", "Errore di sincronizzazione": "Sync error",
+  "{0} in attesa": "{0} waiting", "Liste dalla copia locale: {0}": "Lists from the local copy: {0}", "Liste non disponibili.": "Lists unavailable.",
+  "Dal tuo accesso": "From your sign-in", "Rilevato dall'accesso Windows": "Detected from the Windows login",
+  "scrivi il programma o l'edizione": "type the programme or edition", "Altro… (aggiungi)": "Other… (add)",
+  "Questa registrazione: SI": "This entry: YES", "Questa registrazione: NO (altro giornalista)": "This entry: NO (other journalist)",
+  "Manca: {0}.": "Missing: {0}.", "La data \"al\" precede la data \"dal\".": "The \"to\" date is before the \"from\" date.",
+  "Non accettata: {0}": "Not accepted: {0}", "Dati non validi.": "Invalid data.",
+  "Accesso scaduto: {0} registrazioni in attesa.": "Session expired: {0} entries waiting.",
+  "In attesa di sincronizzazione ({0}): {1} Nuovo tentativo tra {2} s.": "Waiting to sync ({0}): {1} Retrying in {2} s.",
+  "Registrata: {0}": "Recorded: {0}", "Registrazione annullata.": "Entry cancelled.", "Annullamento non riuscito.": "Could not cancel.",
+  "Annullamento non riuscito: {0}": "Could not cancel: {0}", "Giornalista non in elenco: {0}.": "Journalist not in the list: {0}.",
+  "Salvato: {0}": "Saved: {0}", "Caricamento degli elenchi…": "Loading the lists…",
+  "{0} Ricaricare la pagina quando la rete torna.": "{0} Reload the page when the network is back.",
+  // collaudo
+  "Settimana precedente": "Previous week", "Settimana successiva": "Next week", "Settimana": "Week", "Vai": "Go",
+  "Comprimi tutto": "Collapse all", "Espandi tutto": "Expand all", "Annulla ultima modifica": "Undo last change",
+  "Invia per e-mail": "Send by e-mail", "Stampa": "Print", "Accesso · collaudo settimanale": "Login · weekly report",
+  "Sì": "Yes", "No": "No", "Destinatari": "Recipients", "aggiungi un indirizzo e-mail": "add an e-mail address",
+  "Nuovo destinatario": "New recipient", "Aggiungi": "Add", "Invia": "Send", "Invia a {0}": "Send to {0}",
+  "Caricamento della settimana {0}…": "Loading week {0}…", "Errore.": "Error.", "Collaudo non disponibile: {0}": "Weekly report unavailable: {0}",
+  "Riprova": "Retry", "{0} registrazioni": "{0} entries", "Operazione non riuscita ({0}).": "Operation failed ({0}).",
+  "Modifica salvata.": "Change saved.", "Trasferta salvata.": "Travel saved.", "Registrazione ripristinata.": "Entry restored.",
+  "Modifica annullata.": "Change undone.", "Annullare questa registrazione?": "Cancel this entry?",
+  "Settimana non valida: usare la forma 2026-W41.": "Invalid week: use the form 2026-W41.",
+  "Modifica": "Edit", "Annulla registrazione": "Cancel entry", "Collaudo {0} · RAI NYC Servizi": "Weekly report {0} · RAI NYC Servizi",
+  "Invia per e-mail · {0}": "Send by e-mail · {0}",
+  "Il collaudo della settimana {0} (colonne di Roma, senza operatori) parte dalla casella della redazione. Scegliere i destinatari.": "The weekly report for week {0} (Rome's columns, no operators) is sent from the newsroom mailbox. Choose the recipients.",
+  "Togli dall'elenco": "Remove from the list", "Togli {0}": "Remove {0}", "Nessun destinatario: aggiungerne uno qui sotto.": "No recipients: add one below.",
+  "Indirizzo e-mail non valido.": "Invalid e-mail address.", "Invio…": "Sending…", "Inviato a {0}.": "Sent to {0}.",
+  "Collaudo {0} inviato a {1} destinatari.": "Weekly report {0} sent to {1} recipients.", "Ultimo invio ({0}): {1}": "Last sent ({0}): {1}",
+  // collaudo sheet (screen text; the print copy stays Italian)
+  "Nessuna registrazione": "No entries", "Titolo": "Title", "Pezzi": "Pieces", "Tappeti": "Carpets", "Ass. tecnica": "Tech support", "Totale": "Total",
+  "Trasferte": "Travel", "Altre": "Other", "Riepilogo": "Summary", "Collaudo settimanale": "Weekly report",
+  "RAI – Sede di corrispondenza di New York": "RAI – New York Bureau", "Trasferta:": "Travel:",
+  "sì (dettagli non registrati)": "yes (details not recorded)", "Settimana {0} ({1})": "Week {0} ({1})",
+  "Generato il {0} dal sistema RAI NYC Servizi · fonte: database · {1} registrazioni · {2}": "Generated on {0} by the RAI NYC Servizi system · source: database · {1} entries · {2}",
+  "Firma del responsabile ______________________________": "Manager's signature ______________________________",
+  "Totale {0} ({1} registrazioni)": "Total {0} ({1} entries)",
+  // gestione
+  "Accesso · gestione": "Login · admin", "Stato": "Status", "Collegamenti": "Links", "Accessi": "Logins",
+  "password: solo caruso e l'agente": "passwords: only caruso and the agent", "Ultimo accesso": "Last sign-in",
+  "Nuovo accesso": "New login", "Crea": "Create", "Elenchi": "Lists", "mai cancellati: si ritirano": "never deleted: they are retired",
+  "Giornalisti": "Journalists", "Operatori": "Operators", "Reti": "Networks", "Mezzi": "Delivery means", "Richiedenti": "Requesters",
+  "Utente Windows": "Windows user", "Nuovo giornalista": "New journalist", "Nuovo operatore": "New operator", "Nuova rete": "New network",
+  "Nuovo mezzo": "New delivery means", "Nuovo richiedente (es. Tg1 Ore 20)": "New requester (e.g. Tg1 Ore 20)",
+  "Registro": "Audit log", "Quando (NY)": "When (NY)", "Chi": "Who", "Azione": "Action", "Cosa": "What", "Dettaglio": "Detail",
+  "Progetto": "Project", "STATE.md del repository, com'era alla costruzione di questa pagina": "the repository's STATE.md, as it was when this page was built",
+  "Registrazioni {0}": "Entries {0}", "Oggi {0}": "Today {0}", "Totale valide": "Total valid", "Annullate": "Voided", "Dal foglio 2026": "From the 2026 sheet",
+  "Giornalisti attivi": "Active journalists", "Operatori attivi": "Active operators",
+  "Ultima registrazione": "Last entry", "Ultima voce del registro": "Last audit entry", "servita dalla funzione": "served by the function",
+  "aggiornato {0}": "updated {0}", "il modulo dei montatori": "the editors' form", "la settimana da stampare o inviare": "the week to print or send",
+  "E-mail del collaudo": "Weekly report e-mail", "possono inviare: erika, caruso, pippo": "allowed to send: erika, caruso, pippo",
+  "Destinatari proposti": "Suggested recipients", "(nessuno: secret COLLAUDO_TO vuoto)": "(none: secret COLLAUDO_TO is empty)",
+  "nuova password": "new password", "Nuova password per {0}": "New password for {0}", "Imposta": "Set",
+  "Cambiare la password di {0}?": "Change the password of {0}?", "Password di {0} aggiornata.": "Password of {0} updated.",
+  "Accesso {0} creato.": "Login {0} created.", "attivo": "active", "ritirato": "retired", "Ritira": "Retire", "Riattiva": "Reactivate",
+  "Ritirare \"{0}\"? Non comparirà più nel modulo; le registrazioni passate restano.": "Retire \"{0}\"? It will no longer appear in the form; past entries stay.",
+  "Ritirato: {0}": "Retired: {0}", "Riattivato: {0}": "Reactivated: {0}", "Aggiunto: {0}": "Added: {0}",
+  "registrazione": "entry", "giornalista": "journalist", "operatore": "operator", "valore": "value", "accesso": "login",
+  "{0} voci più recenti": "{0} most recent entries", "Pagina riservata.": "Restricted page."
+} };
+var langHooks = [];
+function langNow() { try { return localStorage.getItem(LANG_KEY) === "en" ? "en" : "it"; } catch (e) { return "it"; } }
+function t(s) { var d = langNow() === "en" ? I18N.en[s] : undefined; return d === undefined ? s : d; }
+/** t() with {0}, {1}... placeholders filled in (the Italian text is the same with or without the dictionary). */
+function tf(s) {
+  var a = arguments;
+  return t(s).replace(/\{(\d)\}/g, function (m, i) { return a[+i + 1] === undefined ? m : String(a[+i + 1]); });
+}
+/** Set `el`'s text to the translation of `it` and mark it so a later language change updates it. */
+function L(el, it) {
+  el.textContent = t(it); el.setAttribute("data-i18n", "");
+  if (el.firstChild) el.firstChild.__it = it;
+  return el;
+}
+function applyLang() {
+  var en = langNow() === "en";
+  document.documentElement.lang = en ? "en" : "it";
+  Array.prototype.forEach.call(document.querySelectorAll("[data-i18n]"), function (el) {
+    Array.prototype.forEach.call(el.childNodes, function (n) {
+      if (n.nodeType !== 3 || !n.nodeValue.trim()) return;
+      if (n.__it === undefined) n.__it = n.nodeValue;
+      var core = n.__it.trim(), at = n.__it.indexOf(core);
+      n.nodeValue = n.__it.slice(0, at) + t(core) + n.__it.slice(at + core.length);
+    });
+  });
+  Array.prototype.forEach.call(document.querySelectorAll("[data-i18n-attr]"), function (el) {
+    el.getAttribute("data-i18n-attr").split("|").forEach(function (a) {
+      var k = "data-i18n-it-" + a;
+      if (!el.hasAttribute(k)) el.setAttribute(k, el.getAttribute(a) || "");
+      el.setAttribute(a, t(el.getAttribute(k)));
+    });
+  });
+  var br = document.getElementById("brand");
+  if (br) br.title = t("Pagina costruita") + " " + BUILD;
+  var out = document.getElementById("lnk-esci");
+  if (out && out.getAttribute("data-user")) out.title = tf("Esci ({0})", out.getAttribute("data-user"));
+  var stamp = document.querySelector("#lnk-menu .stamp");
+  if (stamp) stamp.textContent = tf("Pagina costruita {0}", BUILD);
+  if (themeBtn) applyTheme(document.documentElement.getAttribute("data-theme") || themeNow(), themeBtn);
+  var lb = document.getElementById("lang");
+  if (lb) {
+    lb.textContent = en ? "IT" : "EN";
+    var lab = en ? "Passa all'italiano" : "Switch to English";
+    lb.setAttribute("aria-label", lab); lb.title = lab;
+  }
+  langHooks.forEach(function (f) { f(); });
+}
+/** Wire the language button (id): the other language's code on it; click toggles, saves, re-applies. */
+function initLang(id) {
+  var btn = document.getElementById(id);
+  if (btn) btn.addEventListener("click", function () {
+    try { localStorage.setItem(LANG_KEY, langNow() === "en" ? "it" : "en"); } catch (e) { /* storage blocked: this page only */ }
+    applyLang();
+    document.dispatchEvent(new Event("rainyc:lang"));
+  });
+  applyLang();
+}
 
 function ApiError(kind, message) { this.kind = kind; this.message = message; }
 ApiError.prototype = Object.create(Error.prototype);
@@ -434,10 +607,10 @@ function login(name, password) {
   }).then(function (r) {
     return r.json().catch(function () { return {}; }).then(function (b) {
       if (r.ok && b.access_token) { storeSession(b); return { ok: true }; }
-      if (r.status === 400 || r.status === 401) return { ok: false, error: "Nome o password non corretti." };
-      return { ok: false, error: "Accesso non riuscito (" + r.status + "). Riprovare." };
+      if (r.status === 400 || r.status === 401) return { ok: false, error: t("Nome o password non corretti.") };
+      return { ok: false, error: tf("Accesso non riuscito ({0}). Riprovare.", r.status) };
     });
-  }, function () { return { ok: false, error: "Rete non raggiungibile." }; });
+  }, function () { return { ok: false, error: t("Rete non raggiungibile.") }; });
 }
 
 var refreshing = null;
@@ -468,27 +641,27 @@ function logout() { Session.clear(); }
  */
 function api(path, init, retried) {
   var s = Session.get();
-  if (!s) return Promise.reject(new ApiError("auth", "Accesso richiesto."));
+  if (!s) return Promise.reject(new ApiError("auth", t("Accesso richiesto.")));
   var soon = (s.expires_at || 0) * 1000 - Date.now() < 60000;
-  var ready = soon ? refreshSession().then(function (ok) { if (!ok) throw new ApiError("auth", "Sessione scaduta: accedere di nuovo."); }) : Promise.resolve();
+  var ready = soon ? refreshSession().then(function (ok) { if (!ok) throw new ApiError("auth", t("Sessione scaduta: accedere di nuovo.")); }) : Promise.resolve();
   return ready.then(function () {
     var cur = Session.get();
-    if (!cur) throw new ApiError("auth", "Accesso richiesto.");
+    if (!cur) throw new ApiError("auth", t("Accesso richiesto."));
     var opts = Object.assign({}, init || {});
     opts.headers = Object.assign({ Authorization: "Bearer " + cur.access_token, "Content-Type": "application/json" }, (init && init.headers) || {});
-    return fetch(APP_BASE + path, opts).then(null, function () { throw new ApiError("network", "Rete non raggiungibile."); });
+    return fetch(APP_BASE + path, opts).then(null, function () { throw new ApiError("network", t("Rete non raggiungibile.")); });
   }).then(function (r) {
     if (r.status === 401 && !retried) {
       return refreshSession().then(function (ok) {
         if (ok) return api(path, init, true);
-        throw new ApiError("auth", "Sessione scaduta: accedere di nuovo.");
+        throw new ApiError("auth", t("Sessione scaduta: accedere di nuovo."));
       });
     }
     return r.text().then(function (t) {
       var body = null;
       try { body = t ? JSON.parse(t) : null; } catch (e) { body = null; }
-      if (r.status === 401) throw new ApiError("auth", "Sessione scaduta: accedere di nuovo.");
-      if (r.status >= 500 || r.status === 429) throw new ApiError("network", (body && body.error) || "Servizio non disponibile.");
+      if (r.status === 401) throw new ApiError("auth", t("Sessione scaduta: accedere di nuovo."));
+      if (r.status >= 500 || r.status === 429) throw new ApiError("network", (body && body.error) || t("Servizio non disponibile."));
       return { status: r.status, body: body };
     });
   });
@@ -536,10 +709,10 @@ function mountLinks(slot) {
   var ul = document.createElement("ul"); ul.setAttribute("role", "menu"); ul.hidden = true;
   LINKS.forEach(function (x) {
     var li = document.createElement("li"); li.setAttribute("role", "none");
-    var a = document.createElement("a"); a.href = x[1]; a.textContent = x[0]; a.title = x[2]; a.target = "_blank"; a.rel = "noopener"; a.setAttribute("role", "menuitem");
+    var a = document.createElement("a"); a.href = x[1]; L(a, x[0]); a.title = t(x[2]); a.setAttribute("data-i18n-attr", "title"); a.setAttribute("data-i18n-it-title", x[2]); a.target = "_blank"; a.rel = "noopener"; a.setAttribute("role", "menuitem");
     li.appendChild(a); ul.appendChild(li);
   });
-  if (BUILD) { var li2 = document.createElement("li"); li2.className = "stamp"; li2.textContent = "Pagina costruita " + BUILD; ul.appendChild(li2); }
+  if (BUILD) { var li2 = document.createElement("li"); li2.className = "stamp"; li2.textContent = tf("Pagina costruita {0}", BUILD); ul.appendChild(li2); }
   function close() { ul.hidden = true; b.setAttribute("aria-expanded", "false"); }
   b.addEventListener("click", function () { ul.hidden = !ul.hidden; b.setAttribute("aria-expanded", ul.hidden ? "false" : "true"); });
   document.addEventListener("click", function (ev) { if (!wrap.contains(ev.target)) close(); });
@@ -554,8 +727,8 @@ function mountLogout(slot) {
   if (old) old.parentNode.removeChild(old);
   if (!slot || !Session.get()) return;
   var a = document.createElement("a");
-  a.href = "#"; a.id = "lnk-esci"; a.className = "hlink"; a.textContent = "Esci";
-  var s = Session.get(); if (s && s.email) a.title = "Esci (" + String(s.email).split("@")[0] + ")";
+  a.href = "#"; a.id = "lnk-esci"; a.className = "hlink"; L(a, "Esci");
+  var s = Session.get(); if (s && s.email) { a.setAttribute("data-user", String(s.email).split("@")[0]); a.title = tf("Esci ({0})", a.getAttribute("data-user")); }
   a.addEventListener("click", function (ev) { ev.preventDefault(); logout(); mountPassword(null); mountLogout(null); document.dispatchEvent(new Event("rainyc:auth-lost")); });
   slot.insertBefore(a, slot.firstChild);
 }
@@ -566,12 +739,12 @@ function mountLogout(slot) {
  */
 function changePassword(newPassword, retried) {
   var s = Session.get();
-  if (!s) return Promise.resolve({ ok: false, error: "Sessione scaduta: accedere di nuovo." });
+  if (!s) return Promise.resolve({ ok: false, error: t("Sessione scaduta: accedere di nuovo.") });
   var soon = (s.expires_at || 0) * 1000 - Date.now() < 60000;
   var ready = soon ? refreshSession() : Promise.resolve(true);
   return ready.then(function (ok) {
     var cur = Session.get();
-    if (!ok || !cur) return { ok: false, error: "Sessione scaduta: accedere di nuovo." };
+    if (!ok || !cur) return { ok: false, error: t("Sessione scaduta: accedere di nuovo.") };
     return fetch(AUTH_URL + "/user", {
       method: "PUT",
       headers: { apikey: ANON_KEY, Authorization: "Bearer " + cur.access_token, "Content-Type": "application/json" },
@@ -579,15 +752,15 @@ function changePassword(newPassword, retried) {
     }).then(function (r) {
       return r.json().catch(function () { return {}; }).then(function (b) {
         if (r.ok) return { ok: true };
-        if (r.status === 401 && !retried) return refreshSession().then(function (ok2) { return ok2 ? changePassword(newPassword, true) : { ok: false, error: "Sessione scaduta: accedere di nuovo." }; });
+        if (r.status === 401 && !retried) return refreshSession().then(function (ok2) { return ok2 ? changePassword(newPassword, true) : { ok: false, error: t("Sessione scaduta: accedere di nuovo.") }; });
         var code = b.error_code || b.code || "";
-        if (code === "same_password") return { ok: false, error: "La nuova password deve essere diversa da quella attuale." };
-        if (code === "weak_password") return { ok: false, error: "Password troppo debole: sceglierne una piu lunga o meno comune." };
-        if (r.status === 401 || r.status === 403) return { ok: false, error: "Sessione scaduta: accedere di nuovo." };
-        if (r.status === 429) return { ok: false, error: "Troppi tentativi. Riprovare tra qualche minuto." };
-        return { ok: false, error: "Password non aggiornata (" + r.status + "). Riprovare." };
+        if (code === "same_password") return { ok: false, error: t("La nuova password deve essere diversa da quella attuale.") };
+        if (code === "weak_password") return { ok: false, error: t("Password troppo debole: sceglierne una piu lunga o meno comune.") };
+        if (r.status === 401 || r.status === 403) return { ok: false, error: t("Sessione scaduta: accedere di nuovo.") };
+        if (r.status === 429) return { ok: false, error: t("Troppi tentativi. Riprovare tra qualche minuto.") };
+        return { ok: false, error: tf("Password non aggiornata ({0}). Riprovare.", r.status) };
       });
-    }, function () { return { ok: false, error: "Rete non raggiungibile." }; });
+    }, function () { return { ok: false, error: t("Rete non raggiungibile.") }; });
   });
 }
 
@@ -595,20 +768,22 @@ function changePassword(newPassword, retried) {
 // The <head> of each page sets data-theme before first paint (same rule as themeNow below);
 // this wires the header button. Saved choice in localStorage "rainyc.tema"; none saved = follow the OS.
 var THEME_KEY = "rainyc.tema";
+var themeBtn = null;
 function themeSaved() { try { var t = localStorage.getItem(THEME_KEY); return t === "light" || t === "dark" ? t : null; } catch (e) { return null; } }
 function themeOs() { try { return window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"; } catch (e) { return "light"; } }
 function themeNow() { return themeSaved() || themeOs(); }
-function applyTheme(t, btn) {
-  document.documentElement.setAttribute("data-theme", t);
+function applyTheme(th, btn) {
+  document.documentElement.setAttribute("data-theme", th);
   if (btn) {
-    var label = t === "dark" ? "Passa al tema chiaro" : "Passa al tema scuro";
+    var label = t(th === "dark" ? "Passa al tema chiaro" : "Passa al tema scuro");
     btn.setAttribute("aria-label", label); btn.title = label;
-    btn.setAttribute("aria-pressed", t === "dark" ? "true" : "false");
+    btn.setAttribute("aria-pressed", th === "dark" ? "true" : "false");
   }
 }
 /** Wire the theme toggle button (id). */
 function initTheme(id) {
   var btn = document.getElementById(id);
+  themeBtn = btn;
   applyTheme(themeNow(), btn);
   if (btn) btn.addEventListener("click", function () {
     var t = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
@@ -643,23 +818,24 @@ function mountPassword(slot) {
   if (!slot || !canChangePassword()) return;
   if (!document.body.hasAttribute("data-gestione")) {
     var g = document.createElement("a");
-    g.href = PAGE_GESTIONE; g.id = "lnk-gestione"; g.className = "hlink"; g.textContent = "Gestione";
+    g.href = PAGE_GESTIONE; g.id = "lnk-gestione"; g.className = "hlink"; L(g, "Gestione");
     slot.insertBefore(g, slot.firstChild);
   }
   mountLinks(slot);
   var a = document.createElement("a");
-  a.href = "#"; a.id = "lnk-pwd"; a.className = "hlink"; a.textContent = "Cambia password";
+  a.href = "#"; a.id = "lnk-pwd"; a.className = "hlink"; L(a, "Cambia password");
   slot.insertBefore(a, slot.firstChild);
   var root = document.createElement("div");
   root.id = "pwd-root"; root.className = "pop-pwd"; root.hidden = true;
   root.innerHTML =
     '<form id="pwd" class="pwd" autocomplete="off" novalidate>' +
-    '<h2 class="ph">Cambia password</h2>' +
-    '<div class="fld"><label for="pwd-new">Nuova password <span class="hint">(almeno 5 caratteri)</span></label><input type="password" id="pwd-new" autocomplete="new-password"></div>' +
-    '<div class="fld"><label for="pwd-conf">Conferma</label><input type="password" id="pwd-conf" autocomplete="new-password"></div>' +
-    '<div class="row"><button type="submit" class="btn pri" id="pwd-save">Salva</button><button type="button" class="btn" id="pwd-close">Chiudi</button></div>' +
+    '<h2 class="ph" data-i18n>Cambia password</h2>' +
+    '<div class="fld"><label for="pwd-new" data-i18n>Nuova password <span class="hint" data-i18n>(almeno 5 caratteri)</span></label><input type="password" id="pwd-new" autocomplete="new-password"></div>' +
+    '<div class="fld"><label for="pwd-conf" data-i18n>Conferma</label><input type="password" id="pwd-conf" autocomplete="new-password"></div>' +
+    '<div class="row"><button type="submit" class="btn pri" id="pwd-save" data-i18n>Salva</button><button type="button" class="btn" id="pwd-close" data-i18n>Chiudi</button></div>' +
     '<div class="pwd-msg" id="pwd-msg" role="alert"></div></form>';
   document.body.appendChild(root);
+  applyLang();
   var $p = function (id) { return document.getElementById(id); };
   function close() { root.hidden = true; $p("pwd-new").value = ""; $p("pwd-conf").value = ""; $p("pwd-msg").textContent = ""; a.setAttribute("aria-expanded", "false"); }
   a.setAttribute("aria-expanded", "false");
@@ -673,12 +849,12 @@ function mountPassword(slot) {
     ev.preventDefault();
     var msg = $p("pwd-msg"), pa = $p("pwd-new").value, pc = $p("pwd-conf").value;
     function say(ok, t) { msg.className = "pwd-msg " + (ok ? "ok" : "ko"); msg.textContent = t; }
-    if (pa.length < 5) { say(false, "La password deve avere almeno 5 caratteri."); $p("pwd-new").focus(); return; }
-    if (pa !== pc) { say(false, "Le due password non coincidono."); $p("pwd-conf").focus(); return; }
-    var b = $p("pwd-save"); b.disabled = true; say(true, "Salvataggio…");
+    if (pa.length < 5) { say(false, t("La password deve avere almeno 5 caratteri.")); $p("pwd-new").focus(); return; }
+    if (pa !== pc) { say(false, t("Le due password non coincidono.")); $p("pwd-conf").focus(); return; }
+    var b = $p("pwd-save"); b.disabled = true; say(true, t("Salvataggio…"));
     changePassword(pa).then(function (res) {
       b.disabled = false;
-      if (res.ok) { $p("pwd-new").value = ""; $p("pwd-conf").value = ""; say(true, "Password aggiornata."); } else say(false, res.error);
+      if (res.ok) { $p("pwd-new").value = ""; $p("pwd-conf").value = ""; say(true, t("Password aggiornata.")); } else say(false, res.error);
     });
   });
   document.addEventListener("rainyc:auth-lost", function () { mountPassword(null); });
@@ -814,15 +990,21 @@ function fmtRange(a, b) {
   // The page lives at …/servizi (no trailing slash): relative links would resolve one level up.
   $("lnk-collaudo").href = PAGE_COLLAUDO;
   initTheme("theme");
+  initLang("lang");
   var isMac = /Mac|iPhone|iPad/.test(navigator.platform || "");
-  if (isMac) $("send").querySelector("kbd").textContent = "⌘+Invio";
+  function sendKbd() { $("send").querySelector("kbd").textContent = t(isMac ? "⌘+Invio" : "Ctrl+Invio"); }
+  // Texts set by this page's code (not data-i18n): each has a source function so a language change can repaint it.
+  var statusSrc = null, errSrc = null, lastSrc = null;
+  function paintStatus() { if (statusSrc) $("status").textContent = statusSrc(); }
+  function paintErr() { if (errSrc) $("err").textContent = errSrc(); }
+  function paintLast() { if (lastSrc) $("last-text").textContent = lastSrc(); }
 
   function boot(text, isErr) { var b = $("boot"); b.hidden = !text; b.textContent = text || ""; b.className = "boot" + (isErr ? " ko" : ""); }
 
   // ---- lists (from the API, cached so the form also opens offline) ----
   function loadLists() {
     return api("/api/lists").then(function (r) {
-      if (r.status !== 200) throw new ApiError("network", (r.body && r.body.error) || "Liste non disponibili.");
+      if (r.status !== 200) throw new ApiError("network", (r.body && r.body.error) || t("Liste non disponibili."));
       lists = r.body;
       try { localStorage.setItem("rainyc.liste", JSON.stringify(lists)); } catch (e) { /* ignore */ }
       return lists;
@@ -830,7 +1012,7 @@ function fmtRange(a, b) {
       if (e.kind === "auth") throw e;
       try { lists = JSON.parse(localStorage.getItem("rainyc.liste") || "null"); } catch (x) { lists = null; }
       if (!lists) throw e;
-      setStatus("attesa", "Liste dalla copia locale: " + e.message);
+      setStatus("attesa", function () { return tf("Liste dalla copia locale: {0}", e.message); });
       return lists;
     });
   }
@@ -872,6 +1054,7 @@ function fmtRange(a, b) {
     var sel = $(id); sel.textContent = "";
     items.forEach(function (v) { var o = document.createElement("option"); o.value = o.textContent = v; sel.appendChild(o); });
   }
+  var opNote = "";
   var myOperator = null; // the operator of the logged-in account, when the login is personal
   function buildForm() {
     fillDatalist("l-giornalisti", lists.giornalisti);
@@ -890,7 +1073,8 @@ function fmtRange(a, b) {
     // defaultSelected: form.reset() (Esc, resetAll) returns to this operator instead of the first option.
     Array.prototype.forEach.call($("operatore").options, function (o) { o.defaultSelected = o.value === pick; });
     $("operatore").value = pick;
-    $("op-note").textContent = mine && pick === mine ? "Dal tuo accesso" : (fromUrl && pick === fromUrl ? "Rilevato dall'accesso Windows" : "");
+    opNote = mine && pick === mine ? "Dal tuo accesso" : (fromUrl && pick === fromUrl ? "Rilevato dall'accesso Windows" : "");
+    $("op-note").textContent = t(opNote);
     var pc = params.get("pc");
     $("t").textContent = "RAI NYC Servizi" + (pc ? " · " + pc : "");
   }
@@ -923,7 +1107,7 @@ function fmtRange(a, b) {
   function openList() {
     var ul = $("rich-list"); ul.textContent = "";
     var cur = $("richiedente").value.trim().toLowerCase(), at = -1;
-    richSlots.concat(["Altro… (aggiungi)"]).forEach(function (v, k) {
+    richSlots.concat([t("Altro… (aggiungi)")]).forEach(function (v, k) {
       var li = document.createElement("li"); li.id = "rich-o" + k; li.setAttribute("role", "option"); li.textContent = v;
       if (k === richSlots.length) li.className = "altro"; else if (v.toLowerCase() === cur) at = k;
       li.setAttribute("data-k", String(k)); ul.appendChild(li);
@@ -934,7 +1118,7 @@ function fmtRange(a, b) {
   function chooseRich(k) {
     var inp = $("richiedente");
     closeList();
-    if (k >= richSlots.length) { inp.value = ""; inp.placeholder = "scrivi il programma o l'edizione"; }
+    if (k >= richSlots.length) { inp.value = ""; inp.placeholder = t("scrivi il programma o l'edizione"); }
     else { inp.value = richSlots[k]; inp.placeholder = ""; }
     inp.focus();
   }
@@ -947,7 +1131,11 @@ function fmtRange(a, b) {
     fillDatalist("l-richiedenti", slots);
     richSlots = slots.filter(function (v, k) { return slots.indexOf(v) === k; });
     closeList(); $("richiedente").placeholder = "";
-    $("rich-hint").textContent = rete ? (slots.length ? "(edizione; anche testo libero)" : "(programma; testo libero)") : "(scegliere prima la rete)";
+    updateRichiedenteHint();
+  }
+  function updateRichiedenteHint() {
+    var rete = checked("rete"), n = $("l-richiedenti").options.length;
+    $("rich-hint").textContent = t(rete ? (n ? "(edizione; anche testo libero)" : "(programma; testo libero)") : "(scegliere prima la rete)");
   }
   // The stored value: "Tg1 Ore 20" for the prefixed reti, as typed for the rest.
   function richiedenteValue() {
@@ -997,14 +1185,14 @@ function fmtRange(a, b) {
   function renderTrip() {
     var on = !!trip, applies = tripApplies();
     $("trip-none").hidden = on; $("trip-set").hidden = !on; $("trip-remove").hidden = !on;
-    $("trip-edit").textContent = on ? "Modifica…" : "Imposta trasferta…";
+    $("trip-edit").textContent = t(on ? "Modifica…" : "Imposta trasferta…");
     form.querySelector(".p-trip").classList.toggle("on", on);
     if (on) {
       $("trip-who").textContent = trip.journalist; $("trip-where").textContent = trip.luogo;
       $("trip-when").textContent = trip.dal === trip.al ? dmy(trip.dal) : dmy(trip.dal) + " – " + dmy(trip.al);
     }
     var a = $("trip-apply");
-    a.textContent = on ? (applies ? "Questa registrazione: SI" : "Questa registrazione: NO (altro giornalista)") : "";
+    a.textContent = on ? t(applies ? "Questa registrazione: SI" : "Questa registrazione: NO (altro giornalista)") : "";
     a.className = "aside" + (on && applies ? " on" : "");
   }
   function tripOpen() {
@@ -1028,15 +1216,15 @@ function fmtRange(a, b) {
     back.focus();
   }
   function tripApply() {
-    var t = { journalist: $("trip-giornalista").value, luogo: $("trip-luogo").value.trim(), dal: $("trip-dal").value, al: $("trip-al").value };
+    var nt = { journalist: $("trip-giornalista").value, luogo: $("trip-luogo").value.trim(), dal: $("trip-dal").value, al: $("trip-al").value };
     var missing = [];
-    if (!t.journalist) missing.push("Giornalista in trasferta");
-    if (!t.luogo) missing.push("Destinazione");
-    if (!t.dal) missing.push("Dal");
-    if (!t.al) missing.push("Al");
-    if (missing.length) { $("trip-err").textContent = "Manca: " + missing.join(", ") + "."; return; }
-    if (t.al < t.dal) { $("trip-err").textContent = 'La data "al" precede la data "dal".'; $("trip-al").focus(); return; }
-    trip = t; tripSave(t); renderTrip(); tripClose();
+    if (!nt.journalist) missing.push("Giornalista in trasferta");
+    if (!nt.luogo) missing.push("Destinazione");
+    if (!nt.dal) missing.push("Dal");
+    if (!nt.al) missing.push("Al");
+    if (missing.length) { $("trip-err").textContent = tf("Manca: {0}.", missing.map(function (m) { return t(m); }).join(", ")); return; }
+    if (nt.al < nt.dal) { $("trip-err").textContent = t('La data "al" precede la data "dal".'); $("trip-al").focus(); return; }
+    trip = nt; tripSave(nt); renderTrip(); tripClose();
   }
   function tripRemove() { trip = null; tripSave(null); renderTrip(); tripClose(); $("trip-edit").focus(); }
   $("trip-edit").addEventListener("click", function () { if ($("trip").hidden) tripOpen(); else tripClose(); });
@@ -1055,7 +1243,7 @@ function fmtRange(a, b) {
     setRadio("rete", "");
     setRadio("mezzo", "V-Mover");
     $("richiedente").value = "";
-    $("err").textContent = "";
+    errSrc = null; $("err").textContent = "";
     if (lists && !myOperator) { var last = null; try { last = localStorage.getItem("rainyc.operatore"); } catch (e) { /* ignore */ } if (last) $("operatore").value = last; }
     tripClose();
     updateRichiedente(); updateCategoria(); renderTrip();
@@ -1073,11 +1261,15 @@ function fmtRange(a, b) {
   var serverRows = [];
   var timer = null, attempt = 0, sending = false;
 
-  function setStatus(stato, text) { var s = $("status"); s.className = "status " + stato; s.textContent = text; }
+  // text: an Italian string, or a function returning the text in the current language.
+  function setStatus(stato, text) {
+    statusSrc = typeof text === "function" ? text : function () { return t(text); };
+    $("status").className = "status " + stato; paintStatus();
+  }
   function pendingCount() { return queue.filter(function (e) { return e.stato === "salvato" || e.stato === "attesa"; }).length; }
   function renderPending() {
     var n = pendingCount(); var p = $("pend");
-    p.hidden = n === 0; p.textContent = n + " in attesa";
+    p.hidden = n === 0; p.textContent = tf("{0} in attesa", n);
   }
   function renderRecent() {
     var ol = $("recent"); ol.textContent = "";
@@ -1092,13 +1284,13 @@ function fmtRange(a, b) {
     }));
     items.sort(function (a, b) { return a.sort < b.sort ? 1 : -1; });
     $("recent-n").textContent = items.length ? String(items.length) : "";
-    if (!items.length) { var li0 = document.createElement("li"); li0.className = "vuoto"; li0.textContent = "Nessuna registrazione oggi."; ol.appendChild(li0); return; }
+    if (!items.length) { var li0 = document.createElement("li"); li0.className = "vuoto"; li0.textContent = t("Nessuna registrazione oggi."); ol.appendChild(li0); return; }
     items.slice(0, 40).forEach(function (it) {
       var li = document.createElement("li");
       var o = document.createElement("span"); o.className = "o"; o.textContent = it.ora || "--:--";
-      var t = document.createElement("span"); t.className = "t"; t.textContent = " " + it.text + " "; t.title = it.text;
-      var s = document.createElement("span"); s.className = "s " + it.stato; s.textContent = LABEL[it.stato];
-      li.appendChild(o); li.appendChild(t); li.appendChild(s);
+      var tx = document.createElement("span"); tx.className = "t"; tx.textContent = " " + it.text + " "; tx.title = it.text;
+      var s = document.createElement("span"); s.className = "s " + it.stato; s.textContent = t(LABEL[it.stato]);
+      li.appendChild(o); li.appendChild(tx); li.appendChild(s);
       if (it.err) { var e = document.createElement("span"); e.className = "e"; e.textContent = it.err; li.appendChild(e); }
       ol.appendChild(li);
     });
@@ -1129,19 +1321,19 @@ function fmtRange(a, b) {
         schedule(50);
       } else {
         // The database refused the data: not retried. The editor corrects and sends again.
-        e.stato = "errore"; e.errore = (r.body && r.body.error) || "Dati non validi.";
+        e.stato = "errore"; e.errore = (r.body && r.body.error) || t("Dati non validi.");
         qsave(queue); renderPending(); renderRecent();
-        setStatus("errore", "Non accettata: " + e.errore);
+        setStatus("errore", function () { return tf("Non accettata: {0}", e.errore); });
         restore(e);
         schedule(50);
       }
     }, function (err) {
       sending = false;
-      if (err.kind === "auth") { setStatus("attesa", "Accesso scaduto: " + pendingCount() + " registrazioni in attesa."); authLost(); return; }
+      if (err.kind === "auth") { setStatus("attesa", function () { return tf("Accesso scaduto: {0} registrazioni in attesa.", pendingCount()); }); authLost(); return; }
       e.stato = "attesa"; qsave(queue); renderPending(); renderRecent();
       attempt += 1;
       var delay = Math.min(60000, 1000 * Math.pow(2, attempt));
-      setStatus("attesa", "In attesa di sincronizzazione (" + pendingCount() + "): " + err.message + " Nuovo tentativo tra " + Math.round(delay / 1000) + " s.");
+      setStatus("attesa", function () { return tf("In attesa di sincronizzazione ({0}): {1} Nuovo tentativo tra {2} s.", pendingCount(), err.message, Math.round(delay / 1000)); });
       schedule(delay);
     });
   }
@@ -1150,7 +1342,8 @@ function fmtRange(a, b) {
   function showLast(e) {
     lastSynced = { id: e.server_id, entry: e };
     var p = e.payload;
-    $("last-text").textContent = "Registrata: " + p.journalist + " · " + p.rete + (p.richiedente ? " " + p.richiedente : "") + " · " + p.subject;
+    var line = p.journalist + " · " + p.rete + (p.richiedente ? " " + p.richiedente : "") + " · " + p.subject;
+    lastSrc = function () { return tf("Registrata: {0}", line); }; paintLast();
     $("last-text").title = $("last-text").textContent;
     $("last").className = "last"; $("last").hidden = false; $("undo").hidden = false; $("undo").disabled = false;
     setStatus("sincronizzato", "Sincronizzato");
@@ -1158,17 +1351,17 @@ function fmtRange(a, b) {
   $("undo").addEventListener("click", function () {
     var l = lastSynced; if (!l || !l.id) return;
     var b = $("undo"); b.disabled = true;
-    function fail(msg) { b.disabled = false; $("last-text").textContent = msg; $("last").className = "last errore"; }
+    function fail(msg) { b.disabled = false; lastSrc = typeof msg === "function" ? msg : function () { return t(msg); }; paintLast(); $("last").className = "last errore"; }
     api("/api/void", { method: "POST", body: JSON.stringify({ id: l.id, reason: "annullata dall'operatore" }) }).then(function (r) {
       if (r.status === 200) {
         lastSynced = null; b.hidden = true;
         queue = queue.filter(function (x) { return x !== l.entry; }); qsave(queue);
-        $("last-text").textContent = "Registrazione annullata."; $("last").className = "last";
+        lastSrc = function () { return t("Registrazione annullata."); }; paintLast(); $("last").className = "last";
         renderRecent(); refreshServerRows();
       } else fail((r.body && r.body.error) || "Annullamento non riuscito.");
     }, function (err) {
       if (err.kind === "auth") { fail(err.message); authLost(); return; }
-      fail("Annullamento non riuscito: " + err.message);
+      fail(function () { return tf("Annullamento non riuscito: {0}", err.message); });
     });
   });
   // Put a refused entry back into the form so it can be corrected and sent again.
@@ -1183,7 +1376,7 @@ function fmtRange(a, b) {
     if (p.trasferta && !trip) { trip = { journalist: p.trasferta_journalist, luogo: p.trasferta_luogo, dal: p.trasferta_dal, al: p.trasferta_al }; tripSave(trip); }
     renderTrip();
     $("operatore").value = p.operator; updateCategoria();
-    $("err").textContent = e.errore;
+    errSrc = function () { return e.errore; }; paintErr();
   }
 
   // ---- submit ----
@@ -1266,7 +1459,7 @@ function fmtRange(a, b) {
     function miss(label, id) { missing.push(label); if (!focusId) focusId = id; }
     if (!v.delivery_date) miss("Data", "data");
     if (!g) miss("Giornalista", "giornalista");
-    else if (!gMatch) { $("err").textContent = "Giornalista non in elenco: " + g + "."; $("giornalista").focus(); return; }
+    else if (!gMatch) { errSrc = function () { return tf("Giornalista non in elenco: {0}.", g); }; paintErr(); $("giornalista").focus(); return; }
     if (!v.subject) miss("Argomento / Titolo", "titolo");
     if (!v.rete) miss("Rete", null);
     if (!v.mezzo) miss("Mezzo", null);
@@ -1276,17 +1469,17 @@ function fmtRange(a, b) {
       v.trasferta = true; v.trasferta_journalist = trip.journalist; v.trasferta_luogo = trip.luogo; v.trasferta_dal = trip.dal; v.trasferta_al = trip.al;
     }
     if (missing.length) {
-      $("err").textContent = "Manca: " + missing.join(", ") + ".";
+      errSrc = function () { return tf("Manca: {0}.", missing.map(function (m) { return t(m); }).join(", ")); }; paintErr();
       if (focusId) $(focusId).focus();
       else form.querySelector('input[name="' + (!v.rete ? "rete" : "mezzo") + '"]').focus();
       return;
     }
-    $("err").textContent = "";
+    errSrc = null; $("err").textContent = "";
     var now = new Date();
     queue.push({ client_record_id: v.client_record_id, payload: v, stato: "salvato", creato: now.toISOString(),
       ora: String(now.getHours()).padStart(2, "0") + ":" + String(now.getMinutes()).padStart(2, "0") });
     qsave(queue); renderPending(); renderRecent();
-    setStatus("salvato", "Salvato: " + v.subject);
+    setStatus("salvato", function () { return tf("Salvato: {0}", v.subject); });
     try { localStorage.setItem("rainyc.operatore", v.operator); } catch (e) { /* ignore */ }
     // Keep date, journalist, title and operator for the next entry of the same story.
     setRadio("rete", ""); $("durata").value = ""; $("richiedente").value = ""; $("note").value = "";
@@ -1344,9 +1537,19 @@ function fmtRange(a, b) {
   });
   window.addEventListener("online", function () { attempt = 0; schedule(0); });
 
+  // Language change: repaint what the page's code wrote (the static text is handled by applyLang).
+  document.addEventListener("rainyc:lang", function () {
+    sendKbd(); paintStatus(); paintErr(); paintLast();
+    if (!form.hidden) {
+      $("op-note").textContent = t(opNote);
+      renderTrip(); updateRichiedenteHint(); renderPending(); renderRecent();
+    }
+  });
+  sendKbd();
+
   // ---- start ----
   requireLogin(function () {
-    boot("Caricamento degli elenchi…");
+    boot(t("Caricamento degli elenchi…"));
     loadLists().then(function () {
       boot("");
       buildForm();
@@ -1358,7 +1561,7 @@ function fmtRange(a, b) {
       schedule(0);
     }, function (e) {
       if (e.kind === "auth") { boot(""); authLost(); return; }
-      boot(e.message + " Ricaricare la pagina quando la rete torna.", true);
+      boot(tf("{0} Ricaricare la pagina quando la rete torna.", e.message), true);
     });
   });
 })();
