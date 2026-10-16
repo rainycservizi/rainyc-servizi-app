@@ -1,0 +1,769 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nuova registrazione · RAI NYC Servizi</title>
+<style>
+:root { --ink:#15171a; --mute:#5d636b; --line:#c9cdd2; --bg:#eceef0; --card:#fff; --accent:#1f3a5f; --accent-ink:#fff; --ok:#1d6b3a; --warn:#8a5a00; --err:#b00020; --focus:#2f6fd6; }
+* { box-sizing:border-box; }
+html, body { margin:0; background:var(--bg); color:var(--ink); }
+body { font:17px/1.4 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+.win { max-width:560px; margin:24px auto; background:var(--card); border:1px solid var(--line); border-radius:8px; box-shadow:0 6px 24px rgba(0,0,0,.12); overflow:hidden; }
+.bar { background:var(--accent); color:var(--accent-ink); font-size:13px; padding:7px 14px; display:flex; justify-content:space-between; gap:8px; align-items:center; }
+.bar a { color:#fff; opacity:.85; text-decoration:none; }
+.bar a:hover, .bar a:focus-visible { opacity:1; text-decoration:underline; }
+.bar .pend { background:#f2b705; color:#1b1b1b; border-radius:10px; padding:1px 8px; font-weight:700; }
+form.entry { padding:18px 20px 8px; }
+.f { margin:0 0 16px; border:0; padding:0; min-width:0; }
+.f > label, .f > legend { display:block; font-weight:600; font-size:15px; margin:0 0 6px; padding:0; }
+.hint { font-weight:400; color:var(--mute); font-size:13px; }
+input[type=text], input[type=date], input[type=email], input[type=password], select { width:100%; height:48px; font:inherit; padding:0 12px; border:1.5px solid var(--line); border-radius:6px; background:#fff; color:var(--ink); }
+input:focus-visible, select:focus-visible { outline:3px solid var(--focus); outline-offset:1px; border-color:var(--focus); }
+.chips { display:flex; flex-wrap:wrap; gap:8px; }
+.chips label { position:relative; }
+.chips input { position:absolute; opacity:0; inset:0; margin:0; }
+.chips span { display:inline-block; min-height:44px; padding:10px 14px; border:1.5px solid var(--line); border-radius:22px; font-size:15px; line-height:1.4; cursor:pointer; user-select:none; background:#fff; }
+.chips input:checked + span { background:var(--accent); border-color:var(--accent); color:var(--accent-ink); font-weight:600; }
+.chips input:focus-visible + span { outline:3px solid var(--focus); outline-offset:2px; }
+.prefixed { display:flex; align-items:stretch; }
+.prefixed .pre { display:none; align-items:center; padding:0 10px; border:1.5px solid var(--line); border-right:0; border-radius:6px 0 0 6px; background:#f3f4f6; font-weight:600; font-size:15px; white-space:nowrap; }
+.prefixed.has-pre .pre { display:flex; }
+.prefixed.has-pre input { border-radius:0 6px 6px 0; }
+.f > label.toggle, .toggle { display:flex; margin:0; align-items:center; gap:12px; cursor:pointer; width:max-content; }
+.toggle input { position:absolute; opacity:0; width:1px; height:1px; }
+.toggle .sw { width:56px; height:32px; border-radius:16px; background:#c3c7cc; position:relative; transition:background .15s; flex:none; }
+.toggle .sw::after { content:""; position:absolute; top:3px; left:3px; width:26px; height:26px; border-radius:50%; background:#fff; transition:transform .15s; box-shadow:0 1px 3px rgba(0,0,0,.3); }
+.toggle input:checked + .sw { background:var(--err); }
+.toggle input:checked + .sw::after { transform:translateX(24px); }
+.toggle input:focus-visible + .sw { outline:3px solid var(--focus); outline-offset:2px; }
+.toggle .val { font-weight:600; }
+.trip { margin:10px 0 0; padding:12px 12px 2px; border:1.5px solid #f3c6cc; background:#fff6f7; border-radius:6px; }
+.trip .row { display:flex; gap:10px; }
+.trip .row .f { flex:1; }
+.note { font-size:13px; color:var(--mute); margin-top:4px; }
+.cat { font-size:16px; padding:10px 12px; background:#f3f4f6; border-radius:6px; margin:0 0 16px; }
+.cat b { font-size:18px; }
+button { width:100%; height:54px; font:inherit; font-weight:700; font-size:18px; background:var(--accent); color:var(--accent-ink); border:0; border-radius:6px; cursor:pointer; }
+button:disabled { opacity:.6; cursor:default; }
+button:focus-visible { outline:3px solid var(--focus); outline-offset:2px; }
+.keys { font-size:12px; color:var(--mute); text-align:center; margin:8px 0 0; }
+.err { color:var(--err); font-size:14px; margin:6px 0 0; min-height:0; }
+.status { margin:12px 20px 0; padding:10px 12px; border-radius:6px; font-weight:600; font-size:15px; display:none; }
+.status.salvato { display:block; background:#e8f0fb; color:var(--accent); }
+.status.attesa { display:block; background:#fff4dc; color:var(--warn); }
+.status.sincronizzato { display:block; background:#e5f4ea; color:var(--ok); }
+.status.errore { display:block; background:#fde8eb; color:var(--err); }
+.recent { padding:14px 20px 18px; border-top:1px solid var(--line); margin-top:16px; }
+.recent h2 { font-size:15px; margin:0 0 8px; }
+.recent ol { list-style:none; margin:0; padding:0; font-size:14px; }
+.recent li { display:flex; justify-content:space-between; gap:10px; padding:6px 0; border-bottom:1px solid #eee; }
+.recent li .t { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.recent li .s { flex:none; font-size:12px; font-weight:600; }
+.s.salvato { color:var(--accent); } .s.attesa { color:var(--warn); } .s.sincronizzato { color:var(--ok); } .s.errore { color:var(--err); }
+.recent .vuoto { color:var(--mute); font-size:14px; }
+#login { padding:22px 20px 18px; }
+#login h2 { font-size:17px; margin:0 0 14px; }
+#login button { margin-top:4px; }
+[hidden] { display:none !important; }
+@media (max-width:600px) { .win { margin:0; border-radius:0; border:0; } body { font-size:16px; } form.entry { padding:14px 16px 6px; } .status { margin:12px 16px 0; } .recent { padding:14px 16px; } }
+</style>
+</head>
+<body>
+<div class="win" role="dialog" aria-labelledby="t">
+  <div class="bar"><span id="t">RAI NYC Servizi</span><span><span class="pend" id="pend" hidden></span> <a href="collaudo" id="lnk-collaudo">Collaudo</a></span></div>
+
+  <form id="login" hidden autocomplete="on">
+    <h2>Accesso</h2>
+    <div class="f"><label for="login-email">Nome <span class="hint">(cognome come in elenco, es. Arzilla)</span></label><input type="text" id="login-email" name="username" required autocomplete="username" autocapitalize="none"></div>
+    <div class="f"><label for="login-password">Password</label><input type="password" id="login-password" name="password" required autocomplete="current-password"></div>
+    <button type="submit">Accedi</button>
+    <div class="err" id="login-err" role="alert"></div>
+  </form>
+
+  <form id="f" class="entry" novalidate autocomplete="off" hidden>
+    <div class="f">
+      <label for="data">Data</label>
+      <input type="date" id="data" name="data" required>
+    </div>
+    <div class="f">
+      <label for="giornalista">Giornalista</label>
+      <input type="text" id="giornalista" name="giornalista" list="l-giornalisti" required>
+      <datalist id="l-giornalisti"></datalist>
+    </div>
+    <div class="f">
+      <label for="titolo">Argomento / Titolo</label>
+      <input type="text" id="titolo" name="titolo" required maxlength="500">
+    </div>
+    <fieldset class="f">
+      <legend>Rete</legend>
+      <div class="chips" id="c-rete"></div>
+    </fieldset>
+    <div class="f">
+      <label for="richiedente">Richiedente <span class="hint" id="rich-hint">(edizione o programma; anche testo libero)</span></label>
+      <div class="prefixed" id="rich-wrap"><span class="pre" id="rich-pre"></span><input type="text" id="richiedente" name="richiedente" list="l-richiedenti" maxlength="200"></div>
+      <datalist id="l-richiedenti"></datalist>
+    </div>
+    <div class="f">
+      <label for="durata">Durata <span class="hint">(facoltativa)</span></label>
+      <input type="text" id="durata" name="durata" placeholder="5 minuti / :50 / 01:22:00" maxlength="50">
+    </div>
+    <fieldset class="f">
+      <legend>Mezzo</legend>
+      <div class="chips" id="c-mezzo"></div>
+    </fieldset>
+    <div class="f">
+      <label class="toggle" for="trasferta"><input type="checkbox" id="trasferta" name="trasferta"><span class="sw"></span><span>Trasferta: <span class="val" id="trasferta-val">NO</span></span></label>
+      <fieldset class="trip" id="trip" hidden>
+        <div class="f">
+          <label for="trip-giornalista">Giornalista in trasferta</label>
+          <select id="trip-giornalista" name="trip_giornalista"></select>
+        </div>
+        <div class="f">
+          <label for="trip-luogo">Destinazione</label>
+          <input type="text" id="trip-luogo" name="trip_luogo" placeholder="Washington D.C." maxlength="200">
+        </div>
+        <div class="row">
+          <div class="f"><label for="trip-dal">Dal</label><input type="date" id="trip-dal" name="trip_dal"></div>
+          <div class="f"><label for="trip-al">Al</label><input type="date" id="trip-al" name="trip_al"></div>
+        </div>
+      </fieldset>
+    </div>
+    <div class="f">
+      <label for="operatore">Operatore</label>
+      <select id="operatore" name="operatore"></select>
+      <div class="note" id="op-note"></div>
+    </div>
+    <div class="cat" aria-live="polite">Categoria: <b id="categoria">–</b></div>
+    <button type="submit" id="send">Invia registrazione</button>
+    <div class="err" id="err" role="alert"></div>
+    <p class="keys">Invio = invia · Esc = svuota · Tab = completa il nome e passa al campo successivo · frecce = scelta nella riga</p>
+  </form>
+  <div class="status" id="status" aria-live="polite"></div>
+  <section class="recent" id="recent-box" hidden>
+    <h2>Registrazioni di oggi</h2>
+    <ol id="recent"></ol>
+  </section>
+</div>
+<script>
+// ---- pages/shared.js ----
+// Shared browser code for form.html and collaudo.html. Inlined by scripts/build_pages.mjs.
+// Session: Supabase Auth password grant, kept in localStorage, refreshed before it expires.
+// All data goes through the function's /api routes with the bearer; auth goes to /auth/v1 on
+// the same origin (locally the CLI gateway, in production <ref>.supabase.co).
+
+var ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind5cnRoZndya2dkb2JsbHpzc2R2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIwMjI2MDIsImV4cCI6MjEwNzU5ODYwMn0.UE8hAaDlRY5pgsMs8hUMKE5bIVF_Jc5eP1Z2e954Kd4";
+// Served by the function itself: the placeholders are empty and everything is same-origin.
+// Built as static pages (scripts/build_pages.mjs --static): absolute URLs are filled in at build time.
+var APP_BASE = "https://wyrthfwrkgdobllzssdv.supabase.co/functions/v1/servizi" || (function () {
+  var p = location.pathname.replace(/\/+$/, "");
+  var i = p.indexOf("/servizi");
+  return i >= 0 ? p.slice(0, i + "/servizi".length) : p;
+})();
+var AUTH_URL = ("https://wyrthfwrkgdobllzssdv.supabase.co" || location.origin) + "/auth/v1";
+var PAGE_FORM = "./" || APP_BASE;
+var PAGE_COLLAUDO = "./collaudo.html" || APP_BASE + "/collaudo";
+
+function ApiError(kind, message) { this.kind = kind; this.message = message; }
+ApiError.prototype = Object.create(Error.prototype);
+
+var Session = {
+  KEY: "rainyc.sessione",
+  get: function () { try { return JSON.parse(localStorage.getItem(this.KEY) || "null"); } catch (e) { return null; } },
+  set: function (s) { try { localStorage.setItem(this.KEY, JSON.stringify(s)); } catch (e) { /* storage blocked */ } },
+  clear: function () { try { localStorage.removeItem(this.KEY); } catch (e) { /* ignore */ } }
+};
+
+function storeSession(data) {
+  Session.set({
+    access_token: data.access_token,
+    refresh_token: data.refresh_token,
+    expires_at: data.expires_at || (Math.floor(Date.now() / 1000) + (data.expires_in || 3600)),
+    email: data.user && data.user.email
+  });
+}
+
+var LOGIN_DOMAIN = "rainyc.nyc";
+/** "De Marco" / "de marco" / "de.marco@rainyc.nyc" -> "de.marco@rainyc.nyc". Operators log in with their name. */
+function loginEmail(name) {
+  var s = (name || "").trim().toLowerCase();
+  if (s.indexOf("@") >= 0) return s;
+  return s.replace(/\s+/g, ".") + "@" + LOGIN_DOMAIN;
+}
+/** @returns {Promise<{ok:boolean, error?:string}>} */
+function login(name, password) {
+  var email = loginEmail(name);
+  return fetch(AUTH_URL + "/token?grant_type=password", {
+    method: "POST",
+    headers: { apikey: ANON_KEY, "Content-Type": "application/json" },
+    body: JSON.stringify({ email: email, password: password })
+  }).then(function (r) {
+    return r.json().catch(function () { return {}; }).then(function (b) {
+      if (r.ok && b.access_token) { storeSession(b); return { ok: true }; }
+      if (r.status === 400 || r.status === 401) return { ok: false, error: "Nome o password non corretti." };
+      return { ok: false, error: "Accesso non riuscito (" + r.status + "). Riprovare." };
+    });
+  }, function () { return { ok: false, error: "Rete non raggiungibile." }; });
+}
+
+var refreshing = null;
+/** @returns {Promise<boolean>} */
+function refreshSession() {
+  if (refreshing) return refreshing;
+  var s = Session.get();
+  if (!s || !s.refresh_token) return Promise.resolve(false);
+  refreshing = fetch(AUTH_URL + "/token?grant_type=refresh_token", {
+    method: "POST",
+    headers: { apikey: ANON_KEY, "Content-Type": "application/json" },
+    body: JSON.stringify({ refresh_token: s.refresh_token })
+  }).then(function (r) {
+    return r.json().catch(function () { return {}; }).then(function (b) {
+      if (r.ok && b.access_token) { storeSession(b); return true; }
+      if (r.status >= 400 && r.status < 500) Session.clear();
+      return false;
+    });
+  }, function () { return false; }).then(function (ok) { refreshing = null; return ok; });
+  return refreshing;
+}
+
+function logout() { Session.clear(); }
+
+/**
+ * Call the function API. Resolves {status, body}; rejects with ApiError kind
+ * "auth" (log in again) or "network" (retry later). 4xx answers resolve normally.
+ */
+function api(path, init, retried) {
+  var s = Session.get();
+  if (!s) return Promise.reject(new ApiError("auth", "Accesso richiesto."));
+  var soon = (s.expires_at || 0) * 1000 - Date.now() < 60000;
+  var ready = soon ? refreshSession().then(function (ok) { if (!ok) throw new ApiError("auth", "Sessione scaduta: accedere di nuovo."); }) : Promise.resolve();
+  return ready.then(function () {
+    var cur = Session.get();
+    if (!cur) throw new ApiError("auth", "Accesso richiesto.");
+    var opts = Object.assign({}, init || {});
+    opts.headers = Object.assign({ Authorization: "Bearer " + cur.access_token, "Content-Type": "application/json" }, (init && init.headers) || {});
+    return fetch(APP_BASE + path, opts).then(null, function () { throw new ApiError("network", "Rete non raggiungibile."); });
+  }).then(function (r) {
+    if (r.status === 401 && !retried) {
+      return refreshSession().then(function (ok) {
+        if (ok) return api(path, init, true);
+        throw new ApiError("auth", "Sessione scaduta: accedere di nuovo.");
+      });
+    }
+    return r.text().then(function (t) {
+      var body = null;
+      try { body = t ? JSON.parse(t) : null; } catch (e) { body = null; }
+      if (r.status === 401) throw new ApiError("auth", "Sessione scaduta: accedere di nuovo.");
+      if (r.status >= 500 || r.status === 429) throw new ApiError("network", (body && body.error) || "Servizio non disponibile.");
+      return { status: r.status, body: body };
+    });
+  });
+}
+
+/** Wire a login panel: elements #login, #login-email, #login-password, #login-err. Calls onReady() when signed in. */
+function requireLogin(onReady) {
+  var panel = document.getElementById("login");
+  var email = document.getElementById("login-email");
+  var pass = document.getElementById("login-password");
+  var err = document.getElementById("login-err");
+  function show() {
+    panel.hidden = false;
+    try { email.value = localStorage.getItem("rainyc.email") || ""; } catch (e) { /* ignore */ }
+    (email.value ? pass : email).focus();
+  }
+  function done() { panel.hidden = true; onReady(); }
+  panel.addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    err.textContent = "";
+    var b = panel.querySelector("button");
+    b.disabled = true;
+    login(email.value.trim(), pass.value).then(function (res) {
+      b.disabled = false;
+      if (!res.ok) { err.textContent = res.error; pass.focus(); pass.select(); return; }
+      try { localStorage.setItem("rainyc.email", email.value.trim()); } catch (e) { /* ignore */ }
+      pass.value = "";
+      done();
+    });
+  });
+  if (Session.get()) done(); else show();
+  // Any later auth failure brings the panel back.
+  document.addEventListener("rainyc:auth-lost", function () { if (panel.hidden) show(); });
+}
+
+function authLost() { Session.clear(); document.dispatchEvent(new Event("rainyc:auth-lost")); }
+
+// ---- end pages/shared.js ----
+// ---- lib/week.js ----
+// ISO week helpers. Plain JS so the same file runs in Deno (server) and, inlined by
+// scripts/build_pages.mjs, in the browser pages. Dates are "YYYY-MM-DD" strings; all
+// arithmetic is in UTC so the machine's time zone never shifts a day.
+
+const DAY = 86400000;
+
+/** @param {string} s @returns {number} ms since epoch at 00:00 UTC */
+function utcOf(s) {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s);
+  if (!m) throw new Error("data non valida: " + s);
+  return Date.UTC(+m[1], +m[2] - 1, +m[3]);
+}
+
+/** @param {number} ms @returns {string} */
+function isoDate(ms) {
+  return new Date(ms).toISOString().slice(0, 10);
+}
+
+/** Monday = 0 … Sunday = 6. @param {number} ms */
+function dow(ms) {
+  return (new Date(ms).getUTCDay() + 6) % 7;
+}
+
+/** Monday of ISO week 1 of `year`, ms UTC. Jan 4 is always in week 1. */
+function week1Monday(year) {
+  const jan4 = Date.UTC(year, 0, 4);
+  return jan4 - dow(jan4) * DAY;
+}
+
+/**
+ * ISO week of a date.
+ * @param {string} date "YYYY-MM-DD"
+ * @returns {{year:number, week:number}}
+ */
+function isoWeekOf(date) {
+  const d = utcOf(date);
+  const thursday = d + (3 - dow(d)) * DAY;
+  const year = new Date(thursday).getUTCFullYear();
+  const week = Math.floor((thursday - Date.UTC(year, 0, 1)) / DAY / 7) + 1;
+  return { year, week };
+}
+
+/** 52 or 53. @param {number} year */
+function weeksInYear(year) {
+  return isoWeekOf(year + "-12-28").week;
+}
+
+/**
+ * Parse "2026-W41" (also "2026-W5", "2026-w41").
+ * @param {string} text
+ * @returns {{year:number, week:number}|null} null when malformed or out of range
+ */
+function parseWeek(text) {
+  const m = /^\s*(\d{4})-[Ww](\d{1,2})\s*$/.exec(text || "");
+  if (!m) return null;
+  const year = +m[1];
+  const week = +m[2];
+  if (year < 2020 || year > 2100) return null;
+  if (week < 1 || week > weeksInYear(year)) return null;
+  return { year, week };
+}
+
+/** @param {{year:number, week:number}} w @returns {string} "2026-W41" */
+function formatWeek(w) {
+  return w.year + "-W" + String(w.week).padStart(2, "0");
+}
+
+/** The seven dates of an ISO week, Monday first. @param {{year:number, week:number}} w */
+function weekDays(w) {
+  const monday = week1Monday(w.year) + (w.week - 1) * 7 * DAY;
+  const out = [];
+  for (let i = 0; i < 7; i++) out.push(isoDate(monday + i * DAY));
+  return out;
+}
+
+/** @param {{year:number, week:number}} w @param {number} delta @returns {{year:number, week:number}} */
+function shiftWeek(w, delta) {
+  const monday = week1Monday(w.year) + (w.week - 1) * 7 * DAY;
+  return isoWeekOf(isoDate(monday + delta * 7 * DAY));
+}
+
+/** Today's date in New York as "YYYY-MM-DD". */
+function todayNewYork(now) {
+  const d = now || new Date();
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "America/New_York", year: "numeric", month: "2-digit", day: "2-digit",
+  }).formatToParts(d);
+  const get = (t) => parts.find((p) => p.type === t).value;
+  return get("year") + "-" + get("month") + "-" + get("day");
+}
+
+const MESI = ["gennaio", "febbraio", "marzo", "aprile", "maggio", "giugno", "luglio",
+  "agosto", "settembre", "ottobre", "novembre", "dicembre"];
+const GIORNI = ["Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato", "Domenica"];
+
+/** "Lunedì 5 ottobre 2026" @param {string} date */
+function fmtDay(date) {
+  const ms = utcOf(date);
+  const d = new Date(ms);
+  return GIORNI[dow(ms)] + " " + d.getUTCDate() + " " + MESI[d.getUTCMonth()] + " " + d.getUTCFullYear();
+}
+
+/** "5–11 ottobre 2026" / "28 settembre – 4 ottobre 2026" / across years. */
+function fmtRange(a, b) {
+  const da = new Date(utcOf(a)), db = new Date(utcOf(b));
+  const ya = da.getUTCFullYear(), yb = db.getUTCFullYear();
+  const ma = da.getUTCMonth(), mb = db.getUTCMonth();
+  if (ya !== yb) return da.getUTCDate() + " " + MESI[ma] + " " + ya + " – " + db.getUTCDate() + " " + MESI[mb] + " " + yb;
+  if (ma !== mb) return da.getUTCDate() + " " + MESI[ma] + " – " + db.getUTCDate() + " " + MESI[mb] + " " + yb;
+  return da.getUTCDate() + "–" + db.getUTCDate() + " " + MESI[ma] + " " + ya;
+}
+
+// ---- end lib/week.js ----
+(function () {
+  "use strict";
+  var $ = function (id) { return document.getElementById(id); };
+  var form = $("f");
+  var LIVE_MEZZI = ["270", "268", "LiveU", "LiveU/270", "LiveU/268", "Eurovision"];
+  var PREFIXED = ["Tg1", "Tg2", "Tg3", "GR"];           // slots stored as "<Rete> <slot>", shown without the prefix
+  var TAPPETO_FROM = ["Tg1", "Tg2", "Tg3", "RAN", "GR"];  // a tappeto's richiedente is any edition of these
+  var LABEL = { salvato: "Salvato", attesa: "In attesa di sincronizzazione", sincronizzato: "Sincronizzato", errore: "Errore di sincronizzazione" };
+  var lists = null;
+  var params = new URLSearchParams(location.search);
+  // The page lives at …/servizi (no trailing slash): relative links would resolve one level up.
+  $("lnk-collaudo").href = PAGE_COLLAUDO;
+
+  // ---- lists (from the API, cached so the form also opens offline) ----
+  function loadLists() {
+    return api("/api/lists").then(function (r) {
+      if (r.status !== 200) throw new ApiError("network", (r.body && r.body.error) || "Liste non disponibili.");
+      lists = r.body;
+      try { localStorage.setItem("rainyc.liste", JSON.stringify(lists)); } catch (e) { /* ignore */ }
+      return lists;
+    }, function (e) {
+      if (e.kind === "auth") throw e;
+      try { lists = JSON.parse(localStorage.getItem("rainyc.liste") || "null"); } catch (x) { lists = null; }
+      if (!lists) throw e;
+      setStatus("attesa", "Liste dalla copia locale: " + e.message);
+      return lists;
+    });
+  }
+  function fillDatalist(id, items) {
+    var dl = $(id); dl.textContent = "";
+    items.forEach(function (v) { var o = document.createElement("option"); o.value = v; dl.appendChild(o); });
+  }
+  function chips(id, name, items) {
+    var box = $(id); box.textContent = "";
+    items.forEach(function (v) {
+      var l = document.createElement("label");
+      var i = document.createElement("input"); i.type = "radio"; i.name = name; i.value = v;
+      var s = document.createElement("span"); s.textContent = v;
+      l.appendChild(i); l.appendChild(s); box.appendChild(l);
+    });
+  }
+  function fillSelect(id, items) {
+    var sel = $(id); sel.textContent = "";
+    items.forEach(function (v) { var o = document.createElement("option"); o.value = o.textContent = v; sel.appendChild(o); });
+  }
+  var myOperator = null; // the operator of the logged-in account, when the login is personal
+  function buildForm() {
+    fillDatalist("l-giornalisti", lists.giornalisti);
+    fillSelect("trip-giornalista", lists.giornalisti);
+    chips("c-rete", "rete", lists.reti);
+    chips("c-mezzo", "mezzo", lists.mezzi);
+    fillSelect("operatore", lists.operatori.map(function (o) { return o.display_name; }));
+    var fromUrl = params.get("operatore") || params.get("op");
+    var last = null; try { last = localStorage.getItem("rainyc.operatore"); } catch (e) { /* ignore */ }
+    var names = lists.operatori.map(function (o) { return o.display_name; });
+    // The logged-in operator: "de.marco@rainyc.nyc" -> "De Marco" (the bureau account matches nobody).
+    var s = Session.get(), local = s && s.email ? s.email.split("@")[0] : "";
+    var mine = names.filter(function (n) { return n.toLowerCase().replace(/\s+/g, ".") === local; })[0] || null;
+    var pick = [mine, fromUrl, last].filter(function (v) { return v && names.indexOf(v) >= 0; })[0] || names[0];
+    myOperator = mine;
+    // defaultSelected: form.reset() (Esc, resetAll) returns to this operator instead of the first option.
+    Array.prototype.forEach.call($("operatore").options, function (o) { o.defaultSelected = o.value === pick; });
+    $("operatore").value = pick;
+    $("op-note").textContent = mine && pick === mine ? "Dal tuo accesso" : (fromUrl && pick === fromUrl ? "Rilevato dall'accesso Windows" : "");
+    var pc = params.get("pc");
+    $("t").textContent = "RAI NYC Servizi" + (pc ? " · " + pc : "");
+  }
+
+  // ---- richiedente depends on rete ----
+  function checked(name) { var el = form.querySelector('input[name="' + name + '"]:checked'); return el ? el.value : ""; }
+  function setRadio(name, value) { form.querySelectorAll('input[name="' + name + '"]').forEach(function (i) { i.checked = i.value === value; }); }
+  function slotsFor(rete) {
+    if (!lists) return [];
+    if (rete === "Tappeto") return lists.richiedenti.filter(function (r) { return TAPPETO_FROM.indexOf(r.rete) >= 0; }).map(function (r) { return r.value; });
+    return lists.richiedenti.filter(function (r) { return r.rete === rete; }).map(function (r) { return r.value; });
+  }
+  function stripPrefix(rete, value) {
+    var p = rete + " ";
+    return value.toLowerCase().indexOf(p.toLowerCase()) === 0 ? value.slice(p.length) : value;
+  }
+  function updateRichiedente() {
+    var rete = checked("rete");
+    var pre = PREFIXED.indexOf(rete) >= 0;
+    $("rich-wrap").classList.toggle("has-pre", pre);
+    $("rich-pre").textContent = pre ? rete : "";
+    var slots = slotsFor(rete).map(function (v) { return pre ? stripPrefix(rete, v) : v; });
+    fillDatalist("l-richiedenti", slots);
+    $("rich-hint").textContent = rete ? (slots.length ? "(edizione; anche testo libero)" : "(programma; testo libero)") : "(scegliere prima la rete)";
+  }
+  // The stored value: "Tg1 Ore 20" for the prefixed reti, as typed for the rest.
+  function richiedenteValue() {
+    var rete = checked("rete");
+    var v = $("richiedente").value.trim();
+    if (!v) return "";
+    if (PREFIXED.indexOf(rete) >= 0) {
+      var full = slotsFor(rete).filter(function (s) { return stripPrefix(rete, s).toLowerCase() === v.toLowerCase() || s.toLowerCase() === v.toLowerCase(); })[0];
+      if (full) return full;
+      if (v.toLowerCase().indexOf((rete + " ").toLowerCase()) === 0) return v;
+      if (v.toLowerCase() === "linea notte") return "Linea Notte";
+      return rete + " " + v;
+    }
+    var exact = slotsFor(rete).filter(function (s) { return s.toLowerCase() === v.toLowerCase(); })[0];
+    return exact || v;
+  }
+
+  // Same rule as public.derive_categoria on the server.
+  function categoria(rete, mezzo) {
+    if (!rete) return "–";
+    if (rete === "Tappeto") return "tappeto";
+    if (rete.indexOf("GR") === 0) return "radio";
+    if (LIVE_MEZZI.indexOf(mezzo) >= 0) return "live";
+    return "pezzo";
+  }
+  function updateCategoria() { $("categoria").textContent = categoria(checked("rete"), checked("mezzo")); }
+  function updateTrasferta() {
+    var on = $("trasferta").checked;
+    $("trasferta-val").textContent = on ? "SI" : "NO";
+    $("trip").hidden = !on;
+    if (on) {
+      var g = $("giornalista").value.trim();
+      if (!$("trip-giornalista").value || !$("trip-luogo").value) {
+        if (lists.giornalisti.indexOf(g) >= 0) $("trip-giornalista").value = g;
+        if (!$("trip-dal").value) $("trip-dal").value = $("data").value;
+        if (!$("trip-al").value) $("trip-al").value = $("data").value;
+      }
+    }
+  }
+  function today() { return todayNewYork(); }
+
+  function resetAll() {
+    form.reset();
+    $("data").value = today();
+    setRadio("rete", "");
+    setRadio("mezzo", "V-Mover");
+    $("richiedente").value = "";
+    $("trip").hidden = true;
+    $("err").textContent = "";
+    if (lists && !myOperator) { var last = null; try { last = localStorage.getItem("rainyc.operatore"); } catch (e) { /* ignore */ } if (last) $("operatore").value = last; }
+    updateRichiedente(); updateCategoria(); updateTrasferta();
+    $("giornalista").focus();
+  }
+
+  // ---- queue: written before the network call, kept in this browser ----
+  var QKEY = "rainyc.coda";
+  function qload() { try { return JSON.parse(localStorage.getItem(QKEY) || "[]"); } catch (e) { return []; } }
+  function qsave(q) { try { localStorage.setItem(QKEY, JSON.stringify(q)); } catch (e) { /* storage blocked: memory only */ } }
+  var queue = qload();
+  var cutoff = new Date(Date.now() - 2 * 86400000).toISOString();
+  queue = queue.filter(function (e) { return !(e.stato === "sincronizzato" && e.creato < cutoff); });
+  qsave(queue);
+  var serverRows = [];
+  var timer = null, attempt = 0, sending = false;
+
+  function setStatus(stato, text) { var s = $("status"); s.className = "status " + stato; s.textContent = text; }
+  function pendingCount() { return queue.filter(function (e) { return e.stato === "salvato" || e.stato === "attesa"; }).length; }
+  function renderPending() {
+    var n = pendingCount(); var p = $("pend");
+    p.hidden = n === 0; p.textContent = n + " in attesa";
+  }
+  function renderRecent() {
+    var ol = $("recent"); ol.textContent = "";
+    var todayStr = today();
+    var local = queue.filter(function (e) { return e.payload.delivery_date === todayStr || e.stato !== "sincronizzato"; });
+    var ids = {}; local.forEach(function (e) { if (e.server_id) ids[e.server_id] = true; });
+    var items = local.map(function (e) {
+      return { ora: e.ora, text: e.payload.journalist + " · " + e.payload.subject + " · " + e.payload.rete + " (" + categoria(e.payload.rete, e.payload.mezzo) + ")", stato: e.stato, err: e.errore, sort: e.creato };
+    }).concat(serverRows.filter(function (r) { return !ids[r.record_id]; }).map(function (r) {
+      var t = r.submitted_at ? new Date(r.submitted_at) : null;
+      return { ora: t ? String(t.getHours()).padStart(2, "0") + ":" + String(t.getMinutes()).padStart(2, "0") : "", text: r.giornalista + " · " + r.titolo + " · " + r.rete + " (" + r.categoria + ")" + (r.operatore ? " · " + r.operatore : ""), stato: "sincronizzato", sort: r.submitted_at || "" };
+    }));
+    items.sort(function (a, b) { return a.sort < b.sort ? 1 : -1; });
+    if (!items.length) { var li0 = document.createElement("li"); li0.className = "vuoto"; li0.textContent = "Nessuna registrazione oggi."; ol.appendChild(li0); return; }
+    items.slice(0, 20).forEach(function (it) {
+      var li = document.createElement("li");
+      var t = document.createElement("span"); t.className = "t"; t.textContent = it.ora + " · " + it.text + (it.err ? " — " + it.err : ""); t.title = it.text;
+      var s = document.createElement("span"); s.className = "s " + it.stato; s.textContent = LABEL[it.stato];
+      li.appendChild(t); li.appendChild(s); ol.appendChild(li);
+    });
+  }
+  function refreshServerRows() {
+    return api("/api/recent?date=" + today()).then(function (r) {
+      if (r.status === 200) { serverRows = r.body.rows || []; renderRecent(); }
+    }, function () { /* offline: local list only */ });
+  }
+
+  function schedule(delayMs) {
+    if (timer) clearTimeout(timer);
+    timer = setTimeout(flush, delayMs);
+  }
+  function flush() {
+    timer = null;
+    if (sending) return;
+    var e = queue.filter(function (x) { return x.stato === "salvato" || x.stato === "attesa"; })[0];
+    if (!e) { attempt = 0; return; }
+    sending = true;
+    api("/api/submit", { method: "POST", body: JSON.stringify(e.payload) }).then(function (r) {
+      sending = false;
+      if (r.status === 200) {
+        e.stato = "sincronizzato"; e.server_id = r.body.id; delete e.errore; attempt = 0;
+        qsave(queue); renderPending(); renderRecent();
+        setStatus("sincronizzato", "Sincronizzato: " + e.payload.subject);
+        refreshServerRows();
+        schedule(50);
+      } else {
+        // The database refused the data: not retried. The editor corrects and sends again.
+        e.stato = "errore"; e.errore = (r.body && r.body.error) || "Dati non validi.";
+        qsave(queue); renderPending(); renderRecent();
+        setStatus("errore", "Non accettata: " + e.errore);
+        restore(e);
+        schedule(50);
+      }
+    }, function (err) {
+      sending = false;
+      if (err.kind === "auth") { setStatus("attesa", "Accesso scaduto: " + pendingCount() + " registrazioni in attesa."); authLost(); return; }
+      e.stato = "attesa"; qsave(queue); renderPending(); renderRecent();
+      attempt += 1;
+      var delay = Math.min(60000, 1000 * Math.pow(2, attempt));
+      setStatus("attesa", "In attesa di sincronizzazione (" + pendingCount() + "): " + err.message + " Nuovo tentativo tra " + Math.round(delay / 1000) + " s.");
+      schedule(delay);
+    });
+  }
+  // Put a refused entry back into the form so it can be corrected and sent again.
+  function restore(e) {
+    var p = e.payload;
+    queue = queue.filter(function (x) { return x !== e; }); qsave(queue);
+    $("data").value = p.delivery_date; $("giornalista").value = p.journalist; $("titolo").value = p.subject;
+    setRadio("rete", p.rete); updateRichiedente();
+    $("richiedente").value = PREFIXED.indexOf(p.rete) >= 0 ? stripPrefix(p.rete, p.richiedente || "") : (p.richiedente || "");
+    $("durata").value = p.duration_text || ""; setRadio("mezzo", p.mezzo);
+    $("trasferta").checked = !!p.trasferta; updateTrasferta();
+    if (p.trasferta) { $("trip-giornalista").value = p.trasferta_journalist; $("trip-luogo").value = p.trasferta_luogo; $("trip-dal").value = p.trasferta_dal; $("trip-al").value = p.trasferta_al; }
+    $("operatore").value = p.operator; updateCategoria();
+    $("err").textContent = e.errore;
+  }
+
+  // ---- submit ----
+  // crypto.randomUUID exists only in secure contexts (https or localhost); the office LAN serves the
+  // page over plain http, so build the v4 UUID from getRandomValues, which works everywhere.
+  function newUuid() {
+    if (crypto.randomUUID) return crypto.randomUUID();
+    var b = crypto.getRandomValues(new Uint8Array(16));
+    b[6] = (b[6] & 0x0f) | 0x40; b[8] = (b[8] & 0x3f) | 0x80;
+    var h = Array.prototype.map.call(b, function (x) { return (x + 256).toString(16).slice(1); }).join("");
+    return h.slice(0, 8) + "-" + h.slice(8, 12) + "-" + h.slice(12, 16) + "-" + h.slice(16, 20) + "-" + h.slice(20);
+  }
+  // Tab completes a datalist field: "l" + Tab → "Lo Prete" when one name starts with it (else the
+  // first name that starts with it). Browsers do not accept datalist suggestions on Tab by themselves.
+  function completeFrom(input, names) {
+    var typed = input.value.trim().toLowerCase();
+    if (!typed) return false;
+    var exact = names.filter(function (n) { return n.toLowerCase() === typed; });
+    if (exact.length) { input.value = exact[0]; return true; }
+    var starts = names.filter(function (n) { return n.toLowerCase().indexOf(typed) === 0; });
+    if (!starts.length) starts = names.filter(function (n) { return n.toLowerCase().indexOf(typed) >= 0; });
+    if (!starts.length) return false;
+    input.value = starts[0];
+    input.dispatchEvent(new Event("change", { bubbles: true }));
+    return true;
+  }
+  $("giornalista").addEventListener("keydown", function (ev) {
+    if (ev.key === "Tab" && !ev.shiftKey) completeFrom(ev.target, lists.giornalisti);
+  });
+  $("richiedente").addEventListener("keydown", function (ev) {
+    if (ev.key === "Tab" && !ev.shiftKey) completeFrom(ev.target, Array.prototype.map.call($("l-richiedenti").options, function (o) { return o.value; }));
+  });
+  form.addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    var g = $("giornalista").value.trim();
+    var gMatch = lists.giornalisti.filter(function (n) { return n.toLowerCase() === g.toLowerCase(); })[0];
+    if (!gMatch && g) {
+      var gStarts = lists.giornalisti.filter(function (n) { return n.toLowerCase().indexOf(g.toLowerCase()) === 0; });
+      if (gStarts.length === 1) { gMatch = gStarts[0]; $("giornalista").value = gMatch; }
+    }
+    var v = {
+      client_record_id: newUuid(),
+      delivery_date: $("data").value,
+      journalist: gMatch || g,
+      subject: $("titolo").value.trim(),
+      rete: checked("rete"),
+      richiedente: richiedenteValue() || null,
+      duration_text: $("durata").value.trim() || null,
+      mezzo: checked("mezzo"),
+      trasferta: $("trasferta").checked,
+      trasferta_journalist: null, trasferta_luogo: null, trasferta_dal: null, trasferta_al: null,
+      operator: $("operatore").value,
+      notes: null
+    };
+    var missing = [], focusId = null;
+    function miss(label, id) { missing.push(label); if (!focusId) focusId = id; }
+    if (!v.delivery_date) miss("Data", "data");
+    if (!g) miss("Giornalista", "giornalista");
+    else if (!gMatch) { $("err").textContent = "Giornalista non in elenco: " + g + "."; $("giornalista").focus(); return; }
+    if (!v.subject) miss("Argomento / Titolo", "titolo");
+    if (!v.rete) miss("Rete", null);
+    if (!v.mezzo) miss("Mezzo", null);
+    if (!v.operator) miss("Operatore", "operatore");
+    if (v.trasferta) {
+      v.trasferta_journalist = $("trip-giornalista").value;
+      v.trasferta_luogo = $("trip-luogo").value.trim() || null;
+      v.trasferta_dal = $("trip-dal").value || null;
+      v.trasferta_al = $("trip-al").value || null;
+      if (!v.trasferta_journalist) miss("Giornalista in trasferta", "trip-giornalista");
+      if (!v.trasferta_luogo) miss("Destinazione", "trip-luogo");
+      if (!v.trasferta_dal) miss("Trasferta dal", "trip-dal");
+      if (!v.trasferta_al) miss("Trasferta al", "trip-al");
+      if (v.trasferta_dal && v.trasferta_al && v.trasferta_al < v.trasferta_dal) { $("err").textContent = 'Trasferta: la data "al" precede la data "dal".'; $("trip-al").focus(); return; }
+    }
+    if (missing.length) {
+      $("err").textContent = "Manca: " + missing.join(", ") + ".";
+      if (focusId) $(focusId).focus();
+      else form.querySelector('input[name="' + (!v.rete ? "rete" : "mezzo") + '"]').focus();
+      return;
+    }
+    $("err").textContent = "";
+    var now = new Date();
+    queue.push({ client_record_id: v.client_record_id, payload: v, stato: "salvato", creato: now.toISOString(),
+      ora: String(now.getHours()).padStart(2, "0") + ":" + String(now.getMinutes()).padStart(2, "0") });
+    qsave(queue); renderPending(); renderRecent();
+    setStatus("salvato", "Salvato: " + v.subject);
+    try { localStorage.setItem("rainyc.operatore", v.operator); } catch (e) { /* ignore */ }
+    // Keep date, journalist, title and operator for the next entry of the same story.
+    setRadio("rete", ""); $("durata").value = ""; $("richiedente").value = "";
+    setRadio("mezzo", "V-Mover"); $("trasferta").checked = false;
+    updateRichiedente(); updateCategoria(); updateTrasferta();
+    form.querySelector('input[name="rete"]').focus();
+    schedule(0);
+  });
+
+  form.addEventListener("change", function (ev) {
+    if (ev.target.name === "rete") { $("richiedente").value = ""; updateRichiedente(); }
+    if (ev.target.name === "rete" || ev.target.name === "mezzo") updateCategoria();
+    if (ev.target.id === "trasferta") updateTrasferta();
+    if (ev.target.id === "giornalista" && $("trasferta").checked && lists.giornalisti.indexOf(ev.target.value.trim()) >= 0) $("trip-giornalista").value = ev.target.value.trim();
+  });
+  // Enter submits from any field (radio chips, toggle and select included).
+  form.addEventListener("keydown", function (ev) {
+    if (ev.key === "Enter" && !ev.isComposing && ev.target.tagName !== "BUTTON") { ev.preventDefault(); form.requestSubmit(); }
+  });
+  document.addEventListener("keydown", function (ev) {
+    if (ev.key === "Escape" && !form.hidden) { ev.preventDefault(); resetAll(); }
+  });
+  window.addEventListener("online", function () { attempt = 0; schedule(0); });
+
+  // ---- start ----
+  requireLogin(function () {
+    loadLists().then(function () {
+      buildForm();
+      form.hidden = false; $("recent-box").hidden = false;
+      resetAll(); renderPending(); renderRecent();
+      refreshServerRows();
+      schedule(0);
+    }, function (e) {
+      if (e.kind === "auth") { authLost(); return; }
+      setStatus("errore", e.message + " Ricaricare la pagina quando la rete torna.");
+    });
+  });
+})();
+</script>
+</body>
+</html>

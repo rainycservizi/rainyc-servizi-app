@@ -1,0 +1,566 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Collaudo settimanale · RAI NYC Servizi</title>
+<style>
+:root { --ink:#111; --mute:#555; --rule:#bbb; --zebra:#f4f4f4; --band:#e2e2e2; --red:#c00000; --accent:#1f3a5f; --focus:#2f6fd6; }
+* { box-sizing:border-box; }
+html, body { margin:0; background:#fff; color:var(--ink); }
+body { font:13px/1.35 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+.page { max-width:1180px; margin:0 auto; padding:16px 24px 40px; }
+.tools { display:flex; flex-wrap:wrap; align-items:center; gap:10px; padding:10px 12px; margin:0 0 18px; background:#eceef0; border-radius:8px; font-size:14px; }
+.tools input[type=text] { width:9em; height:36px; font:inherit; padding:0 8px; border:1.5px solid #c9cdd2; border-radius:6px; }
+.tools button, .tools a.btn { height:36px; padding:0 12px; font:inherit; font-weight:600; background:var(--accent); color:#fff; border:0; border-radius:6px; cursor:pointer; text-decoration:none; display:inline-flex; align-items:center; }
+.tools button.sec { background:#fff; color:var(--accent); border:1.5px solid var(--accent); }
+.tools button:focus-visible, .tools input:focus-visible { outline:3px solid var(--focus); outline-offset:1px; }
+.tools .msg { color:var(--mute); }
+.tools .err { color:var(--red); font-weight:600; }
+#login { max-width:420px; margin:40px auto; padding:22px 20px; border:1px solid #c9cdd2; border-radius:8px; font-size:16px; }
+#login h2 { margin:0 0 14px; font-size:17px; }
+#login label { display:block; font-weight:600; margin:0 0 6px; }
+#login input { width:100%; height:44px; font:inherit; padding:0 12px; border:1.5px solid #c9cdd2; border-radius:6px; margin:0 0 14px; }
+#login button { width:100%; height:48px; font:inherit; font-weight:700; background:var(--accent); color:#fff; border:0; border-radius:6px; cursor:pointer; }
+#login .err { color:var(--red); margin-top:8px; }
+header.doc { border-bottom:2px solid var(--ink); padding-bottom:10px; margin-bottom:14px; }
+header.doc .ente { font-size:12px; letter-spacing:.06em; text-transform:uppercase; color:var(--mute); }
+header.doc h1 { font-size:22px; margin:4px 0 2px; font-weight:700; }
+header.doc .sett { font-size:15px; }
+.counters { display:flex; flex-wrap:wrap; gap:0; border:1px solid var(--ink); margin:0 0 16px; }
+.counters .grp { display:flex; flex-wrap:wrap; }
+.counters .grp + .grp { border-left:1px solid var(--ink); }
+.counters .c { padding:6px 12px; text-align:center; min-width:72px; }
+.counters .c + .c { border-left:1px solid var(--rule); }
+.counters .n { font-size:18px; font-weight:700; font-variant-numeric:tabular-nums; display:block; }
+.counters .l { font-size:11px; color:var(--mute); }
+.counters .tot .n { font-size:20px; }
+table { width:100%; border-collapse:collapse; font-variant-numeric:tabular-nums; }
+thead th { text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:.03em; border-top:1.5px solid var(--ink); border-bottom:1.5px solid var(--ink); padding:5px 6px; white-space:nowrap; }
+td { padding:4px 6px; border-bottom:1px solid #e6e6e6; vertical-align:top; }
+tbody tr.r:nth-of-type(even) td { background:var(--zebra); }
+th.k, td.k { text-align:center; width:3.6em; }
+td.k { font-weight:700; }
+tr.day td { background:var(--band); font-weight:700; border-top:1px solid var(--rule); border-bottom:1px solid var(--rule); padding:5px 6px; }
+tr.day .trip { font-weight:600; color:var(--red); margin-left:14px; }
+tr.tot td { text-align:right; font-weight:600; border-bottom:1.5px solid var(--ink); background:#fff; }
+tr.tot td.k { text-align:center; }
+tr.empty td { color:var(--mute); font-style:italic; }
+.si { color:var(--red); font-weight:700; }
+.nowrap { white-space:nowrap; }
+footer.doc { margin-top:28px; display:flex; justify-content:space-between; align-items:flex-end; gap:24px; flex-wrap:wrap; }
+footer.doc .gen { font-size:11px; color:var(--mute); }
+footer.doc .firma { font-size:13px; white-space:nowrap; }
+[hidden] { display:none !important; }
+@media screen and (max-width:760px) { .page { padding:16px; } .table-wrap { overflow-x:auto; } }
+@page { size: A4 landscape; margin: 12mm; }
+@media print {
+  body { font-size:11px; }
+  .page { max-width:none; padding:0; }
+  .tools { display:none; }
+  header.doc h1 { font-size:17px; }
+  .counters .n { font-size:14px; } .counters .tot .n { font-size:15px; }
+  .counters .c { padding:4px 9px; min-width:58px; }
+  thead { display:table-header-group; }
+  thead th { font-size:9.5px; }
+  tr { break-inside:avoid; page-break-inside:avoid; }
+  tr.day { break-after:avoid; page-break-after:avoid; }
+  td { padding:2.5px 5px; }
+  footer.doc { break-inside:avoid; }
+  * { -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+  <form id="login" hidden autocomplete="on">
+    <h2>Accesso · collaudo settimanale</h2>
+    <label for="login-email">Nome <span class="hint">(cognome come in elenco, es. Arzilla)</span></label><input type="text" id="login-email" name="username" required autocomplete="username" autocapitalize="none">
+    <label for="login-password">Password</label><input type="password" id="login-password" name="password" required autocomplete="current-password">
+    <button type="submit">Accedi</button>
+    <div class="err" id="login-err" role="alert"></div>
+  </form>
+  <form class="tools" id="tools" hidden>
+    <button type="button" class="sec" id="prev" title="Settimana precedente">◀</button>
+    <label>Settimana <input type="text" id="week" pattern="\d{4}-W\d{1,2}" placeholder="2026-W41"></label>
+    <button type="button" class="sec" id="next" title="Settimana successiva">▶</button>
+    <button type="submit">Vai</button>
+    <button type="button" id="print">Stampa</button>
+    <a class="btn" href="." id="lnk-form">Nuova registrazione</a>
+    <span class="msg" id="msg"></span>
+  </form>
+  <div id="doc"></div>
+</div>
+<script>
+// ---- pages/shared.js ----
+// Shared browser code for form.html and collaudo.html. Inlined by scripts/build_pages.mjs.
+// Session: Supabase Auth password grant, kept in localStorage, refreshed before it expires.
+// All data goes through the function's /api routes with the bearer; auth goes to /auth/v1 on
+// the same origin (locally the CLI gateway, in production <ref>.supabase.co).
+
+var ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind5cnRoZndya2dkb2JsbHpzc2R2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIwMjI2MDIsImV4cCI6MjEwNzU5ODYwMn0.UE8hAaDlRY5pgsMs8hUMKE5bIVF_Jc5eP1Z2e954Kd4";
+// Served by the function itself: the placeholders are empty and everything is same-origin.
+// Built as static pages (scripts/build_pages.mjs --static): absolute URLs are filled in at build time.
+var APP_BASE = "https://wyrthfwrkgdobllzssdv.supabase.co/functions/v1/servizi" || (function () {
+  var p = location.pathname.replace(/\/+$/, "");
+  var i = p.indexOf("/servizi");
+  return i >= 0 ? p.slice(0, i + "/servizi".length) : p;
+})();
+var AUTH_URL = ("https://wyrthfwrkgdobllzssdv.supabase.co" || location.origin) + "/auth/v1";
+var PAGE_FORM = "./" || APP_BASE;
+var PAGE_COLLAUDO = "./collaudo.html" || APP_BASE + "/collaudo";
+
+function ApiError(kind, message) { this.kind = kind; this.message = message; }
+ApiError.prototype = Object.create(Error.prototype);
+
+var Session = {
+  KEY: "rainyc.sessione",
+  get: function () { try { return JSON.parse(localStorage.getItem(this.KEY) || "null"); } catch (e) { return null; } },
+  set: function (s) { try { localStorage.setItem(this.KEY, JSON.stringify(s)); } catch (e) { /* storage blocked */ } },
+  clear: function () { try { localStorage.removeItem(this.KEY); } catch (e) { /* ignore */ } }
+};
+
+function storeSession(data) {
+  Session.set({
+    access_token: data.access_token,
+    refresh_token: data.refresh_token,
+    expires_at: data.expires_at || (Math.floor(Date.now() / 1000) + (data.expires_in || 3600)),
+    email: data.user && data.user.email
+  });
+}
+
+var LOGIN_DOMAIN = "rainyc.nyc";
+/** "De Marco" / "de marco" / "de.marco@rainyc.nyc" -> "de.marco@rainyc.nyc". Operators log in with their name. */
+function loginEmail(name) {
+  var s = (name || "").trim().toLowerCase();
+  if (s.indexOf("@") >= 0) return s;
+  return s.replace(/\s+/g, ".") + "@" + LOGIN_DOMAIN;
+}
+/** @returns {Promise<{ok:boolean, error?:string}>} */
+function login(name, password) {
+  var email = loginEmail(name);
+  return fetch(AUTH_URL + "/token?grant_type=password", {
+    method: "POST",
+    headers: { apikey: ANON_KEY, "Content-Type": "application/json" },
+    body: JSON.stringify({ email: email, password: password })
+  }).then(function (r) {
+    return r.json().catch(function () { return {}; }).then(function (b) {
+      if (r.ok && b.access_token) { storeSession(b); return { ok: true }; }
+      if (r.status === 400 || r.status === 401) return { ok: false, error: "Nome o password non corretti." };
+      return { ok: false, error: "Accesso non riuscito (" + r.status + "). Riprovare." };
+    });
+  }, function () { return { ok: false, error: "Rete non raggiungibile." }; });
+}
+
+var refreshing = null;
+/** @returns {Promise<boolean>} */
+function refreshSession() {
+  if (refreshing) return refreshing;
+  var s = Session.get();
+  if (!s || !s.refresh_token) return Promise.resolve(false);
+  refreshing = fetch(AUTH_URL + "/token?grant_type=refresh_token", {
+    method: "POST",
+    headers: { apikey: ANON_KEY, "Content-Type": "application/json" },
+    body: JSON.stringify({ refresh_token: s.refresh_token })
+  }).then(function (r) {
+    return r.json().catch(function () { return {}; }).then(function (b) {
+      if (r.ok && b.access_token) { storeSession(b); return true; }
+      if (r.status >= 400 && r.status < 500) Session.clear();
+      return false;
+    });
+  }, function () { return false; }).then(function (ok) { refreshing = null; return ok; });
+  return refreshing;
+}
+
+function logout() { Session.clear(); }
+
+/**
+ * Call the function API. Resolves {status, body}; rejects with ApiError kind
+ * "auth" (log in again) or "network" (retry later). 4xx answers resolve normally.
+ */
+function api(path, init, retried) {
+  var s = Session.get();
+  if (!s) return Promise.reject(new ApiError("auth", "Accesso richiesto."));
+  var soon = (s.expires_at || 0) * 1000 - Date.now() < 60000;
+  var ready = soon ? refreshSession().then(function (ok) { if (!ok) throw new ApiError("auth", "Sessione scaduta: accedere di nuovo."); }) : Promise.resolve();
+  return ready.then(function () {
+    var cur = Session.get();
+    if (!cur) throw new ApiError("auth", "Accesso richiesto.");
+    var opts = Object.assign({}, init || {});
+    opts.headers = Object.assign({ Authorization: "Bearer " + cur.access_token, "Content-Type": "application/json" }, (init && init.headers) || {});
+    return fetch(APP_BASE + path, opts).then(null, function () { throw new ApiError("network", "Rete non raggiungibile."); });
+  }).then(function (r) {
+    if (r.status === 401 && !retried) {
+      return refreshSession().then(function (ok) {
+        if (ok) return api(path, init, true);
+        throw new ApiError("auth", "Sessione scaduta: accedere di nuovo.");
+      });
+    }
+    return r.text().then(function (t) {
+      var body = null;
+      try { body = t ? JSON.parse(t) : null; } catch (e) { body = null; }
+      if (r.status === 401) throw new ApiError("auth", "Sessione scaduta: accedere di nuovo.");
+      if (r.status >= 500 || r.status === 429) throw new ApiError("network", (body && body.error) || "Servizio non disponibile.");
+      return { status: r.status, body: body };
+    });
+  });
+}
+
+/** Wire a login panel: elements #login, #login-email, #login-password, #login-err. Calls onReady() when signed in. */
+function requireLogin(onReady) {
+  var panel = document.getElementById("login");
+  var email = document.getElementById("login-email");
+  var pass = document.getElementById("login-password");
+  var err = document.getElementById("login-err");
+  function show() {
+    panel.hidden = false;
+    try { email.value = localStorage.getItem("rainyc.email") || ""; } catch (e) { /* ignore */ }
+    (email.value ? pass : email).focus();
+  }
+  function done() { panel.hidden = true; onReady(); }
+  panel.addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    err.textContent = "";
+    var b = panel.querySelector("button");
+    b.disabled = true;
+    login(email.value.trim(), pass.value).then(function (res) {
+      b.disabled = false;
+      if (!res.ok) { err.textContent = res.error; pass.focus(); pass.select(); return; }
+      try { localStorage.setItem("rainyc.email", email.value.trim()); } catch (e) { /* ignore */ }
+      pass.value = "";
+      done();
+    });
+  });
+  if (Session.get()) done(); else show();
+  // Any later auth failure brings the panel back.
+  document.addEventListener("rainyc:auth-lost", function () { if (panel.hidden) show(); });
+}
+
+function authLost() { Session.clear(); document.dispatchEvent(new Event("rainyc:auth-lost")); }
+
+// ---- end pages/shared.js ----
+// ---- lib/week.js ----
+// ISO week helpers. Plain JS so the same file runs in Deno (server) and, inlined by
+// scripts/build_pages.mjs, in the browser pages. Dates are "YYYY-MM-DD" strings; all
+// arithmetic is in UTC so the machine's time zone never shifts a day.
+
+const DAY = 86400000;
+
+/** @param {string} s @returns {number} ms since epoch at 00:00 UTC */
+function utcOf(s) {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s);
+  if (!m) throw new Error("data non valida: " + s);
+  return Date.UTC(+m[1], +m[2] - 1, +m[3]);
+}
+
+/** @param {number} ms @returns {string} */
+function isoDate(ms) {
+  return new Date(ms).toISOString().slice(0, 10);
+}
+
+/** Monday = 0 … Sunday = 6. @param {number} ms */
+function dow(ms) {
+  return (new Date(ms).getUTCDay() + 6) % 7;
+}
+
+/** Monday of ISO week 1 of `year`, ms UTC. Jan 4 is always in week 1. */
+function week1Monday(year) {
+  const jan4 = Date.UTC(year, 0, 4);
+  return jan4 - dow(jan4) * DAY;
+}
+
+/**
+ * ISO week of a date.
+ * @param {string} date "YYYY-MM-DD"
+ * @returns {{year:number, week:number}}
+ */
+function isoWeekOf(date) {
+  const d = utcOf(date);
+  const thursday = d + (3 - dow(d)) * DAY;
+  const year = new Date(thursday).getUTCFullYear();
+  const week = Math.floor((thursday - Date.UTC(year, 0, 1)) / DAY / 7) + 1;
+  return { year, week };
+}
+
+/** 52 or 53. @param {number} year */
+function weeksInYear(year) {
+  return isoWeekOf(year + "-12-28").week;
+}
+
+/**
+ * Parse "2026-W41" (also "2026-W5", "2026-w41").
+ * @param {string} text
+ * @returns {{year:number, week:number}|null} null when malformed or out of range
+ */
+function parseWeek(text) {
+  const m = /^\s*(\d{4})-[Ww](\d{1,2})\s*$/.exec(text || "");
+  if (!m) return null;
+  const year = +m[1];
+  const week = +m[2];
+  if (year < 2020 || year > 2100) return null;
+  if (week < 1 || week > weeksInYear(year)) return null;
+  return { year, week };
+}
+
+/** @param {{year:number, week:number}} w @returns {string} "2026-W41" */
+function formatWeek(w) {
+  return w.year + "-W" + String(w.week).padStart(2, "0");
+}
+
+/** The seven dates of an ISO week, Monday first. @param {{year:number, week:number}} w */
+function weekDays(w) {
+  const monday = week1Monday(w.year) + (w.week - 1) * 7 * DAY;
+  const out = [];
+  for (let i = 0; i < 7; i++) out.push(isoDate(monday + i * DAY));
+  return out;
+}
+
+/** @param {{year:number, week:number}} w @param {number} delta @returns {{year:number, week:number}} */
+function shiftWeek(w, delta) {
+  const monday = week1Monday(w.year) + (w.week - 1) * 7 * DAY;
+  return isoWeekOf(isoDate(monday + delta * 7 * DAY));
+}
+
+/** Today's date in New York as "YYYY-MM-DD". */
+function todayNewYork(now) {
+  const d = now || new Date();
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "America/New_York", year: "numeric", month: "2-digit", day: "2-digit",
+  }).formatToParts(d);
+  const get = (t) => parts.find((p) => p.type === t).value;
+  return get("year") + "-" + get("month") + "-" + get("day");
+}
+
+const MESI = ["gennaio", "febbraio", "marzo", "aprile", "maggio", "giugno", "luglio",
+  "agosto", "settembre", "ottobre", "novembre", "dicembre"];
+const GIORNI = ["Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato", "Domenica"];
+
+/** "Lunedì 5 ottobre 2026" @param {string} date */
+function fmtDay(date) {
+  const ms = utcOf(date);
+  const d = new Date(ms);
+  return GIORNI[dow(ms)] + " " + d.getUTCDate() + " " + MESI[d.getUTCMonth()] + " " + d.getUTCFullYear();
+}
+
+/** "5–11 ottobre 2026" / "28 settembre – 4 ottobre 2026" / across years. */
+function fmtRange(a, b) {
+  const da = new Date(utcOf(a)), db = new Date(utcOf(b));
+  const ya = da.getUTCFullYear(), yb = db.getUTCFullYear();
+  const ma = da.getUTCMonth(), mb = db.getUTCMonth();
+  if (ya !== yb) return da.getUTCDate() + " " + MESI[ma] + " " + ya + " – " + db.getUTCDate() + " " + MESI[mb] + " " + yb;
+  if (ma !== mb) return da.getUTCDate() + " " + MESI[ma] + " – " + db.getUTCDate() + " " + MESI[mb] + " " + yb;
+  return da.getUTCDate() + "–" + db.getUTCDate() + " " + MESI[ma] + " " + ya;
+}
+
+// ---- end lib/week.js ----
+// ---- lib/collaudo.js ----
+// Weekly collaudo: rows of public.v_weekly_collaudo -> HTML fragment.
+// Plain JS, shared by Deno tests and (inlined) the browser page. Layout follows the sheet
+// Marco sends to Rome ("2026 Rai Erika", one tab per week): network totals on top, one block
+// per day whose header names who is in trasferta and where, rows in the sheet's column order,
+// a totals row per day. scripts/render_collaudo.py stays the offline CSV tool.
+
+
+const CATEGORIE = ["pezzo", "radio", "live", "tappeto"];
+const CAT_LABEL = { pezzo: "Pezzi", radio: "Radio", live: "Live", tappeto: "Tappeti" };
+// Per-rete counters in the sheet's order. Tappeto rows count only under Tappeti.
+const RETI = ["Rainews.it", "Tg1", "Tg2", "Tg3", "RAN", "Rai Sport", "GR", "Altre"];
+const COLS = ["Titolo", "Giornalista", "Richiedente", "Rete", "Durata",
+  "Pezzi", "Radio", "Live", "Trasferta", "Mezzo", "Tappeti", "Ass. tecnica", "Operatore"];
+const CHECK_COLS = ["Pezzi", "Radio", "Live", "Tappeti", "Ass. tecnica"];
+
+/** @param {string} rete @returns {string|null} */
+function reteBucket(rete) {
+  const r = (rete || "").trim();
+  if (r === "Tappeto") return null;
+  if (r.toUpperCase().startsWith("GR")) return "GR";
+  if (RETI.includes(r)) return r;
+  return "Altre";
+}
+
+/** @param {unknown} s */
+function esc(s) {
+  return String(s == null ? "" : s)
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+}
+
+/**
+ * Totals for a set of rows (one ISO week).
+ * @param {Array<{categoria:string, rete:string, trasferta:boolean}>} rows
+ */
+function totals(rows) {
+  const cat = Object.fromEntries(CATEGORIE.map((c) => [c, 0]));
+  const rete = Object.fromEntries(RETI.map((r) => [r, 0]));
+  let trasferte = 0;
+  for (const r of rows) {
+    if (r.categoria in cat) cat[r.categoria] += 1;
+    const b = reteBucket(r.rete);
+    if (b) rete[b] += 1;
+    if (r.trasferta === true) trasferte += 1;
+  }
+  return { cat, rete, trasferte, righe: rows.length };
+}
+
+/** "5 ott" @param {string} date */
+function shortDate(date) {
+  const d = new Date(date + "T00:00:00Z");
+  return d.getUTCDate() + " " + MESI[d.getUTCMonth()].slice(0, 3);
+}
+
+/**
+ * Who is in trasferta on `day`, from the week's rows: "Lo Prete, Washington D.C. (24–26 ago)".
+ * Legacy rows (trasferta true, no details) give "sì (dettagli non registrati)".
+ * @param {string} day @param {Array<Record<string, unknown>>} rows
+ */
+function trasferteOn(day, rows) {
+  const seen = new Set();
+  const out = [];
+  let legacy = false;
+  for (const r of rows) {
+    if (r.trasferta !== true) continue;
+    if (!r.trasferta_dal || !r.trasferta_al) {
+      if (r.data === day) legacy = true;
+      continue;
+    }
+    if (day < String(r.trasferta_dal) || day > String(r.trasferta_al)) continue;
+    const key = [r.trasferta_giornalista, r.trasferta_luogo, r.trasferta_dal, r.trasferta_al].join("|");
+    if (seen.has(key)) continue;
+    seen.add(key);
+    const range = r.trasferta_dal === r.trasferta_al
+      ? shortDate(String(r.trasferta_dal))
+      : shortDate(String(r.trasferta_dal)) + "–" + shortDate(String(r.trasferta_al));
+    out.push(`${r.trasferta_giornalista || "?"}, ${r.trasferta_luogo || "?"} (${range})`);
+  }
+  if (legacy) out.push("sì (dettagli non registrati)");
+  return out;
+}
+
+/**
+ * Render the collaudo body (header, counters, table, footer) for one week.
+ * @param {{year:number, week:number}} w
+ * @param {Array<Record<string, unknown>>} rows  v_weekly_collaudo rows, already in order
+ * @param {string} generated  "YYYY-MM-DD"
+ * @returns {string} HTML
+ */
+function renderCollaudo(w, rows, generated) {
+  const days = weekDays(w);
+  const byDay = Object.fromEntries(days.map((d) => [d, []]));
+  for (const r of rows) if (r.data in byDay) byDay[r.data].push(r);
+
+  const t = totals(rows);
+  const body = [];
+  for (const d of days) {
+    const dayRows = byDay[d];
+    const trips = trasferteOn(d, rows);
+    const tripNote = trips.length ? ` <span class="trip">Trasferta: ${esc(trips.join(" · "))}</span>` : "";
+    body.push(`<tr class="day"><td colspan="${COLS.length}">${esc(fmtDay(d))}${tripNote}</td></tr>`);
+    if (!dayRows.length) {
+      body.push(`<tr class="empty"><td colspan="${COLS.length}">Nessuna registrazione</td></tr>`);
+      continue;
+    }
+    const dayTot = Object.fromEntries(CATEGORIE.map((c) => [c, 0]));
+    for (const r of dayRows) {
+      const cat = String(r.categoria || "").toLowerCase();
+      if (cat in dayTot) dayTot[cat] += 1;
+      const si = r.trasferta === true;
+      const k = (c) => `<td class="k">${cat === c ? "✓" : ""}</td>`;
+      body.push('<tr class="r">' +
+        `<td>${esc(r.titolo)}</td>` +
+        `<td class="nowrap">${esc(r.giornalista)}</td>` +
+        `<td>${esc(r.richiedente)}</td>` +
+        `<td class="nowrap">${esc(r.rete)}</td>` +
+        `<td class="nowrap">${esc(r.durata)}</td>` +
+        k("pezzo") + k("radio") + k("live") +
+        `<td class="k">${si ? '<span class="si">SI</span>' : ""}</td>` +
+        `<td class="nowrap">${esc(r.mezzo)}</td>` +
+        k("tappeto") +
+        `<td class="k">X</td>` +
+        `<td class="nowrap">${esc(r.operatore)}</td>` +
+        "</tr>");
+    }
+    const dd = new Date(d + "T00:00:00Z");
+    body.push(`<tr class="tot"><td colspan="5">Totale ${esc(GIORNI[(dd.getUTCDay() + 6) % 7].toLowerCase())} ${dd.getUTCDate()} ` +
+      `(${dayRows.length} registrazioni)</td>` +
+      `<td class="k">${dayTot.pezzo}</td><td class="k">${dayTot.radio}</td><td class="k">${dayTot.live}</td>` +
+      `<td></td><td></td><td class="k">${dayTot.tappeto}</td><td></td><td></td></tr>`);
+  }
+
+  const counter = (n, label, cls) =>
+    `<div class="${cls || "c"}"><span class="n">${n}</span><span class="l">${esc(label)}</span></div>`;
+  const tot = CATEGORIE.map((c) => counter(t.cat[c], CAT_LABEL[c], "c tot")).join("");
+  const reti = RETI.map((k) => counter(t.rete[k], k === "GR" ? "GR 1,2,3" : k)).join("");
+  const extra = counter(t.trasferte, "Trasferte");
+  const head = COLS.map((c) => CHECK_COLS.includes(c) || c === "Trasferta" ? `<th class="k">${c}</th>` : `<th>${c}</th>`).join("");
+  const titleWeek = `Settimana ${w.week} (${fmtRange(days[0], days[6])})`;
+  const g = new Date(generated + "T00:00:00Z");
+  const gen = `${g.getUTCDate()} ${MESI[g.getUTCMonth()]} ${g.getUTCFullYear()}`;
+
+  return `<header class="doc">
+  <div class="ente">RAI – Sede di corrispondenza di New York</div>
+  <h1>Collaudo settimanale</h1>
+  <div class="sett">${esc(titleWeek)}</div>
+</header>
+<section class="counters" aria-label="Riepilogo">
+  <div class="grp">${tot}</div>
+  <div class="grp">${reti}</div>
+  <div class="grp">${extra}</div>
+</section>
+<div class="table-wrap">
+<table>
+<thead><tr>${head}</tr></thead>
+<tbody>
+${body.join("\n")}
+</tbody>
+</table>
+</div>
+<footer class="doc">
+  <div class="gen">Generato il ${gen} dal sistema RAI NYC Servizi · fonte: database · ${rows.length} registrazioni · ${esc(formatWeek(w))}</div>
+  <div class="firma">Firma del responsabile ______________________________</div>
+</footer>`;
+}
+
+// ---- end lib/collaudo.js ----
+(function () {
+  "use strict";
+  var $ = function (id) { return document.getElementById(id); };
+  var current = null;
+  $("lnk-form").href = PAGE_FORM;
+
+  function setMsg(text, isErr) { var m = $("msg"); m.textContent = text; m.className = isErr ? "err" : "msg"; }
+
+  function load(w) {
+    current = w;
+    $("week").value = formatWeek(w);
+    try { history.replaceState(null, "", location.pathname + "?week=" + formatWeek(w)); } catch (e) { /* ignore */ }
+    setMsg("Caricamento…");
+    document.title = "Collaudo " + formatWeek(w) + " · RAI NYC Servizi";
+    return api("/api/collaudo?week=" + formatWeek(w)).then(function (r) {
+      if (r.status !== 200) { setMsg((r.body && r.body.error) || "Errore.", true); return; }
+      $("doc").innerHTML = renderCollaudo(w, r.body.rows, todayNewYork());
+      setMsg(r.body.rows.length + " registrazioni");
+    }, function (e) {
+      if (e.kind === "auth") { authLost(); return; }
+      setMsg(e.message, true);
+    });
+  }
+
+  $("tools").addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    var w = parseWeek($("week").value);
+    if (!w) { setMsg("Settimana non valida: usare la forma 2026-W41.", true); return; }
+    load(w);
+  });
+  $("prev").addEventListener("click", function () { if (current) load(shiftWeek(current, -1)); });
+  $("next").addEventListener("click", function () { if (current) load(shiftWeek(current, 1)); });
+  $("print").addEventListener("click", function () { window.print(); });
+
+  requireLogin(function () {
+    $("tools").hidden = false;
+    var w = parseWeek(new URLSearchParams(location.search).get("week") || "") || isoWeekOf(todayNewYork());
+    load(w);
+  });
+})();
+</script>
+</body>
+</html>
