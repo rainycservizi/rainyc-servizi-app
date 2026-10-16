@@ -1,0 +1,825 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>RAI NYC Servizi · Gestione</title>
+<script>(function () { var t = null; try { t = localStorage.getItem("rainyc.tema"); } catch (e) { /* blocked */ } if (t !== "light" && t !== "dark") { try { t = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"; } catch (e) { t = "light"; } } document.documentElement.setAttribute("data-theme", t); })();</script>
+<style>
+/* Same tokens as form.html / collaudo.html (Crop Studio language). The page scrolls: it is a dashboard, not a form. */
+:root {
+  --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --mono: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, monospace;
+  --bg:#f3f1ed; --panel:#ffffff; --raise:#f7f5f2; --input:#ffffff; --hover:#efece7; --line:#e0dcd5; --line2:#c9c3b9;
+  --fg:#1b1a1c; --dim:#666159; --accent:#e85d04; --accent-ink:#140a03; --accent-text:#b04400; --accent-soft:#fdeee3;
+  --ok:#1d6b3a; --ok-bg:#e5f2e9; --warn:#8a5a00; --warn-bg:#fcf1d8; --bad:#b3261e; --bad-bg:#fbe8e5;
+  --focus:#c24e00; --shadow:0 1px 2px rgba(40,30,20,.06), 0 4px 14px rgba(40,30,20,.05); --pop:0 10px 30px rgba(30,20,10,.18);
+  --zebra:#faf8f5;
+}
+:root[data-theme=dark] {
+  --bg:#111012; --panel:#171619; --raise:#1e1d21; --input:#0d0c0f; --hover:#232227; --line:#2a292e; --line2:#3a3940;
+  --fg:#f0eeea; --dim:#9a958e; --accent:#e85d04; --accent-ink:#140a03; --accent-text:#ff8a3d; --accent-soft:#2a1a10;
+  --ok:#6fd39b; --ok-bg:#12241a; --warn:#e9b44c; --warn-bg:#2a2210; --bad:#ff7b66; --bad-bg:#2c1613;
+  --focus:#ff8a3d; --shadow:0 1px 0 rgba(0,0,0,.35); --pop:0 14px 40px rgba(0,0,0,.6);
+  --zebra:#1b1a1e;
+}
+:root { color-scheme:light; } :root[data-theme=dark] { color-scheme:dark; }
+* { box-sizing:border-box; }
+html, body { margin:0; background:var(--bg); color:var(--fg); }
+body { font:14px/1.45 var(--sans); -webkit-font-smoothing:antialiased; }
+[hidden] { display:none !important; }
+a { color:inherit; }
+:focus-visible { outline:2px solid var(--focus); outline-offset:2px; }
+.appbar { position:sticky; top:0; z-index:20; height:52px; display:flex; align-items:center; gap:16px; padding:0 16px; background:var(--panel); border-bottom:1px solid var(--line); }
+.brand { display:flex; align-items:baseline; gap:10px; min-width:0; overflow:hidden; }
+.brand .mk { font:700 11px/1 var(--mono); letter-spacing:.16em; text-transform:uppercase; color:var(--accent-text); }
+.brand .nm { font-weight:650; font-size:15px; white-space:nowrap; }
+.brand .pg { font:600 11px/1 var(--mono); letter-spacing:.12em; text-transform:uppercase; color:var(--dim); }
+.hright { margin-left:auto; display:flex; align-items:center; gap:6px; }
+.hlink { display:inline-flex; align-items:center; height:36px; padding:0 12px; border-radius:6px; font-size:14px; color:var(--dim); text-decoration:none; white-space:nowrap; }
+.hlink:hover { color:var(--fg); background:var(--hover); }
+.hlink.go { color:var(--fg); border:1px solid var(--line2); }
+.hlink.go:hover { border-color:var(--accent); color:var(--accent-text); background:transparent; }
+.icbtn { width:36px; height:36px; display:inline-grid; place-items:center; border:1px solid var(--line2); border-radius:6px; background:transparent; color:var(--fg); cursor:pointer; padding:0; }
+.icbtn:hover { border-color:var(--accent); color:var(--accent-text); }
+.icbtn svg { width:18px; height:18px; }
+:root[data-theme=dark] .ic-moon, :root:not([data-theme=dark]) .ic-sun { display:none; }
+
+.page { padding:16px; display:grid; gap:14px; grid-template-columns:repeat(auto-fit, minmax(min(100%, 420px), 1fr)); align-items:start; }
+.panel { background:var(--panel); border:1px solid var(--line); border-radius:8px; box-shadow:var(--shadow); padding:14px 16px 16px; min-width:0; }
+.panel.wide { grid-column:1 / -1; }
+.ph { font:600 11px/1 var(--mono); letter-spacing:.13em; text-transform:uppercase; color:var(--dim); margin:0 0 12px; display:flex; align-items:center; gap:8px; }
+.ph .n { color:var(--accent-text); }
+.ph .aside { margin-left:auto; letter-spacing:.04em; text-transform:none; font-family:var(--sans); font-weight:500; font-size:12px; color:var(--dim); }
+.state { padding:32px 20px; text-align:center; color:var(--dim); font-size:15px; }
+.state.ko { color:var(--bad); font-weight:600; }
+#login { max-width:400px; margin:9vh auto 0; grid-column:1 / -1; font-size:15px; }
+#login .lead { margin:0 0 16px; color:var(--dim); font-size:14px; }
+#login label, .fld label { display:block; font-weight:600; font-size:13px; margin:0 0 6px; }
+#login .hint { font-weight:400; color:var(--dim); font-size:12px; }
+input[type=text], input[type=password], input[type=email], select { width:100%; height:40px; font:inherit; font-size:15px; padding:0 10px; border:1px solid var(--line2); border-radius:6px; background:var(--input); color:var(--fg); }
+#login input { margin:0 0 12px; height:44px; font-size:16px; }
+input:focus-visible, select:focus-visible { outline:none; border-color:var(--focus); box-shadow:0 0 0 3px color-mix(in srgb, var(--focus) 28%, transparent); }
+.btn { height:36px; padding:0 12px; font:inherit; font-size:14px; font-weight:600; border-radius:6px; border:1px solid var(--line2); background:var(--raise); color:var(--fg); cursor:pointer; white-space:nowrap; display:inline-flex; align-items:center; gap:6px; text-decoration:none; }
+.btn:hover { border-color:var(--dim); }
+.btn:disabled { opacity:.45; cursor:default; }
+.btn.pri { background:var(--accent); border-color:var(--accent); color:var(--accent-ink); font-weight:700; }
+.btn.sm { height:30px; padding:0 9px; font-size:13px; }
+.btn.bad { color:var(--bad); border-color:color-mix(in srgb, var(--bad) 50%, transparent); background:transparent; }
+#login button { width:100%; height:48px; justify-content:center; font-size:15px; }
+.err { color:var(--bad); font-weight:600; font-size:13px; margin-top:8px; }
+.err:empty { display:none; }
+.msg { color:var(--ok); font-weight:600; font-size:13px; margin-top:8px; }
+.msg:empty { display:none; }
+
+/* status tiles */
+.tiles { display:grid; grid-template-columns:repeat(auto-fill, minmax(120px, 1fr)); gap:8px; }
+.tile { background:var(--raise); border:1px solid var(--line); border-radius:6px; padding:10px 10px 8px; min-width:0; }
+.tile .v { font:700 22px/1.1 var(--mono); font-variant-numeric:tabular-nums; display:block; color:var(--fg); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.tile .v.ok { color:var(--ok); } .tile .v.ko { color:var(--bad); } .tile .v.acc { color:var(--accent-text); }
+.tile .l { font-size:11.5px; color:var(--dim); margin-top:4px; display:block; }
+.kv { margin:12px 0 0; display:grid; grid-template-columns:auto minmax(0,1fr); gap:5px 14px; font-size:13px; }
+.kv dt { color:var(--dim); white-space:nowrap; } .kv dd { margin:0; min-width:0; overflow-wrap:anywhere; }
+code, .mono { font:600 12px/1.4 var(--mono); }
+.links { list-style:none; margin:0; padding:0; display:grid; gap:6px; }
+.links li { display:flex; gap:10px; align-items:baseline; font-size:14px; min-width:0; }
+.links a { color:var(--accent-text); font-weight:600; text-decoration:none; white-space:nowrap; }
+.links a:hover { text-decoration:underline; }
+.links span { color:var(--dim); font-size:13px; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+pre.state-md { margin:0; max-height:420px; overflow:auto; font:12.5px/1.5 var(--mono); white-space:pre-wrap; overflow-wrap:anywhere; background:var(--raise); border:1px solid var(--line); border-radius:6px; padding:10px 12px; color:var(--fg); }
+
+/* tables */
+table { width:100%; border-collapse:collapse; font-size:13.5px; }
+th { text-align:left; font:600 10.5px/1.2 var(--mono); text-transform:uppercase; letter-spacing:.06em; color:var(--dim); padding:6px 8px; border-bottom:1.5px solid var(--line2); white-space:nowrap; }
+td { padding:6px 8px; border-bottom:1px solid var(--line); vertical-align:middle; }
+tbody tr:nth-child(even) td { background:var(--zebra); }
+td.r, th.r { text-align:right; white-space:nowrap; }
+td.dim { color:var(--dim); } tr.off td { color:var(--dim); } tr.off td:first-child { text-decoration:line-through; text-decoration-color:var(--line2); }
+.pill { font:700 10px/1 var(--mono); letter-spacing:.06em; text-transform:uppercase; padding:4px 6px; border-radius:4px; white-space:nowrap; }
+.pill.on { color:var(--ok); background:var(--ok-bg); } .pill.off { color:var(--dim); background:var(--raise); border:1px solid var(--line2); }
+.tabs { display:flex; gap:4px; margin:0 0 10px; flex-wrap:wrap; }
+.tabs button { all:unset; cursor:pointer; padding:7px 11px; border-radius:6px; font-size:13px; font-weight:600; color:var(--dim); border:1px solid transparent; }
+.tabs button[aria-selected=true] { color:var(--accent-text); background:var(--accent-soft); border-color:color-mix(in srgb, var(--accent) 30%, transparent); }
+.tabs button:focus-visible { outline:2px solid var(--focus); }
+.addrow { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:8px; margin:10px 0 0; align-items:end; }
+.addrow.three { grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto; }
+.addrow .fld { margin:0; min-width:0; }
+.scroll { max-height:380px; overflow:auto; border:1px solid var(--line); border-radius:6px; }
+.scroll table th { position:sticky; top:0; background:var(--panel); z-index:1; }
+.inline-pw { display:flex; gap:6px; align-items:center; }
+.inline-pw input { width:11em; height:30px; font-size:13px; }
+.aud td { font-size:12.5px; } .aud td.t { white-space:nowrap; color:var(--dim); font-family:var(--mono); font-size:11.5px; }
+.aud .pl { font:11px/1.4 var(--mono); color:var(--dim); max-width:48em; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; display:block; }
+@media (max-width:760px) { .page { padding:10px; gap:10px; } .brand .pg, .brand .mk { display:none; } .hlink { padding:0 8px; font-size:13px; } .tile .v { font-size:18px; } }
+@media (prefers-reduced-motion:reduce) { * { transition:none !important; } }
+</style>
+</head>
+<body data-gestione>
+<header class="appbar">
+  <div class="brand"><span class="mk">Rai · NY</span><span class="nm">RAI NYC Servizi</span><span class="pg">Gestione</span></div>
+  <nav class="hright" id="hright" aria-label="Pagine">
+    <button type="button" class="icbtn" id="theme" aria-label="Cambia tema" title="Cambia tema">
+      <svg class="ic-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+      <svg class="ic-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.2M12 19.8V22M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M2 12h2.2M19.8 12H22M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6"/></svg>
+    </button>
+    <a class="hlink go" href="." id="lnk-form">Registrazione</a>
+    <a class="hlink go" href="collaudo" id="lnk-collaudo">Collaudo</a>
+  </nav>
+</header>
+<div class="page">
+  <form id="login" class="panel" hidden autocomplete="on">
+    <h1 class="ph">Accesso · gestione</h1>
+    <p class="lead">Accedere con il proprio cognome e la password.</p>
+    <label for="login-email">Nome <span class="hint">(cognome come in elenco, es. Arzilla)</span></label><input type="text" id="login-email" name="username" required autocomplete="username" autocapitalize="none">
+    <label for="login-password">Password</label><input type="password" id="login-password" name="password" required autocomplete="current-password">
+    <button type="submit" class="btn pri">Accedi</button>
+    <div class="err" id="login-err" role="alert"></div>
+  </form>
+  <div class="panel wide state" id="boot" hidden role="status" aria-live="polite"></div>
+
+  <section class="panel" id="p-stato" hidden aria-labelledby="h-stato">
+    <h2 class="ph" id="h-stato"><span class="n">01</span> Stato <span class="aside" id="stato-at"></span></h2>
+    <div class="tiles" id="tiles"></div>
+    <dl class="kv" id="stato-kv"></dl>
+  </section>
+
+  <section class="panel" id="p-link" hidden aria-labelledby="h-link">
+    <h2 class="ph" id="h-link"><span class="n">02</span> Collegamenti</h2>
+    <ul class="links" id="links"></ul>
+    <dl class="kv" id="mail-kv"></dl>
+  </section>
+
+  <section class="panel" id="p-accessi" hidden aria-labelledby="h-accessi">
+    <h2 class="ph" id="h-accessi"><span class="n">03</span> Accessi <span class="aside">password: solo caruso e l'agente</span></h2>
+    <div class="scroll"><table id="t-logins"><thead><tr><th>Accesso</th><th>Ultimo accesso</th><th class="r">Nuova password</th></tr></thead><tbody></tbody></table></div>
+    <form class="addrow three" id="f-login" autocomplete="off">
+      <div class="fld"><label for="nl-email">Nuovo accesso</label><input type="text" id="nl-email" placeholder="cognome@rainyc.nyc" autocapitalize="none"></div>
+      <div class="fld"><label for="nl-pass">Password <span class="hint">(5–72)</span></label><input type="text" id="nl-pass" autocomplete="off"></div>
+      <button type="submit" class="btn">Crea</button>
+    </form>
+    <div class="err" id="accessi-err" role="alert"></div><div class="msg" id="accessi-msg" role="status"></div>
+  </section>
+
+  <section class="panel" id="p-elenchi" hidden aria-labelledby="h-elenchi">
+    <h2 class="ph" id="h-elenchi"><span class="n">04</span> Elenchi <span class="aside">mai cancellati: si ritirano</span></h2>
+    <div class="tabs" role="tablist" id="tabs">
+      <button type="button" role="tab" aria-selected="true" data-tab="journalists">Giornalisti</button>
+      <button type="button" role="tab" aria-selected="false" data-tab="operators">Operatori</button>
+      <button type="button" role="tab" aria-selected="false" data-tab="rete">Reti</button>
+      <button type="button" role="tab" aria-selected="false" data-tab="mezzo">Mezzi</button>
+      <button type="button" role="tab" aria-selected="false" data-tab="richiedente">Richiedenti</button>
+    </div>
+    <div class="scroll"><table id="t-list"><thead><tr><th>Nome</th><th id="th-extra" hidden>Utente Windows</th><th>Stato</th><th class="r"></th></tr></thead><tbody></tbody></table></div>
+    <form class="addrow" id="f-list" autocomplete="off">
+      <div class="fld"><label for="nl-name" id="nl-name-l">Nuovo giornalista</label><input type="text" id="nl-name"></div>
+      <button type="submit" class="btn">Aggiungi</button>
+    </form>
+    <div class="err" id="elenchi-err" role="alert"></div><div class="msg" id="elenchi-msg" role="status"></div>
+  </section>
+
+  <section class="panel wide" id="p-registro" hidden aria-labelledby="h-registro">
+    <h2 class="ph" id="h-registro"><span class="n">05</span> Registro <span class="aside" id="registro-n"></span></h2>
+    <div class="scroll"><table class="aud" id="t-audit"><thead><tr><th>Quando (NY)</th><th>Chi</th><th>Azione</th><th>Cosa</th><th>Dettaglio</th></tr></thead><tbody></tbody></table></div>
+  </section>
+
+  <section class="panel wide" id="p-progetto" hidden aria-labelledby="h-progetto">
+    <h2 class="ph" id="h-progetto"><span class="n">06</span> Progetto <span class="aside">STATE.md del repository, com'era alla costruzione di questa pagina</span></h2>
+    <pre class="state-md" id="state-md">&lt;!-- GENERATED by ~/work/bin/sync-state.py from the vault STATE.md. Do not edit here. --&gt;
+# RAI NYC Servizi — STATE (repo copy)
+
+&gt; **Short read-only copy for agents with no vault access (cloud agents).**
+&gt; Source of truth: `~/vault/10 Work/12 KIMA Creative/12.01 Active Clients/gvg-global-vision-group/rai-nyc-servizi/STATE.md` (on the Mac). Vault STATE updated: 2026-10-16T16:55-04:00 by Claude Code (Fable 5.1) on MacBook.
+&gt; Cloud agents: read this; do not edit it. At END, put your end state (done / next / blockers) in the PR description.
+&gt; The next Mac session merges it into the vault STATE.md, then refreshes this copy.
+
+## Purpose
+Marco's day job at RAI NY (GVG): a startup popup on the Avid edit machines NYC-EDIT-MC01/02/03 (C#, .NET 8, WPF) where editors log each tappeto or servizio. Supabase is the truth; the Google Sheet "2026 Report Rai NYC, Servizi Giornalistici" is a reporting mirror. The collaudo forms go to Rome for overtime and travel. Host `supervisor` (Linux Mint, user `rainyc`, Tailscale only). Owner account for everything: `rainyc.servizi@gmail.com`.
+
+## Current goal
+**2026-10-16 (16:55):** Marco is testing for approval (live entries from edit 3 arrive as caruso@rainyc.nyc); workbook to be retired soon (conflicts ok, no mirroring needed). Live now (commit dc922bb, function deployed 16:43 ET, pages rsync'd to supervisor 16:45; GitHub Pages NOT yet pushed — needs Marco's OK): (1) **Trasferta is a state of the session** — panel 05 "Imposta trasferta…" sets giornalista/destinazione/dal/al once (saved in the browser, `rainyc.trasferta`), every entry of THAT journalist goes out with trasferta SI + details until "Rimuovi trasferta" or the "al" date passes; the panel shows "Questa registrazione: SI / NO (altro giornalista)" live; rule: never other people's rows (legacy data agrees), ALL of the traveller's entries while set (Marco's words; legacy marked only part of the traveller's rows on 13/13 trasferta days — confirm or correct). (2) **Fits 1920×930**: measured worst state (trasferta set + status + last + error) ends at 861 px; a compact tier kicks in under 900 px of height (keys legend hidden); the integration test asserts no page scroll at 1920×930. Collaudo at 1920 and 1366 wide: no horizontal scroll (table 1454/1288 px inside the wrap). (3) **Collaudo**: ONE click edits a cell; the ✎ pencil and a click on the trasferta cell open the trasferta editor (now position:fixed, clamped inside the viewport). (4) **E-mail**: "Invia per e-mail" opens a dialog — suggested addresses (secret COLLAUDO_TO, ticked) + "aggiungi un indirizzo" (kept per browser) + "Invia a N"; `GET /api/email-recipients {allowed, suggested}`, `POST /api/email-collaudo {week, to[]}` (1..15 valid addresses, Italian errors). **Only erika, caruso, pippo may send** (Marco ruled 16:35; server-side list `SENDERS` in lib/mail.ts, override secret COLLAUDO_SENDERS; other accounts get 403 and no button). COLLAUDO_TO = caruso@kimacreative.com only (hash verified), COLLAUDO_FROM = rainyc.servizi@gmail.com, GMAIL_* secrets set, Gmail API enabled. **First real send not done**: it needs a logged-in erika/caruso/pippo session — Marco's click (collaudo → Invia per e-mail → tick his address → Invia). Data today: ballot applied (12 moved, 102 inserted), trasferta Washington D.C. 15–16/10 on Lo Prete's rows, operator Corti + login corti@rainyc.nyc, erika/pippo logins, Marco's 3 test rows voided, Oct 13 aligned to the sheet, 3 conflicts kept DB-side. Tests: 109/109 local integration, 31 deno. Known small gaps: print shows "SI" for trasferta (Rome's sheet does too); form `slotsFor('Tappeto')`; notes not editable in the collaudo; Supabase Auth itself still lets any user change their own password (page hides the link only). Reference found by a subagent: the GVG RAI bando pages (`~/Library/CloudStorage/GoogleDrive-m.caruso@freedomview.org/My Drive/40-02-gvg-rai-ny-master/gvg-rai-bando-workbook.html`) use measured sticky heights in CSS variables + inner scroll boxes, "one window, one scroll bar" — the collaudo already follows that; the form is a no-scroll grid.
+
+## Last 3 decisions
+1. 2026-10-16 16:35 — Marco: "only user erika, caruso and pippo can email. ruled."; the GVG RAI bando pages are a layout reference (looked at by a subagent). Agent: trasferta attaches by journalist match, all entries while set (legacy never marks other people's rows, but marked only part of the traveller's), one click edits a collaudo cell and the pencil opens the trasferta editor (Marco's words), function deployed and supervisor pages refreshed without a separate go (additive, Marco is testing), GitHub Pages push held for his OK. (Claude Code)
+2. 2026-10-16 16:00 — Marco: ballot ruled (117 ticks; rule 5: pieces typed on the air day must move to the sending day); e-mail = yes, recipients given; workbook will be retired, conflicts ok; prefer logos; Enter must select not send; wide panel layout, dark/light, responsive, Crop Studio look; collapsible collaudo days; trasferta editable; passwords changed only by caruso and the agent; Oct 16 group of the ballot dropped (being worked). Agent: Gmail API send from rainyc.servizi (needs Marco's click + Gmail API enabled); Ctrl+Enter is the keyboard submit. (Claude Code)
+3. 2026-10-16 15:00 — Marco: the workbook stays master until ~Monday and he updates both workbook and form "contemporaneously"; the database will never BE a sheet (Phase 7 = one-way mirror DB → read-only sheet); conflicts answered (De Marco ×2, Tg3 Sera, Contini); logos preferred over colours; new users erika/pippo (not operators); needed: future items, clear, undo, collaudo cell editing/delete/undo, print = Rome's columns only, e-mail from the collaudo, richiedente menu with "other/add". Agent: corrections = soft void + audited update RPCs; sheet sync content-based with CONFLICT rows never auto-overwritten (`--sheet-wins` explicit); migration applied + function deployed without a separate go because Marco is testing these features now and the change is additive (backup first). (Claude Code)
+
+## Next 3 actions
+1. Marco — (a) test on Windows/Chrome at the edit machine: Registrazione with a trasferta set, no scroll; collaudo one-click edit + pencil; (b) first e-mail test: collaudo → "Invia per e-mail" → tick caruso@kimacreative.com → Invia (logged in as caruso; others cannot); then say which addresses go into COLLAUDO_TO (Erika, Pippo, Marco?) — the agent sets the secret, no redeploy; (c) "go"/OK for the GitHub Pages push (publishes the new pages outside the office); (d) decide: trasferta "SI" vs ✓ in print; keep the Note field.
+2. Agent ("go") — after Marco's OK: push dist/ to `~/work/rai/rainyc-servizi-app` (OPERATIONS.md recipe); set COLLAUDO_TO to the chosen list; then Phase 7 mirror once the workbook is retired, cron on supervisor (sheet sync dry-run report + DB backup), Gemini UI review, small fixes (Tappeto richiedenti in slotsFor, notes editable in the collaudo, Supabase Auth password change restriction server-side), history rewrite of 280a9b1 only on explicit go.
+3. Agent — Claude Code Projects: candidate once the waitlist opens (intel 2026-10-09); repo-only rules are in CLAUDE.md, STATE.md stays the handoff; Marco should check Thread model/effort.
+
+## Blockers
+- Marco — Windows test of the new form/collaudo, first e-mail send (only erika/caruso/pippo can), GitHub Pages OK. Still pending: key-only SSH on supervisor, CLT update, WhatsApp images route, Durata required/optional.
+
+## Live warnings
+- **No credentials in this file, the repo or chat.** 1Password item names only. The plan text held the Linux password in clear; the repo copy is redacted, the Desktop original is not.
+- The Mac's `gh`, Supabase CLI and Supabase MCP connector are Marco's PERSONAL accounts (brooklyn70's org). The RAI project is invisible from them. Never push, link or migrate from them.
+- Never change the original workbook; work only from a copy. Supabase: never `db reset --linked`. Never commit `inputs/`, `.env`, keys.
+- The WPF client builds only on Windows (go-boxx or an edit machine). The Mac edits; Windows builds and tests.
+- Drive access: the Mac's Google connector is mac.caruso@gmail.com. Brave has the rainyc.servizi Google session in slot u/4 (`drive.google.com/drive/u/4/`), but share/upload clicks there are refused by the permission classifier. `gws` and `rclone` are not configured. Data files are on supervisor `~/rai-nyc-servizi-inputs/` and in the gitignored `inputs/`.
+- Backups are job-side: Google Drive (operational account), supervisor, private GitHub. `~/work` is mirrored nightly to kimaserver (personal NAS); `inputs/` rides along — Marco decides if that is acceptable.
+</pre>
+  </section>
+</div>
+<script>
+// ---- pages/shared.js ----
+// Shared browser code for form.html and collaudo.html. Inlined by scripts/build_pages.mjs.
+// Session: Supabase Auth password grant, kept in localStorage, refreshed before it expires.
+// All data goes through the function's /api routes with the bearer; auth goes to /auth/v1 on
+// the same origin (locally the CLI gateway, in production <ref>.supabase.co).
+
+var ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind5cnRoZndya2dkb2JsbHpzc2R2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIwMjI2MDIsImV4cCI6MjEwNzU5ODYwMn0.UE8hAaDlRY5pgsMs8hUMKE5bIVF_Jc5eP1Z2e954Kd4";
+// Served by the function itself: the placeholders are empty and everything is same-origin.
+// Built as static pages (scripts/build_pages.mjs --static): absolute URLs are filled in at build time.
+var APP_BASE = "https://wyrthfwrkgdobllzssdv.supabase.co/functions/v1/servizi" || (function () {
+  var p = location.pathname.replace(/\/+$/, "");
+  var i = p.indexOf("/servizi");
+  return i >= 0 ? p.slice(0, i + "/servizi".length) : p;
+})();
+var AUTH_URL = ("https://wyrthfwrkgdobllzssdv.supabase.co" || location.origin) + "/auth/v1";
+var PAGE_FORM = "./" || APP_BASE;
+var PAGE_COLLAUDO = "./collaudo.html" || APP_BASE + "/collaudo";
+var PAGE_GESTIONE = "./gestione.html" || APP_BASE + "/gestione";
+
+function ApiError(kind, message) { this.kind = kind; this.message = message; }
+ApiError.prototype = Object.create(Error.prototype);
+
+var Session = {
+  KEY: "rainyc.sessione",
+  get: function () { try { return JSON.parse(localStorage.getItem(this.KEY) || "null"); } catch (e) { return null; } },
+  set: function (s) { try { localStorage.setItem(this.KEY, JSON.stringify(s)); } catch (e) { /* storage blocked */ } },
+  clear: function () { try { localStorage.removeItem(this.KEY); } catch (e) { /* ignore */ } }
+};
+
+function storeSession(data) {
+  Session.set({
+    access_token: data.access_token,
+    refresh_token: data.refresh_token,
+    expires_at: data.expires_at || (Math.floor(Date.now() / 1000) + (data.expires_in || 3600)),
+    email: data.user && data.user.email
+  });
+}
+
+var LOGIN_DOMAIN = "rainyc.nyc";
+/** "De Marco" / "de marco" / "de.marco@rainyc.nyc" -> "de.marco@rainyc.nyc". Operators log in with their name. */
+function loginEmail(name) {
+  var s = (name || "").trim().toLowerCase();
+  if (s.indexOf("@") >= 0) return s;
+  return s.replace(/\s+/g, ".") + "@" + LOGIN_DOMAIN;
+}
+/** @returns {Promise<{ok:boolean, error?:string}>} */
+function login(name, password) {
+  var email = loginEmail(name);
+  return fetch(AUTH_URL + "/token?grant_type=password", {
+    method: "POST",
+    headers: { apikey: ANON_KEY, "Content-Type": "application/json" },
+    body: JSON.stringify({ email: email, password: password })
+  }).then(function (r) {
+    return r.json().catch(function () { return {}; }).then(function (b) {
+      if (r.ok && b.access_token) { storeSession(b); return { ok: true }; }
+      if (r.status === 400 || r.status === 401) return { ok: false, error: "Nome o password non corretti." };
+      return { ok: false, error: "Accesso non riuscito (" + r.status + "). Riprovare." };
+    });
+  }, function () { return { ok: false, error: "Rete non raggiungibile." }; });
+}
+
+var refreshing = null;
+/** @returns {Promise<boolean>} */
+function refreshSession() {
+  if (refreshing) return refreshing;
+  var s = Session.get();
+  if (!s || !s.refresh_token) return Promise.resolve(false);
+  refreshing = fetch(AUTH_URL + "/token?grant_type=refresh_token", {
+    method: "POST",
+    headers: { apikey: ANON_KEY, "Content-Type": "application/json" },
+    body: JSON.stringify({ refresh_token: s.refresh_token })
+  }).then(function (r) {
+    return r.json().catch(function () { return {}; }).then(function (b) {
+      if (r.ok && b.access_token) { storeSession(b); return true; }
+      if (r.status >= 400 && r.status < 500) Session.clear();
+      return false;
+    });
+  }, function () { return false; }).then(function (ok) { refreshing = null; return ok; });
+  return refreshing;
+}
+
+function logout() { Session.clear(); }
+
+/**
+ * Call the function API. Resolves {status, body}; rejects with ApiError kind
+ * "auth" (log in again) or "network" (retry later). 4xx answers resolve normally.
+ */
+function api(path, init, retried) {
+  var s = Session.get();
+  if (!s) return Promise.reject(new ApiError("auth", "Accesso richiesto."));
+  var soon = (s.expires_at || 0) * 1000 - Date.now() < 60000;
+  var ready = soon ? refreshSession().then(function (ok) { if (!ok) throw new ApiError("auth", "Sessione scaduta: accedere di nuovo."); }) : Promise.resolve();
+  return ready.then(function () {
+    var cur = Session.get();
+    if (!cur) throw new ApiError("auth", "Accesso richiesto.");
+    var opts = Object.assign({}, init || {});
+    opts.headers = Object.assign({ Authorization: "Bearer " + cur.access_token, "Content-Type": "application/json" }, (init && init.headers) || {});
+    return fetch(APP_BASE + path, opts).then(null, function () { throw new ApiError("network", "Rete non raggiungibile."); });
+  }).then(function (r) {
+    if (r.status === 401 && !retried) {
+      return refreshSession().then(function (ok) {
+        if (ok) return api(path, init, true);
+        throw new ApiError("auth", "Sessione scaduta: accedere di nuovo.");
+      });
+    }
+    return r.text().then(function (t) {
+      var body = null;
+      try { body = t ? JSON.parse(t) : null; } catch (e) { body = null; }
+      if (r.status === 401) throw new ApiError("auth", "Sessione scaduta: accedere di nuovo.");
+      if (r.status >= 500 || r.status === 429) throw new ApiError("network", (body && body.error) || "Servizio non disponibile.");
+      return { status: r.status, body: body };
+    });
+  });
+}
+
+/** Wire a login panel: elements #login, #login-email, #login-password, #login-err. Calls onReady() when signed in. */
+function requireLogin(onReady) {
+  var panel = document.getElementById("login");
+  var email = document.getElementById("login-email");
+  var pass = document.getElementById("login-password");
+  var err = document.getElementById("login-err");
+  function show() {
+    panel.hidden = false;
+    try { email.value = localStorage.getItem("rainyc.email") || ""; } catch (e) { /* ignore */ }
+    (email.value ? pass : email).focus();
+  }
+  function done() { panel.hidden = true; onReady(); }
+  panel.addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    err.textContent = "";
+    var b = panel.querySelector("button");
+    b.disabled = true;
+    login(email.value.trim(), pass.value).then(function (res) {
+      b.disabled = false;
+      if (!res.ok) { err.textContent = res.error; pass.focus(); pass.select(); return; }
+      try { localStorage.setItem("rainyc.email", email.value.trim()); } catch (e) { /* ignore */ }
+      pass.value = "";
+      done();
+    });
+  });
+  if (Session.get()) done(); else show();
+  // Any later auth failure brings the panel back.
+  document.addEventListener("rainyc:auth-lost", function () { if (panel.hidden) show(); });
+}
+
+function authLost() { Session.clear(); document.dispatchEvent(new Event("rainyc:auth-lost")); }
+
+/** "Esci" in the header `slot`: clears the session and shows the login again (the queue stays in this browser). */
+function mountLogout(slot) {
+  var old = document.getElementById("lnk-esci");
+  if (old) old.parentNode.removeChild(old);
+  if (!slot || !Session.get()) return;
+  var a = document.createElement("a");
+  a.href = "#"; a.id = "lnk-esci"; a.className = "hlink"; a.textContent = "Esci";
+  var s = Session.get(); if (s && s.email) a.title = "Esci (" + String(s.email).split("@")[0] + ")";
+  a.addEventListener("click", function (ev) { ev.preventDefault(); logout(); mountPassword(null); mountLogout(null); document.dispatchEvent(new Event("rainyc:auth-lost")); });
+  slot.insertBefore(a, slot.firstChild);
+}
+
+/**
+ * Change the signed-in user's password (Supabase Auth: PUT /auth/v1/user with the access token).
+ * @returns {Promise<{ok:boolean, error?:string}>} error is Italian, ready to show.
+ */
+function changePassword(newPassword, retried) {
+  var s = Session.get();
+  if (!s) return Promise.resolve({ ok: false, error: "Sessione scaduta: accedere di nuovo." });
+  var soon = (s.expires_at || 0) * 1000 - Date.now() < 60000;
+  var ready = soon ? refreshSession() : Promise.resolve(true);
+  return ready.then(function (ok) {
+    var cur = Session.get();
+    if (!ok || !cur) return { ok: false, error: "Sessione scaduta: accedere di nuovo." };
+    return fetch(AUTH_URL + "/user", {
+      method: "PUT",
+      headers: { apikey: ANON_KEY, Authorization: "Bearer " + cur.access_token, "Content-Type": "application/json" },
+      body: JSON.stringify({ password: newPassword })
+    }).then(function (r) {
+      return r.json().catch(function () { return {}; }).then(function (b) {
+        if (r.ok) return { ok: true };
+        if (r.status === 401 && !retried) return refreshSession().then(function (ok2) { return ok2 ? changePassword(newPassword, true) : { ok: false, error: "Sessione scaduta: accedere di nuovo." }; });
+        var code = b.error_code || b.code || "";
+        if (code === "same_password") return { ok: false, error: "La nuova password deve essere diversa da quella attuale." };
+        if (code === "weak_password") return { ok: false, error: "Password troppo debole: sceglierne una piu lunga o meno comune." };
+        if (r.status === 401 || r.status === 403) return { ok: false, error: "Sessione scaduta: accedere di nuovo." };
+        if (r.status === 429) return { ok: false, error: "Troppi tentativi. Riprovare tra qualche minuto." };
+        return { ok: false, error: "Password non aggiornata (" + r.status + "). Riprovare." };
+      });
+    }, function () { return { ok: false, error: "Rete non raggiungibile." }; });
+  });
+}
+
+// ---- theme (light / dark), shared by both pages ----
+// The <head> of each page sets data-theme before first paint (same rule as themeNow below);
+// this wires the header button. Saved choice in localStorage "rainyc.tema"; none saved = follow the OS.
+var THEME_KEY = "rainyc.tema";
+function themeSaved() { try { var t = localStorage.getItem(THEME_KEY); return t === "light" || t === "dark" ? t : null; } catch (e) { return null; } }
+function themeOs() { try { return window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"; } catch (e) { return "light"; } }
+function themeNow() { return themeSaved() || themeOs(); }
+function applyTheme(t, btn) {
+  document.documentElement.setAttribute("data-theme", t);
+  if (btn) {
+    var label = t === "dark" ? "Passa al tema chiaro" : "Passa al tema scuro";
+    btn.setAttribute("aria-label", label); btn.title = label;
+    btn.setAttribute("aria-pressed", t === "dark" ? "true" : "false");
+  }
+}
+/** Wire the theme toggle button (id). */
+function initTheme(id) {
+  var btn = document.getElementById(id);
+  applyTheme(themeNow(), btn);
+  if (btn) btn.addEventListener("click", function () {
+    var t = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
+    try { localStorage.setItem(THEME_KEY, t); } catch (e) { /* storage blocked: this page only */ }
+    applyTheme(t, btn);
+  });
+  try {
+    var mq = window.matchMedia("(prefers-color-scheme: dark)");
+    var follow = function () { if (!themeSaved()) applyTheme(themeOs(), btn); };
+    if (mq.addEventListener) mq.addEventListener("change", follow); else if (mq.addListener) mq.addListener(follow);
+  } catch (e) { /* old browser: no live follow */ }
+}
+
+// ---- change password: only the account that administers the system ----
+var PASSWORD_ADMIN = "caruso@rainyc.nyc";
+function canChangePassword() {
+  var s = Session.get();
+  return !!(s && s.email && String(s.email).toLowerCase() === PASSWORD_ADMIN);
+}
+/**
+ * Mount "Cambia password" for the admin account only: the link goes into `slot` (an element in
+ * the header), the panel drops below the header. For every other account nothing is created.
+ * Call after login; safe to call again (it removes what it made when the account changes).
+ */
+function mountPassword(slot) {
+  var old = document.getElementById("pwd-root");
+  if (old) old.parentNode.removeChild(old);
+  var oldLink = document.getElementById("lnk-pwd");
+  if (oldLink) oldLink.parentNode.removeChild(oldLink);
+  var oldG = document.getElementById("lnk-gestione");
+  if (oldG) oldG.parentNode.removeChild(oldG);
+  if (!slot || !canChangePassword()) return;
+  if (!document.body.hasAttribute("data-gestione")) {
+    var g = document.createElement("a");
+    g.href = PAGE_GESTIONE; g.id = "lnk-gestione"; g.className = "hlink"; g.textContent = "Gestione";
+    slot.insertBefore(g, slot.firstChild);
+  }
+  var a = document.createElement("a");
+  a.href = "#"; a.id = "lnk-pwd"; a.className = "hlink"; a.textContent = "Cambia password";
+  slot.insertBefore(a, slot.firstChild);
+  var root = document.createElement("div");
+  root.id = "pwd-root"; root.className = "pop-pwd"; root.hidden = true;
+  root.innerHTML =
+    '<form id="pwd" class="pwd" autocomplete="off" novalidate>' +
+    '<h2 class="ph">Cambia password</h2>' +
+    '<div class="fld"><label for="pwd-new">Nuova password <span class="hint">(almeno 5 caratteri)</span></label><input type="password" id="pwd-new" autocomplete="new-password"></div>' +
+    '<div class="fld"><label for="pwd-conf">Conferma</label><input type="password" id="pwd-conf" autocomplete="new-password"></div>' +
+    '<div class="row"><button type="submit" class="btn pri" id="pwd-save">Salva</button><button type="button" class="btn" id="pwd-close">Chiudi</button></div>' +
+    '<div class="pwd-msg" id="pwd-msg" role="alert"></div></form>';
+  document.body.appendChild(root);
+  var $p = function (id) { return document.getElementById(id); };
+  function close() { root.hidden = true; $p("pwd-new").value = ""; $p("pwd-conf").value = ""; $p("pwd-msg").textContent = ""; a.setAttribute("aria-expanded", "false"); }
+  a.setAttribute("aria-expanded", "false");
+  a.addEventListener("click", function (ev) {
+    ev.preventDefault();
+    if (root.hidden) { root.hidden = false; a.setAttribute("aria-expanded", "true"); $p("pwd-msg").textContent = ""; $p("pwd-new").focus(); } else close();
+  });
+  $p("pwd-close").addEventListener("click", close);
+  root.addEventListener("keydown", function (ev) { if (ev.key === "Escape") { ev.preventDefault(); ev.stopPropagation(); close(); a.focus(); } });
+  $p("pwd").addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    var msg = $p("pwd-msg"), pa = $p("pwd-new").value, pc = $p("pwd-conf").value;
+    function say(ok, t) { msg.className = "pwd-msg " + (ok ? "ok" : "ko"); msg.textContent = t; }
+    if (pa.length < 5) { say(false, "La password deve avere almeno 5 caratteri."); $p("pwd-new").focus(); return; }
+    if (pa !== pc) { say(false, "Le due password non coincidono."); $p("pwd-conf").focus(); return; }
+    var b = $p("pwd-save"); b.disabled = true; say(true, "Salvataggio…");
+    changePassword(pa).then(function (res) {
+      b.disabled = false;
+      if (res.ok) { $p("pwd-new").value = ""; $p("pwd-conf").value = ""; say(true, "Password aggiornata."); } else say(false, res.error);
+    });
+  });
+  document.addEventListener("rainyc:auth-lost", function () { mountPassword(null); });
+}
+
+// ---- end pages/shared.js ----
+// ---- lib/week.js ----
+// ISO week helpers. Plain JS so the same file runs in Deno (server) and, inlined by
+// scripts/build_pages.mjs, in the browser pages. Dates are "YYYY-MM-DD" strings; all
+// arithmetic is in UTC so the machine's time zone never shifts a day.
+
+const DAY = 86400000;
+
+/** @param {string} s @returns {number} ms since epoch at 00:00 UTC */
+function utcOf(s) {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s);
+  if (!m) throw new Error("data non valida: " + s);
+  return Date.UTC(+m[1], +m[2] - 1, +m[3]);
+}
+
+/** @param {number} ms @returns {string} */
+function isoDate(ms) {
+  return new Date(ms).toISOString().slice(0, 10);
+}
+
+/** Monday = 0 … Sunday = 6. @param {number} ms */
+function dow(ms) {
+  return (new Date(ms).getUTCDay() + 6) % 7;
+}
+
+/** Monday of ISO week 1 of `year`, ms UTC. Jan 4 is always in week 1. */
+function week1Monday(year) {
+  const jan4 = Date.UTC(year, 0, 4);
+  return jan4 - dow(jan4) * DAY;
+}
+
+/**
+ * ISO week of a date.
+ * @param {string} date "YYYY-MM-DD"
+ * @returns {{year:number, week:number}}
+ */
+function isoWeekOf(date) {
+  const d = utcOf(date);
+  const thursday = d + (3 - dow(d)) * DAY;
+  const year = new Date(thursday).getUTCFullYear();
+  const week = Math.floor((thursday - Date.UTC(year, 0, 1)) / DAY / 7) + 1;
+  return { year, week };
+}
+
+/** 52 or 53. @param {number} year */
+function weeksInYear(year) {
+  return isoWeekOf(year + "-12-28").week;
+}
+
+/**
+ * Parse "2026-W41" (also "2026-W5", "2026-w41").
+ * @param {string} text
+ * @returns {{year:number, week:number}|null} null when malformed or out of range
+ */
+function parseWeek(text) {
+  const m = /^\s*(\d{4})-[Ww](\d{1,2})\s*$/.exec(text || "");
+  if (!m) return null;
+  const year = +m[1];
+  const week = +m[2];
+  if (year < 2020 || year > 2100) return null;
+  if (week < 1 || week > weeksInYear(year)) return null;
+  return { year, week };
+}
+
+/** @param {{year:number, week:number}} w @returns {string} "2026-W41" */
+function formatWeek(w) {
+  return w.year + "-W" + String(w.week).padStart(2, "0");
+}
+
+/** The seven dates of an ISO week, Monday first. @param {{year:number, week:number}} w */
+function weekDays(w) {
+  const monday = week1Monday(w.year) + (w.week - 1) * 7 * DAY;
+  const out = [];
+  for (let i = 0; i < 7; i++) out.push(isoDate(monday + i * DAY));
+  return out;
+}
+
+/** @param {{year:number, week:number}} w @param {number} delta @returns {{year:number, week:number}} */
+function shiftWeek(w, delta) {
+  const monday = week1Monday(w.year) + (w.week - 1) * 7 * DAY;
+  return isoWeekOf(isoDate(monday + delta * 7 * DAY));
+}
+
+/** Today's date in New York as "YYYY-MM-DD". */
+function todayNewYork(now) {
+  const d = now || new Date();
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "America/New_York", year: "numeric", month: "2-digit", day: "2-digit",
+  }).formatToParts(d);
+  const get = (t) => parts.find((p) => p.type === t).value;
+  return get("year") + "-" + get("month") + "-" + get("day");
+}
+
+const MESI = ["gennaio", "febbraio", "marzo", "aprile", "maggio", "giugno", "luglio",
+  "agosto", "settembre", "ottobre", "novembre", "dicembre"];
+const GIORNI = ["Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato", "Domenica"];
+
+/** "Lunedì 5 ottobre 2026" @param {string} date */
+function fmtDay(date) {
+  const ms = utcOf(date);
+  const d = new Date(ms);
+  return GIORNI[dow(ms)] + " " + d.getUTCDate() + " " + MESI[d.getUTCMonth()] + " " + d.getUTCFullYear();
+}
+
+/** "5–11 ottobre 2026" / "28 settembre – 4 ottobre 2026" / across years. */
+function fmtRange(a, b) {
+  const da = new Date(utcOf(a)), db = new Date(utcOf(b));
+  const ya = da.getUTCFullYear(), yb = db.getUTCFullYear();
+  const ma = da.getUTCMonth(), mb = db.getUTCMonth();
+  if (ya !== yb) return da.getUTCDate() + " " + MESI[ma] + " " + ya + " – " + db.getUTCDate() + " " + MESI[mb] + " " + yb;
+  if (ma !== mb) return da.getUTCDate() + " " + MESI[ma] + " – " + db.getUTCDate() + " " + MESI[mb] + " " + yb;
+  return da.getUTCDate() + "–" + db.getUTCDate() + " " + MESI[ma] + " " + ya;
+}
+
+// ---- end lib/week.js ----
+(function () {
+  "use strict";
+  var $ = function (id) { return document.getElementById(id); };
+  var BUILD = "2026-10-16 21:16 UTC · 2a3471e";
+  $("lnk-form").href = PAGE_FORM; $("lnk-collaudo").href = PAGE_COLLAUDO;
+  initTheme("theme");
+  function boot(text, isErr) { var b = $("boot"); b.hidden = !text; b.textContent = text || ""; b.className = "panel wide state" + (isErr ? " ko" : ""); }
+  function show(on) { ["p-stato", "p-link", "p-accessi", "p-elenchi", "p-registro", "p-progetto"].forEach(function (id) { $(id).hidden = !on; }); }
+  function errText(r) { return (r.body && r.body.error) || "Operazione non riuscita (" + r.status + ")."; }
+  function fmtTs(iso) {
+    if (!iso) return "–";
+    try { return new Date(iso).toLocaleString("it-IT", { timeZone: "America/New_York", day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" }); } catch (e) { return iso; }
+  }
+  function post(path, body) {
+    return api(path, { method: "POST", body: JSON.stringify(body) }).then(null, function (e) {
+      if (e.kind === "auth") { authLost(); return null; }
+      return { status: 0, body: { error: e.message } };
+    });
+  }
+  function tile(v, l, cls) { var d = document.createElement("div"); d.className = "tile"; var s = document.createElement("span"); s.className = "v" + (cls ? " " + cls : ""); s.textContent = v; var t = document.createElement("span"); t.className = "l"; t.textContent = l; d.appendChild(s); d.appendChild(t); return d; }
+  function kv(dl, pairs) { dl.textContent = ""; pairs.forEach(function (p) { var dt = document.createElement("dt"); dt.textContent = p[0]; var dd = document.createElement("dd"); if (p[1] && p[1].nodeType) dd.appendChild(p[1]); else dd.textContent = p[1]; dl.appendChild(dt); dl.appendChild(dd); }); }
+
+  // ---- 01 stato ----
+  function loadStats() {
+    var tiles = $("tiles"); tiles.textContent = "";
+    return Promise.all([
+      fetch(APP_BASE + "/health").then(function (r) { return r.json().then(function (b) { return { ok: r.ok && b.ok === true, at: b.at }; }); }, function () { return { ok: false }; }),
+      api("/api/admin/stats"),
+    ]).then(function (res) {
+      var h = res[0], r = res[1];
+      if (r.status !== 200) return r;
+      var s = r.body;
+      tiles.appendChild(tile(h.ok ? "OK" : "KO", "API", h.ok ? "ok" : "ko"));
+      tiles.appendChild(tile(String(s.rows_week), "Registrazioni " + s.week, "acc"));
+      tiles.appendChild(tile(String(s.rows_today), "Oggi " + s.today.slice(8, 10) + "/" + s.today.slice(5, 7)));
+      tiles.appendChild(tile(String(s.rows_total), "Totale valide"));
+      tiles.appendChild(tile(String(s.rows_voided), "Annullate"));
+      tiles.appendChild(tile(String(s.rows_legacy), "Dal foglio 2026"));
+      tiles.appendChild(tile(String(s.journalists_active), "Giornalisti attivi"));
+      tiles.appendChild(tile(String(s.operators_active), "Operatori attivi"));
+      var sess = Session.get();
+      kv($("stato-kv"), [
+        ["Ultima registrazione", s.last_submission ? fmtTs(s.last_submission.submitted_at) + " (" + s.last_submission.submission_source + ")" : "–"],
+        ["Ultima voce del registro", s.last_audit ? fmtTs(s.last_audit.created_at) + " · " + s.last_audit.action + " · " + (s.last_audit.actor_identifier || "") : "–"],
+        ["Pagina costruita", BUILD || "servita dalla funzione"],
+        ["API", APP_BASE],
+        ["Accesso", sess && sess.email ? sess.email : "–"],
+      ]);
+      $("stato-at").textContent = "aggiornato " + fmtTs(s.generated_at);
+      return r;
+    });
+  }
+
+  // ---- 02 collegamenti ----
+  function loadLinks() {
+    var L = [
+      ["Registrazione", PAGE_FORM, "il modulo dei montatori"],
+      ["Collaudo", PAGE_COLLAUDO, "la settimana da stampare o inviare"],
+      ["Pagine pubbliche", "https://rainycservizi.github.io/rainyc-servizi-app/", "GitHub Pages: il sito di prova principale"],
+      ["Pagine in ufficio", "http://supervisor.gvgrai.net/", "supervisor, solo http (senza s), rete dell'ufficio"],
+      ["Stato API", APP_BASE + "/health", "risposta {ok:true} = funzione e database raggiungibili"],
+      ["Repository", "https://github.com/rainycservizi/rai-nyc-servizi", "codice, OPERATIONS.md, SECURITY.md (privato)"],
+      ["Supabase", "https://supabase.com/dashboard/project/wyrthfwrkgdobllzssdv", "database e funzione (accesso rainyc.servizi)"],
+    ];
+    var ul = $("links"); ul.textContent = "";
+    L.forEach(function (x) { var li = document.createElement("li"); var a = document.createElement("a"); a.href = x[1]; a.textContent = x[0]; a.target = "_blank"; a.rel = "noopener"; var sp = document.createElement("span"); sp.textContent = x[2]; li.appendChild(a); li.appendChild(sp); ul.appendChild(li); });
+    api("/api/email-recipients").then(function (r) {
+      var b = r.body || {};
+      kv($("mail-kv"), [["E-mail del collaudo", "possono inviare: erika, caruso, pippo"], ["Destinatari proposti", (b.suggested || []).join(", ") || "(nessuno: secret COLLAUDO_TO vuoto)"]]);
+    }, function () { /* ignore */ });
+  }
+
+  // ---- 03 accessi ----
+  function loadLogins() {
+    return api("/api/admin/logins").then(function (r) {
+      if (r.status !== 200) return r;
+      var tb = $("t-logins").querySelector("tbody"); tb.textContent = "";
+      (r.body.logins || []).forEach(function (u) {
+        var tr = document.createElement("tr");
+        var td1 = document.createElement("td"); td1.textContent = u.email; tr.appendChild(td1);
+        var td2 = document.createElement("td"); td2.className = "dim"; td2.textContent = fmtTs(u.last_sign_in_at); tr.appendChild(td2);
+        var td3 = document.createElement("td"); td3.className = "r";
+        var box = document.createElement("div"); box.className = "inline-pw"; box.style.justifyContent = "flex-end";
+        var inp = document.createElement("input"); inp.type = "text"; inp.autocomplete = "off"; inp.placeholder = "nuova password"; inp.setAttribute("aria-label", "Nuova password per " + u.email);
+        var b = document.createElement("button"); b.type = "button"; b.className = "btn sm"; b.textContent = "Imposta";
+        b.addEventListener("click", function () {
+          var pw = inp.value; if (pw.length < 5) { $("accessi-err").textContent = "La password deve avere almeno 5 caratteri."; inp.focus(); return; }
+          if (!window.confirm("Cambiare la password di " + u.email + "?")) return;
+          b.disabled = true; $("accessi-err").textContent = ""; $("accessi-msg").textContent = "";
+          post("/api/admin/logins", { email: u.email, password: pw }).then(function (res) {
+            b.disabled = false; if (!res) return;
+            if (res.status !== 200) { $("accessi-err").textContent = errText(res); return; }
+            inp.value = ""; $("accessi-msg").textContent = "Password di " + u.email + " aggiornata."; loadAudit();
+          });
+        });
+        box.appendChild(inp); box.appendChild(b); td3.appendChild(box); tr.appendChild(td3); tb.appendChild(tr);
+      });
+      return r;
+    });
+  }
+  $("f-login").addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    var email = $("nl-email").value.trim().toLowerCase(), pw = $("nl-pass").value;
+    if (email && email.indexOf("@") < 0) email += "@" + LOGIN_DOMAIN;
+    $("accessi-err").textContent = ""; $("accessi-msg").textContent = "";
+    post("/api/admin/logins", { email: email, password: pw, create: true }).then(function (res) {
+      if (!res) return;
+      if (res.status !== 200) { $("accessi-err").textContent = errText(res); return; }
+      $("nl-email").value = ""; $("nl-pass").value = ""; $("accessi-msg").textContent = "Accesso " + email + " creato."; loadLogins(); loadAudit();
+    });
+  });
+
+  // ---- 04 elenchi ----
+  var lists = null, tab = "journalists";
+  var TAB_LABEL = { journalists: "Nuovo giornalista", operators: "Nuovo operatore", rete: "Nuova rete", mezzo: "Nuovo mezzo", richiedente: "Nuovo richiedente (es. Tg1 Ore 20)" };
+  function rowsFor(t) {
+    if (!lists) return [];
+    if (t === "journalists") return lists.journalists.map(function (x) { return { id: x.id, name: x.display_name, active: x.active, table: "journalists" }; });
+    if (t === "operators") return lists.operators.map(function (x) { return { id: x.id, name: x.display_name, active: x.active, extra: x.windows_username || "", table: "operators" }; });
+    return lists.lookup_values.filter(function (x) { return x.kind === t; }).map(function (x) { return { id: x.id, name: x.value, active: x.active, kind: t, table: "lookup_values" }; });
+  }
+  function renderList() {
+    var tb = $("t-list").querySelector("tbody"); tb.textContent = "";
+    $("th-extra").hidden = tab !== "operators";
+    $("nl-name-l").textContent = TAB_LABEL[tab];
+    rowsFor(tab).forEach(function (x) {
+      var tr = document.createElement("tr"); if (!x.active) tr.className = "off";
+      var td1 = document.createElement("td"); td1.textContent = x.name; tr.appendChild(td1);
+      if (tab === "operators") { var tdx = document.createElement("td"); tdx.className = "dim mono"; tdx.textContent = x.extra; tr.appendChild(tdx); }
+      var td2 = document.createElement("td"); var pill = document.createElement("span"); pill.className = "pill " + (x.active ? "on" : "off"); pill.textContent = x.active ? "attivo" : "ritirato"; td2.appendChild(pill); tr.appendChild(td2);
+      var td3 = document.createElement("td"); td3.className = "r";
+      var b = document.createElement("button"); b.type = "button"; b.className = "btn sm" + (x.active ? " bad" : ""); b.textContent = x.active ? "Ritira" : "Riattiva";
+      b.addEventListener("click", function () {
+        if (x.active && !window.confirm("Ritirare \"" + x.name + "\"? Non comparirà più nel modulo; le registrazioni passate restano.")) return;
+        b.disabled = true; $("elenchi-err").textContent = ""; $("elenchi-msg").textContent = "";
+        var body = { table: x.table, id: x.id, name: x.name, active: !x.active };
+        if (x.kind) body.kind = x.kind; if (x.table === "operators") body.windows_username = x.extra;
+        post("/api/admin/lists", body).then(function (res) {
+          b.disabled = false; if (!res) return;
+          if (res.status !== 200) { $("elenchi-err").textContent = errText(res); return; }
+          $("elenchi-msg").textContent = (x.active ? "Ritirato: " : "Riattivato: ") + x.name; loadLists(); loadAudit();
+        });
+      });
+      td3.appendChild(b); tr.appendChild(td3); tb.appendChild(tr);
+    });
+  }
+  function loadLists() {
+    return api("/api/admin/lists").then(function (r) { if (r.status !== 200) return r; lists = r.body; renderList(); return r; });
+  }
+  $("tabs").addEventListener("click", function (ev) {
+    var b = ev.target.closest("button[data-tab]"); if (!b) return;
+    tab = b.getAttribute("data-tab");
+    Array.prototype.forEach.call($("tabs").children, function (x) { x.setAttribute("aria-selected", x === b ? "true" : "false"); });
+    $("elenchi-err").textContent = ""; $("elenchi-msg").textContent = ""; renderList();
+  });
+  $("f-list").addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    var name = $("nl-name").value.trim(); if (!name) { $("nl-name").focus(); return; }
+    var body = tab === "journalists" || tab === "operators" ? { table: tab, name: name } : { table: "lookup_values", kind: tab, name: name };
+    $("elenchi-err").textContent = ""; $("elenchi-msg").textContent = "";
+    post("/api/admin/lists", body).then(function (res) {
+      if (!res) return;
+      if (res.status !== 200) { $("elenchi-err").textContent = errText(res); return; }
+      $("nl-name").value = ""; $("elenchi-msg").textContent = "Aggiunto: " + name; loadLists(); loadAudit();
+    });
+  });
+
+  // ---- 05 registro ----
+  var ENTITY = { delivery_record: "registrazione", delivery_records: "registrazione", journalists: "giornalista", operators: "operatore", lookup_values: "valore", auth_user: "accesso" };
+  function loadAudit() {
+    return api("/api/admin/audit?limit=100").then(function (r) {
+      if (r.status !== 200) return r;
+      var tb = $("t-audit").querySelector("tbody"); tb.textContent = "";
+      (r.body.rows || []).forEach(function (a) {
+        var tr = document.createElement("tr");
+        [fmtTs(a.created_at), a.actor_identifier || a.actor_type, a.action, ENTITY[a.entity_type] || a.entity_type].forEach(function (v, k) { var td = document.createElement("td"); if (k === 0) td.className = "t"; td.textContent = v; tr.appendChild(td); });
+        var td = document.createElement("td"); var sp = document.createElement("span"); sp.className = "pl"; var pl = a.payload ? JSON.stringify(a.payload) : ""; sp.textContent = pl; sp.title = pl; td.appendChild(sp); tr.appendChild(td);
+        tb.appendChild(tr);
+      });
+      $("registro-n").textContent = (r.body.rows || []).length + " voci più recenti";
+      return r;
+    });
+  }
+
+  // ---- start ----
+  requireLogin(function () {
+    mountPassword($("hright")); mountLogout($("hright"));
+    boot("Caricamento…");
+    loadStats().then(function (r) {
+      if (r.status === 403) { boot((r.body && r.body.error) || "Pagina riservata.", true); show(false); return; }
+      if (r.status !== 200) { boot(errText(r), true); return; }
+      boot(""); show(true); loadLinks();
+      return Promise.all([loadLogins(), loadLists(), loadAudit()]);
+    }, function (e) {
+      if (e.kind === "auth") { boot(""); authLost(); return; }
+      boot(e.message, true);
+    });
+  });
+  document.addEventListener("rainyc:auth-lost", function () { show(false); boot(""); });
+})();
+</script>
+</body>
+</html>

@@ -309,6 +309,7 @@ var APP_BASE = "https://wyrthfwrkgdobllzssdv.supabase.co/functions/v1/servizi" |
 var AUTH_URL = ("https://wyrthfwrkgdobllzssdv.supabase.co" || location.origin) + "/auth/v1";
 var PAGE_FORM = "./" || APP_BASE;
 var PAGE_COLLAUDO = "./collaudo.html" || APP_BASE + "/collaudo";
+var PAGE_GESTIONE = "./gestione.html" || APP_BASE + "/gestione";
 
 function ApiError(kind, message) { this.kind = kind; this.message = message; }
 ApiError.prototype = Object.create(Error.prototype);
@@ -528,7 +529,14 @@ function mountPassword(slot) {
   if (old) old.parentNode.removeChild(old);
   var oldLink = document.getElementById("lnk-pwd");
   if (oldLink) oldLink.parentNode.removeChild(oldLink);
+  var oldG = document.getElementById("lnk-gestione");
+  if (oldG) oldG.parentNode.removeChild(oldG);
   if (!slot || !canChangePassword()) return;
+  if (!document.body.hasAttribute("data-gestione")) {
+    var g = document.createElement("a");
+    g.href = PAGE_GESTIONE; g.id = "lnk-gestione"; g.className = "hlink"; g.textContent = "Gestione";
+    slot.insertBefore(g, slot.firstChild);
+  }
   var a = document.createElement("a");
   a.href = "#"; a.id = "lnk-pwd"; a.className = "hlink"; a.textContent = "Cambia password";
   slot.insertBefore(a, slot.firstChild);
