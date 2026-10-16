@@ -3,105 +3,271 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
 <title>RAI NYC Servizi · Collaudo</title>
+<script>(function () { var t = null; try { t = localStorage.getItem("rainyc.tema"); } catch (e) { /* blocked */ } if (t !== "light" && t !== "dark") { try { t = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"; } catch (e) { t = "light"; } } document.documentElement.setAttribute("data-theme", t); })();</script>
 <style>
-:root { --ink:#111; --mute:#555; --rule:#bbb; --zebra:#f4f4f4; --band:#e2e2e2; --red:#c00000; --accent:#1f3a5f; --focus:#2f6fd6; }
+/* Same tokens as form.html (visual language borrowed from Crop Studio). Print is always light. */
+:root {
+  --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --mono: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, monospace;
+  --bg:#f3f1ed; --panel:#ffffff; --raise:#f7f5f2; --input:#ffffff; --hover:#efece7; --line:#e0dcd5; --line2:#c9c3b9;
+  --fg:#1b1a1c; --dim:#666159; --accent:#e85d04; --accent-ink:#140a03; --accent-text:#b04400; --accent-soft:#fdeee3;
+  --ok:#1d6b3a; --ok-bg:#e5f2e9; --warn:#8a5a00; --warn-bg:#fcf1d8; --bad:#b3261e; --bad-bg:#fbe8e5;
+  --focus:#c24e00; --shadow:0 1px 2px rgba(40,30,20,.06), 0 4px 14px rgba(40,30,20,.05); --pop:0 10px 30px rgba(30,20,10,.18);
+  --zebra:#faf8f5; --band:#f0ece6; --rule:#1b1a1c; --red:#b3261e;
+}
+:root[data-theme=dark] {
+  --bg:#111012; --panel:#171619; --raise:#1e1d21; --input:#0d0c0f; --hover:#232227; --line:#2a292e; --line2:#3a3940;
+  --fg:#f0eeea; --dim:#9a958e; --accent:#e85d04; --accent-ink:#140a03; --accent-text:#ff8a3d; --accent-soft:#2a1a10;
+  --ok:#6fd39b; --ok-bg:#12241a; --warn:#e9b44c; --warn-bg:#2a2210; --bad:#ff7b66; --bad-bg:#2c1613;
+  --focus:#ff8a3d; --shadow:0 1px 0 rgba(0,0,0,.35); --pop:0 14px 40px rgba(0,0,0,.6);
+  --zebra:#1b1a1e; --band:#222126; --rule:#5a5860; --red:#ff7b66;
+}
+:root { color-scheme:light; } :root[data-theme=dark] { color-scheme:dark; }
 * { box-sizing:border-box; }
-html, body { margin:0; background:#fff; color:var(--ink); }
-body { font:13px/1.35 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
-.page { max-width:1180px; margin:0 auto; padding:16px 24px 40px; }
-.tools { display:flex; flex-wrap:wrap; align-items:center; gap:10px; padding:10px 12px; margin:0 0 18px; background:#eceef0; border-radius:8px; font-size:14px; }
-.tools input[type=text] { width:9em; height:36px; font:inherit; padding:0 8px; border:1.5px solid #c9cdd2; border-radius:6px; }
-.tools button, .tools a.btn { height:36px; padding:0 12px; font:inherit; font-weight:600; background:var(--accent); color:#fff; border:0; border-radius:6px; cursor:pointer; text-decoration:none; display:inline-flex; align-items:center; }
-.tools button.sec { background:#fff; color:var(--accent); border:1.5px solid var(--accent); }
-.tools button:focus-visible, .tools input:focus-visible { outline:3px solid var(--focus); outline-offset:1px; }
-.tools .msg { color:var(--mute); }
-.tools .err { color:var(--red); font-weight:600; }
-#login { max-width:420px; margin:40px auto; padding:22px 20px; border:1px solid #c9cdd2; border-radius:8px; font-size:16px; }
-#login h2 { margin:0 0 14px; font-size:17px; }
-#login label { display:block; font-weight:600; margin:0 0 6px; }
-#login input { width:100%; height:44px; font:inherit; padding:0 12px; border:1.5px solid #c9cdd2; border-radius:6px; margin:0 0 14px; }
-#login button { width:100%; height:48px; font:inherit; font-weight:700; background:var(--accent); color:#fff; border:0; border-radius:6px; cursor:pointer; }
-#login .err { color:var(--red); margin-top:8px; }
-header.doc { border-bottom:2px solid var(--ink); padding-bottom:10px; margin-bottom:14px; }
-header.doc .ente { font-size:12px; letter-spacing:.06em; text-transform:uppercase; color:var(--mute); }
-header.doc h1 { font-size:22px; margin:4px 0 2px; font-weight:700; }
-header.doc .sett { font-size:15px; }
-.counters { display:flex; flex-wrap:wrap; gap:0; border:1px solid var(--ink); margin:0 0 16px; }
+html, body { margin:0; background:var(--bg); color:var(--fg); }
+body { font:14px/1.45 var(--sans); -webkit-font-smoothing:antialiased; }
+[hidden] { display:none !important; }
+:focus-visible { outline:2px solid var(--focus); outline-offset:2px; }
+
+/* ── header + tools (one sticky block) ── */
+.top { position:sticky; top:0; z-index:20; }
+.appbar { height:52px; display:flex; align-items:center; gap:16px; padding:0 16px; background:var(--panel); border-bottom:1px solid var(--line); }
+.brand { display:flex; align-items:baseline; gap:10px; min-width:0; overflow:hidden; }
+.brand .mk { font:700 11px/1 var(--mono); letter-spacing:.16em; text-transform:uppercase; color:var(--accent-text); }
+.brand .nm { font-weight:650; font-size:15px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; min-width:0; }
+.brand .pg { font:600 11px/1 var(--mono); letter-spacing:.12em; text-transform:uppercase; color:var(--dim); }
+.hright { margin-left:auto; display:flex; align-items:center; gap:6px; }
+.hlink { display:inline-flex; align-items:center; height:36px; padding:0 12px; border-radius:6px; font-size:14px; color:var(--dim); text-decoration:none; white-space:nowrap; }
+.hlink:hover { color:var(--fg); background:var(--hover); }
+.hlink.go { color:var(--fg); border:1px solid var(--line2); }
+.hlink.go:hover { border-color:var(--accent); color:var(--accent-text); background:transparent; }
+.icbtn { width:36px; height:36px; display:inline-grid; place-items:center; border:1px solid var(--line2); border-radius:6px; background:transparent; color:var(--fg); cursor:pointer; padding:0; }
+.icbtn:hover { border-color:var(--accent); color:var(--accent-text); }
+.icbtn svg { width:18px; height:18px; }
+:root[data-theme=dark] .ic-moon, :root:not([data-theme=dark]) .ic-sun { display:none; }
+
+.tools { display:flex; flex-wrap:wrap; align-items:center; gap:8px; padding:8px 16px; margin:0; background:var(--bg); background:color-mix(in srgb, var(--bg) 88%, transparent); border-bottom:1px solid var(--line); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px); }
+.tools .grp { display:flex; align-items:center; gap:6px; }
+.tools .sep { width:1px; height:24px; background:var(--line2); margin:0 4px; }
+.tools label.wk { display:flex; align-items:center; gap:8px; font:600 11px/1 var(--mono); letter-spacing:.1em; text-transform:uppercase; color:var(--dim); }
+.tools input[type=text] { width:8.5em; height:36px; font:600 14px/1 var(--mono); padding:0 10px; border:1px solid var(--line2); border-radius:6px; background:var(--input); color:var(--fg); }
+.tools .msg { color:var(--dim); font-size:13px; margin-left:auto; }
+.tools .err { color:var(--bad); font-weight:600; font-size:13px; margin-left:auto; }
+.btn { height:36px; padding:0 12px; font:inherit; font-size:14px; font-weight:600; border-radius:6px; border:1px solid var(--line2); background:var(--raise); color:var(--fg); cursor:pointer; white-space:nowrap; display:inline-flex; align-items:center; gap:6px; text-decoration:none; }
+.btn:hover { border-color:var(--dim); }
+.btn:disabled { opacity:.45; cursor:default; }
+.btn.pri { background:var(--accent); border-color:var(--accent); color:var(--accent-ink); font-weight:700; }
+.btn.pri:hover { filter:brightness(1.07); }
+.btn.sq { width:36px; padding:0; justify-content:center; }
+.btn svg { width:16px; height:16px; }
+input:focus-visible, select:focus-visible { outline:none; border-color:var(--focus) !important; box-shadow:0 0 0 3px color-mix(in srgb, var(--focus) 28%, transparent); }
+
+/* ── login, states ── */
+.page { padding:16px; }
+.panel { background:var(--panel); border:1px solid var(--line); border-radius:8px; box-shadow:var(--shadow); }
+.ph { font:600 11px/1 var(--mono); letter-spacing:.13em; text-transform:uppercase; color:var(--dim); margin:0 0 14px; }
+#login { max-width:400px; margin:9vh auto 0; padding:16px 16px 18px; font-size:15px; }
+#login .lead { margin:0 0 16px; color:var(--dim); font-size:14px; }
+#login label { display:block; font-weight:600; font-size:13px; margin:0 0 6px; }
+#login .hint { font-weight:400; color:var(--dim); font-size:12px; }
+#login input, .fld input, .fld select { width:100%; height:44px; font:inherit; font-size:16px; padding:0 12px; border:1px solid var(--line2); border-radius:6px; background:var(--input); color:var(--fg); margin:0 0 12px; }
+#login button { width:100%; height:48px; justify-content:center; font-size:15px; }
+#login .err, .pop .err { color:var(--bad); margin-top:8px; font-weight:600; font-size:13px; }
+.err:empty { display:none; }
+.state { padding:48px 24px; text-align:center; color:var(--dim); font-size:15px; }
+.state.ko { color:var(--bad); font-weight:600; }
+.state .btn { margin-top:14px; }
+#doc.busy { opacity:.55; transition:opacity .15s; pointer-events:none; }
+
+/* ── the collaudo sheet ── */
+.sheet { padding:18px 22px 22px; max-width:1500px; margin:0 auto; }
+.sheet:empty { display:none; }
+.sheet { display:grid; grid-template-columns:minmax(0,1fr) auto; column-gap:24px; }
+.sheet > * { grid-column:1 / -1; }
+.sheet > header.doc { grid-column:1; margin-bottom:14px; }
+.sheet > .counters { grid-column:2; align-self:end; margin-bottom:14px; }
+.dochead { display:flex; flex-wrap:wrap; align-items:flex-end; justify-content:space-between; gap:12px 24px; margin:0 0 14px; }
+header.doc { padding:0; margin:0; }
+header.doc .ente { font:600 11px/1.2 var(--mono); letter-spacing:.12em; text-transform:uppercase; color:var(--dim); }
+header.doc h1 { font-size:22px; margin:6px 0 2px; font-weight:700; letter-spacing:-.01em; }
+header.doc .sett { font-size:14px; color:var(--dim); }
+.counters { display:flex; flex-wrap:wrap; gap:0; border:1px solid var(--line2); border-radius:6px; margin:0; overflow:hidden; background:var(--raise); }
 .counters .grp { display:flex; flex-wrap:wrap; }
-.counters .grp + .grp { border-left:1px solid var(--ink); }
-.counters .c { padding:6px 12px; text-align:center; min-width:72px; }
-.counters .c + .c { border-left:1px solid var(--rule); }
-.counters .n { font-size:18px; font-weight:700; font-variant-numeric:tabular-nums; display:block; }
-.counters .l { font-size:11px; color:var(--mute); }
-.counters .tot .n { font-size:20px; }
-table { width:100%; border-collapse:collapse; font-variant-numeric:tabular-nums; }
-thead th { text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:.03em; border-top:1.5px solid var(--ink); border-bottom:1.5px solid var(--ink); padding:5px 6px; white-space:nowrap; }
-td { padding:4px 6px; border-bottom:1px solid #e6e6e6; vertical-align:top; }
+.counters .grp + .grp { border-left:1px solid var(--line2); }
+.counters .c { padding:6px 10px; text-align:center; min-width:58px; }
+.counters .c + .c { border-left:1px solid var(--line); }
+.counters .n { font:700 17px/1.2 var(--mono); font-variant-numeric:tabular-nums; display:block; }
+.counters .l { font-size:10.5px; color:var(--dim); white-space:nowrap; }
+.counters .tot .n { color:var(--accent-text); }
+
+table { width:100%; border-collapse:separate; border-spacing:0; font-variant-numeric:tabular-nums; font-size:13.5px; }
+thead th { position:sticky; top:var(--toph, 0px); z-index:5; background:var(--panel); text-align:left; font:600 10.5px/1.2 var(--mono); text-transform:uppercase; letter-spacing:.06em; color:var(--dim);
+  border-top:1px solid var(--line2); border-bottom:1.5px solid var(--rule); padding:9px 8px; white-space:nowrap; }
+td { padding:7px 8px; line-height:20px; border-bottom:1px solid var(--line); vertical-align:top; }
 tbody tr.r:nth-of-type(even) td { background:var(--zebra); }
+tbody tr.r:hover td { background:var(--hover); }
 th.k, td.k { text-align:center; width:3.6em; }
 td.k { font-weight:700; }
-tr.day td { background:var(--band); font-weight:700; border-top:1px solid var(--rule); border-bottom:1px solid var(--rule); padding:5px 6px; }
-tr.day .trip { font-weight:600; color:var(--red); margin-left:14px; }
-tr.tot td { text-align:right; font-weight:600; border-bottom:1.5px solid var(--ink); background:#fff; }
-tr.tot td.k { text-align:center; }
-tr.empty td { color:var(--mute); font-style:italic; }
-.si { color:var(--red); font-weight:700; }
+td.k.tcell { width:auto; min-width:4.2em; }
+tr.day td { background:var(--band); border-top:1px solid var(--line2); border-bottom:1px solid var(--line2); padding:0 8px 0 0; }
+button.dt { all:unset; box-sizing:border-box; display:inline-flex; align-items:center; gap:8px; min-height:36px; padding:0 10px 0 8px; font-weight:700; font-size:13.5px; cursor:pointer; border-radius:4px; color:var(--fg); }
+button.dt:hover { color:var(--accent-text); }
+button.dt:focus-visible { outline:2px solid var(--focus); outline-offset:-2px; }
+button.dt .chev { transition:transform .15s; color:var(--dim); flex:none; }
+button.dt[aria-expanded=false] .chev { transform:rotate(-90deg); }
+.dn { font:700 11px/1 var(--mono); color:var(--dim); background:var(--panel); border:1px solid var(--line2); border-radius:999px; padding:3px 7px; }
+tr.day .trip { font-weight:600; color:var(--red); margin-left:6px; font-size:13px; }
+tr.tot td { text-align:right; font-size:12.5px; color:var(--dim); border-bottom:1px solid var(--line2); background:var(--panel); padding-top:5px; padding-bottom:5px; }
+tr.tot td.k { text-align:center; color:var(--fg); }
+tr.empty td { color:var(--dim); font-style:italic; font-size:12.5px; padding-top:5px; padding-bottom:5px; }
+tbody.dg.chiuso tr.r, tbody.dg.chiuso tr.empty { display:none; }
+.si { color:var(--red); font-weight:800; }
+.tn { display:block; font-size:11px; font-weight:500; color:var(--dim); white-space:nowrap; line-height:14px; }
 .prn { display:none; }
 td.ed { cursor:text; }
-td.ed:hover { outline:1px dashed #9aa4b2; outline-offset:-2px; }
+td.ed:hover { box-shadow:inset 0 0 0 1px var(--line2); }
 td.ed.saving { opacity:.5; }
-td.ed .edin { width:100%; min-width:6em; font:inherit; padding:2px 4px; border:1.5px solid var(--focus); border-radius:4px; background:#fff; }
-td.act { white-space:nowrap; text-align:right; width:1%; }
-button.ic { border:0; background:transparent; color:var(--mute); font-size:15px; line-height:1; padding:4px 6px; cursor:pointer; border-radius:4px; }
-button.ic:hover, button.ic:focus-visible { background:#e6e9ee; color:var(--ink); outline:none; }
-button.ic[data-act=void]:hover { color:var(--red); }
-.rowerr { display:block; color:var(--red); font-weight:600; font-size:12px; white-space:normal; text-align:right; }
+td.ed .edin { width:100%; min-width:6em; height:30px; font:inherit; padding:2px 6px; border:1px solid var(--focus); border-radius:4px; background:var(--input); color:var(--fg); }
+td.act { white-space:nowrap; text-align:right; width:1%; padding-top:4px; padding-bottom:4px; }
+button.ic { border:0; background:transparent; color:var(--dim); width:28px; height:28px; line-height:1; padding:0; cursor:pointer; border-radius:4px; font-size:14px; }
+button.ic:hover, button.ic:focus-visible { background:var(--raise); color:var(--fg); }
+button.ic[data-act=void]:hover { color:var(--bad); }
+.rowerr { display:block; color:var(--bad); font-weight:600; font-size:12px; white-space:normal; text-align:right; }
+.rowerr:empty { display:none; }
 .nowrap { white-space:nowrap; }
-footer.doc { margin-top:28px; display:flex; justify-content:space-between; align-items:flex-end; gap:24px; flex-wrap:wrap; }
-footer.doc .gen { font-size:11px; color:var(--mute); }
+footer.doc { margin-top:22px; display:flex; justify-content:space-between; align-items:flex-end; gap:24px; flex-wrap:wrap; }
+footer.doc .gen { font-size:11px; color:var(--dim); }
 footer.doc .firma { font-size:13px; white-space:nowrap; }
-[hidden] { display:none !important; }
-@media screen and (max-width:760px) { .page { padding:16px; } .table-wrap { overflow-x:auto; } }
+
+/* ── trasferta popover ── */
+.pop { position:absolute; z-index:40; width:360px; max-width:calc(100vw - 24px); background:var(--panel); border:1px solid var(--line2); border-radius:8px; box-shadow:var(--pop); padding:14px 16px 16px; font-size:14px; }
+.pop .fld label { display:block; font-weight:600; font-size:13px; margin:0 0 6px; }
+.pop .row2 { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:10px; }
+.pop .row2 > * { min-width:0; }
+.pop input[type=date] { font-size:15px; padding:0 8px; }
+.pop .row { display:flex; gap:8px; margin-top:4px; }
+.pop .row .btn { flex:1; justify-content:center; height:40px; }
+.seg { display:grid; grid-template-columns:1fr 1fr; gap:6px; margin:0 0 14px; }
+.seg label { position:relative; }
+.seg input { position:absolute; opacity:0; inset:0; margin:0; }
+.seg span { display:flex; align-items:center; justify-content:center; height:40px; border:1px solid var(--line2); border-radius:6px; background:var(--raise); font-weight:600; cursor:pointer; }
+.seg input:checked + span { background:var(--accent); border-color:var(--accent); color:var(--accent-ink); }
+.seg input:focus-visible + span { outline:2px solid var(--focus); outline-offset:2px; }
+.pop-pwd { position:absolute; top:58px; right:16px; z-index:40; width:340px; max-width:calc(100vw - 32px); background:var(--panel); border:1px solid var(--line2); border-radius:8px; box-shadow:var(--pop); padding:14px 16px 16px; }
+.pop-pwd .fld label { display:block; font-weight:600; font-size:13px; margin:0 0 6px; }
+.pop-pwd .hint { font-weight:400; color:var(--dim); font-size:12px; }
+.pop-pwd .row { display:flex; gap:8px; }
+.pop-pwd .row .btn { flex:1; justify-content:center; height:40px; }
+.pwd-msg { font-size:13px; margin:10px 0 0; font-weight:600; }
+.pwd-msg:empty { display:none; }
+.pwd-msg.ok { color:var(--ok); } .pwd-msg.ko { color:var(--bad); }
+
+/* Below 1200px the 15 columns no longer fit: the table scrolls sideways inside the sheet, not the page. */
+@media screen and (max-width:1199.98px) { .table-wrap { overflow-x:auto; } thead th { position:static; } td[data-f="subject"] { min-width:15em; } td[data-f="richiedente"] { min-width:8em; } .sheet > header.doc, .sheet > .counters { grid-column:1 / -1; } .sheet > .counters { justify-self:start; } }
+@media screen and (max-width:760px) {
+  .page { padding:10px; } .sheet { padding:14px; }
+  .brand .pg, .brand .mk { display:none; } .appbar { padding:0 10px; gap:8px; } .tools { padding:8px 10px; }
+  .tools .msg, .tools .err { margin-left:0; flex-basis:100%; }
+  .btn .tx { display:none; } .tools .sep { display:none; } .hlink { padding:0 8px; font-size:13px; }
+}
+@media (prefers-reduced-motion:reduce) { * { transition:none !important; } }
+
+/* ── print: always light, every day expanded, Rome's columns only ── */
 @page { size: A4 landscape; margin: 12mm; }
 @media print {
+  :root, :root[data-theme=dark] {
+    --bg:#fff; --panel:#fff; --raise:#fff; --fg:#111; --dim:#555; --line:#e6e6e6; --line2:#bbb; --rule:#111;
+    --zebra:#f4f4f4; --band:#e2e2e2; --red:#c00000; --accent-text:#111;
+  }
+  :root, :root[data-theme=dark] { color-scheme:light; }
+  html, body { background:#fff; color:#111; }
   body { font-size:11px; }
-  .page { max-width:none; padding:0; }
-  .tools, .np { display:none !important; }
-  .scr { display:none; } .prn { display:inline; }
+  .top, .tools, .np, .pop, .pop-pwd, #login { display:none !important; }
+  .page { padding:0; }
+  .panel { border:0; box-shadow:none; border-radius:0; }
+  .sheet { max-width:none; padding:0; display:block; }
+  header.doc { margin-bottom:10px; } .counters { margin-bottom:12px; width:max-content; max-width:100%; }
+  .scr, .chev { display:none !important; } .prn { display:inline; }
+  tbody.dg.chiuso tr.r, tbody.dg.chiuso tr.empty { display:table-row !important; }
+  button.dt { min-height:0; padding:0; font-size:inherit; }
+  .counters { border-radius:0; border-color:#111; background:#fff; }
+  .counters .grp + .grp { border-left-color:#111; } .counters .c + .c { border-left-color:#bbb; }
   header.doc h1 { font-size:17px; }
-  .counters .n { font-size:14px; } .counters .tot .n { font-size:15px; }
-  .counters .c { padding:4px 9px; min-width:58px; }
+  .counters .n { font-size:14px; } .counters .c { padding:4px 9px; min-width:54px; }
   thead { display:table-header-group; }
-  thead th { font-size:9.5px; }
+  thead th { position:static; font-size:9px; color:#111; border-top:1.5px solid #111; padding:4px 5px; }
+  table { font-size:11px; }
   tr { break-inside:avoid; page-break-inside:avoid; }
   tr.day { break-after:avoid; page-break-after:avoid; }
-  td { padding:2.5px 5px; }
+  td { padding:2.5px 5px; line-height:1.3; }
+  tr.day td { padding:3px 5px; }
+  tr.tot td { color:#111; font-weight:600; border-bottom:1.5px solid #111; }
   footer.doc { break-inside:avoid; }
   * { -webkit-print-color-adjust:exact; print-color-adjust:exact; }
 }
 </style>
 </head>
 <body>
+<div class="top" id="top">
+  <header class="appbar">
+    <div class="brand"><span class="mk">Rai · NY</span><span class="nm">RAI NYC Servizi</span><span class="pg">Collaudo</span></div>
+    <nav class="hright" id="hright" aria-label="Pagine">
+      <button type="button" class="icbtn" id="theme" aria-label="Cambia tema" title="Cambia tema">
+        <svg class="ic-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+        <svg class="ic-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.2M12 19.8V22M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M2 12h2.2M19.8 12H22M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6"/></svg>
+      </button>
+      <a class="hlink go" href="." id="lnk-form">&larr; Nuova registrazione</a>
+    </nav>
+  </header>
+  <form class="tools" id="tools" hidden>
+    <div class="grp">
+      <button type="button" class="btn sq" id="prev" title="Settimana precedente" aria-label="Settimana precedente"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M10 3L5 8l5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <label class="wk">Settimana <input type="text" id="week" pattern="\d{4}-W\d{1,2}" placeholder="2026-W41"></label>
+      <button type="button" class="btn sq" id="next" title="Settimana successiva" aria-label="Settimana successiva"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M6 3l5 5-5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <button type="submit" class="btn">Vai</button>
+    </div>
+    <span class="sep" aria-hidden="true"></span>
+    <div class="grp">
+      <button type="button" class="btn" id="fold" aria-controls="doc"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="fold-t">Comprimi tutto</span></button>
+      <button type="button" class="btn" id="undo" disabled title="Ctrl+Z"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M5 4L2 7l3 3M2.5 7H10a4 4 0 0 1 0 8H8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="tx">Annulla ultima modifica</span></button>
+    </div>
+    <span class="msg" id="msg" role="status" aria-live="polite"></span>
+    <button type="button" class="btn" id="email"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M2 4h12v8H2zM2.5 4.5L8 9l5.5-4.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg><span id="email-t">Invia per e-mail</span></button>
+    <button type="button" class="btn pri" id="print"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 6V2h8v4M4 12H2.5V7h11v5H12M4.5 10h7v4h-7z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>Stampa</button>
+  </form>
+</div>
 <div class="page">
-  <form id="login" hidden autocomplete="on">
-    <h2>Accesso · collaudo settimanale</h2>
+  <form id="login" class="panel" hidden autocomplete="on">
+    <h1 class="ph">Accesso · collaudo settimanale</h1>
+    <p class="lead">Accedere con il proprio cognome e la password.</p>
     <label for="login-email">Nome <span class="hint">(cognome come in elenco, es. Arzilla)</span></label><input type="text" id="login-email" name="username" required autocomplete="username" autocapitalize="none">
     <label for="login-password">Password</label><input type="password" id="login-password" name="password" required autocomplete="current-password">
-    <button type="submit">Accedi</button>
+    <button type="submit" class="btn pri">Accedi</button>
     <div class="err" id="login-err" role="alert"></div>
   </form>
-  <form class="tools" id="tools" hidden>
-    <button type="button" class="sec" id="prev" title="Settimana precedente">◀</button>
-    <label>Settimana <input type="text" id="week" pattern="\d{4}-W\d{1,2}" placeholder="2026-W41"></label>
-    <button type="button" class="sec" id="next" title="Settimana successiva">▶</button>
-    <button type="submit">Vai</button>
-    <button type="button" id="print">Stampa</button>
-    <button type="button" class="sec" id="undo" disabled>Annulla ultima modifica</button>
-    <a class="btn" href="." id="lnk-form">Nuova registrazione</a>
-    <span class="msg" id="msg"></span>
+  <div id="doc" class="panel sheet"></div>
+</div>
+
+<div class="pop" id="tpop" role="dialog" aria-labelledby="tpop-h" hidden>
+  <form id="tpop-f" novalidate>
+    <h2 class="ph" id="tpop-h">Trasferta</h2>
+    <div class="seg" role="radiogroup" aria-label="Trasferta">
+      <label><input type="radio" name="tp-si" id="tp-si" value="true"><span>Sì</span></label>
+      <label><input type="radio" name="tp-si" id="tp-no" value="false"><span>No</span></label>
+    </div>
+    <div id="tp-det">
+      <div class="fld"><label for="tp-g">Giornalista in trasferta</label><select id="tp-g"></select></div>
+      <div class="fld"><label for="tp-l">Destinazione</label><input type="text" id="tp-l" maxlength="200" placeholder="Washington D.C."></div>
+      <div class="row2">
+        <div class="fld"><label for="tp-d">Dal</label><input type="date" id="tp-d"></div>
+        <div class="fld"><label for="tp-a">Al</label><input type="date" id="tp-a"></div>
+      </div>
+    </div>
+    <div class="row"><button type="submit" class="btn pri" id="tp-save">Salva</button><button type="button" class="btn" id="tp-cancel">Annulla</button></div>
+    <div class="err" id="tpop-err" role="alert"></div>
   </form>
-  <div id="doc"></div>
 </div>
 <script>
 // ---- pages/shared.js ----
@@ -279,6 +445,91 @@ function changePassword(newPassword, retried) {
       });
     }, function () { return { ok: false, error: "Rete non raggiungibile." }; });
   });
+}
+
+// ---- theme (light / dark), shared by both pages ----
+// The <head> of each page sets data-theme before first paint (same rule as themeNow below);
+// this wires the header button. Saved choice in localStorage "rainyc.tema"; none saved = follow the OS.
+var THEME_KEY = "rainyc.tema";
+function themeSaved() { try { var t = localStorage.getItem(THEME_KEY); return t === "light" || t === "dark" ? t : null; } catch (e) { return null; } }
+function themeOs() { try { return window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"; } catch (e) { return "light"; } }
+function themeNow() { return themeSaved() || themeOs(); }
+function applyTheme(t, btn) {
+  document.documentElement.setAttribute("data-theme", t);
+  if (btn) {
+    var label = t === "dark" ? "Passa al tema chiaro" : "Passa al tema scuro";
+    btn.setAttribute("aria-label", label); btn.title = label;
+    btn.setAttribute("aria-pressed", t === "dark" ? "true" : "false");
+  }
+}
+/** Wire the theme toggle button (id). */
+function initTheme(id) {
+  var btn = document.getElementById(id);
+  applyTheme(themeNow(), btn);
+  if (btn) btn.addEventListener("click", function () {
+    var t = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
+    try { localStorage.setItem(THEME_KEY, t); } catch (e) { /* storage blocked: this page only */ }
+    applyTheme(t, btn);
+  });
+  try {
+    var mq = window.matchMedia("(prefers-color-scheme: dark)");
+    var follow = function () { if (!themeSaved()) applyTheme(themeOs(), btn); };
+    if (mq.addEventListener) mq.addEventListener("change", follow); else if (mq.addListener) mq.addListener(follow);
+  } catch (e) { /* old browser: no live follow */ }
+}
+
+// ---- change password: only the account that administers the system ----
+var PASSWORD_ADMIN = "caruso@rainyc.nyc";
+function canChangePassword() {
+  var s = Session.get();
+  return !!(s && s.email && String(s.email).toLowerCase() === PASSWORD_ADMIN);
+}
+/**
+ * Mount "Cambia password" for the admin account only: the link goes into `slot` (an element in
+ * the header), the panel drops below the header. For every other account nothing is created.
+ * Call after login; safe to call again (it removes what it made when the account changes).
+ */
+function mountPassword(slot) {
+  var old = document.getElementById("pwd-root");
+  if (old) old.parentNode.removeChild(old);
+  var oldLink = document.getElementById("lnk-pwd");
+  if (oldLink) oldLink.parentNode.removeChild(oldLink);
+  if (!slot || !canChangePassword()) return;
+  var a = document.createElement("a");
+  a.href = "#"; a.id = "lnk-pwd"; a.className = "hlink"; a.textContent = "Cambia password";
+  slot.insertBefore(a, slot.firstChild);
+  var root = document.createElement("div");
+  root.id = "pwd-root"; root.className = "pop-pwd"; root.hidden = true;
+  root.innerHTML =
+    '<form id="pwd" class="pwd" autocomplete="off" novalidate>' +
+    '<h2 class="ph">Cambia password</h2>' +
+    '<div class="fld"><label for="pwd-new">Nuova password <span class="hint">(almeno 5 caratteri)</span></label><input type="password" id="pwd-new" autocomplete="new-password"></div>' +
+    '<div class="fld"><label for="pwd-conf">Conferma</label><input type="password" id="pwd-conf" autocomplete="new-password"></div>' +
+    '<div class="row"><button type="submit" class="btn pri" id="pwd-save">Salva</button><button type="button" class="btn" id="pwd-close">Chiudi</button></div>' +
+    '<div class="pwd-msg" id="pwd-msg" role="alert"></div></form>';
+  document.body.appendChild(root);
+  var $p = function (id) { return document.getElementById(id); };
+  function close() { root.hidden = true; $p("pwd-new").value = ""; $p("pwd-conf").value = ""; $p("pwd-msg").textContent = ""; a.setAttribute("aria-expanded", "false"); }
+  a.setAttribute("aria-expanded", "false");
+  a.addEventListener("click", function (ev) {
+    ev.preventDefault();
+    if (root.hidden) { root.hidden = false; a.setAttribute("aria-expanded", "true"); $p("pwd-msg").textContent = ""; $p("pwd-new").focus(); } else close();
+  });
+  $p("pwd-close").addEventListener("click", close);
+  root.addEventListener("keydown", function (ev) { if (ev.key === "Escape") { ev.preventDefault(); ev.stopPropagation(); close(); a.focus(); } });
+  $p("pwd").addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    var msg = $p("pwd-msg"), pa = $p("pwd-new").value, pc = $p("pwd-conf").value;
+    function say(ok, t) { msg.className = "pwd-msg " + (ok ? "ok" : "ko"); msg.textContent = t; }
+    if (pa.length < 5) { say(false, "La password deve avere almeno 5 caratteri."); $p("pwd-new").focus(); return; }
+    if (pa !== pc) { say(false, "Le due password non coincidono."); $p("pwd-conf").focus(); return; }
+    var b = $p("pwd-save"); b.disabled = true; say(true, "Salvataggio…");
+    changePassword(pa).then(function (res) {
+      b.disabled = false;
+      if (res.ok) { $p("pwd-new").value = ""; $p("pwd-conf").value = ""; say(true, "Password aggiornata."); } else say(false, res.error);
+    });
+  });
+  document.addEventListener("rainyc:auth-lost", function () { mountPassword(null); });
 }
 
 // ---- end pages/shared.js ----
@@ -529,6 +780,31 @@ function trasferteOn(day, rows) {
   return out;
 }
 
+/** "15/10" from "2026-10-15". */
+function dm(date) {
+  const d = new Date(date + "T00:00:00Z");
+  return d.getUTCDate() + "/" + (d.getUTCMonth() + 1);
+}
+
+/**
+ * Short trasferta note for the cell (screen only): "Washington D.C. 15–16/10", "Roma 30/9–2/10",
+ * "Boston 15/10". Empty when the row has no trip details (legacy rows).
+ * @param {Record<string, unknown>} r
+ */
+function tripNote(r) {
+  if (r.trasferta !== true || !r.trasferta_dal || !r.trasferta_al) return "";
+  const dal = String(r.trasferta_dal), al = String(r.trasferta_al);
+  let range;
+  if (dal === al) range = dm(dal);
+  else if (dal.slice(0, 7) === al.slice(0, 7)) range = Number(dal.slice(8, 10)) + "–" + dm(al);
+  else range = dm(dal) + "–" + dm(al);
+  return [r.trasferta_luogo ? String(r.trasferta_luogo) : "", range].filter(Boolean).join(" ");
+}
+
+// Day header chevron (screen only; aria-hidden, no text so the header text stays the day name).
+const CHEVRON = '<svg class="chev" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false">' +
+  '<path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
 /**
  * Render the collaudo body (header, counters, table, footer) for one week.
  * @param {{year:number, week:number}} w
@@ -542,14 +818,19 @@ function renderCollaudo(w, rows, generated) {
   for (const r of rows) if (r.data in byDay) byDay[r.data].push(r);
 
   const t = totals(rows);
-  const body = [];
+  const groups = [];
   for (const d of days) {
+    const body = [];
     const dayRows = byDay[d];
     const trips = trasferteOn(d, rows);
-    const tripNote = trips.length ? ` <span class="trip">Trasferta: ${esc(trips.join(" · "))}</span>` : "";
-    body.push(`<tr class="day"><td colspan="${PRINT_COLS.length}">${esc(fmtDay(d))}${tripNote}</td>${NP_TAIL}</tr>`);
+    const tripHead = trips.length ? ` <span class="trip">Trasferta: ${esc(trips.join(" · "))}</span>` : "";
+    // One <tbody> per day: the page collapses a day by its data-day; the header button toggles it.
+    const count = dayRows.length ? `<span class="dn scr">${dayRows.length}</span>` : "";
+    body.push(`<tr class="day"><td colspan="${PRINT_COLS.length}"><button type="button" class="dt" data-day="${d}" aria-expanded="true">` +
+      `${CHEVRON}<span class="dl">${esc(fmtDay(d))}</span>${count}</button>${tripHead}</td>${NP_TAIL}</tr>`);
     if (!dayRows.length) {
       body.push(`<tr class="empty"><td colspan="${PRINT_COLS.length}">Nessuna registrazione</td>${NP_TAIL}</tr>`);
+      groups.push(`<tbody class="dg vuoto" data-day="${d}">\n${body.join("\n")}\n</tbody>`);
       continue;
     }
     const dayTot = Object.fromEntries(CATEGORIE.map((c) => [c, 0]));
@@ -558,8 +839,12 @@ function renderCollaudo(w, rows, generated) {
       if (cat in dayTot) dayTot[cat] += 1;
       const si = r.trasferta === true;
       const k = (c) => `<td class="k">${cat === c ? "✓" : ""}</td>`;
-      const ed = (col, cls, shown, value) =>
-        `<td class="ed${cls ? " " + cls : ""}" data-f="${EDIT_FIELDS[col].api}" data-v="${esc(value)}">${shown}</td>`;
+      const ed = (col, cls, shown, value, extra) =>
+        `<td class="ed${cls ? " " + cls : ""}" data-f="${EDIT_FIELDS[col].api}" data-v="${esc(value)}"${extra || ""}>${shown}</td>`;
+      const note = tripNote(r);
+      // The trasferta editor (a popover on the page) starts from these.
+      const tripData = si ? ` data-tj="${esc(r.trasferta_giornalista)}" data-tl="${esc(r.trasferta_luogo)}"` +
+        ` data-td="${esc(r.trasferta_dal)}" data-ta="${esc(r.trasferta_al)}"` : "";
       body.push(`<tr class="r" data-id="${esc(r.record_id)}">` +
         ed("titolo", "", esc(r.titolo), r.titolo) +
         ed("giornalista", "nowrap", esc(r.giornalista), r.giornalista) +
@@ -567,7 +852,8 @@ function renderCollaudo(w, rows, generated) {
         ed("rete", "nowrap", esc(r.rete), r.rete) +
         ed("durata", "nowrap", esc(r.durata), r.durata) +
         k("pezzo") + k("radio") + k("live") +
-        ed("trasferta", "k", si ? '<span class="si">SI</span>' : "", si ? "true" : "false") +
+        ed("trasferta", "k tcell", si ? '<span class="si"><span class="scr">✓</span><span class="prn">SI</span></span>' + (note ? `<span class="tn scr">${esc(note)}</span>` : "") : "",
+          si ? "true" : "false", tripData) +
         ed("mezzo", "nowrap", esc(r.mezzo), r.mezzo) +
         k("tappeto") +
         `<td class="k np">X</td>` +
@@ -583,6 +869,7 @@ function renderCollaudo(w, rows, generated) {
       `(${dayRows.length} registrazioni)</td>` +
       `<td class="k">${dayTot.pezzo}</td><td class="k">${dayTot.radio}</td><td class="k">${dayTot.live}</td>` +
       `<td></td><td></td><td class="k">${dayTot.tappeto}</td>${NP_TAIL}</tr>`);
+    groups.push(`<tbody class="dg" data-day="${d}">\n${body.join("\n")}\n</tbody>`);
   }
 
   const counter = (n, label, cls) =>
@@ -612,9 +899,7 @@ function renderCollaudo(w, rows, generated) {
 <div class="table-wrap">
 <table>
 <thead><tr>${head}</tr></thead>
-<tbody>
-${body.join("\n")}
-</tbody>
+${groups.join("\n")}
 </table>
 </div>
 <footer class="doc">
@@ -628,28 +913,86 @@ ${body.join("\n")}
   "use strict";
   var $ = function (id) { return document.getElementById(id); };
   var current = null;
+  var loadedOnce = false;
   $("lnk-form").href = PAGE_FORM;
+  initTheme("theme");
 
   function setMsg(text, isErr) { var m = $("msg"); m.textContent = text; m.className = isErr ? "err" : "msg"; }
+  // The sticky table header sits right under the sticky header + tools block.
+  function syncTop() { document.documentElement.style.setProperty("--toph", $("top").offsetHeight + "px"); }
+  window.addEventListener("resize", syncTop);
 
   function load(w, note) {
     current = w;
+    closeTrip();
     $("week").value = formatWeek(w);
     try { history.replaceState(null, "", location.pathname + "?week=" + formatWeek(w)); } catch (e) { /* ignore */ }
     setMsg("Caricamento…");
     document.title = "Collaudo " + formatWeek(w) + " · RAI NYC Servizi";
+    if (!loadedOnce) $("doc").innerHTML = '<div class="state">Caricamento della settimana ' + esc(formatWeek(w)) + "…</div>";
+    else $("doc").classList.add("busy");
     return api("/api/collaudo?week=" + formatWeek(w)).then(function (r) {
-      if (r.status !== 200) { setMsg((r.body && r.body.error) || "Errore.", true); return; }
+      $("doc").classList.remove("busy");
+      if (r.status !== 200) { failState((r.body && r.body.error) || "Errore."); return; }
       $("doc").innerHTML = renderCollaudo(w, r.body.rows, todayNewYork());
+      loadedOnce = true;
+      applyFold();
       setMsg(note || (r.body.rows.length + " registrazioni"));
     }, function (e) {
+      $("doc").classList.remove("busy");
       if (e.kind === "auth") { authLost(); return; }
-      setMsg(e.message, true);
+      failState(e.message);
     });
   }
+  // Error in place: on the first load the sheet says so (with a retry); later the last sheet stays.
+  function failState(text) {
+    setMsg(text, true);
+    if (loadedOnce) return;
+    $("doc").innerHTML = '<div class="state ko">Collaudo non disponibile: ' + esc(text) +
+      '<br><button type="button" class="btn" id="retry">Riprova</button></div>';
+  }
+
+  // ---- collapse days (per week, this browser tab) ----
+  function foldKey() { return "rainyc.collaudo.chiusi." + (current ? formatWeek(current) : ""); }
+  function foldGet() { try { return JSON.parse(sessionStorage.getItem(foldKey()) || "[]"); } catch (e) { return []; } }
+  function foldSet(days) { try { sessionStorage.setItem(foldKey(), JSON.stringify(days)); } catch (e) { /* storage blocked: this view only */ } }
+  function groups() { return Array.prototype.slice.call($("doc").querySelectorAll("tbody.dg")); }
+  function applyFold() {
+    var closed = foldGet();
+    groups().forEach(function (g) {
+      var shut = closed.indexOf(g.getAttribute("data-day")) >= 0;
+      g.classList.toggle("chiuso", shut);
+      var b = g.querySelector("button.dt"); if (b) b.setAttribute("aria-expanded", shut ? "false" : "true");
+    });
+    syncFoldBtn();
+  }
+  function syncFoldBtn() {
+    var gs = groups(), allShut = gs.length > 0 && gs.every(function (g) { return g.classList.contains("chiuso"); });
+    $("fold-t").textContent = allShut ? "Espandi tutto" : "Comprimi tutto";
+    $("fold").setAttribute("aria-expanded", allShut ? "false" : "true");
+    $("fold").disabled = !gs.length;
+  }
+  function saveFold() {
+    foldSet(groups().filter(function (g) { return g.classList.contains("chiuso"); }).map(function (g) { return g.getAttribute("data-day"); }));
+  }
+  function toggleDay(btn) {
+    var g = btn.closest("tbody.dg"); if (!g) return;
+    var shut = !g.classList.contains("chiuso");
+    g.classList.toggle("chiuso", shut);
+    btn.setAttribute("aria-expanded", shut ? "false" : "true");
+    saveFold(); syncFoldBtn();
+  }
+  $("fold").addEventListener("click", function () {
+    var gs = groups(), shut = !gs.every(function (g) { return g.classList.contains("chiuso"); });
+    gs.forEach(function (g) {
+      g.classList.toggle("chiuso", shut);
+      var b = g.querySelector("button.dt"); if (b) b.setAttribute("aria-expanded", shut ? "false" : "true");
+    });
+    saveFold(); syncFoldBtn();
+  });
 
   // ---- editing, void and undo ----
-  var undoStack = [];   // last 20 actions: {kind:"edit", id, field, old} | {kind:"void", id}
+  var undoStack = [];   // last 20 actions: {kind:"edit", id, field, old} | {kind:"patch", id, patch} | {kind:"void", id}
   var busy = false;
   var lists = null;
 
@@ -716,6 +1059,7 @@ ${body.join("\n")}
 
   function startEdit(td) {
     if (busy || td.getAttribute("data-editing")) return;
+    if (td.getAttribute("data-f") === "trasferta") { openTrip(td); return; }
     td.setAttribute("data-editing", "1");
     var field = td.getAttribute("data-f"), old = td.getAttribute("data-v") || "";
     var id = td.parentNode.getAttribute("data-id"), html = td.innerHTML, done = false;
@@ -754,6 +1098,92 @@ ${body.join("\n")}
     });
   }
 
+  // ---- trasferta: one popover, one POST /api/update with every trasferta field ----
+  var trip = null; // {td, id, old:{on,tj,tl,td,ta}}
+  function cellVal(tr, f) { var c = tr.querySelector('td[data-f="' + f + '"]'); return c ? c.getAttribute("data-v") || "" : ""; }
+  function tripOn() { return $("tp-si").checked; }
+  function syncTripDet() {
+    var on = tripOn();
+    $("tp-det").hidden = !on;
+    if (on && trip) {
+      var tr = trip.td.parentNode;
+      if (!$("tp-g").value) $("tp-g").value = cellVal(tr, "journalist");
+      if (!$("tp-d").value) $("tp-d").value = cellVal(tr, "delivery_date");
+      if (!$("tp-a").value) $("tp-a").value = $("tp-d").value;
+    }
+  }
+  function placePop(pop, anchor) {
+    var r = anchor.getBoundingClientRect(), w = pop.offsetWidth, h = pop.offsetHeight;
+    var left = Math.max(12, Math.min(r.left, document.documentElement.clientWidth - w - 12));
+    var top = r.bottom + 6;
+    if (top + h > window.innerHeight - 8 && r.top - h - 6 > $("top").offsetHeight) top = r.top - h - 6;
+    pop.style.left = (left + window.scrollX) + "px";
+    pop.style.top = (top + window.scrollY) + "px";
+  }
+  function openTrip(td) {
+    if (busy) return;
+    var tr = td.parentNode;
+    var old = { on: td.getAttribute("data-v") === "true", tj: td.getAttribute("data-tj") || "", tl: td.getAttribute("data-tl") || "",
+      td: td.getAttribute("data-td") || "", ta: td.getAttribute("data-ta") || "" };
+    ensureLists().then(function (l) {
+      trip = { td: td, id: tr.getAttribute("data-id"), old: old };
+      var sel = $("tp-g"); sel.textContent = "";
+      selectOptions(listNames(l && l.giornalisti), old.tj).forEach(function (n) {
+        var o = document.createElement("option"); o.value = n; o.textContent = n; sel.appendChild(o);
+      });
+      sel.value = old.tj;
+      $("tp-l").value = old.tl; $("tp-d").value = old.td; $("tp-a").value = old.ta;
+      $("tp-si").checked = old.on; $("tp-no").checked = !old.on;
+      $("tpop-err").textContent = "";
+      $("tp-save").disabled = false;
+      $("tpop").hidden = false;
+      syncTripDet();
+      placePop($("tpop"), td);
+      (old.on ? $("tp-si") : $("tp-no")).focus();
+    });
+  }
+  function closeTrip(refocus) {
+    if (!trip) return;
+    var td = trip.td; trip = null;
+    $("tpop").hidden = true;
+    if (refocus && td && document.contains(td)) { var b = td.parentNode.querySelector('button[data-act="edit"]'); if (b) b.focus(); }
+  }
+  $("tp-si").addEventListener("change", syncTripDet);
+  $("tp-no").addEventListener("change", syncTripDet);
+  $("tp-cancel").addEventListener("click", function () { closeTrip(true); });
+  $("tpop").addEventListener("keydown", function (ev) {
+    if (ev.key === "Escape") { ev.preventDefault(); closeTrip(true); }
+    else if (ev.key === "Enter" && ev.target.tagName !== "BUTTON") { ev.preventDefault(); $("tpop-f").requestSubmit(); }
+  });
+  document.addEventListener("mousedown", function (ev) {
+    if (trip && !$("tpop").contains(ev.target) && !trip.td.contains(ev.target)) closeTrip(false);
+  });
+  $("tpop-f").addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    if (!trip || busy) return;
+    var t = trip, o = t.old, patch;
+    if (tripOn()) patch = { trasferta: true, trasferta_journalist: $("tp-g").value, trasferta_luogo: $("tp-l").value.trim(), trasferta_dal: $("tp-d").value, trasferta_al: $("tp-a").value };
+    else patch = { trasferta: false };
+    var same = tripOn() ? (o.on && patch.trasferta_journalist === o.tj && patch.trasferta_luogo === o.tl && patch.trasferta_dal === o.td && patch.trasferta_al === o.ta) : !o.on;
+    if (same) { closeTrip(true); return; }
+    // Undo puts back exactly what was there. A legacy "Sì" without details cannot be rebuilt
+    // (the server requires the details): its undo sends {trasferta:true} and shows the server's answer.
+    var back = o.on ? (o.tj && o.td && o.ta ? { trasferta: true, trasferta_journalist: o.tj, trasferta_luogo: o.tl, trasferta_dal: o.td, trasferta_al: o.ta } : { trasferta: true }) : { trasferta: false };
+    $("tpop-err").textContent = ""; $("tp-save").disabled = true;
+    t.td.classList.add("saving");
+    setBusy(true);
+    post("/api/update", { id: t.id, patch: patch }).then(function (r) {
+      setBusy(false);
+      $("tp-save").disabled = false;
+      t.td.classList.remove("saving");
+      if (!r) { closeTrip(false); return; }
+      if (r.status !== 200) { $("tpop-err").textContent = errText(r); return; }
+      pushUndo({ kind: "patch", id: t.id, patch: back });
+      closeTrip(false);
+      load(current, "Trasferta salvata.");
+    });
+  });
+
   function voidRow(tr) {
     if (busy || !window.confirm("Annullare questa registrazione?")) return;
     var id = tr.getAttribute("data-id");
@@ -771,6 +1201,7 @@ ${body.join("\n")}
     if (busy || !undoStack.length) return;
     var a = undoStack[undoStack.length - 1], req;
     if (a.kind === "void") req = post("/api/unvoid", { id: a.id });
+    else if (a.kind === "patch") req = post("/api/update", { id: a.id, patch: a.patch });
     else { var patch = {}; patch[a.field] = a.old; req = post("/api/update", { id: a.id, patch: patch }); }
     setBusy(true);
     req.then(function (r) {
@@ -787,7 +1218,11 @@ ${body.join("\n")}
     if (td) startEdit(td);
   });
   $("doc").addEventListener("click", function (ev) {
-    var b = ev.target.closest && ev.target.closest("button[data-act]");
+    if (!ev.target.closest) return;
+    var dt = ev.target.closest("button.dt");
+    if (dt) { toggleDay(dt); return; }
+    if (ev.target.closest("#retry")) { if (current) load(current); return; }
+    var b = ev.target.closest("button[data-act]");
     if (!b) return;
     var tr = b.closest("tr.r");
     if (b.getAttribute("data-act") === "void") voidRow(tr);
@@ -810,13 +1245,36 @@ ${body.join("\n")}
   });
   $("prev").addEventListener("click", function () { if (current) load(shiftWeek(current, -1)); });
   $("next").addEventListener("click", function () { if (current) load(shiftWeek(current, 1)); });
-  $("print").addEventListener("click", function () { window.print(); });
+  $("print").addEventListener("click", function () { closeTrip(false); window.print(); });
+  // E-mail the week to Rome and the newsroom (server sends it; POST /api/email-collaudo {week}).
+  $("email").addEventListener("click", function () {
+    if (!current) return;
+    var wk = formatWeek(current), b = $("email");
+    if (!window.confirm("Inviare il collaudo della settimana " + wk + " a Roma e alla redazione?")) return;
+    b.disabled = true; $("email-t").textContent = "Invio…"; setMsg("Invio del collaudo " + wk + "…");
+    function done() { b.disabled = false; $("email-t").textContent = "Invia per e-mail"; }
+    api("/api/email-collaudo", { method: "POST", body: JSON.stringify({ week: wk }) }).then(function (r) {
+      done();
+      if (r.status === 200 && r.body) {
+        var to = Array.isArray(r.body.sent_to) ? r.body.sent_to : [];
+        setMsg("Inviato a " + to.length + " destinatari.");
+        b.title = "Ultimo invio (" + wk + "): " + to.join(", ");
+      } else setMsg(errText(r), true);
+    }, function (e) {
+      done();
+      if (e.kind === "auth") { authLost(); return; }
+      setMsg(e.message, true);
+    });
+  });
 
   requireLogin(function () {
     $("tools").hidden = false;
+    syncTop();
+    mountPassword($("hright"));
     var w = parseWeek(new URLSearchParams(location.search).get("week") || "") || isoWeekOf(todayNewYork());
     load(w);
   });
+  document.addEventListener("rainyc:auth-lost", function () { $("doc").innerHTML = ""; loadedOnce = false; });
 })();
 </script>
 </body>

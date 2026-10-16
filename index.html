@@ -3,31 +3,89 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
 <title>RAI NYC Servizi</title>
+<script>(function () { var t = null; try { t = localStorage.getItem("rainyc.tema"); } catch (e) { /* blocked */ } if (t !== "light" && t !== "dark") { try { t = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"; } catch (e) { t = "light"; } } document.documentElement.setAttribute("data-theme", t); })();</script>
 <style>
-:root { --ink:#15171a; --mute:#5d636b; --line:#c9cdd2; --bg:#eceef0; --card:#fff; --accent:#1f3a5f; --accent-ink:#fff; --ok:#1d6b3a; --warn:#8a5a00; --err:#b00020; --focus:#2f6fd6; }
+/* Visual language borrowed from Crop Studio (apr70 tools): warm near-black panels, hairline borders,
+   small mono uppercase section heads, one amber accent. Same tokens in collaudo.html. */
+:root {
+  --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --mono: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, monospace;
+  --bg:#f3f1ed; --panel:#ffffff; --raise:#f7f5f2; --input:#ffffff; --hover:#efece7; --line:#e0dcd5; --line2:#c9c3b9;
+  --fg:#1b1a1c; --dim:#666159; --accent:#e85d04; --accent-ink:#140a03; --accent-text:#b04400; --accent-soft:#fdeee3;
+  --ok:#1d6b3a; --ok-bg:#e5f2e9; --warn:#8a5a00; --warn-bg:#fcf1d8; --bad:#b3261e; --bad-bg:#fbe8e5;
+  --focus:#c24e00; --shadow:0 1px 2px rgba(40,30,20,.06), 0 4px 14px rgba(40,30,20,.05); --pop:0 10px 30px rgba(30,20,10,.18);
+  --sw-off:#cbc5bb;
+}
+:root[data-theme=dark] {
+  --bg:#111012; --panel:#171619; --raise:#1e1d21; --input:#0d0c0f; --hover:#232227; --line:#2a292e; --line2:#3a3940;
+  --fg:#f0eeea; --dim:#9a958e; --accent:#e85d04; --accent-ink:#140a03; --accent-text:#ff8a3d; --accent-soft:#2a1a10;
+  --ok:#6fd39b; --ok-bg:#12241a; --warn:#e9b44c; --warn-bg:#2a2210; --bad:#ff7b66; --bad-bg:#2c1613;
+  --focus:#ff8a3d; --shadow:0 1px 0 rgba(0,0,0,.35); --pop:0 14px 40px rgba(0,0,0,.6);
+  --sw-off:#3a3940;
+}
+:root { color-scheme:light; } :root[data-theme=dark] { color-scheme:dark; }
 * { box-sizing:border-box; }
-html, body { margin:0; background:var(--bg); color:var(--ink); }
-body { font:17px/1.4 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
-.win { max-width:560px; margin:24px auto; background:var(--card); border:1px solid var(--line); border-radius:8px; box-shadow:0 6px 24px rgba(0,0,0,.12); overflow:hidden; }
-.bar { background:var(--accent); color:var(--accent-ink); font-size:13px; padding:7px 14px; display:flex; justify-content:space-between; gap:8px; align-items:center; }
-.bar a { color:#fff; opacity:.85; text-decoration:none; }
-.bar a:hover, .bar a:focus-visible { opacity:1; text-decoration:underline; }
-.bar .pend { background:#f2b705; color:#1b1b1b; border-radius:10px; padding:1px 8px; font-weight:700; }
-form.entry { padding:18px 20px 8px; }
-.f { margin:0 0 16px; border:0; padding:0; min-width:0; }
-.f > label, .f > legend { display:block; font-weight:600; font-size:15px; margin:0 0 6px; padding:0; }
-.hint { font-weight:400; color:var(--mute); font-size:13px; }
-input[type=text], input[type=date], input[type=email], input[type=password], select { width:100%; height:48px; font:inherit; padding:0 12px; border:1.5px solid var(--line); border-radius:6px; background:#fff; color:var(--ink); }
-input:focus-visible, select:focus-visible { outline:3px solid var(--focus); outline-offset:1px; border-color:var(--focus); }
-.chips { display:flex; flex-wrap:wrap; gap:8px; }
-.chips label { position:relative; }
+html, body { margin:0; background:var(--bg); color:var(--fg); }
+body { font:15px/1.45 var(--sans); min-height:100vh; -webkit-font-smoothing:antialiased; }
+[hidden] { display:none !important; }
+a { color:inherit; }
+:focus-visible { outline:2px solid var(--focus); outline-offset:2px; }
+
+/* ── header bar ── */
+.appbar { height:52px; display:flex; align-items:center; gap:16px; padding:0 16px; background:var(--panel); border-bottom:1px solid var(--line); position:relative; z-index:20; }
+.brand { display:flex; align-items:baseline; gap:10px; min-width:0; }
+.brand .mk { font:700 11px/1 var(--mono); letter-spacing:.16em; text-transform:uppercase; color:var(--accent-text); }
+.brand #t { font-weight:650; font-size:15px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.brand .pg { font:600 11px/1 var(--mono); letter-spacing:.12em; text-transform:uppercase; color:var(--dim); }
+.hright { margin-left:auto; display:flex; align-items:center; gap:6px; }
+.hlink { display:inline-flex; align-items:center; height:36px; padding:0 12px; border-radius:6px; font-size:14px; color:var(--dim); text-decoration:none; white-space:nowrap; }
+.hlink:hover { color:var(--fg); background:var(--hover); }
+.hlink.go { color:var(--fg); border:1px solid var(--line2); }
+.hlink.go:hover { border-color:var(--accent); color:var(--accent-text); background:transparent; }
+.pend { font:700 12px/1 var(--mono); background:var(--warn-bg); color:var(--warn); border:1px solid currentColor; border-radius:999px; padding:5px 10px; white-space:nowrap; }
+.icbtn { width:36px; height:36px; display:inline-grid; place-items:center; border:1px solid var(--line2); border-radius:6px; background:transparent; color:var(--fg); cursor:pointer; padding:0; }
+.icbtn:hover { border-color:var(--accent); color:var(--accent-text); }
+.icbtn svg { width:18px; height:18px; }
+:root[data-theme=dark] .ic-moon, :root:not([data-theme=dark]) .ic-sun { display:none; }
+
+/* ── panels ("little windows") ── */
+.desk { padding:16px; display:grid; gap:14px; grid-template-columns:minmax(0,1fr); }
+.entry { display:grid; gap:12px; grid-template-columns:minmax(0,1fr); align-content:start; margin:0; }
+.panel { background:var(--panel); border:1px solid var(--line); border-radius:8px; box-shadow:var(--shadow); padding:14px 16px 16px; min-width:0; margin:0; }
+fieldset.panel { min-inline-size:0; }
+.ph { font:600 11px/1 var(--mono); letter-spacing:.13em; text-transform:uppercase; color:var(--dim); margin:0 0 14px; padding:0; display:flex; align-items:center; gap:8px; width:100%; }
+.ph .n { color:var(--accent-text); }
+.ph .aside { margin-left:auto; letter-spacing:.04em; text-transform:none; font-family:var(--sans); font-weight:500; font-size:12px; color:var(--dim); }
+legend.ph { float:left; }
+legend.ph + * { clear:both; }
+.fld { margin:0 0 12px; min-width:0; }
+.fld:last-child { margin-bottom:0; }
+.fld > label, .lbl { display:block; font-weight:600; font-size:13px; margin:0 0 6px; }
+.hint { font-weight:400; color:var(--dim); font-size:12px; }
+.row2 { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+input[type=text], input[type=date], input[type=email], input[type=password], select {
+  width:100%; height:44px; font:inherit; font-size:16px; padding:0 12px; border:1px solid var(--line2); border-radius:6px;
+  background:var(--input); color:var(--fg); transition:border-color .12s, box-shadow .12s; }
+input::placeholder { color:var(--dim); opacity:.8; }
+input:hover, select:hover { border-color:var(--dim); }
+input:focus-visible, select:focus-visible { outline:none; border-color:var(--focus); box-shadow:0 0 0 3px color-mix(in srgb, var(--focus) 28%, transparent); }
+
+/* ── chips ── */
+.chips { display:grid; grid-template-columns:repeat(auto-fill, minmax(96px, 1fr)); gap:6px; }
+#c-rete { grid-template-columns:repeat(auto-fill, minmax(138px, 1fr)); }
+.chips label { position:relative; display:block; min-width:0; }
 .chips input { position:absolute; opacity:0; inset:0; margin:0; }
-.chips span { display:inline-block; min-height:44px; padding:10px 14px; border:1.5px solid var(--line); border-radius:22px; font-size:15px; line-height:1.4; cursor:pointer; user-select:none; background:#fff; }
-.chips input:checked + span { background:var(--accent); border-color:var(--accent); color:var(--accent-ink); font-weight:600; }
-.chips input:focus-visible + span { outline:3px solid var(--focus); outline-offset:2px; }
-/* Rete chips carry the colour of their Rai brand. --b = brand colour (border); --d = same colour, darkened only where
-   white text on it would be under 4.5:1 (checked background and unchecked text/border text). Sources (hex read from the
+.chips span { display:flex; align-items:center; justify-content:center; gap:7px; min-height:44px; padding:6px 8px; border:1px solid var(--line2); border-radius:6px;
+  font-size:14px; line-height:1.2; cursor:pointer; user-select:none; background:var(--raise); color:var(--fg); text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  transition:background .12s, border-color .12s, color .12s; }
+.chips span:hover { border-color:var(--dim); }
+.chips input:checked + span { background:var(--accent); border-color:var(--accent); color:var(--accent-ink); font-weight:650; }
+.chips input:focus-visible + span { outline:2px solid var(--focus); outline-offset:2px; }
+/* Rete chips carry the colour of their Rai brand. --c = brand colour as a background under white text
+   (darkened only where white on it would be under 4.5:1); --k = text/border on the light panel;
+   --kd = text/border on the dark panel (lightened for contrast on #171619). Sources (hex read from the
    official logo SVGs on Wikimedia Commons, 2026-10-16):
    Rai 1 #4144C5  https://commons.wikimedia.org/wiki/File:Rai_1_-_Logo_2016.svg
    Rai 2 #E61C23  https://commons.wikimedia.org/wiki/File:Rai_2_-_Logo_2016.svg
@@ -35,167 +93,257 @@ input:focus-visible, select:focus-visible { outline:3px solid var(--focus); outl
    Rai News 24 #000099  https://commons.wikimedia.org/wiki/File:Rai_News_24_logo_(2022).svg (logo.dev lists #020199)
    Rai Radio (GR) #000099  https://commons.wikimedia.org/wiki/File:Logo_of_RAI_Radio.svg
    Rai Sport #FF510C  https://commons.wikimedia.org/wiki/File:Rai_Sport_-_Logo_2017.svg (darkened to #C73A00 for text)
-   Tappeto: not a channel, neutral dark grey. */
-#c-rete label { --b:#4b5563; --d:#4b5563; }
-#c-rete label[data-rete="Tg1"], #c-rete label[data-rete="Tv7"], #c-rete label[data-rete="Rai 1"] { --b:#4144c5; --d:#4144c5; }
-#c-rete label[data-rete="Tg2"], #c-rete label[data-rete="Rai 2"] { --b:#e61c23; --d:#e61c23; }
-#c-rete label[data-rete="Tg3"], #c-rete label[data-rete="Rai 3"] { --b:#00b46e; --d:#007a4a; }
-#c-rete label[data-rete="RAN"], #c-rete label[data-rete="Rainews.it"], #c-rete label[data-rete="GR"] { --b:#000099; --d:#000099; }
-#c-rete label[data-rete="Rai Sport"] { --b:#ff510c; --d:#c73a00; }
-#c-rete span { border:2px solid var(--b); color:var(--d); background:#fff; }
-#c-rete input:checked + span { background:var(--d); border-color:var(--d); color:#fff; }
-/* Logo tile: always white, so the logo stays legible on the coloured checked chip. */
-#c-rete span { display:inline-flex; align-items:center; gap:8px; }
-#c-rete i.logo { display:inline-flex; flex:none; background:#fff; border-radius:5px; padding:2px 3px; line-height:0; }
-#c-rete i.logo svg { display:block; height:22px; width:auto; }
+   Tappeto: not a channel, neutral. */
+#c-rete label { --c:#4b5563; --k:#4b5563; --kd:#b9b3aa; }
+#c-rete label[data-rete="Tg1"], #c-rete label[data-rete="Tv7"], #c-rete label[data-rete="Rai 1"] { --c:#4144c5; --k:#4144c5; --kd:#a3a5ff; }
+#c-rete label[data-rete="Tg2"], #c-rete label[data-rete="Rai 2"] { --c:#d0161d; --k:#d0161d; --kd:#ff8a8e; }
+#c-rete label[data-rete="Tg3"], #c-rete label[data-rete="Rai 3"] { --c:#007a4a; --k:#007a4a; --kd:#3fdc9c; }
+#c-rete label[data-rete="RAN"], #c-rete label[data-rete="Rainews.it"], #c-rete label[data-rete="GR"] { --c:#000099; --k:#000099; --kd:#9da2ff; }
+#c-rete label[data-rete="Rai Sport"] { --c:#c73a00; --k:#c73a00; --kd:#ff8f5e; }
+#c-rete span { justify-content:flex-start; border:1.5px solid color-mix(in srgb, var(--k) 55%, transparent); color:var(--k); background:var(--panel); font-weight:600; }
+:root[data-theme=dark] #c-rete span { border-color:color-mix(in srgb, var(--kd) 45%, transparent); color:var(--kd); background:var(--raise); }
+#c-rete span:hover { border-color:var(--k); }
+:root[data-theme=dark] #c-rete span:hover { border-color:var(--kd); }
+#c-rete input:checked + span, :root[data-theme=dark] #c-rete input:checked + span { background:var(--c); border-color:var(--c); color:#fff; box-shadow:0 0 0 2px var(--panel), 0 0 0 4px var(--c); }
+/* Logo tile: always white, so the logo stays legible on the coloured checked chip and on the dark panel. */
+#c-rete i.logo { display:inline-flex; flex:none; background:#fff; border-radius:4px; padding:2px 3px; line-height:0; box-shadow:0 0 0 1px rgba(0,0,0,.08); }
+#c-rete i.logo svg { display:block; height:20px; width:auto; }
+
+/* ── richiedente ── */
 .prefixed { display:flex; align-items:stretch; position:relative; }
 .prefixed input { flex:1; min-width:0; border-radius:6px 0 0 6px; }
 #richiedente::-webkit-calendar-picker-indicator { display:none !important; } /* our own dropdown button replaces the native datalist arrow */
-.rich-btn { flex:none; width:44px; height:48px; padding:0; border:1.5px solid var(--line); border-left:0; border-radius:0 6px 6px 0; background:#f3f4f6; color:var(--ink); font-size:16px; font-weight:400; }
-.rich-btn:hover { background:#e6e9ec; }
-.rich-list { position:absolute; z-index:10; top:100%; left:0; right:0; margin:2px 0 0; padding:4px 0; list-style:none; background:#fff; border:1.5px solid var(--line); border-radius:6px; box-shadow:0 6px 18px rgba(0,0,0,.18); max-height:260px; overflow:auto; }
-.rich-list li { padding:10px 12px; min-height:44px; display:flex; align-items:center; cursor:pointer; font-size:16px; }
-.rich-list li.on, .rich-list li:hover { background:#e8f0fb; }
-.rich-list li.altro { border-top:1px solid var(--line); color:var(--accent); font-weight:600; }
-.prefixed .pre { display:none; align-items:center; padding:0 10px; border:1.5px solid var(--line); border-right:0; border-radius:6px 0 0 6px; background:#f3f4f6; font-weight:600; font-size:15px; white-space:nowrap; }
+.rich-btn { flex:none; width:44px; height:44px; padding:0; border:1px solid var(--line2); border-left:0; border-radius:0 6px 6px 0; background:var(--raise); color:var(--fg); font-size:15px; cursor:pointer; }
+.rich-btn:hover { background:var(--hover); color:var(--accent-text); }
+.rich-list { position:absolute; z-index:30; top:100%; left:0; right:0; margin:4px 0 0; padding:4px; list-style:none; background:var(--panel); border:1px solid var(--line2); border-radius:8px; box-shadow:var(--pop); max-height:300px; overflow:auto; }
+.rich-list li { padding:8px 10px; min-height:44px; display:flex; align-items:center; cursor:pointer; font-size:15px; border-radius:5px; }
+.rich-list li.on, .rich-list li:hover { background:var(--accent-soft); color:var(--fg); }
+.rich-list li.on { box-shadow:inset 3px 0 0 var(--accent); }
+.rich-list li.altro { border-top:1px solid var(--line); border-radius:0 0 5px 5px; color:var(--accent-text); font-weight:600; margin-top:4px; }
+.prefixed .pre { display:none; align-items:center; padding:0 10px; border:1px solid var(--line2); border-right:0; border-radius:6px 0 0 6px; background:var(--raise); font:700 13px/1 var(--mono); white-space:nowrap; color:var(--accent-text); }
 .prefixed.has-pre .pre { display:flex; }
 .prefixed.has-pre input { border-radius:0; }
-.f > label.toggle, .toggle { display:flex; margin:0; align-items:center; gap:12px; cursor:pointer; width:max-content; }
+
+/* ── trasferta ── */
+.toggle { display:flex; align-items:center; gap:12px; cursor:pointer; width:max-content; min-height:44px; font-weight:600; position:relative; }
 .toggle input { position:absolute; opacity:0; width:1px; height:1px; }
-.toggle .sw { width:56px; height:32px; border-radius:16px; background:#c3c7cc; position:relative; transition:background .15s; flex:none; }
-.toggle .sw::after { content:""; position:absolute; top:3px; left:3px; width:26px; height:26px; border-radius:50%; background:#fff; transition:transform .15s; box-shadow:0 1px 3px rgba(0,0,0,.3); }
-.toggle input:checked + .sw { background:var(--err); }
-.toggle input:checked + .sw::after { transform:translateX(24px); }
-.toggle input:focus-visible + .sw { outline:3px solid var(--focus); outline-offset:2px; }
-.toggle .val { font-weight:600; }
-.trip { margin:10px 0 0; padding:12px 12px 2px; border:1.5px solid #f3c6cc; background:#fff6f7; border-radius:6px; }
-.trip .row { display:flex; gap:10px; }
-.trip .row .f { flex:1; }
-.note { font-size:13px; color:var(--mute); margin-top:4px; }
-.cat { font-size:16px; padding:10px 12px; background:#f3f4f6; border-radius:6px; margin:0 0 16px; }
-.cat b { font-size:18px; }
-button { width:100%; height:54px; font:inherit; font-weight:700; font-size:18px; background:var(--accent); color:var(--accent-ink); border:0; border-radius:6px; cursor:pointer; }
-button:disabled { opacity:.6; cursor:default; }
-button:focus-visible { outline:3px solid var(--focus); outline-offset:2px; }
-.actions { display:flex; gap:10px; }
-.actions #send { flex:1; width:auto; }
-button.sec { width:120px; flex:none; background:#fff; color:var(--accent); border:1.5px solid var(--accent); font-size:16px; }
-button.mini { width:auto; height:36px; padding:0 14px; font-size:15px; background:#fff; color:var(--err); border:1.5px solid var(--err); flex:none; }
-.last { margin:12px 20px 0; padding:10px 12px; border-radius:6px; background:#e5f4ea; color:var(--ok); font-weight:600; font-size:15px; display:flex; gap:10px; align-items:center; justify-content:space-between; }
-.last.errore { background:#fde8eb; color:var(--err); }
-.pwd { padding:12px 20px 14px; background:#f3f4f6; border-bottom:1px solid var(--line); }
-.pwd .f { margin:0 0 10px; }
-.pwd .row { display:flex; gap:10px; }
-.pwd .row button { height:44px; font-size:16px; }
-.pwd .row button.sec { width:110px; }
-.pwd-msg { font-size:14px; margin:8px 0 0; font-weight:600; }
-.pwd-msg.ok { color:var(--ok); } .pwd-msg.ko { color:var(--err); }
-.keys { font-size:12px; color:var(--mute); text-align:center; margin:8px 0 0; }
-.err { color:var(--err); font-size:14px; margin:6px 0 0; min-height:0; }
-.status { margin:12px 20px 0; padding:10px 12px; border-radius:6px; font-weight:600; font-size:15px; display:none; }
-.status.salvato { display:block; background:#e8f0fb; color:var(--accent); }
-.status.attesa { display:block; background:#fff4dc; color:var(--warn); }
-.status.sincronizzato { display:block; background:#e5f4ea; color:var(--ok); }
-.status.errore { display:block; background:#fde8eb; color:var(--err); }
-.recent { padding:14px 20px 18px; border-top:1px solid var(--line); margin-top:16px; }
-.recent h2 { font-size:15px; margin:0 0 8px; }
-.recent ol { list-style:none; margin:0; padding:0; font-size:14px; }
-.recent li { display:flex; justify-content:space-between; gap:10px; padding:6px 0; border-bottom:1px solid #eee; }
-.recent li .t { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-.recent li .s { flex:none; font-size:12px; font-weight:600; }
-.s.salvato { color:var(--accent); } .s.attesa { color:var(--warn); } .s.sincronizzato { color:var(--ok); } .s.errore { color:var(--err); }
-.recent .vuoto { color:var(--mute); font-size:14px; }
-#login { padding:22px 20px 18px; }
-#login h2 { font-size:17px; margin:0 0 14px; }
-#login button { margin-top:4px; }
-[hidden] { display:none !important; }
-@media (max-width:600px) { .win { margin:0; border-radius:0; border:0; } body { font-size:16px; } form.entry { padding:14px 16px 6px; } .status, .last { margin:12px 16px 0; } .pwd { padding:12px 16px 14px; } .recent { padding:14px 16px; } }
+.toggle .sw { width:48px; height:28px; border-radius:14px; background:var(--sw-off); position:relative; transition:background .15s; flex:none; }
+.toggle .sw::after { content:""; position:absolute; top:3px; left:3px; width:22px; height:22px; border-radius:50%; background:#fff; transition:transform .15s; box-shadow:0 1px 3px rgba(0,0,0,.3); }
+.toggle input:checked + .sw { background:var(--bad); }
+.toggle input:checked + .sw::after { transform:translateX(20px); }
+.toggle input:focus-visible + .sw { outline:2px solid var(--focus); outline-offset:2px; }
+.toggle .val { font:700 13px/1 var(--mono); letter-spacing:.06em; }
+.trip { margin:10px 0 0; padding:12px 12px 12px; border:1px solid color-mix(in srgb, var(--bad) 35%, transparent); background:var(--bad-bg); border-radius:6px; min-inline-size:0; }
+.trip .grid { display:grid; grid-template-columns:1fr 1fr; gap:10px 12px; }
+.trip .fld { margin:0; }
+.muted { color:var(--dim); font-size:13px; margin:4px 0 0; }
+
+/* ── actions ── */
+.actions { display:grid; grid-template-columns:auto minmax(0,1fr); gap:10px 18px; align-items:center; }
+.btns { display:flex; gap:8px; align-items:center; }
+.btn { height:44px; padding:0 16px; font:inherit; font-size:15px; font-weight:600; border-radius:6px; border:1px solid var(--line2); background:var(--raise); color:var(--fg); cursor:pointer; white-space:nowrap; }
+.btn:hover { border-color:var(--dim); }
+.btn.pri { background:var(--accent); border-color:var(--accent); color:var(--accent-ink); font-weight:700; }
+.btn.pri:hover { filter:brightness(1.07); }
+.btn:disabled { opacity:.5; cursor:default; }
+#send { height:52px; padding:0 26px; font-size:16px; letter-spacing:.01em; }
+#send kbd { font:600 11px/1 var(--mono); margin-left:10px; padding:4px 6px; border-radius:4px; background:rgba(0,0,0,.12); }
+.btn.mini { height:34px; padding:0 12px; font-size:13px; color:var(--bad); border-color:color-mix(in srgb, var(--bad) 50%, transparent); background:transparent; }
+.cat { font-size:13px; color:var(--dim); display:flex; align-items:center; gap:8px; }
+.cat b { font:700 12px/1 var(--mono); letter-spacing:.08em; text-transform:uppercase; color:var(--fg); background:var(--raise); border:1px solid var(--line2); padding:6px 9px; border-radius:4px; }
+.msgs { display:flex; flex-direction:column; gap:6px; min-width:0; }
+.err { color:var(--bad); font-size:14px; font-weight:600; margin:0; }
+.err:empty { display:none; }
+.status { padding:8px 12px; border-radius:6px; font-weight:600; font-size:14px; display:none; border:1px solid transparent; }
+.status.salvato { display:block; background:var(--accent-soft); color:var(--accent-text); border-color:color-mix(in srgb, var(--accent) 30%, transparent); }
+.status.attesa { display:block; background:var(--warn-bg); color:var(--warn); border-color:color-mix(in srgb, var(--warn) 30%, transparent); }
+.status.sincronizzato { display:block; background:var(--ok-bg); color:var(--ok); border-color:color-mix(in srgb, var(--ok) 30%, transparent); }
+.status.errore { display:block; background:var(--bad-bg); color:var(--bad); border-color:color-mix(in srgb, var(--bad) 30%, transparent); }
+.last { padding:6px 6px 6px 12px; border-radius:6px; background:var(--raise); border:1px solid var(--line); color:var(--fg); font-size:14px; display:flex; gap:10px; align-items:center; justify-content:space-between; min-width:0; }
+.last #last-text { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.last.errore { background:var(--bad-bg); color:var(--bad); }
+.keys { grid-column:1 / -1; font-size:12px; color:var(--dim); margin:2px 0 0; padding-top:10px; border-top:1px solid var(--line); line-height:1.7; }
+kbd { font:600 11px/1 var(--mono); padding:2px 5px; border:1px solid var(--line2); border-bottom-width:2px; border-radius:4px; background:var(--raise); color:var(--fg); white-space:nowrap; }
+
+/* ── today (side panel) ── */
+.side { display:flex; flex-direction:column; min-height:0; }
+.side ol { list-style:none; margin:0 -6px; padding:0; overflow:auto; min-height:0; flex:1; }
+.side li { padding:8px 6px; border-bottom:1px solid var(--line); display:grid; grid-template-columns:auto minmax(0,1fr) auto; gap:4px 10px; align-items:baseline; }
+.side li:last-child { border-bottom:0; }
+.side li .o { font:600 12px/1.4 var(--mono); color:var(--dim); }
+.side li .t { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:14px; }
+.side li .s { font:700 10px/1 var(--mono); letter-spacing:.06em; text-transform:uppercase; padding:4px 6px; border-radius:4px; white-space:nowrap; }
+.side li .e { grid-column:2 / -1; color:var(--bad); font-size:12px; }
+.s.salvato { color:var(--accent-text); background:var(--accent-soft); } .s.attesa { color:var(--warn); background:var(--warn-bg); }
+.s.sincronizzato { color:var(--ok); background:var(--ok-bg); } .s.errore { color:var(--bad); background:var(--bad-bg); }
+.side li.vuoto { display:block; color:var(--dim); font-size:14px; text-align:center; padding:28px 6px; border:1px dashed var(--line2); border-radius:6px; margin:0 6px; }
+
+/* ── login, boot, password ── */
+.card { max-width:400px; margin:9vh auto 0; }
+#login .btn { width:100%; height:48px; margin-top:4px; }
+.lead { margin:0 0 16px; color:var(--dim); font-size:14px; }
+.boot { max-width:520px; margin:12vh auto 0; text-align:center; color:var(--dim); font-size:15px; }
+.boot.ko { color:var(--bad); font-weight:600; }
+.pop-pwd { position:absolute; top:58px; right:16px; z-index:40; width:340px; max-width:calc(100vw - 32px); background:var(--panel); border:1px solid var(--line2); border-radius:8px; box-shadow:var(--pop); padding:14px 16px 16px; }
+.pop-pwd .row { display:flex; gap:8px; }
+.pop-pwd .row .btn { flex:1; }
+.pwd-msg { font-size:13px; margin:10px 0 0; font-weight:600; }
+.pwd-msg:empty { display:none; }
+.pwd-msg.ok { color:var(--ok); } .pwd-msg.ko { color:var(--bad); }
+
+/* ── layout tiers ── */
+/* Desktop (1920×1080 edit machines): everything on one screen, no page scroll.
+   DOM order = visual order, so Tab walks the panels left to right, top to bottom. */
+@media (min-width:1100px) {
+  .desk { grid-template-columns:minmax(0,1fr) clamp(320px, 24vw, 420px); align-items:start; }
+  .entry { grid-template-columns:minmax(0,1fr) minmax(0,1.3fr) minmax(0,1fr); }
+  .p-act { grid-column:1 / -1; }
+  .side { position:sticky; top:16px; max-height:calc(100vh - 52px - 32px); }
+}
+/* Tablet: two columns of panels, today's list below. */
+@media (min-width:700px) and (max-width:1099.98px) {
+  .entry { grid-template-columns:minmax(0,1fr) minmax(0,1fr); }
+  .p-act { grid-column:1 / -1; }
+  .side { max-height:none; }
+}
+/* Phone: panels stacked; the page scrolls. */
+@media (max-width:699.98px) {
+  body { font-size:16px; }
+  .desk { padding:12px; gap:12px; }
+  .appbar { padding:0 12px; gap:8px; }
+  .brand .pg, .brand .mk { display:none; }
+  .hlink { padding:0 8px; }
+  .actions { grid-template-columns:minmax(0,1fr); }
+  .btns { flex-wrap:wrap; }
+  #send { flex:1 1 100%; }
+  #send kbd { display:none; }
+  .keys { display:none; }
+}
+@media (prefers-reduced-motion:reduce) { * { transition:none !important; } }
 </style>
 </head>
 <body>
-<div class="win" role="dialog" aria-labelledby="t">
-  <div class="bar"><span id="t">RAI NYC Servizi</span><span><span class="pend" id="pend" hidden></span> <a href="#" id="lnk-pwd" hidden>Cambia password</a> <a href="collaudo" id="lnk-collaudo">Collaudo</a></span></div>
+<header class="appbar">
+  <div class="brand"><span class="mk">Rai · NY</span><span id="t">RAI NYC Servizi</span><span class="pg">Registrazione</span></div>
+  <nav class="hright" id="hright" aria-label="Pagine">
+    <span class="pend" id="pend" hidden></span>
+    <button type="button" class="icbtn" id="theme" aria-label="Cambia tema" title="Cambia tema">
+      <svg class="ic-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+      <svg class="ic-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.2M12 19.8V22M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M2 12h2.2M19.8 12H22M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6"/></svg>
+    </button>
+    <a href="collaudo" id="lnk-collaudo" class="hlink go">Collaudo &rarr;</a>
+  </nav>
+</header>
 
-  <form id="pwd" class="pwd" hidden autocomplete="off" novalidate>
-    <div class="f"><label for="pwd-new">Nuova password <span class="hint">(almeno 5 caratteri)</span></label><input type="password" id="pwd-new" autocomplete="new-password"></div>
-    <div class="f"><label for="pwd-conf">Conferma</label><input type="password" id="pwd-conf" autocomplete="new-password"></div>
-    <div class="row"><button type="submit" id="pwd-save">Salva</button><button type="button" class="sec" id="pwd-close">Chiudi</button></div>
-    <div class="pwd-msg" id="pwd-msg" role="alert"></div>
-  </form>
-
-  <form id="login" hidden autocomplete="on">
-    <h2>Accesso</h2>
-    <div class="f"><label for="login-email">Nome <span class="hint">(cognome come in elenco, es. Arzilla)</span></label><input type="text" id="login-email" name="username" required autocomplete="username" autocapitalize="none"></div>
-    <div class="f"><label for="login-password">Password</label><input type="password" id="login-password" name="password" required autocomplete="current-password"></div>
-    <button type="submit">Accedi</button>
+<main>
+  <form id="login" class="panel card" hidden autocomplete="on">
+    <h1 class="ph">Accesso</h1>
+    <p class="lead">Accedere con il proprio cognome e la password.</p>
+    <div class="fld"><label for="login-email">Nome <span class="hint">(cognome come in elenco, es. Arzilla)</span></label><input type="text" id="login-email" name="username" required autocomplete="username" autocapitalize="none"></div>
+    <div class="fld"><label for="login-password">Password</label><input type="password" id="login-password" name="password" required autocomplete="current-password"></div>
+    <button type="submit" class="btn pri">Accedi</button>
     <div class="err" id="login-err" role="alert"></div>
   </form>
 
-  <form id="f" class="entry" novalidate autocomplete="off" hidden>
-    <div class="f">
-      <label for="data">Data</label>
-      <input type="date" id="data" name="data" required>
-    </div>
-    <div class="f">
-      <label for="giornalista">Giornalista</label>
-      <input type="text" id="giornalista" name="giornalista" list="l-giornalisti" required>
-      <datalist id="l-giornalisti"></datalist>
-    </div>
-    <div class="f">
-      <label for="titolo">Argomento / Titolo</label>
-      <input type="text" id="titolo" name="titolo" required maxlength="500">
-    </div>
-    <fieldset class="f">
-      <legend>Rete</legend>
-      <div class="chips" id="c-rete"></div>
-    </fieldset>
-    <div class="f">
-      <label for="richiedente">Richiedente <span class="hint" id="rich-hint">(edizione o programma; anche testo libero)</span></label>
-      <div class="prefixed" id="rich-wrap"><span class="pre" id="rich-pre"></span><input type="text" id="richiedente" name="richiedente" list="l-richiedenti" maxlength="200" aria-controls="rich-list"><button type="button" class="rich-btn" id="rich-btn" tabindex="-1" aria-label="Mostra tutte le scelte" aria-haspopup="listbox" aria-expanded="false">&#9662;</button><ul class="rich-list" id="rich-list" role="listbox" aria-label="Richiedente" hidden></ul></div>
-      <datalist id="l-richiedenti"></datalist>
-    </div>
-    <div class="f">
-      <label for="durata">Durata <span class="hint">(facoltativa)</span></label>
-      <input type="text" id="durata" name="durata" placeholder="5 minuti / :50 / 01:22:00" maxlength="50">
-    </div>
-    <fieldset class="f">
-      <legend>Mezzo</legend>
-      <div class="chips" id="c-mezzo"></div>
-    </fieldset>
-    <div class="f">
-      <label class="toggle" for="trasferta"><input type="checkbox" id="trasferta" name="trasferta"><span class="sw"></span><span>Trasferta: <span class="val" id="trasferta-val">NO</span></span></label>
-      <fieldset class="trip" id="trip" hidden>
-        <div class="f">
-          <label for="trip-giornalista">Giornalista in trasferta</label>
-          <select id="trip-giornalista" name="trip_giornalista"></select>
+  <div class="boot" id="boot" hidden role="status" aria-live="polite"></div>
+
+  <div class="desk">
+    <form id="f" class="entry" novalidate autocomplete="off" hidden>
+      <section class="panel p-dati" aria-labelledby="h-dati">
+        <h2 class="ph" id="h-dati"><span class="n">01</span> Servizio</h2>
+        <div class="fld">
+          <label for="data">Data</label>
+          <input type="date" id="data" name="data" required>
         </div>
-        <div class="f">
-          <label for="trip-luogo">Destinazione</label>
-          <input type="text" id="trip-luogo" name="trip_luogo" placeholder="Washington D.C." maxlength="200">
+        <div class="fld">
+          <label for="giornalista">Giornalista</label>
+          <input type="text" id="giornalista" name="giornalista" list="l-giornalisti" required>
+          <datalist id="l-giornalisti"></datalist>
         </div>
-        <div class="row">
-          <div class="f"><label for="trip-dal">Dal</label><input type="date" id="trip-dal" name="trip_dal"></div>
-          <div class="f"><label for="trip-al">Al</label><input type="date" id="trip-al" name="trip_al"></div>
+        <div class="fld">
+          <label for="titolo">Argomento / Titolo</label>
+          <input type="text" id="titolo" name="titolo" required maxlength="500">
         </div>
+      </section>
+
+      <fieldset class="panel p-rete">
+        <legend class="ph"><span class="n">02</span> Rete</legend>
+        <div class="chips" id="c-rete"></div>
       </fieldset>
-    </div>
-    <div class="f">
-      <label for="operatore">Operatore</label>
-      <select id="operatore" name="operatore"></select>
-      <div class="note" id="op-note"></div>
-    </div>
-    <div class="cat" aria-live="polite">Categoria: <b id="categoria">–</b></div>
-    <div class="actions"><button type="submit" id="send">Invia registrazione</button><button type="button" class="sec" id="clear">Svuota</button></div>
-    <div class="err" id="err" role="alert"></div>
-    <p class="keys">Invio = invia · Esc o Svuota = svuota · &#9662; = tutte le scelte del Richiedente · Tab = completa il nome e passa al campo successivo; nella Rete e nel Mezzo Tab scorre le scelte (Maiusc+Tab torna indietro) · frecce = scelta nella riga</p>
-  </form>
-  <div class="status" id="status" aria-live="polite"></div>
-  <div class="last" id="last" hidden aria-live="polite"><span id="last-text"></span><button type="button" class="mini" id="undo">Annulla</button></div>
-  <section class="recent" id="recent-box" hidden>
-    <h2>Registrazioni di oggi</h2>
-    <ol id="recent"></ol>
-  </section>
-</div>
+
+      <section class="panel p-rich" aria-labelledby="h-rich">
+        <h2 class="ph" id="h-rich"><span class="n">03</span> Richiesta</h2>
+        <div class="fld">
+          <label for="richiedente">Richiedente <span class="hint" id="rich-hint">(edizione o programma; anche testo libero)</span></label>
+          <div class="prefixed" id="rich-wrap"><span class="pre" id="rich-pre"></span><input type="text" id="richiedente" name="richiedente" list="l-richiedenti" maxlength="200" aria-controls="rich-list"><button type="button" class="rich-btn" id="rich-btn" tabindex="-1" aria-label="Mostra tutte le scelte" aria-haspopup="listbox" aria-expanded="false">&#9662;</button><ul class="rich-list" id="rich-list" role="listbox" aria-label="Richiedente" hidden></ul></div>
+          <datalist id="l-richiedenti"></datalist>
+        </div>
+        <div class="fld">
+          <label for="durata">Durata <span class="hint">(facoltativa)</span></label>
+          <input type="text" id="durata" name="durata" placeholder="5 minuti / :50 / 01:22:00" maxlength="50">
+        </div>
+      </section>
+
+      <fieldset class="panel p-mezzo">
+        <legend class="ph"><span class="n">04</span> Mezzo</legend>
+        <div class="chips" id="c-mezzo"></div>
+      </fieldset>
+
+      <section class="panel p-trip" aria-labelledby="h-trip">
+        <h2 class="ph" id="h-trip"><span class="n">05</span> Trasferta</h2>
+        <label class="toggle" for="trasferta"><input type="checkbox" id="trasferta" name="trasferta"><span class="sw"></span><span>Trasferta: <span class="val" id="trasferta-val">NO</span></span></label>
+        <p class="muted" id="trip-off">Nessuna trasferta. Attivare se il giornalista lavora fuori sede.</p>
+        <fieldset class="trip" id="trip" hidden>
+          <div class="grid">
+            <div class="fld">
+              <label for="trip-giornalista">Giornalista in trasferta</label>
+              <select id="trip-giornalista" name="trip_giornalista"></select>
+            </div>
+            <div class="fld">
+              <label for="trip-luogo">Destinazione</label>
+              <input type="text" id="trip-luogo" name="trip_luogo" placeholder="Washington D.C." maxlength="200">
+            </div>
+            <div class="fld"><label for="trip-dal">Dal</label><input type="date" id="trip-dal" name="trip_dal"></div>
+            <div class="fld"><label for="trip-al">Al</label><input type="date" id="trip-al" name="trip_al"></div>
+          </div>
+        </fieldset>
+      </section>
+
+      <section class="panel p-op" aria-labelledby="h-op">
+        <h2 class="ph" id="h-op"><span class="n">06</span> Operatore <span class="aside" id="op-note"></span></h2>
+        <div class="fld">
+          <label for="operatore">Operatore</label>
+          <select id="operatore" name="operatore"></select>
+        </div>
+        <div class="fld">
+          <label for="note">Note <span class="hint">(facoltative)</span></label>
+          <input type="text" id="note" name="note" maxlength="2000">
+        </div>
+      </section>
+
+      <section class="panel p-act" aria-label="Invio">
+        <div class="actions">
+          <div class="btns">
+            <button type="submit" class="btn pri" id="send">Invia registrazione<kbd>Ctrl+Invio</kbd></button>
+            <button type="button" class="btn" id="clear">Svuota</button>
+            <span class="cat" aria-live="polite">Categoria <b id="categoria">–</b></span>
+          </div>
+          <div class="msgs">
+            <div class="err" id="err" role="alert"></div>
+            <div class="status" id="status" aria-live="polite"></div>
+            <div class="last" id="last" hidden aria-live="polite"><span id="last-text"></span><button type="button" class="btn mini" id="undo">Annulla</button></div>
+          </div>
+          <p class="keys" id="keys"><kbd>Invio</kbd> conferma la scelta e passa al campo successivo · <kbd>Ctrl</kbd>+<kbd>Invio</kbd> (Mac <kbd>&#8984;</kbd>+<kbd>Invio</kbd>) invia · <kbd>Esc</kbd> o Svuota svuota · <kbd>&#9662;</kbd> tutte le scelte del Richiedente · <kbd>Tab</kbd> completa il nome e passa al campo successivo; nella Rete e nel Mezzo <kbd>Tab</kbd> scorre le scelte (<kbd>Maiusc</kbd>+<kbd>Tab</kbd> torna indietro) · frecce = scelta nella riga</p>
+        </div>
+      </section>
+    </form>
+
+    <aside class="panel side" id="recent-box" hidden aria-labelledby="h-oggi">
+      <h2 class="ph" id="h-oggi">Registrazioni di oggi <span class="aside" id="recent-n"></span></h2>
+      <ol id="recent"></ol>
+    </aside>
+  </div>
+</main>
 <script>
 // ---- pages/shared.js ----
 // Shared browser code for form.html and collaudo.html. Inlined by scripts/build_pages.mjs.
@@ -374,6 +522,91 @@ function changePassword(newPassword, retried) {
   });
 }
 
+// ---- theme (light / dark), shared by both pages ----
+// The <head> of each page sets data-theme before first paint (same rule as themeNow below);
+// this wires the header button. Saved choice in localStorage "rainyc.tema"; none saved = follow the OS.
+var THEME_KEY = "rainyc.tema";
+function themeSaved() { try { var t = localStorage.getItem(THEME_KEY); return t === "light" || t === "dark" ? t : null; } catch (e) { return null; } }
+function themeOs() { try { return window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"; } catch (e) { return "light"; } }
+function themeNow() { return themeSaved() || themeOs(); }
+function applyTheme(t, btn) {
+  document.documentElement.setAttribute("data-theme", t);
+  if (btn) {
+    var label = t === "dark" ? "Passa al tema chiaro" : "Passa al tema scuro";
+    btn.setAttribute("aria-label", label); btn.title = label;
+    btn.setAttribute("aria-pressed", t === "dark" ? "true" : "false");
+  }
+}
+/** Wire the theme toggle button (id). */
+function initTheme(id) {
+  var btn = document.getElementById(id);
+  applyTheme(themeNow(), btn);
+  if (btn) btn.addEventListener("click", function () {
+    var t = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
+    try { localStorage.setItem(THEME_KEY, t); } catch (e) { /* storage blocked: this page only */ }
+    applyTheme(t, btn);
+  });
+  try {
+    var mq = window.matchMedia("(prefers-color-scheme: dark)");
+    var follow = function () { if (!themeSaved()) applyTheme(themeOs(), btn); };
+    if (mq.addEventListener) mq.addEventListener("change", follow); else if (mq.addListener) mq.addListener(follow);
+  } catch (e) { /* old browser: no live follow */ }
+}
+
+// ---- change password: only the account that administers the system ----
+var PASSWORD_ADMIN = "caruso@rainyc.nyc";
+function canChangePassword() {
+  var s = Session.get();
+  return !!(s && s.email && String(s.email).toLowerCase() === PASSWORD_ADMIN);
+}
+/**
+ * Mount "Cambia password" for the admin account only: the link goes into `slot` (an element in
+ * the header), the panel drops below the header. For every other account nothing is created.
+ * Call after login; safe to call again (it removes what it made when the account changes).
+ */
+function mountPassword(slot) {
+  var old = document.getElementById("pwd-root");
+  if (old) old.parentNode.removeChild(old);
+  var oldLink = document.getElementById("lnk-pwd");
+  if (oldLink) oldLink.parentNode.removeChild(oldLink);
+  if (!slot || !canChangePassword()) return;
+  var a = document.createElement("a");
+  a.href = "#"; a.id = "lnk-pwd"; a.className = "hlink"; a.textContent = "Cambia password";
+  slot.insertBefore(a, slot.firstChild);
+  var root = document.createElement("div");
+  root.id = "pwd-root"; root.className = "pop-pwd"; root.hidden = true;
+  root.innerHTML =
+    '<form id="pwd" class="pwd" autocomplete="off" novalidate>' +
+    '<h2 class="ph">Cambia password</h2>' +
+    '<div class="fld"><label for="pwd-new">Nuova password <span class="hint">(almeno 5 caratteri)</span></label><input type="password" id="pwd-new" autocomplete="new-password"></div>' +
+    '<div class="fld"><label for="pwd-conf">Conferma</label><input type="password" id="pwd-conf" autocomplete="new-password"></div>' +
+    '<div class="row"><button type="submit" class="btn pri" id="pwd-save">Salva</button><button type="button" class="btn" id="pwd-close">Chiudi</button></div>' +
+    '<div class="pwd-msg" id="pwd-msg" role="alert"></div></form>';
+  document.body.appendChild(root);
+  var $p = function (id) { return document.getElementById(id); };
+  function close() { root.hidden = true; $p("pwd-new").value = ""; $p("pwd-conf").value = ""; $p("pwd-msg").textContent = ""; a.setAttribute("aria-expanded", "false"); }
+  a.setAttribute("aria-expanded", "false");
+  a.addEventListener("click", function (ev) {
+    ev.preventDefault();
+    if (root.hidden) { root.hidden = false; a.setAttribute("aria-expanded", "true"); $p("pwd-msg").textContent = ""; $p("pwd-new").focus(); } else close();
+  });
+  $p("pwd-close").addEventListener("click", close);
+  root.addEventListener("keydown", function (ev) { if (ev.key === "Escape") { ev.preventDefault(); ev.stopPropagation(); close(); a.focus(); } });
+  $p("pwd").addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    var msg = $p("pwd-msg"), pa = $p("pwd-new").value, pc = $p("pwd-conf").value;
+    function say(ok, t) { msg.className = "pwd-msg " + (ok ? "ok" : "ko"); msg.textContent = t; }
+    if (pa.length < 5) { say(false, "La password deve avere almeno 5 caratteri."); $p("pwd-new").focus(); return; }
+    if (pa !== pc) { say(false, "Le due password non coincidono."); $p("pwd-conf").focus(); return; }
+    var b = $p("pwd-save"); b.disabled = true; say(true, "Salvataggio…");
+    changePassword(pa).then(function (res) {
+      b.disabled = false;
+      if (res.ok) { $p("pwd-new").value = ""; $p("pwd-conf").value = ""; say(true, "Password aggiornata."); } else say(false, res.error);
+    });
+  });
+  document.addEventListener("rainyc:auth-lost", function () { mountPassword(null); });
+}
+
 // ---- end pages/shared.js ----
 // ---- lib/week.js ----
 // ISO week helpers. Plain JS so the same file runs in Deno (server) and, inlined by
@@ -503,6 +736,11 @@ function fmtRange(a, b) {
   var params = new URLSearchParams(location.search);
   // The page lives at …/servizi (no trailing slash): relative links would resolve one level up.
   $("lnk-collaudo").href = PAGE_COLLAUDO;
+  initTheme("theme");
+  var isMac = /Mac|iPhone|iPad/.test(navigator.platform || "");
+  if (isMac) $("send").querySelector("kbd").textContent = "⌘+Invio";
+
+  function boot(text, isErr) { var b = $("boot"); b.hidden = !text; b.textContent = text || ""; b.className = "boot" + (isErr ? " ko" : ""); }
 
   // ---- lists (from the API, cached so the form also opens offline) ----
   function loadLists() {
@@ -534,6 +772,7 @@ function fmtRange(a, b) {
         var lg = document.createElement("i"); lg.className = "logo"; lg.innerHTML = LOGOS[v]; // trusted constant above
         s.appendChild(lg); s.appendChild(document.createTextNode(v));
       } else s.textContent = v;
+      s.title = v;
       l.appendChild(i); l.appendChild(s); box.appendChild(l);
     });
   }
@@ -607,7 +846,7 @@ function fmtRange(a, b) {
   function openList() {
     var ul = $("rich-list"); ul.textContent = "";
     var cur = $("richiedente").value.trim().toLowerCase(), at = -1;
-    richSlots.concat(["Altro\u2026 (aggiungi)"]).forEach(function (v, k) {
+    richSlots.concat(["Altro… (aggiungi)"]).forEach(function (v, k) {
       var li = document.createElement("li"); li.id = "rich-o" + k; li.setAttribute("role", "option"); li.textContent = v;
       if (k === richSlots.length) li.className = "altro"; else if (v.toLowerCase() === cur) at = k;
       li.setAttribute("data-k", String(k)); ul.appendChild(li);
@@ -662,6 +901,7 @@ function fmtRange(a, b) {
     var on = $("trasferta").checked;
     $("trasferta-val").textContent = on ? "SI" : "NO";
     $("trip").hidden = !on;
+    $("trip-off").hidden = on;
     if (on) {
       var g = $("giornalista").value.trim();
       if (!$("trip-giornalista").value || !$("trip-luogo").value) {
@@ -715,12 +955,16 @@ function fmtRange(a, b) {
       return { ora: t ? String(t.getHours()).padStart(2, "0") + ":" + String(t.getMinutes()).padStart(2, "0") : "", text: r.giornalista + " · " + r.titolo + " · " + r.rete + " (" + r.categoria + ")" + (r.operatore ? " · " + r.operatore : ""), stato: "sincronizzato", sort: r.submitted_at || "" };
     }));
     items.sort(function (a, b) { return a.sort < b.sort ? 1 : -1; });
+    $("recent-n").textContent = items.length ? String(items.length) : "";
     if (!items.length) { var li0 = document.createElement("li"); li0.className = "vuoto"; li0.textContent = "Nessuna registrazione oggi."; ol.appendChild(li0); return; }
-    items.slice(0, 20).forEach(function (it) {
+    items.slice(0, 40).forEach(function (it) {
       var li = document.createElement("li");
-      var t = document.createElement("span"); t.className = "t"; t.textContent = it.ora + " · " + it.text + (it.err ? " — " + it.err : ""); t.title = it.text;
+      var o = document.createElement("span"); o.className = "o"; o.textContent = it.ora || "--:--";
+      var t = document.createElement("span"); t.className = "t"; t.textContent = " " + it.text + " "; t.title = it.text;
       var s = document.createElement("span"); s.className = "s " + it.stato; s.textContent = LABEL[it.stato];
-      li.appendChild(t); li.appendChild(s); ol.appendChild(li);
+      li.appendChild(o); li.appendChild(t); li.appendChild(s);
+      if (it.err) { var e = document.createElement("span"); e.className = "e"; e.textContent = it.err; li.appendChild(e); }
+      ol.appendChild(li);
     });
   }
   function refreshServerRows() {
@@ -770,7 +1014,8 @@ function fmtRange(a, b) {
   function showLast(e) {
     lastSynced = { id: e.server_id, entry: e };
     var p = e.payload;
-    $("last-text").textContent = "Registrata: " + p.journalist + " \u00b7 " + p.rete + (p.richiedente ? " " + p.richiedente : "") + " \u00b7 " + p.subject;
+    $("last-text").textContent = "Registrata: " + p.journalist + " · " + p.rete + (p.richiedente ? " " + p.richiedente : "") + " · " + p.subject;
+    $("last-text").title = $("last-text").textContent;
     $("last").className = "last"; $("last").hidden = false; $("undo").hidden = false; $("undo").disabled = false;
     setStatus("sincronizzato", "Sincronizzato");
   }
@@ -798,6 +1043,7 @@ function fmtRange(a, b) {
     setRadio("rete", p.rete); updateRichiedente();
     $("richiedente").value = PREFIXED.indexOf(p.rete) >= 0 ? stripPrefix(p.rete, p.richiedente || "") : (p.richiedente || "");
     $("durata").value = p.duration_text || ""; setRadio("mezzo", p.mezzo);
+    $("note").value = p.notes || "";
     $("trasferta").checked = !!p.trasferta; updateTrasferta();
     if (p.trasferta) { $("trip-giornalista").value = p.trasferta_journalist; $("trip-luogo").value = p.trasferta_luogo; $("trip-dal").value = p.trasferta_dal; $("trip-al").value = p.trasferta_al; }
     $("operatore").value = p.operator; updateCategoria();
@@ -814,7 +1060,7 @@ function fmtRange(a, b) {
     var h = Array.prototype.map.call(b, function (x) { return (x + 256).toString(16).slice(1); }).join("");
     return h.slice(0, 8) + "-" + h.slice(8, 12) + "-" + h.slice(12, 16) + "-" + h.slice(16, 20) + "-" + h.slice(20);
   }
-  // Tab completes a datalist field: "l" + Tab → "Lo Prete" when one name starts with it (else the
+  // Tab (and Enter) complete a datalist field: "l" → "Lo Prete" when one name starts with it (else the
   // first name that starts with it). Browsers do not accept datalist suggestions on Tab by themselves.
   function completeFrom(input, names) {
     var typed = input.value.trim().toLowerCase();
@@ -828,11 +1074,12 @@ function fmtRange(a, b) {
     input.dispatchEvent(new Event("change", { bubbles: true }));
     return true;
   }
+  function richOptions() { return Array.prototype.map.call($("l-richiedenti").options, function (o) { return o.value; }); }
   $("giornalista").addEventListener("keydown", function (ev) {
     if (ev.key === "Tab" && !ev.shiftKey) completeFrom(ev.target, lists.giornalisti);
   });
   $("richiedente").addEventListener("keydown", function (ev) {
-    if (ev.key === "Tab" && !ev.shiftKey) completeFrom(ev.target, Array.prototype.map.call($("l-richiedenti").options, function (o) { return o.value; }));
+    if (ev.key === "Tab" && !ev.shiftKey) completeFrom(ev.target, richOptions());
   });
   chipTab("c-rete"); chipTab("c-mezzo");
   // Richiedente dropdown (mouse button, not in the Tab order). While open: Up/Down move, Enter picks, Esc closes.
@@ -854,7 +1101,7 @@ function fmtRange(a, b) {
     else if (ev.key === "ArrowUp") { ev.preventDefault(); ev.stopPropagation(); setActive(richActive < 0 ? -1 : richActive - 1); }
     else if (ev.key === "Escape") { ev.preventDefault(); ev.stopPropagation(); closeList(); }
     else if (ev.key === "Enter" && richActive >= 0) { ev.preventDefault(); ev.stopPropagation(); chooseRich(richActive); }
-    else if (ev.key === "Enter") closeList(); // nothing highlighted: Enter submits as usual
+    else if (ev.key === "Enter") closeList(); // nothing highlighted: the form's Enter rule completes and moves on
   });
   document.addEventListener("click", function (ev) { if (listOpen() && !$("rich-wrap").contains(ev.target)) closeList(); });
   $("clear").addEventListener("click", function () { resetAll(); });
@@ -878,7 +1125,7 @@ function fmtRange(a, b) {
       trasferta: $("trasferta").checked,
       trasferta_journalist: null, trasferta_luogo: null, trasferta_dal: null, trasferta_al: null,
       operator: $("operatore").value,
-      notes: null
+      notes: $("note").value.trim() || null
     };
     var missing = [], focusId = null;
     function miss(label, id) { missing.push(label); if (!focusId) focusId = id; }
@@ -914,7 +1161,7 @@ function fmtRange(a, b) {
     setStatus("salvato", "Salvato: " + v.subject);
     try { localStorage.setItem("rainyc.operatore", v.operator); } catch (e) { /* ignore */ }
     // Keep date, journalist, title and operator for the next entry of the same story.
-    setRadio("rete", ""); $("durata").value = ""; $("richiedente").value = "";
+    setRadio("rete", ""); $("durata").value = ""; $("richiedente").value = ""; $("note").value = "";
     setRadio("mezzo", "V-Mover"); $("trasferta").checked = false;
     updateRichiedente(); updateCategoria(); updateTrasferta();
     form.querySelector('input[name="rete"]').focus();
@@ -927,47 +1174,62 @@ function fmtRange(a, b) {
     if (ev.target.id === "trasferta") updateTrasferta();
     if (ev.target.id === "giornalista" && $("trasferta").checked && lists.giornalisti.indexOf(ev.target.value.trim()) >= 0) $("trip-giornalista").value = ev.target.value.trim();
   });
-  // Enter submits from any field (radio chips, toggle and select included).
+
+  // ---- Enter never sends: it accepts the choice and moves on. Ctrl/Cmd+Enter (or the button) sends. ----
+  // The stops of the Tab order inside the form, in DOM order (= visual order): one stop per radio
+  // group (its checked chip, or the first), hidden fields and tabindex=-1 buttons left out.
+  function stops() {
+    var out = [], seen = {};
+    Array.prototype.forEach.call(form.querySelectorAll("input, select, textarea, button"), function (el) {
+      if (el.disabled || el.tabIndex < 0 || el.type === "hidden" || !el.getClientRects().length) return;
+      if (el.type === "radio") {
+        if (seen[el.name]) return;
+        seen[el.name] = true;
+        out.push(form.querySelector('input[name="' + el.name + '"]:checked') || el);
+        return;
+      }
+      out.push(el);
+    });
+    return out;
+  }
+  function nextField(from) {
+    var list = stops(), key = from;
+    if (from.type === "radio") key = form.querySelector('input[name="' + from.name + '"]:checked') || form.querySelector('input[name="' + from.name + '"]');
+    var i = list.indexOf(key);
+    var to = (i >= 0 && list[i + 1]) || $("send");
+    to.focus();
+    if (to.select && (to.type === "text")) to.select();
+  }
   form.addEventListener("keydown", function (ev) {
-    if (ev.key === "Enter" && !ev.isComposing && ev.target.tagName !== "BUTTON") { ev.preventDefault(); form.requestSubmit(); }
+    if (ev.key !== "Enter" || ev.isComposing) return;
+    if (ev.ctrlKey || ev.metaKey) { ev.preventDefault(); closeList(); form.requestSubmit(); return; }
+    var t = ev.target;
+    if (t.tagName === "BUTTON" || t.tagName === "TEXTAREA") return; // a focused button does what it says
+    ev.preventDefault();
+    if (t.id === "giornalista") completeFrom(t, lists.giornalisti);
+    else if (t.id === "richiedente") { closeList(); completeFrom(t, richOptions()); }
+    else if (t.type === "radio" && !t.checked) { t.checked = true; t.dispatchEvent(new Event("change", { bubbles: true })); }
+    nextField(t);
   });
   document.addEventListener("keydown", function (ev) {
-    if (ev.key === "Escape" && !$("pwd").hidden && $("pwd").contains(ev.target)) { ev.preventDefault(); closePwd(); return; }
-    if (ev.key === "Escape" && !form.hidden) { ev.preventDefault(); resetAll(); }
+    if (ev.key === "Escape" && !form.hidden && !ev.defaultPrevented) { ev.preventDefault(); resetAll(); }
   });
-  // ---- change password ----
-  function closePwd() { $("pwd").hidden = true; $("pwd-new").value = ""; $("pwd-conf").value = ""; $("pwd-msg").textContent = ""; }
-  $("lnk-pwd").addEventListener("click", function (ev) {
-    ev.preventDefault();
-    if ($("pwd").hidden) { $("pwd").hidden = false; $("pwd-msg").textContent = ""; $("pwd-new").focus(); } else closePwd();
-  });
-  $("pwd-close").addEventListener("click", closePwd);
-  $("pwd").addEventListener("submit", function (ev) {
-    ev.preventDefault();
-    var msg = $("pwd-msg"), a = $("pwd-new").value, c = $("pwd-conf").value;
-    function say(ok, t) { msg.className = "pwd-msg " + (ok ? "ok" : "ko"); msg.textContent = t; }
-    if (a.length < 5) { say(false, "La password deve avere almeno 5 caratteri."); $("pwd-new").focus(); return; }
-    if (a !== c) { say(false, "Le due password non coincidono."); $("pwd-conf").focus(); return; }
-    var b = $("pwd-save"); b.disabled = true; say(true, "Salvataggio\u2026");
-    changePassword(a).then(function (res) {
-      b.disabled = false;
-      if (res.ok) { $("pwd-new").value = ""; $("pwd-conf").value = ""; say(true, "Password aggiornata."); } else say(false, res.error);
-    });
-  });
-  document.addEventListener("rainyc:auth-lost", function () { $("lnk-pwd").hidden = true; closePwd(); });
   window.addEventListener("online", function () { attempt = 0; schedule(0); });
 
   // ---- start ----
   requireLogin(function () {
+    boot("Caricamento degli elenchi…");
     loadLists().then(function () {
+      boot("");
       buildForm();
-      form.hidden = false; $("recent-box").hidden = false; $("lnk-pwd").hidden = false;
+      form.hidden = false; $("recent-box").hidden = false;
+      mountPassword($("hright"));
       resetAll(); renderPending(); renderRecent();
       refreshServerRows();
       schedule(0);
     }, function (e) {
-      if (e.kind === "auth") { authLost(); return; }
-      setStatus("errore", e.message + " Ricaricare la pagina quando la rete torna.");
+      if (e.kind === "auth") { boot(""); authLost(); return; }
+      boot(e.message + " Ricaricare la pagina quando la rete torna.", true);
     });
   });
 })();
