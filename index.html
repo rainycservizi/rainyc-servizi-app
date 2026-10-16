@@ -134,6 +134,10 @@ input:focus-visible, select:focus-visible { outline:none; border-color:var(--foc
 .tset { font-size:14px; line-height:1.4; }
 .tset b { color:var(--bad); }
 .tset .tdates { font:600 12px/1 var(--mono); color:var(--dim); white-space:nowrap; }
+.tlist { list-style:none; margin:0; padding:0; display:grid; gap:4px; max-height:120px; overflow:auto; }
+.tlist li { display:flex; align-items:center; gap:8px; min-width:0; }
+.tlist li .tx { flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.tlist li.off .tx { color:var(--dim); }
 .tbtns { display:flex; gap:8px; flex-wrap:wrap; }
 .tpop { position:absolute; z-index:35; top:40px; left:12px; right:12px; padding:12px 14px 14px; border:1px solid var(--line2); background:var(--panel); border-radius:8px; box-shadow:var(--pop); border-top:3px solid var(--bad); }
 .tpop .grid { display:grid; grid-template-columns:1fr 1fr; gap:10px 12px; }
@@ -243,7 +247,7 @@ kbd { font:600 11px/1 var(--mono); padding:2px 5px; border:1px solid var(--line2
 </head>
 <body>
 <header class="appbar">
-  <div class="brand" id="brand" title="Pagina costruita 2026-10-16 21:52 UTC · e0c1e02"><span class="mk">Rai · NY</span><span id="t">RAI NYC Servizi</span><span class="pg" data-i18n>Registrazione</span></div>
+  <div class="brand" id="brand" title="Pagina costruita 2026-10-16 22:02 UTC · cc0ead8"><span class="mk">Rai · NY</span><span id="t">RAI NYC Servizi</span><span class="pg" data-i18n>Registrazione</span></div>
   <nav class="hright" id="hright" aria-label="Pagine">
     <span class="pend" id="pend" hidden></span>
     <button type="button" class="icbtn" id="theme" aria-label="Cambia tema" title="Cambia tema">
@@ -251,6 +255,7 @@ kbd { font:600 11px/1 var(--mono); padding:2px 5px; border:1px solid var(--line2
       <svg class="ic-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.2M12 19.8V22M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M2 12h2.2M19.8 12H22M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6"/></svg>
     </button>
     <button type="button" class="icbtn lang" id="lang" aria-label="Switch to English" title="Switch to English">EN</button>
+    <a href="mensile" id="lnk-mensile" class="hlink" data-i18n>Mensile</a>
     <a href="collaudo" id="lnk-collaudo" class="hlink go" data-i18n>Collaudo &rarr;</a>
   </nav>
 </header>
@@ -312,9 +317,9 @@ kbd { font:600 11px/1 var(--mono); padding:2px 5px; border:1px solid var(--line2
       <section class="panel p-trip" aria-labelledby="h-trip">
         <h2 class="ph" id="h-trip" data-i18n><span class="n">05</span> Trasferta <span class="aside" id="trip-apply"></span></h2>
         <div class="tstate">
-          <div class="tnone" id="trip-none" data-i18n>Nessuna trasferta impostata. Impostarla una volta: vale per ogni registrazione di quel giornalista finché non viene rimossa.</div>
-          <div class="tset" id="trip-set" hidden><b id="trip-who"></b> &middot; <span id="trip-where"></span> &middot; <span class="tdates" id="trip-when"></span></div>
-          <div class="tbtns"><button type="button" class="btn" id="trip-edit" aria-haspopup="dialog" aria-expanded="false">Imposta trasferta&hellip;</button><button type="button" class="btn mini" id="trip-remove" hidden data-i18n>Rimuovi trasferta</button></div>
+          <div class="tnone" id="trip-none" data-i18n>Nessuna trasferta aperta. Impostarla una volta: vale su ogni macchina, per le registrazioni di quel giornalista nelle date indicate.</div>
+          <ul class="tset tlist" id="trip-set" hidden></ul>
+          <div class="tbtns"><button type="button" class="btn" id="trip-edit" aria-haspopup="dialog" aria-expanded="false">Imposta trasferta&hellip;</button><button type="button" class="btn mini" id="trip-remove" hidden data-i18n>Termina trasferta</button></div>
         </div>
         <div class="tpop" id="trip" hidden role="dialog" aria-labelledby="trip-h">
           <h3 class="ph" id="trip-h" data-i18n>Trasferta</h3>
@@ -390,7 +395,8 @@ var AUTH_URL = ("https://wyrthfwrkgdobllzssdv.supabase.co" || location.origin) +
 var PAGE_FORM = "./" || APP_BASE;
 var PAGE_COLLAUDO = "./collaudo.html" || APP_BASE + "/collaudo";
 var PAGE_GESTIONE = "./gestione.html" || APP_BASE + "/gestione";
-var BUILD = "2026-10-16 21:52 UTC · e0c1e02"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
+var PAGE_MENSILE = "./mensile.html" || APP_BASE + "/mensile";
+var BUILD = "2026-10-16 22:02 UTC · cc0ead8"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
 // Every place the project lives (shown in the admin's header menu and on the Gestione page).
 var LINKS = [
   ["Pagine pubbliche", "https://rainycservizi.github.io/rainyc-servizi-app/", "GitHub Pages: il sito di prova principale"],
@@ -411,6 +417,12 @@ var LINKS = [
 var LANG_KEY = "rainyc.lingua";
 var I18N = { en: {
   // header, login, shared
+  "Mensile": "Monthly", "Mensile →": "Monthly →", "Mese": "Month", "Mese precedente": "Previous month", "Mese successivo": "Next month", "Accesso · mensile": "Login · monthly",
+  "Report mensile": "Monthly report", "Sede di corrispondenza di New York": "New York bureau", "il prospetto per Roma": "the sheet for Rome", "Settimane del mese": "Weeks of the month", "Settimana": "Week", "Giornalisti": "Journalists",
+  "Servizi video": "Video stories", "Servizi radio": "Radio stories", "Totale video": "Total video", "Totale radio": "Total radio", "Radio GR 1": "Radio GR 1", "storico, inviato": "historical, sent", "dal database": "from the database",
+  "{0} registrazioni nel mese": "{0} entries in the month", "Caricamento del mese {0}…": "Loading {0}…", "Mensile {0} · RAI NYC Servizi": "Monthly {0} · RAI NYC Servizi", "Mese non valido: usare la forma 2026-10.": "Invalid month: use the form 2026-10.",
+  "Top Sheet {0}: cifre di Gennaio–Luglio come inviate a Roma; da Agosto dal database (registrazioni annullate escluse). GR 1, 2, 3 ripetono il conteggio radio, come nel foglio.": "Top Sheet {0}: January–July as sent to Rome; from August from the database (voided entries excluded). GR 1, 2, 3 repeat the radio count, as in the sheet.",
+  "Generato il {0} dal sistema RAI NYC Servizi · fonte: database": "Generated on {0} by RAI NYC Servizi · source: database",
   "Registrazione": "Entry", "Collaudo": "Weekly report", "Collaudo →": "Weekly report →", "← Nuova registrazione": "← New entry",
   "Gestione": "Admin", "Esci": "Sign out", "Esci ({0})": "Sign out ({0})", "Cambia password": "Change password",
   "Pagina costruita": "Page built", "Pagina costruita {0}": "Page built {0}",
@@ -440,6 +452,9 @@ var I18N = { en: {
   "(edizione; anche testo libero)": "(edition; free text also allowed)", "(programma; testo libero)": "(programme; free text)",
   "(scegliere prima la rete)": "(pick the network first)", "Durata": "Duration", "(facoltativa)": "(optional)", "(facoltative)": "(optional)",
   "Mezzo": "Delivery means", "Trasferta": "Travel",
+  "Nessuna trasferta aperta. Impostarla una volta: vale su ogni macchina, per le registrazioni di quel giornalista nelle date indicate.": "No open travel. Set it once: it applies on every machine to that journalist's entries on those dates.",
+  "Termina trasferta": "End travel", "Termina": "End", "Trasferta aperta.": "Travel opened.", "Trasferta terminata.": "Travel ended.", "Trasferta non salvata.": "Travel not saved.", "Trasferta non terminata.": "Travel not ended.",
+  "Questa registrazione: NO (altro giornalista o altre date)": "This entry: NO (other journalist or other dates)",
   "Nessuna trasferta impostata. Impostarla una volta: vale per ogni registrazione di quel giornalista finché non viene rimossa.": "No travel set. Set it once: it applies to every entry of that journalist until it is removed.",
   "Imposta trasferta…": "Set travel…", "Modifica…": "Edit…", "Rimuovi trasferta": "Remove travel",
   "Giornalista in trasferta": "Journalist on travel", "Destinazione": "Destination", "Dal": "From", "Al": "To", "Applica": "Apply", "Annulla": "Cancel",
@@ -988,7 +1003,7 @@ function fmtRange(a, b) {
   var lists = null;
   var params = new URLSearchParams(location.search);
   // The page lives at …/servizi (no trailing slash): relative links would resolve one level up.
-  $("lnk-collaudo").href = PAGE_COLLAUDO;
+  $("lnk-collaudo").href = PAGE_COLLAUDO; $("lnk-mensile").href = PAGE_MENSILE;
   initTheme("theme");
   initLang("lang");
   var isMac = /Mac|iPhone|iPad/.test(navigator.platform || "");
@@ -1165,44 +1180,55 @@ function fmtRange(a, b) {
   function today() { return todayNewYork(); }
 
   // ---- trasferta: a state of the session, not of the entry ----
-  // Set once (giornalista, destinazione, dal, al), kept in this browser until removed or until the
-  // "al" date has passed; every entry of THAT journalist goes out with trasferta = sì and the details.
-  // Legacy data: a trasferta never marks other people's rows, and marked only part of the traveller's rows;
-  // the new rule (Marco, 2026-10-16) marks every entry of the traveller while the state is set.
-  var TKEY = "rainyc.trasferta";
-  var trip = null;        // {journalist, luogo, dal, al} | null
+  // Trips live in the database (table trasferte, Marco 2026-10-16: "straight to the database, like everything
+  // else"): set once from any machine, every entry of THAT journalist dated inside [dal, al] goes out with
+  // trasferta = sì and the details, on every machine, until the trip is ended. A copy is cached for offline use.
+  var TCACHE = "rainyc.trasferte";
+  var trips = [];         // open trips: [{id, giornalista, luogo, dal, al}]
   var tripReturn = null;  // element to focus when the editor closes
-  function tripLoad() {
-    var t = null;
-    try { t = JSON.parse(localStorage.getItem(TKEY) || "null"); } catch (e) { t = null; }
-    if (!t || !t.journalist || !t.luogo || !t.dal || !t.al) return null;
-    if (t.al < today()) { tripSave(null); return null; } // over: forgotten by itself
-    return t;
+  function tripsLoad() {
+    return api("/api/trasferte").then(function (r) {
+      if (r.status === 200 && r.body) { trips = r.body.trasferte || []; try { localStorage.setItem(TCACHE, JSON.stringify(trips)); } catch (e) { /* ignore */ } }
+      renderTrip();
+    }, function (e) {
+      if (e.kind === "auth") { authLost(); return; }
+      try { trips = JSON.parse(localStorage.getItem(TCACHE) || "[]"); } catch (x) { trips = []; }
+      renderTrip();
+    });
   }
-  function tripSave(t) { try { if (t) localStorage.setItem(TKEY, JSON.stringify(t)); else localStorage.removeItem(TKEY); } catch (e) { /* storage blocked: this page only */ } }
-  function tripApplies() { return !!(trip && $("giornalista").value.trim().toLowerCase() === trip.journalist.toLowerCase()); }
+  function tripFor(name, date) {
+    var n = (name || "").trim().toLowerCase();
+    return trips.filter(function (x) { return x.giornalista.toLowerCase() === n && (!date || (x.dal <= date && date <= x.al)); })[0] || null;
+  }
+  function tripApplies() { return tripFor($("giornalista").value, $("data").value); }
   function dmy(d) { return d ? d.slice(8, 10) + "/" + d.slice(5, 7) : ""; }
   function renderTrip() {
-    var on = !!trip, applies = tripApplies();
-    $("trip-none").hidden = on; $("trip-set").hidden = !on; $("trip-remove").hidden = !on;
-    $("trip-edit").textContent = t(on ? "Modifica…" : "Imposta trasferta…");
-    form.querySelector(".p-trip").classList.toggle("on", on);
-    if (on) {
-      $("trip-who").textContent = trip.journalist; $("trip-where").textContent = trip.luogo;
-      $("trip-when").textContent = trip.dal === trip.al ? dmy(trip.dal) : dmy(trip.dal) + " – " + dmy(trip.al);
-    }
+    var on = trips.length > 0, applies = tripApplies(), todayStr = today();
+    $("trip-none").hidden = on; $("trip-set").hidden = !on; $("trip-remove").hidden = !applies;
+    form.querySelector(".p-trip").classList.toggle("on", !!applies);
+    var ul = $("trip-set"); ul.textContent = "";
+    trips.forEach(function (x) {
+      var li = document.createElement("li"); li.setAttribute("data-id", x.id); if (x.al < todayStr) li.className = "off";
+      var tx = document.createElement("span"); tx.className = "tx";
+      var b = document.createElement("b"); b.textContent = x.giornalista; tx.appendChild(b);
+      tx.appendChild(document.createTextNode(" · " + x.luogo + " · "));
+      var dt = document.createElement("span"); dt.className = "tdates"; dt.textContent = x.dal === x.al ? dmy(x.dal) : dmy(x.dal) + " – " + dmy(x.al); tx.appendChild(dt);
+      tx.title = x.giornalista + " · " + x.luogo + " · " + x.dal + " – " + x.al;
+      var e = document.createElement("button"); e.type = "button"; e.className = "btn mini trip-end"; e.setAttribute("data-id", x.id); e.textContent = t("Termina");
+      li.appendChild(tx); li.appendChild(e); ul.appendChild(li);
+    });
     var a = $("trip-apply");
-    a.textContent = on ? t(applies ? "Questa registrazione: SI" : "Questa registrazione: NO (altro giornalista)") : "";
-    a.className = "aside" + (on && applies ? " on" : "");
+    a.textContent = on ? t(applies ? "Questa registrazione: SI" : "Questa registrazione: NO (altro giornalista o altre date)") : "";
+    a.className = "aside" + (applies ? " on" : "");
   }
   function tripOpen() {
     if (!$("trip").hidden) return;
     tripReturn = document.activeElement;
     var g = $("giornalista").value.trim();
-    $("trip-giornalista").value = trip ? trip.journalist : (lists.giornalisti.indexOf(g) >= 0 ? g : "");
-    $("trip-luogo").value = trip ? trip.luogo : "";
-    $("trip-dal").value = trip ? trip.dal : $("data").value;
-    $("trip-al").value = trip ? trip.al : $("data").value;
+    $("trip-giornalista").value = lists.giornalisti.indexOf(g) >= 0 ? g : "";
+    $("trip-luogo").value = "";
+    $("trip-dal").value = $("data").value;
+    $("trip-al").value = $("data").value;
     $("trip-err").textContent = "";
     $("trip").hidden = false; $("trip-edit").setAttribute("aria-expanded", "true");
     ($("trip-giornalista").value ? $("trip-luogo") : $("trip-giornalista")).focus();
@@ -1224,11 +1250,30 @@ function fmtRange(a, b) {
     if (!nt.al) missing.push("Al");
     if (missing.length) { $("trip-err").textContent = tf("Manca: {0}.", missing.map(function (m) { return t(m); }).join(", ")); return; }
     if (nt.al < nt.dal) { $("trip-err").textContent = t('La data "al" precede la data "dal".'); $("trip-al").focus(); return; }
-    trip = nt; tripSave(nt); renderTrip(); tripClose();
+    $("trip-ok").disabled = true; $("trip-err").textContent = "";
+    api("/api/trasferta", { method: "POST", body: JSON.stringify(nt) }).then(function (r) {
+      $("trip-ok").disabled = false;
+      if (r.status !== 200) { $("trip-err").textContent = (r.body && r.body.error) || t("Trasferta non salvata."); return; }
+      tripClose();
+      setStatus("sincronizzato", t("Trasferta aperta."));
+      return tripsLoad();
+    }, function (e) {
+      $("trip-ok").disabled = false;
+      if (e.kind === "auth") { tripClose(); authLost(); return; }
+      $("trip-err").textContent = e.message;
+    });
   }
-  function tripRemove() { trip = null; tripSave(null); renderTrip(); tripClose(); $("trip-edit").focus(); }
+  function tripEnd(id) {
+    if (!id) return;
+    api("/api/trasferta/end", { method: "POST", body: JSON.stringify({ id: id }) }).then(function (r) {
+      if (r.status !== 200) { setStatus("errore", (r.body && r.body.error) || t("Trasferta non terminata.")); return; }
+      setStatus("sincronizzato", t("Trasferta terminata."));
+      return tripsLoad();
+    }, function (e) { if (e.kind === "auth") { authLost(); return; } setStatus("errore", e.message); });
+  }
   $("trip-edit").addEventListener("click", function () { if ($("trip").hidden) tripOpen(); else tripClose(); });
-  $("trip-remove").addEventListener("click", tripRemove);
+  $("trip-remove").addEventListener("click", function () { var x = tripApplies() || trips[0]; tripClose(); if (x) tripEnd(x.id); });
+  $("trip-set").addEventListener("click", function (ev) { var b = ev.target.closest && ev.target.closest("button.trip-end"); if (b) tripEnd(b.getAttribute("data-id")); });
   $("trip-ok").addEventListener("click", tripApply);
   $("trip-cancel").addEventListener("click", tripClose);
   $("trip").addEventListener("keydown", function (ev) {
@@ -1373,7 +1418,6 @@ function fmtRange(a, b) {
     $("richiedente").value = PREFIXED.indexOf(p.rete) >= 0 ? stripPrefix(p.rete, p.richiedente || "") : (p.richiedente || "");
     $("durata").value = p.duration_text || ""; setRadio("mezzo", p.mezzo);
     $("note").value = p.notes || "";
-    if (p.trasferta && !trip) { trip = { journalist: p.trasferta_journalist, luogo: p.trasferta_luogo, dal: p.trasferta_dal, al: p.trasferta_al }; tripSave(trip); }
     renderTrip();
     $("operatore").value = p.operator; updateCategoria();
     errSrc = function () { return e.errore; }; paintErr();
@@ -1464,10 +1508,9 @@ function fmtRange(a, b) {
     if (!v.rete) miss("Rete", null);
     if (!v.mezzo) miss("Mezzo", null);
     if (!v.operator) miss("Operatore", "operatore");
-    // The session's trasferta applies to this journalist's entries (already validated when it was set).
-    if (gMatch && trip && gMatch.toLowerCase() === trip.journalist.toLowerCase()) {
-      v.trasferta = true; v.trasferta_journalist = trip.journalist; v.trasferta_luogo = trip.luogo; v.trasferta_dal = trip.dal; v.trasferta_al = trip.al;
-    }
+    // An open trip of this journalist covering the entry date marks the entry (validated by the database when set).
+    var tr = gMatch ? tripFor(gMatch, v.delivery_date) : null;
+    if (tr) { v.trasferta = true; v.trasferta_journalist = tr.giornalista; v.trasferta_luogo = tr.luogo; v.trasferta_dal = tr.dal; v.trasferta_al = tr.al; }
     if (missing.length) {
       errSrc = function () { return tf("Manca: {0}.", missing.map(function (m) { return t(m); }).join(", ")); }; paintErr();
       if (focusId) $(focusId).focus();
@@ -1492,7 +1535,7 @@ function fmtRange(a, b) {
   form.addEventListener("change", function (ev) {
     if (ev.target.name === "rete") { $("richiedente").value = ""; updateRichiedente(); }
     if (ev.target.name === "rete" || ev.target.name === "mezzo") updateCategoria();
-    if (ev.target.id === "giornalista") renderTrip();
+    if (ev.target.id === "giornalista" || ev.target.id === "data") renderTrip();
   });
 
   // ---- Enter never sends: it accepts the choice and moves on. Ctrl/Cmd+Enter (or the button) sends. ----
@@ -1553,7 +1596,7 @@ function fmtRange(a, b) {
     loadLists().then(function () {
       boot("");
       buildForm();
-      trip = tripLoad();
+      tripsLoad();
       form.hidden = false; $("recent-box").hidden = false;
       mountPassword($("hright")); mountLogout($("hright"));
       resetAll(); renderPending(); renderRecent();

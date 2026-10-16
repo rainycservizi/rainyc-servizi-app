@@ -231,7 +231,7 @@ footer.doc .firma { font-size:13px; white-space:nowrap; }
 <body>
 <div class="top" id="top">
   <header class="appbar">
-    <div class="brand" id="brand" title="Pagina costruita 2026-10-16 21:52 UTC · e0c1e02"><span class="mk">Rai · NY</span><span class="nm">RAI NYC Servizi</span><span class="pg" data-i18n>Collaudo</span></div>
+    <div class="brand" id="brand" title="Pagina costruita 2026-10-16 22:02 UTC · cc0ead8"><span class="mk">Rai · NY</span><span class="nm">RAI NYC Servizi</span><span class="pg" data-i18n>Collaudo</span></div>
     <nav class="hright" id="hright" aria-label="Pagine">
       <button type="button" class="icbtn" id="theme" aria-label="Cambia tema" title="Cambia tema">
         <svg class="ic-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
@@ -253,6 +253,7 @@ footer.doc .firma { font-size:13px; white-space:nowrap; }
       <button type="button" class="btn" id="fold" aria-controls="doc"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="fold-t">Comprimi tutto</span></button>
       <button type="button" class="btn" id="undo" disabled title="Ctrl+Z"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M5 4L2 7l3 3M2.5 7H10a4 4 0 0 1 0 8H8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="tx" data-i18n>Annulla ultima modifica</span></button>
     </div>
+    <a class="btn" id="lnk-mensile" href="mensile" data-i18n>Mensile →</a>
     <span class="msg" id="msg" role="status" aria-live="polite"></span>
     <button type="button" class="btn" id="email"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M2 4h12v8H2zM2.5 4.5L8 9l5.5-4.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg><span id="email-t" data-i18n>Invia per e-mail</span></button>
     <button type="button" class="btn pri" id="print" data-i18n><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 6V2h8v4M4 12H2.5V7h11v5H12M4.5 10h7v4h-7z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>Stampa</button>
@@ -320,7 +321,8 @@ var AUTH_URL = ("https://wyrthfwrkgdobllzssdv.supabase.co" || location.origin) +
 var PAGE_FORM = "./" || APP_BASE;
 var PAGE_COLLAUDO = "./collaudo.html" || APP_BASE + "/collaudo";
 var PAGE_GESTIONE = "./gestione.html" || APP_BASE + "/gestione";
-var BUILD = "2026-10-16 21:52 UTC · e0c1e02"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
+var PAGE_MENSILE = "./mensile.html" || APP_BASE + "/mensile";
+var BUILD = "2026-10-16 22:02 UTC · cc0ead8"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
 // Every place the project lives (shown in the admin's header menu and on the Gestione page).
 var LINKS = [
   ["Pagine pubbliche", "https://rainycservizi.github.io/rainyc-servizi-app/", "GitHub Pages: il sito di prova principale"],
@@ -341,6 +343,12 @@ var LINKS = [
 var LANG_KEY = "rainyc.lingua";
 var I18N = { en: {
   // header, login, shared
+  "Mensile": "Monthly", "Mensile →": "Monthly →", "Mese": "Month", "Mese precedente": "Previous month", "Mese successivo": "Next month", "Accesso · mensile": "Login · monthly",
+  "Report mensile": "Monthly report", "Sede di corrispondenza di New York": "New York bureau", "il prospetto per Roma": "the sheet for Rome", "Settimane del mese": "Weeks of the month", "Settimana": "Week", "Giornalisti": "Journalists",
+  "Servizi video": "Video stories", "Servizi radio": "Radio stories", "Totale video": "Total video", "Totale radio": "Total radio", "Radio GR 1": "Radio GR 1", "storico, inviato": "historical, sent", "dal database": "from the database",
+  "{0} registrazioni nel mese": "{0} entries in the month", "Caricamento del mese {0}…": "Loading {0}…", "Mensile {0} · RAI NYC Servizi": "Monthly {0} · RAI NYC Servizi", "Mese non valido: usare la forma 2026-10.": "Invalid month: use the form 2026-10.",
+  "Top Sheet {0}: cifre di Gennaio–Luglio come inviate a Roma; da Agosto dal database (registrazioni annullate escluse). GR 1, 2, 3 ripetono il conteggio radio, come nel foglio.": "Top Sheet {0}: January–July as sent to Rome; from August from the database (voided entries excluded). GR 1, 2, 3 repeat the radio count, as in the sheet.",
+  "Generato il {0} dal sistema RAI NYC Servizi · fonte: database": "Generated on {0} by RAI NYC Servizi · source: database",
   "Registrazione": "Entry", "Collaudo": "Weekly report", "Collaudo →": "Weekly report →", "← Nuova registrazione": "← New entry",
   "Gestione": "Admin", "Esci": "Sign out", "Esci ({0})": "Sign out ({0})", "Cambia password": "Change password",
   "Pagina costruita": "Page built", "Pagina costruita {0}": "Page built {0}",
@@ -370,6 +378,9 @@ var I18N = { en: {
   "(edizione; anche testo libero)": "(edition; free text also allowed)", "(programma; testo libero)": "(programme; free text)",
   "(scegliere prima la rete)": "(pick the network first)", "Durata": "Duration", "(facoltativa)": "(optional)", "(facoltative)": "(optional)",
   "Mezzo": "Delivery means", "Trasferta": "Travel",
+  "Nessuna trasferta aperta. Impostarla una volta: vale su ogni macchina, per le registrazioni di quel giornalista nelle date indicate.": "No open travel. Set it once: it applies on every machine to that journalist's entries on those dates.",
+  "Termina trasferta": "End travel", "Termina": "End", "Trasferta aperta.": "Travel opened.", "Trasferta terminata.": "Travel ended.", "Trasferta non salvata.": "Travel not saved.", "Trasferta non terminata.": "Travel not ended.",
+  "Questa registrazione: NO (altro giornalista o altre date)": "This entry: NO (other journalist or other dates)",
   "Nessuna trasferta impostata. Impostarla una volta: vale per ogni registrazione di quel giornalista finché non viene rimossa.": "No travel set. Set it once: it applies to every entry of that journalist until it is removed.",
   "Imposta trasferta…": "Set travel…", "Modifica…": "Edit…", "Rimuovi trasferta": "Remove travel",
   "Giornalista in trasferta": "Journalist on travel", "Destinazione": "Destination", "Dal": "From", "Al": "To", "Applica": "Apply", "Annulla": "Cancel",
@@ -1228,6 +1239,7 @@ ${groups.join("\n")}
 
   function load(w, note) {
     current = w;
+    $("lnk-mensile").href = PAGE_MENSILE + (PAGE_MENSILE.indexOf("?") >= 0 ? "&" : "?") + "month=" + weekDays(w)[3].slice(0, 7);
     closeTrip();
     $("week").value = formatWeek(w);
     try { history.replaceState(null, "", location.pathname + "?week=" + formatWeek(w)); } catch (e) { /* ignore */ }
