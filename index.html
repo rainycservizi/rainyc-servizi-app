@@ -124,19 +124,22 @@ input:focus-visible, select:focus-visible { outline:none; border-color:var(--foc
 .prefixed.has-pre .pre { display:flex; }
 .prefixed.has-pre input { border-radius:0; }
 
-/* ── trasferta ── */
-.toggle { display:flex; align-items:center; gap:12px; cursor:pointer; width:max-content; min-height:44px; font-weight:600; position:relative; }
-.toggle input { position:absolute; opacity:0; width:1px; height:1px; }
-.toggle .sw { width:48px; height:28px; border-radius:14px; background:var(--sw-off); position:relative; transition:background .15s; flex:none; }
-.toggle .sw::after { content:""; position:absolute; top:3px; left:3px; width:22px; height:22px; border-radius:50%; background:#fff; transition:transform .15s; box-shadow:0 1px 3px rgba(0,0,0,.3); }
-.toggle input:checked + .sw { background:var(--bad); }
-.toggle input:checked + .sw::after { transform:translateX(20px); }
-.toggle input:focus-visible + .sw { outline:2px solid var(--focus); outline-offset:2px; }
-.toggle .val { font:700 13px/1 var(--mono); letter-spacing:.06em; }
-.trip { margin:10px 0 0; padding:12px 12px 12px; border:1px solid color-mix(in srgb, var(--bad) 35%, transparent); background:var(--bad-bg); border-radius:6px; min-inline-size:0; }
-.trip .grid { display:grid; grid-template-columns:1fr 1fr; gap:10px 12px; }
-.trip .fld { margin:0; }
-.muted { color:var(--dim); font-size:13px; margin:4px 0 0; }
+/* ── trasferta: a state of the session (set once, applies to every entry of that journalist until removed) ── */
+.p-trip { position:relative; }
+.p-trip.on { border-color:color-mix(in srgb, var(--bad) 45%, transparent); box-shadow:inset 3px 0 0 var(--bad), var(--shadow); }
+.ph .aside.on { color:var(--bad); font-weight:700; }
+.tstate { display:flex; flex-direction:column; gap:10px; }
+.tnone { color:var(--dim); font-size:14px; }
+.tset { font-size:14px; line-height:1.4; }
+.tset b { color:var(--bad); }
+.tset .tdates { font:600 12px/1 var(--mono); color:var(--dim); white-space:nowrap; }
+.tbtns { display:flex; gap:8px; flex-wrap:wrap; }
+.tpop { position:absolute; z-index:35; top:40px; left:12px; right:12px; padding:12px 14px 14px; border:1px solid var(--line2); background:var(--panel); border-radius:8px; box-shadow:var(--pop); border-top:3px solid var(--bad); }
+.tpop .grid { display:grid; grid-template-columns:1fr 1fr; gap:10px 12px; }
+.tpop .fld { margin:0; }
+.tpop .row { display:flex; gap:8px; margin-top:12px; }
+.tpop .row .btn { flex:1; }
+.tpop .err { margin-top:8px; }
 
 /* ── actions ── */
 .actions { display:grid; grid-template-columns:auto minmax(0,1fr); gap:10px 18px; align-items:center; }
@@ -219,6 +222,14 @@ kbd { font:600 11px/1 var(--mono); padding:2px 5px; border:1px solid var(--line2
   #send kbd { display:none; }
   .keys { display:none; }
 }
+/* Short desktop windows (Windows at 125 % scaling, bookmarks bar…): tighter spacing, no key legend. */
+@media (min-width:1100px) and (max-height:899.98px) {
+  .desk { padding:12px; gap:10px; } .entry { gap:10px; }
+  .panel { padding:10px 14px 12px; } .ph { margin-bottom:10px; } .fld { margin-bottom:8px; }
+  input[type=text], input[type=date], input[type=email], input[type=password], select, .chips span { height:40px; min-height:40px; }
+  .side { max-height:calc(100vh - 52px - 24px); top:12px; }
+  .keys { display:none; }
+}
 @media (prefers-reduced-motion:reduce) { * { transition:none !important; } }
 </style>
 </head>
@@ -290,23 +301,29 @@ kbd { font:600 11px/1 var(--mono); padding:2px 5px; border:1px solid var(--line2
       </fieldset>
 
       <section class="panel p-trip" aria-labelledby="h-trip">
-        <h2 class="ph" id="h-trip"><span class="n">05</span> Trasferta</h2>
-        <label class="toggle" for="trasferta"><input type="checkbox" id="trasferta" name="trasferta"><span class="sw"></span><span>Trasferta: <span class="val" id="trasferta-val">NO</span></span></label>
-        <p class="muted" id="trip-off">Nessuna trasferta. Attivare se il giornalista lavora fuori sede.</p>
-        <fieldset class="trip" id="trip" hidden>
+        <h2 class="ph" id="h-trip"><span class="n">05</span> Trasferta <span class="aside" id="trip-apply"></span></h2>
+        <div class="tstate">
+          <div class="tnone" id="trip-none">Nessuna trasferta impostata. Impostarla una volta: vale per ogni registrazione di quel giornalista finché non viene rimossa.</div>
+          <div class="tset" id="trip-set" hidden><b id="trip-who"></b> &middot; <span id="trip-where"></span> &middot; <span class="tdates" id="trip-when"></span></div>
+          <div class="tbtns"><button type="button" class="btn" id="trip-edit" aria-haspopup="dialog" aria-expanded="false">Imposta trasferta&hellip;</button><button type="button" class="btn mini" id="trip-remove" hidden>Rimuovi trasferta</button></div>
+        </div>
+        <div class="tpop" id="trip" hidden role="dialog" aria-labelledby="trip-h">
+          <h3 class="ph" id="trip-h">Trasferta</h3>
           <div class="grid">
             <div class="fld">
               <label for="trip-giornalista">Giornalista in trasferta</label>
-              <select id="trip-giornalista" name="trip_giornalista"></select>
+              <select id="trip-giornalista"></select>
             </div>
             <div class="fld">
               <label for="trip-luogo">Destinazione</label>
-              <input type="text" id="trip-luogo" name="trip_luogo" placeholder="Washington D.C." maxlength="200">
+              <input type="text" id="trip-luogo" placeholder="Washington D.C." maxlength="200">
             </div>
-            <div class="fld"><label for="trip-dal">Dal</label><input type="date" id="trip-dal" name="trip_dal"></div>
-            <div class="fld"><label for="trip-al">Al</label><input type="date" id="trip-al" name="trip_al"></div>
+            <div class="fld"><label for="trip-dal">Dal</label><input type="date" id="trip-dal"></div>
+            <div class="fld"><label for="trip-al">Al</label><input type="date" id="trip-al"></div>
           </div>
-        </fieldset>
+          <div class="row"><button type="button" class="btn pri" id="trip-ok">Applica</button><button type="button" class="btn" id="trip-cancel">Annulla</button></div>
+          <div class="err" id="trip-err" role="alert"></div>
+        </div>
       </section>
 
       <section class="panel p-op" aria-labelledby="h-op">
@@ -490,6 +507,18 @@ function requireLogin(onReady) {
 }
 
 function authLost() { Session.clear(); document.dispatchEvent(new Event("rainyc:auth-lost")); }
+
+/** "Esci" in the header `slot`: clears the session and shows the login again (the queue stays in this browser). */
+function mountLogout(slot) {
+  var old = document.getElementById("lnk-esci");
+  if (old) old.parentNode.removeChild(old);
+  if (!slot || !Session.get()) return;
+  var a = document.createElement("a");
+  a.href = "#"; a.id = "lnk-esci"; a.className = "hlink"; a.textContent = "Esci";
+  var s = Session.get(); if (s && s.email) a.title = "Esci (" + String(s.email).split("@")[0] + ")";
+  a.addEventListener("click", function (ev) { ev.preventDefault(); logout(); mountPassword(null); mountLogout(null); document.dispatchEvent(new Event("rainyc:auth-lost")); });
+  slot.insertBefore(a, slot.firstChild);
+}
 
 /**
  * Change the signed-in user's password (Supabase Auth: PUT /auth/v1/user with the access token).
@@ -897,21 +926,80 @@ function fmtRange(a, b) {
     return "pezzo";
   }
   function updateCategoria() { $("categoria").textContent = categoria(checked("rete"), checked("mezzo")); }
-  function updateTrasferta() {
-    var on = $("trasferta").checked;
-    $("trasferta-val").textContent = on ? "SI" : "NO";
-    $("trip").hidden = !on;
-    $("trip-off").hidden = on;
-    if (on) {
-      var g = $("giornalista").value.trim();
-      if (!$("trip-giornalista").value || !$("trip-luogo").value) {
-        if (lists.giornalisti.indexOf(g) >= 0) $("trip-giornalista").value = g;
-        if (!$("trip-dal").value) $("trip-dal").value = $("data").value;
-        if (!$("trip-al").value) $("trip-al").value = $("data").value;
-      }
-    }
-  }
   function today() { return todayNewYork(); }
+
+  // ---- trasferta: a state of the session, not of the entry ----
+  // Set once (giornalista, destinazione, dal, al), kept in this browser until removed or until the
+  // "al" date has passed; every entry of THAT journalist goes out with trasferta = sì and the details.
+  // Legacy data: a trasferta never marks other people's rows, and marked only part of the traveller's rows;
+  // the new rule (Marco, 2026-10-16) marks every entry of the traveller while the state is set.
+  var TKEY = "rainyc.trasferta";
+  var trip = null;        // {journalist, luogo, dal, al} | null
+  var tripReturn = null;  // element to focus when the editor closes
+  function tripLoad() {
+    var t = null;
+    try { t = JSON.parse(localStorage.getItem(TKEY) || "null"); } catch (e) { t = null; }
+    if (!t || !t.journalist || !t.luogo || !t.dal || !t.al) return null;
+    if (t.al < today()) { tripSave(null); return null; } // over: forgotten by itself
+    return t;
+  }
+  function tripSave(t) { try { if (t) localStorage.setItem(TKEY, JSON.stringify(t)); else localStorage.removeItem(TKEY); } catch (e) { /* storage blocked: this page only */ } }
+  function tripApplies() { return !!(trip && $("giornalista").value.trim().toLowerCase() === trip.journalist.toLowerCase()); }
+  function dmy(d) { return d ? d.slice(8, 10) + "/" + d.slice(5, 7) : ""; }
+  function renderTrip() {
+    var on = !!trip, applies = tripApplies();
+    $("trip-none").hidden = on; $("trip-set").hidden = !on; $("trip-remove").hidden = !on;
+    $("trip-edit").textContent = on ? "Modifica…" : "Imposta trasferta…";
+    form.querySelector(".p-trip").classList.toggle("on", on);
+    if (on) {
+      $("trip-who").textContent = trip.journalist; $("trip-where").textContent = trip.luogo;
+      $("trip-when").textContent = trip.dal === trip.al ? dmy(trip.dal) : dmy(trip.dal) + " – " + dmy(trip.al);
+    }
+    var a = $("trip-apply");
+    a.textContent = on ? (applies ? "Questa registrazione: SI" : "Questa registrazione: NO (altro giornalista)") : "";
+    a.className = "aside" + (on && applies ? " on" : "");
+  }
+  function tripOpen() {
+    if (!$("trip").hidden) return;
+    tripReturn = document.activeElement;
+    var g = $("giornalista").value.trim();
+    $("trip-giornalista").value = trip ? trip.journalist : (lists.giornalisti.indexOf(g) >= 0 ? g : "");
+    $("trip-luogo").value = trip ? trip.luogo : "";
+    $("trip-dal").value = trip ? trip.dal : $("data").value;
+    $("trip-al").value = trip ? trip.al : $("data").value;
+    $("trip-err").textContent = "";
+    $("trip").hidden = false; $("trip-edit").setAttribute("aria-expanded", "true");
+    ($("trip-giornalista").value ? $("trip-luogo") : $("trip-giornalista")).focus();
+  }
+  function tripClose() {
+    if ($("trip").hidden) return;
+    $("trip").hidden = true; $("trip-edit").setAttribute("aria-expanded", "false");
+    var back = tripReturn && document.contains(tripReturn) && tripReturn !== document.body ? tripReturn : $("giornalista");
+    tripReturn = null;
+    if (back.closest && back.closest("#trip")) back = $("giornalista");
+    back.focus();
+  }
+  function tripApply() {
+    var t = { journalist: $("trip-giornalista").value, luogo: $("trip-luogo").value.trim(), dal: $("trip-dal").value, al: $("trip-al").value };
+    var missing = [];
+    if (!t.journalist) missing.push("Giornalista in trasferta");
+    if (!t.luogo) missing.push("Destinazione");
+    if (!t.dal) missing.push("Dal");
+    if (!t.al) missing.push("Al");
+    if (missing.length) { $("trip-err").textContent = "Manca: " + missing.join(", ") + "."; return; }
+    if (t.al < t.dal) { $("trip-err").textContent = 'La data "al" precede la data "dal".'; $("trip-al").focus(); return; }
+    trip = t; tripSave(t); renderTrip(); tripClose();
+  }
+  function tripRemove() { trip = null; tripSave(null); renderTrip(); tripClose(); $("trip-edit").focus(); }
+  $("trip-edit").addEventListener("click", function () { if ($("trip").hidden) tripOpen(); else tripClose(); });
+  $("trip-remove").addEventListener("click", tripRemove);
+  $("trip-ok").addEventListener("click", tripApply);
+  $("trip-cancel").addEventListener("click", tripClose);
+  $("trip").addEventListener("keydown", function (ev) {
+    if (ev.key === "Escape") { ev.preventDefault(); ev.stopPropagation(); tripClose(); }
+    else if (ev.key === "Enter" && ev.target.tagName !== "BUTTON") { ev.preventDefault(); ev.stopPropagation(); tripApply(); }
+  });
+  $("giornalista").addEventListener("input", renderTrip);
 
   function resetAll() {
     form.reset();
@@ -919,10 +1007,10 @@ function fmtRange(a, b) {
     setRadio("rete", "");
     setRadio("mezzo", "V-Mover");
     $("richiedente").value = "";
-    $("trip").hidden = true;
     $("err").textContent = "";
     if (lists && !myOperator) { var last = null; try { last = localStorage.getItem("rainyc.operatore"); } catch (e) { /* ignore */ } if (last) $("operatore").value = last; }
-    updateRichiedente(); updateCategoria(); updateTrasferta();
+    tripClose();
+    updateRichiedente(); updateCategoria(); renderTrip();
     $("giornalista").focus();
   }
 
@@ -1044,8 +1132,8 @@ function fmtRange(a, b) {
     $("richiedente").value = PREFIXED.indexOf(p.rete) >= 0 ? stripPrefix(p.rete, p.richiedente || "") : (p.richiedente || "");
     $("durata").value = p.duration_text || ""; setRadio("mezzo", p.mezzo);
     $("note").value = p.notes || "";
-    $("trasferta").checked = !!p.trasferta; updateTrasferta();
-    if (p.trasferta) { $("trip-giornalista").value = p.trasferta_journalist; $("trip-luogo").value = p.trasferta_luogo; $("trip-dal").value = p.trasferta_dal; $("trip-al").value = p.trasferta_al; }
+    if (p.trasferta && !trip) { trip = { journalist: p.trasferta_journalist, luogo: p.trasferta_luogo, dal: p.trasferta_dal, al: p.trasferta_al }; tripSave(trip); }
+    renderTrip();
     $("operatore").value = p.operator; updateCategoria();
     $("err").textContent = e.errore;
   }
@@ -1122,8 +1210,7 @@ function fmtRange(a, b) {
       richiedente: richiedenteValue() || null,
       duration_text: $("durata").value.trim() || null,
       mezzo: checked("mezzo"),
-      trasferta: $("trasferta").checked,
-      trasferta_journalist: null, trasferta_luogo: null, trasferta_dal: null, trasferta_al: null,
+      trasferta: false, trasferta_journalist: null, trasferta_luogo: null, trasferta_dal: null, trasferta_al: null,
       operator: $("operatore").value,
       notes: $("note").value.trim() || null
     };
@@ -1136,16 +1223,9 @@ function fmtRange(a, b) {
     if (!v.rete) miss("Rete", null);
     if (!v.mezzo) miss("Mezzo", null);
     if (!v.operator) miss("Operatore", "operatore");
-    if (v.trasferta) {
-      v.trasferta_journalist = $("trip-giornalista").value;
-      v.trasferta_luogo = $("trip-luogo").value.trim() || null;
-      v.trasferta_dal = $("trip-dal").value || null;
-      v.trasferta_al = $("trip-al").value || null;
-      if (!v.trasferta_journalist) miss("Giornalista in trasferta", "trip-giornalista");
-      if (!v.trasferta_luogo) miss("Destinazione", "trip-luogo");
-      if (!v.trasferta_dal) miss("Trasferta dal", "trip-dal");
-      if (!v.trasferta_al) miss("Trasferta al", "trip-al");
-      if (v.trasferta_dal && v.trasferta_al && v.trasferta_al < v.trasferta_dal) { $("err").textContent = 'Trasferta: la data "al" precede la data "dal".'; $("trip-al").focus(); return; }
+    // The session's trasferta applies to this journalist's entries (already validated when it was set).
+    if (gMatch && trip && gMatch.toLowerCase() === trip.journalist.toLowerCase()) {
+      v.trasferta = true; v.trasferta_journalist = trip.journalist; v.trasferta_luogo = trip.luogo; v.trasferta_dal = trip.dal; v.trasferta_al = trip.al;
     }
     if (missing.length) {
       $("err").textContent = "Manca: " + missing.join(", ") + ".";
@@ -1162,8 +1242,8 @@ function fmtRange(a, b) {
     try { localStorage.setItem("rainyc.operatore", v.operator); } catch (e) { /* ignore */ }
     // Keep date, journalist, title and operator for the next entry of the same story.
     setRadio("rete", ""); $("durata").value = ""; $("richiedente").value = ""; $("note").value = "";
-    setRadio("mezzo", "V-Mover"); $("trasferta").checked = false;
-    updateRichiedente(); updateCategoria(); updateTrasferta();
+    setRadio("mezzo", "V-Mover");
+    updateRichiedente(); updateCategoria(); renderTrip();
     form.querySelector('input[name="rete"]').focus();
     schedule(0);
   });
@@ -1171,8 +1251,7 @@ function fmtRange(a, b) {
   form.addEventListener("change", function (ev) {
     if (ev.target.name === "rete") { $("richiedente").value = ""; updateRichiedente(); }
     if (ev.target.name === "rete" || ev.target.name === "mezzo") updateCategoria();
-    if (ev.target.id === "trasferta") updateTrasferta();
-    if (ev.target.id === "giornalista" && $("trasferta").checked && lists.giornalisti.indexOf(ev.target.value.trim()) >= 0) $("trip-giornalista").value = ev.target.value.trim();
+    if (ev.target.id === "giornalista") renderTrip();
   });
 
   // ---- Enter never sends: it accepts the choice and moves on. Ctrl/Cmd+Enter (or the button) sends. ----
@@ -1211,6 +1290,7 @@ function fmtRange(a, b) {
     else if (t.type === "radio" && !t.checked) { t.checked = true; t.dispatchEvent(new Event("change", { bubbles: true })); }
     nextField(t);
   });
+  document.addEventListener("rainyc:auth-lost", function () { form.hidden = true; $("recent-box").hidden = true; });
   document.addEventListener("keydown", function (ev) {
     if (ev.key === "Escape" && !form.hidden && !ev.defaultPrevented) { ev.preventDefault(); resetAll(); }
   });
@@ -1222,8 +1302,9 @@ function fmtRange(a, b) {
     loadLists().then(function () {
       boot("");
       buildForm();
+      trip = tripLoad();
       form.hidden = false; $("recent-box").hidden = false;
-      mountPassword($("hright"));
+      mountPassword($("hright")); mountLogout($("hright"));
       resetAll(); renderPending(); renderRecent();
       refreshServerRows();
       schedule(0);

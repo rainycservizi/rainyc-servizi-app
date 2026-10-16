@@ -75,6 +75,8 @@ input:focus-visible, select:focus-visible { outline:none; border-color:var(--foc
 #login input, .fld input, .fld select { width:100%; height:44px; font:inherit; font-size:16px; padding:0 12px; border:1px solid var(--line2); border-radius:6px; background:var(--input); color:var(--fg); margin:0 0 12px; }
 #login button { width:100%; height:48px; justify-content:center; font-size:15px; }
 #login .err, .pop .err { color:var(--bad); margin-top:8px; font-weight:600; font-size:13px; }
+.pop .msg { color:var(--ok); margin-top:8px; font-weight:600; font-size:13px; }
+.pop .msg:empty { display:none; }
 .err:empty { display:none; }
 .state { padding:48px 24px; text-align:center; color:var(--dim); font-size:15px; }
 .state.ko { color:var(--bad); font-weight:600; }
@@ -142,7 +144,7 @@ footer.doc .gen { font-size:11px; color:var(--dim); }
 footer.doc .firma { font-size:13px; white-space:nowrap; }
 
 /* ── trasferta popover ── */
-.pop { position:absolute; z-index:40; width:360px; max-width:calc(100vw - 24px); background:var(--panel); border:1px solid var(--line2); border-radius:8px; box-shadow:var(--pop); padding:14px 16px 16px; font-size:14px; }
+.pop { position:fixed; z-index:40; width:360px; max-width:calc(100vw - 24px); background:var(--panel); border:1px solid var(--line2); border-radius:8px; box-shadow:var(--pop); padding:14px 16px 16px; font-size:14px; }
 .pop .fld label { display:block; font-weight:600; font-size:13px; margin:0 0 6px; }
 .pop .row2 { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:10px; }
 .pop .row2 > * { min-width:0; }
@@ -155,6 +157,15 @@ footer.doc .firma { font-size:13px; white-space:nowrap; }
 .seg span { display:flex; align-items:center; justify-content:center; height:40px; border:1px solid var(--line2); border-radius:6px; background:var(--raise); font-weight:600; cursor:pointer; }
 .seg input:checked + span { background:var(--accent); border-color:var(--accent); color:var(--accent-ink); }
 .seg input:focus-visible + span { outline:2px solid var(--focus); outline-offset:2px; }
+/* ── e-mail: recipients to tick, one to add ── */
+.pop.mail { width:440px; top:70px; left:50%; transform:translateX(-50%); }
+.rcp { list-style:none; margin:0 0 10px; padding:0; max-height:min(40vh, 320px); overflow:auto; border:1px solid var(--line); border-radius:6px; }
+.rcp li { display:flex; align-items:center; gap:10px; min-height:40px; padding:0 10px; border-bottom:1px solid var(--line); }
+.rcp li:last-child { border-bottom:0; }
+.rcp label { flex:1; display:flex; align-items:center; gap:10px; min-width:0; cursor:pointer; font-size:14px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.rcp input[type=checkbox] { width:18px; height:18px; margin:0; accent-color:var(--accent); flex:none; }
+.rcp .rm { all:unset; cursor:pointer; color:var(--dim); font-size:16px; padding:4px 6px; border-radius:4px; } .rcp .rm:hover { color:var(--bad); background:var(--raise); }
+.addr { display:flex; gap:6px; margin:0 0 4px; } .addr input { flex:1; min-width:0; height:40px; margin:0; font-size:15px; } .addr .btn { height:40px; }
 .pop-pwd { position:absolute; top:58px; right:16px; z-index:40; width:340px; max-width:calc(100vw - 32px); background:var(--panel); border:1px solid var(--line2); border-radius:8px; box-shadow:var(--pop); padding:14px 16px 16px; }
 .pop-pwd .fld label { display:block; font-weight:600; font-size:13px; margin:0 0 6px; }
 .pop-pwd .hint { font-weight:400; color:var(--dim); font-size:12px; }
@@ -267,6 +278,17 @@ footer.doc .firma { font-size:13px; white-space:nowrap; }
     </div>
     <div class="row"><button type="submit" class="btn pri" id="tp-save">Salva</button><button type="button" class="btn" id="tp-cancel">Annulla</button></div>
     <div class="err" id="tpop-err" role="alert"></div>
+  </form>
+</div>
+<div class="pop mail" id="mpop" role="dialog" aria-labelledby="mpop-h" hidden>
+  <form id="mpop-f" novalidate>
+    <h2 class="ph" id="mpop-h">Invia per e-mail</h2>
+    <p class="lead" id="mpop-lead" style="margin:0 0 10px;color:var(--dim);font-size:13px;"></p>
+    <ul class="rcp" id="rcp" aria-label="Destinatari"></ul>
+    <div class="addr"><input type="email" id="rcp-new" placeholder="aggiungi un indirizzo e-mail" autocomplete="off" aria-label="Nuovo destinatario"><button type="button" class="btn" id="rcp-add">Aggiungi</button></div>
+    <div class="row"><button type="submit" class="btn pri" id="mp-send">Invia</button><button type="button" class="btn" id="mp-cancel">Annulla</button></div>
+    <div class="err" id="mpop-err" role="alert"></div>
+    <div class="msg" id="mpop-msg" role="status"></div>
   </form>
 </div>
 <script>
@@ -415,6 +437,18 @@ function requireLogin(onReady) {
 }
 
 function authLost() { Session.clear(); document.dispatchEvent(new Event("rainyc:auth-lost")); }
+
+/** "Esci" in the header `slot`: clears the session and shows the login again (the queue stays in this browser). */
+function mountLogout(slot) {
+  var old = document.getElementById("lnk-esci");
+  if (old) old.parentNode.removeChild(old);
+  if (!slot || !Session.get()) return;
+  var a = document.createElement("a");
+  a.href = "#"; a.id = "lnk-esci"; a.className = "hlink"; a.textContent = "Esci";
+  var s = Session.get(); if (s && s.email) a.title = "Esci (" + String(s.email).split("@")[0] + ")";
+  a.addEventListener("click", function (ev) { ev.preventDefault(); logout(); mountPassword(null); mountLogout(null); document.dispatchEvent(new Event("rainyc:auth-lost")); });
+  slot.insertBefore(a, slot.firstChild);
+}
 
 /**
  * Change the signed-in user's password (Supabase Auth: PUT /auth/v1/user with the access token).
@@ -1117,11 +1151,12 @@ ${groups.join("\n")}
     var left = Math.max(12, Math.min(r.left, document.documentElement.clientWidth - w - 12));
     var top = r.bottom + 6;
     if (top + h > window.innerHeight - 8 && r.top - h - 6 > $("top").offsetHeight) top = r.top - h - 6;
-    pop.style.left = (left + window.scrollX) + "px";
-    pop.style.top = (top + window.scrollY) + "px";
+    pop.style.left = left + "px";
+    pop.style.top = Math.max(8, top) + "px";
   }
   function openTrip(td) {
     if (busy) return;
+    if (trip && trip.td === td) return; // already open on this cell
     var tr = td.parentNode;
     var old = { on: td.getAttribute("data-v") === "true", tj: td.getAttribute("data-tj") || "", tl: td.getAttribute("data-tl") || "",
       td: td.getAttribute("data-td") || "", ta: td.getAttribute("data-ta") || "" };
@@ -1213,20 +1248,21 @@ ${groups.join("\n")}
     });
   }
 
-  $("doc").addEventListener("dblclick", function (ev) {
-    var td = ev.target.closest && ev.target.closest("td.ed");
-    if (td) startEdit(td);
-  });
+  // One click edits a cell (a double-click did not open the trasferta on Windows/Chrome); the ✎ pencil opens the trasferta editor.
   $("doc").addEventListener("click", function (ev) {
     if (!ev.target.closest) return;
     var dt = ev.target.closest("button.dt");
     if (dt) { toggleDay(dt); return; }
     if (ev.target.closest("#retry")) { if (current) load(current); return; }
     var b = ev.target.closest("button[data-act]");
-    if (!b) return;
-    var tr = b.closest("tr.r");
-    if (b.getAttribute("data-act") === "void") voidRow(tr);
-    else startEdit(tr.querySelector("td.ed"));
+    if (b) {
+      var tr = b.closest("tr.r");
+      if (b.getAttribute("data-act") === "void") voidRow(tr);
+      else openTrip(tr.querySelector('td[data-f="trasferta"]'));
+      return;
+    }
+    var td = ev.target.closest("td.ed");
+    if (td && !ev.target.closest(".edin")) startEdit(td);
   });
   $("undo").addEventListener("click", undo);
   document.addEventListener("keydown", function (ev) {
@@ -1246,35 +1282,98 @@ ${groups.join("\n")}
   $("prev").addEventListener("click", function () { if (current) load(shiftWeek(current, -1)); });
   $("next").addEventListener("click", function () { if (current) load(shiftWeek(current, 1)); });
   $("print").addEventListener("click", function () { closeTrip(false); window.print(); });
-  // E-mail the week to Rome and the newsroom (server sends it; POST /api/email-collaudo {week}).
-  $("email").addEventListener("click", function () {
+  // E-mail the week (POST /api/email-collaudo {week, to}). Only the accounts the server allows see the button
+  // (GET /api/email-recipients: {allowed, suggested}); the dialog ticks the suggested addresses and takes new ones.
+  var RKEY = "rainyc.collaudo.destinatari"; // addresses added by hand in this browser
+  var mail = { suggested: [], extra: [] };
+  function extraLoad() { try { return JSON.parse(localStorage.getItem(RKEY) || "[]").filter(isEmail); } catch (e) { return []; } }
+  function extraSave() { try { localStorage.setItem(RKEY, JSON.stringify(mail.extra)); } catch (e) { /* this view only */ } }
+  function isEmail(x) { return typeof x === "string" && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(x); }
+  function renderRcp(ticked) {
+    var ul = $("rcp"); ul.textContent = "";
+    var all = mail.suggested.map(function (a) { return { a: a, own: false }; }).concat(mail.extra.map(function (a) { return { a: a, own: true }; }));
+    all.forEach(function (x, k) {
+      var li = document.createElement("li"), l = document.createElement("label"), c = document.createElement("input");
+      c.type = "checkbox"; c.value = x.a; c.checked = ticked ? ticked.indexOf(x.a) >= 0 : !x.own; c.id = "rcp" + k;
+      l.appendChild(c); l.appendChild(document.createTextNode(x.a)); li.appendChild(l);
+      if (x.own) { var rm = document.createElement("button"); rm.type = "button"; rm.className = "rm"; rm.title = "Togli dall'elenco"; rm.setAttribute("aria-label", "Togli " + x.a); rm.textContent = "✕"; rm.setAttribute("data-rm", x.a); li.appendChild(rm); }
+      ul.appendChild(li);
+    });
+    if (!all.length) { var li0 = document.createElement("li"); li0.textContent = "Nessun destinatario: aggiungerne uno qui sotto."; li0.style.color = "var(--dim)"; ul.appendChild(li0); }
+    syncSend();
+  }
+  function rcpChosen() { return Array.prototype.map.call($("rcp").querySelectorAll("input:checked"), function (c) { return c.value; }); }
+  function syncSend() { var n = rcpChosen().length; $("mp-send").textContent = n ? "Invia a " + n : "Invia"; $("mp-send").disabled = !n; }
+  function addRcp() {
+    var v = $("rcp-new").value.trim().toLowerCase();
+    if (!isEmail(v)) { $("mpop-err").textContent = "Indirizzo e-mail non valido."; $("rcp-new").focus(); return; }
+    $("mpop-err").textContent = "";
+    var ticked = rcpChosen(); ticked.push(v);
+    if (mail.suggested.indexOf(v) < 0 && mail.extra.indexOf(v) < 0) { mail.extra.push(v); extraSave(); }
+    $("rcp-new").value = ""; renderRcp(ticked); $("rcp-new").focus();
+  }
+  function openMail() {
     if (!current) return;
-    var wk = formatWeek(current), b = $("email");
-    if (!window.confirm("Inviare il collaudo della settimana " + wk + " a Roma e alla redazione?")) return;
-    b.disabled = true; $("email-t").textContent = "Invio…"; setMsg("Invio del collaudo " + wk + "…");
-    function done() { b.disabled = false; $("email-t").textContent = "Invia per e-mail"; }
-    api("/api/email-collaudo", { method: "POST", body: JSON.stringify({ week: wk }) }).then(function (r) {
+    var wk = formatWeek(current);
+    $("mpop-h").textContent = "Invia per e-mail · " + wk;
+    $("mpop-lead").textContent = "Il collaudo della settimana " + wk + " (colonne di Roma, senza operatori) parte dalla casella della redazione. Scegliere i destinatari.";
+    $("mpop-err").textContent = ""; $("mpop-msg").textContent = ""; $("rcp-new").value = "";
+    mail.extra = extraLoad();
+    renderRcp(null);
+    $("mpop").hidden = false;
+    var first = $("rcp").querySelector("input"); (first || $("rcp-new")).focus();
+  }
+  function closeMail() { $("mpop").hidden = true; $("email").focus(); }
+  $("email").addEventListener("click", openMail);
+  $("mp-cancel").addEventListener("click", closeMail);
+  $("rcp-add").addEventListener("click", addRcp);
+  $("rcp-new").addEventListener("keydown", function (ev) { if (ev.key === "Enter") { ev.preventDefault(); addRcp(); } });
+  $("rcp").addEventListener("change", syncSend);
+  $("rcp").addEventListener("click", function (ev) {
+    var rm = ev.target.closest && ev.target.closest("button[data-rm]"); if (!rm) return;
+    var a = rm.getAttribute("data-rm"); mail.extra = mail.extra.filter(function (x) { return x !== a; }); extraSave();
+    renderRcp(rcpChosen().filter(function (x) { return x !== a; }));
+  });
+  $("mpop").addEventListener("keydown", function (ev) { if (ev.key === "Escape") { ev.preventDefault(); closeMail(); } });
+  $("mpop-f").addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    var to = rcpChosen(), wk = formatWeek(current), b = $("mp-send");
+    if (!to.length) return;
+    b.disabled = true; $("mp-cancel").disabled = true; $("mpop-err").textContent = ""; $("mpop-msg").textContent = "Invio…";
+    function done() { b.disabled = false; $("mp-cancel").disabled = false; syncSend(); }
+    api("/api/email-collaudo", { method: "POST", body: JSON.stringify({ week: wk, to: to }) }).then(function (r) {
       done();
       if (r.status === 200 && r.body) {
-        var to = Array.isArray(r.body.sent_to) ? r.body.sent_to : [];
-        setMsg("Inviato a " + to.length + " destinatari.");
-        b.title = "Ultimo invio (" + wk + "): " + to.join(", ");
-      } else setMsg(errText(r), true);
+        var sent = Array.isArray(r.body.sent_to) ? r.body.sent_to : to;
+        $("mpop-msg").textContent = "Inviato a " + sent.join(", ") + ".";
+        setMsg("Collaudo " + wk + " inviato a " + sent.length + " destinatari.");
+        $("email").title = "Ultimo invio (" + wk + "): " + sent.join(", ");
+        setTimeout(closeMail, 1800);
+      } else { $("mpop-msg").textContent = ""; $("mpop-err").textContent = errText(r); }
     }, function (e) {
-      done();
-      if (e.kind === "auth") { authLost(); return; }
-      setMsg(e.message, true);
+      done(); $("mpop-msg").textContent = "";
+      if (e.kind === "auth") { closeMail(); authLost(); return; }
+      $("mpop-err").textContent = e.message;
     });
   });
+  function loadMailRights() {
+    $("email").hidden = true;
+    api("/api/email-recipients").then(function (r) {
+      if (r.status !== 200 || !r.body || !r.body.allowed) return;
+      mail.suggested = (r.body.suggested || []).filter(isEmail);
+      $("email").hidden = false;
+    }, function () { /* no e-mail button when the check fails */ });
+  }
 
   requireLogin(function () {
     $("tools").hidden = false;
     syncTop();
-    mountPassword($("hright"));
+    mountPassword($("hright")); mountLogout($("hright"));
+    loadMailRights();
     var w = parseWeek(new URLSearchParams(location.search).get("week") || "") || isoWeekOf(todayNewYork());
     load(w);
   });
-  document.addEventListener("rainyc:auth-lost", function () { $("doc").innerHTML = ""; loadedOnce = false; });
+  document.addEventListener("rainyc:auth-lost", function () { $("doc").innerHTML = ""; loadedOnce = false; $("tools").hidden = true; closeTrip(false); $("mpop").hidden = true; });
 })();
 </script>
 </body>
