@@ -44,10 +44,22 @@ input:focus-visible, select:focus-visible { outline:3px solid var(--focus); outl
 #c-rete label[data-rete="Rai Sport"] { --b:#ff510c; --d:#c73a00; }
 #c-rete span { border:2px solid var(--b); color:var(--d); background:#fff; }
 #c-rete input:checked + span { background:var(--d); border-color:var(--d); color:#fff; }
-.prefixed { display:flex; align-items:stretch; }
+/* Logo tile: always white, so the logo stays legible on the coloured checked chip. */
+#c-rete span { display:inline-flex; align-items:center; gap:8px; }
+#c-rete i.logo { display:inline-flex; flex:none; background:#fff; border-radius:5px; padding:2px 3px; line-height:0; }
+#c-rete i.logo svg { display:block; height:22px; width:auto; }
+.prefixed { display:flex; align-items:stretch; position:relative; }
+.prefixed input { flex:1; min-width:0; border-radius:6px 0 0 6px; }
+#richiedente::-webkit-calendar-picker-indicator { display:none !important; } /* our own dropdown button replaces the native datalist arrow */
+.rich-btn { flex:none; width:44px; height:48px; padding:0; border:1.5px solid var(--line); border-left:0; border-radius:0 6px 6px 0; background:#f3f4f6; color:var(--ink); font-size:16px; font-weight:400; }
+.rich-btn:hover { background:#e6e9ec; }
+.rich-list { position:absolute; z-index:10; top:100%; left:0; right:0; margin:2px 0 0; padding:4px 0; list-style:none; background:#fff; border:1.5px solid var(--line); border-radius:6px; box-shadow:0 6px 18px rgba(0,0,0,.18); max-height:260px; overflow:auto; }
+.rich-list li { padding:10px 12px; min-height:44px; display:flex; align-items:center; cursor:pointer; font-size:16px; }
+.rich-list li.on, .rich-list li:hover { background:#e8f0fb; }
+.rich-list li.altro { border-top:1px solid var(--line); color:var(--accent); font-weight:600; }
 .prefixed .pre { display:none; align-items:center; padding:0 10px; border:1.5px solid var(--line); border-right:0; border-radius:6px 0 0 6px; background:#f3f4f6; font-weight:600; font-size:15px; white-space:nowrap; }
 .prefixed.has-pre .pre { display:flex; }
-.prefixed.has-pre input { border-radius:0 6px 6px 0; }
+.prefixed.has-pre input { border-radius:0; }
 .f > label.toggle, .toggle { display:flex; margin:0; align-items:center; gap:12px; cursor:pointer; width:max-content; }
 .toggle input { position:absolute; opacity:0; width:1px; height:1px; }
 .toggle .sw { width:56px; height:32px; border-radius:16px; background:#c3c7cc; position:relative; transition:background .15s; flex:none; }
@@ -65,6 +77,19 @@ input:focus-visible, select:focus-visible { outline:3px solid var(--focus); outl
 button { width:100%; height:54px; font:inherit; font-weight:700; font-size:18px; background:var(--accent); color:var(--accent-ink); border:0; border-radius:6px; cursor:pointer; }
 button:disabled { opacity:.6; cursor:default; }
 button:focus-visible { outline:3px solid var(--focus); outline-offset:2px; }
+.actions { display:flex; gap:10px; }
+.actions #send { flex:1; width:auto; }
+button.sec { width:120px; flex:none; background:#fff; color:var(--accent); border:1.5px solid var(--accent); font-size:16px; }
+button.mini { width:auto; height:36px; padding:0 14px; font-size:15px; background:#fff; color:var(--err); border:1.5px solid var(--err); flex:none; }
+.last { margin:12px 20px 0; padding:10px 12px; border-radius:6px; background:#e5f4ea; color:var(--ok); font-weight:600; font-size:15px; display:flex; gap:10px; align-items:center; justify-content:space-between; }
+.last.errore { background:#fde8eb; color:var(--err); }
+.pwd { padding:12px 20px 14px; background:#f3f4f6; border-bottom:1px solid var(--line); }
+.pwd .f { margin:0 0 10px; }
+.pwd .row { display:flex; gap:10px; }
+.pwd .row button { height:44px; font-size:16px; }
+.pwd .row button.sec { width:110px; }
+.pwd-msg { font-size:14px; margin:8px 0 0; font-weight:600; }
+.pwd-msg.ok { color:var(--ok); } .pwd-msg.ko { color:var(--err); }
 .keys { font-size:12px; color:var(--mute); text-align:center; margin:8px 0 0; }
 .err { color:var(--err); font-size:14px; margin:6px 0 0; min-height:0; }
 .status { margin:12px 20px 0; padding:10px 12px; border-radius:6px; font-weight:600; font-size:15px; display:none; }
@@ -84,12 +109,19 @@ button:focus-visible { outline:3px solid var(--focus); outline-offset:2px; }
 #login h2 { font-size:17px; margin:0 0 14px; }
 #login button { margin-top:4px; }
 [hidden] { display:none !important; }
-@media (max-width:600px) { .win { margin:0; border-radius:0; border:0; } body { font-size:16px; } form.entry { padding:14px 16px 6px; } .status { margin:12px 16px 0; } .recent { padding:14px 16px; } }
+@media (max-width:600px) { .win { margin:0; border-radius:0; border:0; } body { font-size:16px; } form.entry { padding:14px 16px 6px; } .status, .last { margin:12px 16px 0; } .pwd { padding:12px 16px 14px; } .recent { padding:14px 16px; } }
 </style>
 </head>
 <body>
 <div class="win" role="dialog" aria-labelledby="t">
-  <div class="bar"><span id="t">RAI NYC Servizi</span><span><span class="pend" id="pend" hidden></span> <a href="collaudo" id="lnk-collaudo">Collaudo</a></span></div>
+  <div class="bar"><span id="t">RAI NYC Servizi</span><span><span class="pend" id="pend" hidden></span> <a href="#" id="lnk-pwd" hidden>Cambia password</a> <a href="collaudo" id="lnk-collaudo">Collaudo</a></span></div>
+
+  <form id="pwd" class="pwd" hidden autocomplete="off" novalidate>
+    <div class="f"><label for="pwd-new">Nuova password <span class="hint">(almeno 5 caratteri)</span></label><input type="password" id="pwd-new" autocomplete="new-password"></div>
+    <div class="f"><label for="pwd-conf">Conferma</label><input type="password" id="pwd-conf" autocomplete="new-password"></div>
+    <div class="row"><button type="submit" id="pwd-save">Salva</button><button type="button" class="sec" id="pwd-close">Chiudi</button></div>
+    <div class="pwd-msg" id="pwd-msg" role="alert"></div>
+  </form>
 
   <form id="login" hidden autocomplete="on">
     <h2>Accesso</h2>
@@ -119,7 +151,7 @@ button:focus-visible { outline:3px solid var(--focus); outline-offset:2px; }
     </fieldset>
     <div class="f">
       <label for="richiedente">Richiedente <span class="hint" id="rich-hint">(edizione o programma; anche testo libero)</span></label>
-      <div class="prefixed" id="rich-wrap"><span class="pre" id="rich-pre"></span><input type="text" id="richiedente" name="richiedente" list="l-richiedenti" maxlength="200"></div>
+      <div class="prefixed" id="rich-wrap"><span class="pre" id="rich-pre"></span><input type="text" id="richiedente" name="richiedente" list="l-richiedenti" maxlength="200" aria-controls="rich-list"><button type="button" class="rich-btn" id="rich-btn" tabindex="-1" aria-label="Mostra tutte le scelte" aria-haspopup="listbox" aria-expanded="false">&#9662;</button><ul class="rich-list" id="rich-list" role="listbox" aria-label="Richiedente" hidden></ul></div>
       <datalist id="l-richiedenti"></datalist>
     </div>
     <div class="f">
@@ -153,11 +185,12 @@ button:focus-visible { outline:3px solid var(--focus); outline-offset:2px; }
       <div class="note" id="op-note"></div>
     </div>
     <div class="cat" aria-live="polite">Categoria: <b id="categoria">–</b></div>
-    <button type="submit" id="send">Invia registrazione</button>
+    <div class="actions"><button type="submit" id="send">Invia registrazione</button><button type="button" class="sec" id="clear">Svuota</button></div>
     <div class="err" id="err" role="alert"></div>
-    <p class="keys">Invio = invia · Esc = svuota · Tab = completa il nome e passa al campo successivo; nella Rete e nel Mezzo Tab scorre le scelte (Maiusc+Tab torna indietro) · frecce = scelta nella riga</p>
+    <p class="keys">Invio = invia · Esc o Svuota = svuota · &#9662; = tutte le scelte del Richiedente · Tab = completa il nome e passa al campo successivo; nella Rete e nel Mezzo Tab scorre le scelte (Maiusc+Tab torna indietro) · frecce = scelta nella riga</p>
   </form>
   <div class="status" id="status" aria-live="polite"></div>
+  <div class="last" id="last" hidden aria-live="polite"><span id="last-text"></span><button type="button" class="mini" id="undo">Annulla</button></div>
   <section class="recent" id="recent-box" hidden>
     <h2>Registrazioni di oggi</h2>
     <ol id="recent"></ol>
@@ -310,6 +343,37 @@ function requireLogin(onReady) {
 
 function authLost() { Session.clear(); document.dispatchEvent(new Event("rainyc:auth-lost")); }
 
+/**
+ * Change the signed-in user's password (Supabase Auth: PUT /auth/v1/user with the access token).
+ * @returns {Promise<{ok:boolean, error?:string}>} error is Italian, ready to show.
+ */
+function changePassword(newPassword, retried) {
+  var s = Session.get();
+  if (!s) return Promise.resolve({ ok: false, error: "Sessione scaduta: accedere di nuovo." });
+  var soon = (s.expires_at || 0) * 1000 - Date.now() < 60000;
+  var ready = soon ? refreshSession() : Promise.resolve(true);
+  return ready.then(function (ok) {
+    var cur = Session.get();
+    if (!ok || !cur) return { ok: false, error: "Sessione scaduta: accedere di nuovo." };
+    return fetch(AUTH_URL + "/user", {
+      method: "PUT",
+      headers: { apikey: ANON_KEY, Authorization: "Bearer " + cur.access_token, "Content-Type": "application/json" },
+      body: JSON.stringify({ password: newPassword })
+    }).then(function (r) {
+      return r.json().catch(function () { return {}; }).then(function (b) {
+        if (r.ok) return { ok: true };
+        if (r.status === 401 && !retried) return refreshSession().then(function (ok2) { return ok2 ? changePassword(newPassword, true) : { ok: false, error: "Sessione scaduta: accedere di nuovo." }; });
+        var code = b.error_code || b.code || "";
+        if (code === "same_password") return { ok: false, error: "La nuova password deve essere diversa da quella attuale." };
+        if (code === "weak_password") return { ok: false, error: "Password troppo debole: sceglierne una piu lunga o meno comune." };
+        if (r.status === 401 || r.status === 403) return { ok: false, error: "Sessione scaduta: accedere di nuovo." };
+        if (r.status === 429) return { ok: false, error: "Troppi tentativi. Riprovare tra qualche minuto." };
+        return { ok: false, error: "Password non aggiornata (" + r.status + "). Riprovare." };
+      });
+    }, function () { return { ok: false, error: "Rete non raggiungibile." }; });
+  });
+}
+
 // ---- end pages/shared.js ----
 // ---- lib/week.js ----
 // ISO week helpers. Plain JS so the same file runs in Deno (server) and, inlined by
@@ -433,6 +497,8 @@ function fmtRange(a, b) {
   var PREFIXED = ["Tg1", "Tg2", "Tg3", "GR"];           // slots stored as "<Rete> <slot>", shown without the prefix
   var TAPPETO_FROM = ["Tg1", "Tg2", "Tg3", "RAN", "GR"];  // a tappeto's richiedente is any edition of these
   var LABEL = { salvato: "Salvato", attesa: "In attesa di sincronizzazione", sincronizzato: "Sincronizzato", errore: "Errore di sincronizzazione" };
+  // Rete logos: official SVGs from Wikimedia Commons (originals + sources in pages/logos/), optimised and inlined. Tv7 and Tappeto have none (text chip).
+  var LOGOS = {"Tg1":"<svg width=\"35\" height=\"22\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 795.34 500\" aria-hidden=\"true\" focusable=\"false\"><g><rect fill=\"#03006C\" width=\"795.34\" height=\"500\"/><g><polygon fill=\"#FFFFFF\" points=\"171.09,78.56 82.11,78.56 82.11,390.90 260.07,390.90 260.07,301.92 171.09,301.92 171.09,212.92 260.07,212.92 260.07,123.93 171.09,123.93 \"/><polygon fill=\"#FFFFFF\" points=\"282.08,390.90 548.54,390.90 548.54,235.22 459.55,235.22 459.55,301.92 371.06,301.92 371.06,212.92 548.54,212.92 548.54,123.93 282.08,123.93 \"/><polygon fill=\"#FFFFFF\" points=\"570.16,123.93 570.16,212.92 614.40,212.92 614.40,390.90 703.39,390.90 703.39,123.93 \"/></g></g></svg>","Tg2":"<svg width=\"22\" height=\"22\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 500 500\" aria-hidden=\"true\" focusable=\"false\"><g><rect fill=\"#A5091E\" width=\"500\" height=\"500\"/><g><path fill=\"#FFFFFF\" d=\"M34.6,141.3H212v50.9h-57.1v142.3H91.7V192.1H34.6V141.3z\"/><path fill=\"#FFFFFF\" d=\"M275.7,222.9v-18.1h49.6v116.5c0,15.7-1.1,27.5-3.2,35.2c-2.2,7.9-5.9,14.2-11,18.9 c-6.6,6.3-15.2,11-25.9,14.1c-10.6,3-22.4,4.6-35.4,4.6c-15.1,0-28.1-1.9-39-5.8c-10.9-3.8-19.2-9.1-24.8-15.8 c-4.2-5.1-7.1-11.6-8.7-19.4h56.3c0.5,2.9,2.1,5.2,4.8,7c2.7,1.8,6.8,2.7,12.5,2.7c7.2,0,12.6-2.1,16-6.2 c3.4-4.1,5.2-11.8,5.2-23.2c0-1.9-0.1-5.3-0.4-10.2c-4.7,5.1-9.6,8.7-14.6,10.9c-6.8,2.9-15,4.4-24.6,4.4 c-18.3,0-33.3-6.1-44.9-18.2c-11.7-12.1-17.5-28.6-17.5-49.4c0-14.7,2.7-27.5,8.1-38.2c5.4-10.7,13.1-18.8,23-24.2 c9.9-5.4,20.1-8.2,30.5-8.2c10,0,18.9,2.2,26.8,6.7C264.1,210.3,269.9,215.6,275.7,222.9z M249,300.1c6.7,0,12.2-2.4,16.5-7.3 c4.3-4.9,6.4-12.2,6.4-22c0-10.2-2.2-17.8-6.6-23c-4.4-5.1-10.1-7.7-16.9-7.7c-7.1,0-12.9,2.6-17.4,7.8 c-4.5,5.2-6.7,13.1-6.7,23.7c0,8.7,2.4,15.6,7.2,20.8C236.2,297.5,242,300.1,249,300.1z\"/><path fill=\"#FFFFFF\" d=\"M398.3,138.9c-17.2,0-35,7.9-46.5,20.7l0,0l0,0c-9.4,10.9-11.7,22.7-12.3,37.1l-0.1,2.4h2.4h12h2.4 l-0.1-2.4c-0.3-11.4,3.6-22,11.1-29.6c7.8-8,18.8-12.4,31-12.4c11.2,0,21.8,4.2,29.7,11.8c8,7.7,12.4,18,12.4,29.1 c0,20-18.5,40.4-32,55.3c-0.7,0.8-1.5,1.6-2.2,2.4l-70.1,77.1l-3.5,3.9h5.3H454h2.3V332v-11.3v-2.3H454h-84.3l51.3-56.9l1-1.1 c16.4-17.9,35-38.3,35-63.9C457,164.2,431.2,138.9,398.3,138.9L398.3,138.9z\"/></g></g></svg>","Tg3":"<svg width=\"31.8\" height=\"22\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 602.1 416.2\" aria-hidden=\"true\" focusable=\"false\"><defs><linearGradient id=\"tg3-g1\" x2=\"1\" gradientUnits=\"userSpaceOnUse\" gradientTransform=\"matrix(1.86,-414.50,597.74,2.68,310.18,416.09)\"><stop offset=\"0\" stop-color=\"#d7dae7\"/><stop offset=\"1\" stop-color=\"#dfe4e3\"/></linearGradient><linearGradient id=\"tg3-g2\" x2=\"1\" gradientUnits=\"userSpaceOnUse\" gradientTransform=\"matrix(-69.75,-223.83,323.72,-100.88,350.50,294.33)\"><stop offset=\"0\" stop-color=\"#286d62\" stop-opacity=\".996\"/><stop offset=\".411\" stop-color=\"#214c51\"/><stop offset=\"1\" stop-color=\"#1c272d\"/></linearGradient><radialGradient id=\"tg3-g3\" cx=\"0\" cy=\"0\" r=\"1\" gradientUnits=\"userSpaceOnUse\" gradientTransform=\"matrix(106.56,-4.88,6.53,142.45,217.95,255.23)\"><stop offset=\"0\" stop-color=\"#2d7d62\" stop-opacity=\".996\"/><stop offset=\"1\" stop-color=\"#2d7d62\" stop-opacity=\"0\"/></radialGradient><radialGradient id=\"tg3-g4\" cx=\"0\" cy=\"0\" r=\"1\" gradientUnits=\"userSpaceOnUse\" gradientTransform=\"matrix(1.03,163.03,-218.59,1.38,163.03,78.75)\"><stop offset=\".361\" stop-color=\"#2e5425\"/><stop offset=\"1\" stop-color=\"#2e5425\" stop-opacity=\"0\"/></radialGradient><radialGradient id=\"tg3-g5\" cx=\"0\" cy=\"0\" r=\"1\" gradientUnits=\"userSpaceOnUse\" gradientTransform=\"matrix(-0.42,58.04,-127.33,-0.92,368.90,74.61)\"><stop offset=\".225\" stop-color=\"#2e5425\"/><stop offset=\"1\" stop-color=\"#2e5425\" stop-opacity=\"0\"/></radialGradient></defs><g><path fill=\"url(#tg3-g1)\" d=\"m40.6 0h521c22.4 0 40.6 18.2 40.6 40.6v335.1c0 22.4-18.2 40.6-40.6 40.6h-521c-22.4-0.1-40.6-18.2-40.6-40.6v-335.1c0-22.4 18.2-40.6 40.6-40.6z\"/><path fill=\"url(#tg3-g2)\" d=\"m144 122.3h32.4v44.4h-32.4v62.1c0 13.7 7.3 17.4 18.4 17.4 5.3 0 10.4-1 13.4-1.7v42.1c-2 1-10.4 4.7-26.4 4.7-34.4 0-55.4-20.4-55.4-53.4v-71.1h-29.5v-44.4h8.3c17.4 0 25.7-11.7 25.7-27v-21.4h45.5zm81.1 162.6c3.3 16 16.7 27.7 35.7 27.7 25.4 0 41.1-12.4 41.1-42.4v-7.7c-6 9-20.4 18.7-44.4 18.7-44.1 0-77.1-34.7-77.1-80.8 0-43.7 31.7-81.1 77.1-81.1 27 0 41.4 12 46.1 20.7v-17.7h48.4v145.3c0 47.8-26.7 89.2-88.8 89.2-47.8 0-78.1-29.4-82.8-59.1zm77.1-84.4c0-22.7-16.4-36.7-35.4-36.7-19 0-35.7 14-35.7 36.7 0 22.7 15.4 36.7 35.7 36.7 20.7 0 35.4-14 35.4-36.7zm104.8-41.1l53.4-43.7h-90.5v-44.1h156.3v40.7l-53.4 41.4c33.4 2.3 60.8 29.1 60.8 66.1 0 38.4-31.7 73.1-85.2 73.1-50.4 0-82.5-32.4-85.8-69.5l50.8-9.4c0.7 19 14.4 34.1 34.7 34.1 20.4 0 32.4-13.7 32.4-29.7 0-20.7-16-29.4-31.4-29.4-7 0-14.4 2.3-19.4 5z\"/><path fill=\"url(#tg3-g3)\" d=\"m144 122.3h32.4v44.4h-32.4v62.1c0 13.7 7.3 17.4 18.4 17.4 5.3 0 10.4-1 13.4-1.7v42.1c-2 1-10.4 4.7-26.4 4.7-34.4 0-55.4-20.4-55.4-53.4v-71.1h-29.5v-44.4h8.3c17.4 0 25.7-11.7 25.7-27v-21.4h45.5zm81.1 162.6c3.3 16 16.7 27.7 35.7 27.7 25.4 0 41.1-12.4 41.1-42.4v-7.7c-6 9-20.4 18.7-44.4 18.7-44.1 0-77.1-34.7-77.1-80.8 0-43.7 31.7-81.1 77.1-81.1 27 0 41.4 12 46.1 20.7v-17.7h48.4v145.3c0 47.8-26.7 89.2-88.8 89.2-47.8 0-78.1-29.4-82.8-59.1zm77.1-84.4c0-22.7-16.4-36.7-35.4-36.7-19 0-35.7 14-35.7 36.7 0 22.7 15.4 36.7 35.7 36.7 20.7 0 35.4-14 35.4-36.7zm104.8-41.1l53.4-43.7h-90.5v-44.1h156.3v40.7l-53.4 41.4c33.4 2.3 60.8 29.1 60.8 66.1 0 38.4-31.7 73.1-85.2 73.1-50.4 0-82.5-32.4-85.8-69.5l50.8-9.4c0.7 19 14.4 34.1 34.7 34.1 20.4 0 32.4-13.7 32.4-29.7 0-20.7-16-29.4-31.4-29.4-7 0-14.4 2.3-19.4 5z\"/><path fill=\"url(#tg3-g4)\" d=\"m144 122.3h32.4v44.4h-32.4v62.1c0 13.7 7.3 17.4 18.4 17.4 5.3 0 10.4-1 13.4-1.7v42.1c-2 1-10.4 4.7-26.4 4.7-34.4 0-55.4-20.4-55.4-53.4v-71.1h-29.5v-44.4h8.3c17.4 0 25.7-11.7 25.7-27v-21.4h45.5zm81.1 162.6c3.3 16 16.7 27.7 35.7 27.7 25.4 0 41.1-12.4 41.1-42.4v-7.7c-6 9-20.4 18.7-44.4 18.7-44.1 0-77.1-34.7-77.1-80.8 0-43.7 31.7-81.1 77.1-81.1 27 0 41.4 12 46.1 20.7v-17.7h48.4v145.3c0 47.8-26.7 89.2-88.8 89.2-47.8 0-78.1-29.4-82.8-59.1zm77.1-84.4c0-22.7-16.4-36.7-35.4-36.7-19 0-35.7 14-35.7 36.7 0 22.7 15.4 36.7 35.7 36.7 20.7 0 35.4-14 35.4-36.7zm104.8-41.1l53.4-43.7h-90.5v-44.1h156.3v40.7l-53.4 41.4c33.4 2.3 60.8 29.1 60.8 66.1 0 38.4-31.7 73.1-85.2 73.1-50.4 0-82.5-32.4-85.8-69.5l50.8-9.4c0.7 19 14.4 34.1 34.7 34.1 20.4 0 32.4-13.7 32.4-29.7 0-20.7-16-29.4-31.4-29.4-7 0-14.4 2.3-19.4 5z\"/><path fill=\"url(#tg3-g5)\" d=\"m144 122.3h32.4v44.4h-32.4v62.1c0 13.7 7.3 17.4 18.4 17.4 5.3 0 10.4-1 13.4-1.7v42.1c-2 1-10.4 4.7-26.4 4.7-34.4 0-55.4-20.4-55.4-53.4v-71.1h-29.5v-44.4h8.3c17.4 0 25.7-11.7 25.7-27v-21.4h45.5zm81.1 162.6c3.3 16 16.7 27.7 35.7 27.7 25.4 0 41.1-12.4 41.1-42.4v-7.7c-6 9-20.4 18.7-44.4 18.7-44.1 0-77.1-34.7-77.1-80.8 0-43.7 31.7-81.1 77.1-81.1 27 0 41.4 12 46.1 20.7v-17.7h48.4v145.3c0 47.8-26.7 89.2-88.8 89.2-47.8 0-78.1-29.4-82.8-59.1zm77.1-84.4c0-22.7-16.4-36.7-35.4-36.7-19 0-35.7 14-35.7 36.7 0 22.7 15.4 36.7 35.7 36.7 20.7 0 35.4-14 35.4-36.7zm104.8-41.1l53.4-43.7h-90.5v-44.1h156.3v40.7l-53.4 41.4c33.4 2.3 60.8 29.1 60.8 66.1 0 38.4-31.7 73.1-85.2 73.1-50.4 0-82.5-32.4-85.8-69.5l50.8-9.4c0.7 19 14.4 34.1 34.7 34.1 20.4 0 32.4-13.7 32.4-29.7 0-20.7-16-29.4-31.4-29.4-7 0-14.4 2.3-19.4 5z\"/></g></svg>","Rai 1":"<svg width=\"29\" height=\"22\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1423.43 1078\" aria-hidden=\"true\" focusable=\"false\"><g><g><rect fill=\"#4144C5\" width=\"1078\" height=\"1078\"/><path fill=\"#FFFFFF\" d=\"M320.27,464.5c0,45.75-40.17,52.5-75.88,52.5H234V412h10.38 C280.10,412,320.27,418.74,320.27,464.5z M474.28,749L342.03,576.55c59.70-10.60,92.07-60.84,92.07-118.87 c0-89.83-63.05-129.67-146.19-129.67H124v421h110V587h0.90l103.22,162H474.28z\"/><path fill=\"#FFFFFF\" d=\"M692.1,607.81c0,36.62-24.23,64.80-65.92,64.80c-41.69,0-65.92-28.17-65.92-64.80 c0-35.5,24.22-65.36,65.92-65.36C667.87,542.45,692.1,572.31,692.1,607.81z M791,463H689v28.17 c-22-25.35-56.48-37.74-89.73-37.74c-85.65,0-144.95,71.00-144.95,153.83c0,82.83,60.29,154.40,145.94,154.40 c33.80,0,69.30-12.67,87.34-41.67H689v32h102V463z\"/><path fill=\"#FFFFFF\" d=\"M952,751H850V465h102V751z M900.93,411.89c-31.24,0-56.91-25.66-56.91-56.91 c0-31.24,25.66-56.91,56.91-56.91c31.24,0,56.91,25.66,56.91,56.91C957.85,386.23,932.18,411.89,900.93,411.89z\" /></g><path fill=\"#4144C5\" d=\"M1381.12,670.65h42.31v87.29h-190.85v-87.29h47.93V407.00h-75.75v-79.89h176.35V670.65z\"/></g></svg>","Rai 2":"<svg width=\"30.6\" height=\"22\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1497.22 1078\" aria-hidden=\"true\" focusable=\"false\"><g><g><rect fill=\"#E61C23\" width=\"1078\" height=\"1078\"/><path fill=\"#FFFFFF\" d=\"M952,751H850V465h102V751z M900.93,411.89c-31.24,0-56.91-25.66-56.91-56.91 c0-31.24,25.66-56.91,56.91-56.91c31.24,0,56.91,25.66,56.91,56.91C957.85,386.23,932.18,411.89,900.93,411.89z M338.13,749L234.90,587H234v162H124V328h163.91c83.14,0,146.19,39.83,146.19,129.67 c0,58.03-32.36,108.27-92.07,118.87L474.28,749H338.13z M244.38,412H234v105h10.38c35.71,0,75.88-6.74,75.88-52.5 S280.10,412,244.38,412z M791,752H689v-32h-1.40c-18.03,29-53.53,41.67-87.34,41.67 c-85.64,0-145.94-71.57-145.94-154.40c0-82.83,59.30-153.83,144.95-153.83c33.24,0,67.73,12.39,89.73,37.74V463h102 V752z M626.17,542.45c-41.69,0-65.92,29.86-65.92,65.36c0,36.62,24.22,64.80,65.92,64.80 c41.69,0,65.92-28.17,65.92-64.80C692.1,572.31,667.87,542.45,626.17,542.45z\"/></g><path fill=\"#E61C23\" d=\"M1497.22,758.29h-297.97v-93.8c31.06-18.54,58.30-36.78,81.70-54.74 c23.40-17.94,43.06-35.70,58.99-53.26c32.24-35.30,48.37-68.45,48.37-99.42c0-14.59-3.75-26.23-11.27-34.91 c-7.51-8.67-17.81-13.02-30.89-13.02c-13.47,0-24.11,5.57-31.92,16.71c-7.81,11.14-11.71,26.18-11.71,45.12v5.03 v4.73H1196.59v-2.95c0-47.34,14.07-85.66,42.23-114.95c28.15-29.29,65.06-43.94,110.74-43.94 c44.69,0,80.47,11.88,107.34,35.65c26.87,23.77,40.31,55.38,40.31,94.83c0,32.15-13.31,66.72-39.94,103.71 c-26.63,36.98-66.38,76.09-119.24,117.32h71.31v-27.22h87.88V758.29z\"/></g></svg>","Rai 3":"<svg width=\"29.9\" height=\"22\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1466.22 1078\" aria-hidden=\"true\" focusable=\"false\"><g><g><rect fill=\"#00B46E\" width=\"1078\" height=\"1078\"/><path fill=\"#FFFFFF\" d=\"M320.27,464.5c0,45.75-40.17,52.5-75.88,52.5H234V412h10.38 C280.10,412,320.27,418.74,320.27,464.5z M474.28,749L342.03,576.55c59.70-10.60,92.07-60.84,92.07-118.87 c0-89.83-63.05-129.67-146.19-129.67H124v421h110V587h0.90l103.22,162H474.28z M692.1,607.81 c0,36.62-24.23,64.80-65.92,64.80c-41.69,0-65.92-28.17-65.92-64.80c0-35.5,24.22-65.36,65.92-65.36 C667.87,542.45,692.1,572.31,692.1,607.81z M791,463H689v28.17c-22-25.35-56.48-37.74-89.73-37.74 c-85.65,0-144.95,71.00-144.95,153.83c0,82.83,60.29,154.40,145.94,154.40c33.80,0,69.30-12.67,87.34-41.67H689v32 h102V463z M952,751H850V465h102V751z M900.93,411.89c-31.24,0-56.91-25.66-56.91-56.91 c0-31.24,25.66-56.91,56.91-56.91c31.24,0,56.91,25.66,56.91,56.91C957.85,386.23,932.18,411.89,900.93,411.89z\" /></g><path fill=\"#00B46E\" d=\"M1163.22,623.69h106.22v4.19c0,13.39,3.99,23.68,11.98,30.87 c7.99,7.19,19.67,10.79,35.06,10.79c14.00,0,25.19-4.04,33.58-12.13c8.38-8.08,12.57-18.93,12.57-32.54 c0-15.97-6.02-27.96-18.05-35.95c-12.03-7.99-30.28-11.98-54.74-11.98h-13.02h-7.98v-80.48l5.03,0.59h5.03 c22.48,0,39.35-4.33,50.59-13.02c11.24-8.67,16.86-21.69,16.86-39.05c0-13.41-3.15-23.96-9.46-31.66 c-5.91-7.69-14.30-11.54-25.15-11.54c-9.86,0-17.95,3.25-24.26,9.76c-5.72,6.31-8.58,15.19-8.58,26.63v6.80 h-102.97v-1.47c0-38.86,12.47-70.07,37.43-93.65c24.95-23.57,58.33-35.36,100.16-35.36 c38.46,0,69.68,10.99,93.65,32.99c23.96,21.99,35.95,50.64,35.95,85.95c0,20.71-5.22,38.56-15.68,53.55 c-10.45,14.99-25.64,26.23-45.56,33.73c27.02,7.69,47.83,20.12,62.43,37.28c14.59,17.16,21.89,37.97,21.89,62.43 c0,41.82-13.95,75.94-41.86,102.38c-27.91,26.43-64.06,39.65-108.44,39.65c-24.06,0-45.37-2.97-63.91-8.91 c-18.54-5.94-34.57-15.00-48.08-27.19c-13.51-12.18-23.67-26.84-30.47-43.98 C1166.62,665.24,1163.22,645.68,1163.22,623.69z\"/></g></svg>","RAN":"<svg width=\"71.9\" height=\"22\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1634.68 500\" aria-hidden=\"true\" focusable=\"false\"><g><g><g><rect fill=\"#000099\" width=\"500\" height=\"500\"/><path fill=\"#FFFFFF\" d=\"M113.12,191.64c16.62,0,35.30,3.11,35.30,24.42c0,21.28-18.68,24.39-35.30,24.39h-4.92 v-48.81H113.12 M220.11,348.50l-61.54-80.24c27.78-4.94,42.85-28.32,42.85-55.31c0-41.80-29.34-60.24-68.03-60.24 H57.29v195.80h50.90v-75.32h0.51l48.05,75.32H220.11z M441.66,348.50h-47.26V215.28h47.26V348.50z M418.03,190.60c-14.53,0-26.48-11.95-26.48-26.48c0-14.53,11.95-26.48,26.48-26.48 c14.53,0,26.48,11.95,26.48,26.48C444.52,178.65,432.56,190.60,418.03,190.60 M367.19,348.50h-47.26v-14.81h-0.53 c-8.31,13.23-24.65,19.22-40.23,19.22c-39.48,0-67.27-32.98-67.27-71.15c0-38.18,27.27-70.89,66.73-70.89 c15.32,0,31.43,5.71,41.29,17.38v-12.97h47.26V348.50z M291.10,251.89c-19.22,0-30.38,13.76-30.38,30.13 c0,16.87,11.16,29.85,30.38,29.85c19.22,0,30.38-12.97,30.38-29.85C321.49,265.66,310.32,251.89,291.10,251.89\"/></g><g><polygon fill=\"#000099\" points=\"641.46,309.55 641.46,350.57 555.26,350.57 555.26,309.55 574.51,309.55 574.51,192.95 555.26,192.95 555.26,152.22 618.28,152.22 691.38,262.41 691.38,192.95 671.86,192.95 671.86,152.22 757.77,152.22 757.77,192.95 739.93,192.95 739.93,350.57 697.23,350.57 623.33,240.10 623.33,309.55 \"/><path fill=\"#000099\" d=\"M836.12,354.19c-23.42,0-42.40-7.24-58.28-23.15c-15.64-15.35-23.44-34.87-23.44-57.2 c0-22.32,8.09-42.09,23.44-57.16c15.33-15.06,35.97-23.42,58.28-23.42c28.16,0,53.27,13.38,68.33,35.68 c8.93,13.13,13.10,27.93,13.10,44.90c0,5.60-0.54,11.46-1.37,17.31H803.22c3.62,13.37,16.45,22.56,32.90,22.56 c8.65,0,15.91-2.77,22.87-8.63h52.73C898.04,336.33,869.88,354.19,836.12,354.19 M870.44,258.52 c-4.45-16.74-16.72-25.93-34.31-25.93c-16.18,0-28.99,9.47-34.02,25.93H870.44z\"/><polygon fill=\"#000099\" points=\"965.22,350.55 929.23,237.60 915.84,237.60 915.84,197.43 984.19,197.43 984.19,237.60 971.90,237.60 988.35,297.55 1014.86,197.43 1052.24,197.43 1078.75,297.55 1095.20,237.60 1082.91,237.60 1082.91,197.43 1151.27,197.43 1151.27,237.60 1137.88,237.60 1101.89,350.55 1058.94,350.55 1033.55,262.41 1008.18,350.55 \"/><path fill=\"#000099\" d=\"M1198.71,303.41c0.55,10.88,6.41,16.76,17.55,16.76c10.61,0,16.20-4.77,16.20-13.40 c0-12.29-12.83-11.69-33.19-17.57c-28.45-8.09-42.11-22.87-42.11-47.41c0-28.72,20.92-48.26,52.98-48.26 c12.29,0,22.04,2.77,31.53,9.78v-6.43h31.78v43.52h-40.43c-1.67-10.03-5.58-13.94-14.23-13.94 c-9.20,0-14.48,5.29-14.48,11.42c0,11.15,9.19,13.67,26.20,17.84c33.75,8.66,50.20,19.28,50.20,48.55 c0,29.86-22.85,50.20-56.04,50.20c-13.11,0-23.98-3.62-33.77-11.71v7.80h-33.44v-47.14H1198.71z\"/><path fill=\"#000099\" d=\"M1335.89,350.55v-43.21c58.29-34.61,87.31-67.50,87.31-95.42 c0-13.92-7.53-22.03-19.53-22.03c-12.25,0-20.36,10.34-20.36,28.47c0,1.40,0.30,3.08,0.30,4.45h-48.81v-1.36 c0-44.09,28.70-73.07,70.57-73.07c41.82,0,68.04,23.98,68.04,59.93c0,29.30-24.52,63.88-73.65,101.82h32.92 v-12.56h40.45v53H1335.89z\"/><path fill=\"#000099\" d=\"M1537.89,313.46h22.88V296.72H1475.7v-37.93l80.88-106.54h52.45v106.54h25.64v37.93h-25.64 v16.74h17.01v37.10h-88.16V313.46z M1564.13,198.82l-41.57,59.95h41.57V198.82z\"/></g></g></g></svg>","GR":"<svg width=\"59.6\" height=\"22\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 2921 1078\" aria-hidden=\"true\" focusable=\"false\"><g><g><rect fill=\"#000099\" width=\"1078\" height=\"1078\"/><path fill=\"#FFFFFF\" d=\"M952,751H850V465h102V751z M900.9,411.9c-31.2,0-56.9-25.7-56.9-56.9s25.7-56.9,56.9-56.9 s56.9,25.7,56.9,56.9S932.2,411.9,900.9,411.9z M689.1,463v28.2c-22-25.3-56.5-37.7-89.7-37.7c-85.7,0-145,71-145,153.8 s60.3,154.4,145.9,154.4c33.8,0,69.3-12.7,87.3-41.7h1.4v32h102l0.1-289H689.1z M626.2,672.7c-41.7,0-65.9-28.2-65.9-64.8 c0-35.5,24.2-65.4,65.9-65.4s65.9,29.8,65.9,65.4C692.1,644.5,667.9,672.7,626.2,672.7z M342,576.6 c59.7-10.6,92.1-60.9,92.1-118.9c0-89.9-63.1-129.7-146.2-129.7H124v421h110V587h0.9l103.2,162h136.2L342,576.6z M244.4,517H234 V412h10.4c35.7,0,75.9,6.7,75.9,52.5S280.1,517,244.4,517z\"/></g><g><path fill=\"#000099\" d=\"M1340.3,666.8h25.5V755h-171.7v-88.2h41.3V416h-41.3v-87.6h171.7c36.7,0,62.9,1.8,78.7,5.4 c15.7,3.6,29.6,9.6,41.8,18c18.2,12.3,32.5,29,43.1,50.1c10.5,21.1,15.8,43.8,15.8,68c0,29.5-7.1,55.8-21.2,79 c-14.2,23.1-33.7,40.9-58.7,53.2l53,64.8h40.1V755H1466l-125.7-153V666.8L1340.3,666.8z M1340.3,525.3h20.5 c27,0,46.6-4.1,58.9-12.3s18.5-21.1,18.5-38.7c0-18-5.3-30.8-16-38.4c-10.6-7.6-29.4-11.4-56.4-11.4h-25.5V525.3z\"/><path fill=\"#000099\" d=\"M1828.6,718.4c-10.8,13.9-24.2,24.2-40.4,31.1c-16.2,6.8-34.8,10.3-55.9,10.3c-46.4,0-85-16-115.7-48.1 c-30.7-32-46.1-72.6-46.1-121.6s15.2-89.6,45.7-121.7s69.1-48.2,115.7-48.2c22.5,0,41.9,3.8,58.3,11.3s30.6,19.2,42.5,35v-40.7 h126v86.4H1923V668h35.7v87h-130.1V718.4L1828.6,718.4z M1670.1,590.1c0,23.8,7.5,43.5,22.4,58.9s33.9,23.1,57,23.1 c22.9,0,41.8-7.7,56.7-23.1c14.9-15.4,22.4-35.1,22.4-58.9c0-24-7.4-43.8-22.3-59.2c-14.8-15.4-33.8-23.1-56.8-23.1 c-23.1,0-42,7.8-57,23.3C1677.5,546.5,1670.1,566.2,1670.1,590.1z\"/><path fill=\"#000099\" d=\"M2230.1,718.4c-10.8,13.9-24.2,24.2-40.4,31.1c-16.2,6.8-34.8,10.3-55.9,10.3c-46.4,0-85-16-115.7-48.1 c-30.7-32-46.1-72.6-46.1-121.6s15.2-89.6,45.7-121.7c30.5-32.1,69.1-48.2,115.7-48.2c22.5,0,41.9,3.8,58.3,11.3 c16.4,7.5,30.6,19.2,42.5,35V412h-35.7v-83.5h126V668h35.7v87h-130.1L2230.1,718.4L2230.1,718.4z M2071.5,590.1 c0,23.8,7.5,43.5,22.4,58.9s33.9,23.1,57,23.1c22.9,0,41.8-7.7,56.7-23.1c14.9-15.4,22.4-35.1,22.4-58.9c0-24-7.4-43.8-22.3-59.2 c-14.9-15.4-33.8-23.1-56.8-23.1c-23.1,0-42,7.8-57,23.3C2079,546.5,2071.5,566.2,2071.5,590.1z\"/><path fill=\"#000099\" d=\"M2428,668V512.1h-40.1v-86.4h133V668h41.6v87h-175.8v-87H2428L2428,668z M2428,407.5v-79.1h92.9v79.1H2428z\" /><path fill=\"#000099\" d=\"M2570,589.9c0-24.2,4.3-46.7,12.9-67.5c8.6-20.8,21-39.2,37.4-55.3c16.3-16.1,35.4-28.5,57.1-37.3 c21.8-8.8,44.6-13.2,68.4-13.2c24.2,0,47,4.3,68.3,12.9s40.1,20.9,56.4,37c16.3,16.1,28.8,34.6,37.5,55.6s13,43.6,13,67.8 s-4.2,46.7-12.6,67.5c-8.4,20.8-20.9,39.2-37.5,55.3s-35.7,28.5-57.1,37.3c-10.7,4.1-21.7,7.2-32.8,9.4 c-11.1,2.1-22.9,3.2-35.2,3.2c-24.4,0-47.2-4.2-68.4-12.7s-40-20.7-56.6-36.7c-16.5-16-29.1-34.6-37.8-55.8 C2574.4,636.2,2570,613.7,2570,589.9z M2669.1,589.9c0,22.2,7.5,41.3,22.6,57.3c15,16,33.1,24,54.2,24c20.9,0,38.9-7.9,53.9-23.8 c15-15.9,22.6-35.1,22.6-57.5c0-22.8-7.4-42.2-22.3-58.2c-14.9-16-32.9-24-54.2-24c-20.9,0-38.9,8-54.1,24 C2676.6,547.7,2669.1,567.1,2669.1,589.9z\"/></g></g></svg>","Rai Sport":"<svg width=\"55.1\" height=\"22\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 2698.78 1078\" aria-hidden=\"true\" focusable=\"false\"><g><g><rect x=\"0\" y=\"0\" fill=\"#FF510C\" width=\"1078\" height=\"1078\"/><path fill=\"#FFFFFF\" d=\"M901.28,410.93c-31.35,0-57.13-25.75-57.13-57.11s25.77-57.11,57.13-57.11 c31.33,0,57.08,25.75,57.08,57.11S932.61,410.93,901.28,410.93 M952.20,751.34H850.30V464.13h101.90V751.34z M243.89,413.17c35.83,0,76.13,6.70,76.13,52.63c0,45.89-40.29,52.63-76.13,52.63H233.26V413.17H243.89 M474.56,751.34L341.87,578.35c59.93-10.66,92.37-61.03,92.37-119.27c0-90.14-63.24-129.88-146.65-129.88H123.51 v422.14h109.74v-162.37h1.12l103.58,162.37H474.56z M791.65,751.34H689.77v-31.90h-1.15 c-17.91,28.55-53.18,41.41-86.76,41.41c-85.09,0-145.00-71.1-145.00-153.38c0-82.31,58.78-152.86,143.87-152.86 c33.05,0,67.74,12.31,89.04,37.51v-27.98h101.88V751.34z M627.61,543.06c-41.41,0-65.49,29.65-65.49,64.94 c0,36.38,24.07,64.39,65.49,64.39c41.41,0,65.49-28.00,65.49-64.39C693.10,572.72,669.03,543.06,627.61,543.06\"/></g><g><path fill=\"#FF510C\" d=\"M1283.59,754.57h-82.95V614.43h97.35c4.21,40.29,16.86,58.93,42.73,58.93 c24.07,0,42.09-17.44,42.09-39.67c0-13.79-7.21-26.47-18.63-33.68c-19.85-12.00-45.13-18.03-71.53-29.46 c-61.97-26.44-92.63-66.11-92.63-119.65c0-73.99,57.11-131.08,132.30-131.08c25.27,0,46.30,7.21,66.74,22.85v-12.02 h78.76v122.10h-89.01c-4.79-29.49-19.78-45.13-41.46-45.13c-21.08,0-36.65,15.64-36.65,34.28 c0,15.59,7.18,27.66,18.61,33.68c27.07,13.79,57.73,19.23,84.15,33.63c52.36,27.71,78.23,65.59,78.23,114.89 c0,76.94-62.02,140.09-135.32,140.09c-25.27,0-48.75-7.80-72.77-23.42V754.57z\"/><path fill=\"#FF510C\" d=\"M1713.08,672.78c45.70,0,79.31-34.28,79.31-82.40c0-48.05-33.61-82.35-79.31-82.35 c-45.73,0-79.38,34.30-79.38,82.35C1633.69,638.50,1667.35,672.78,1713.08,672.78 M1539.88,512.21h-36.12V425.66 h126.31v40.84c23.45-30.66,54.71-46.28,101.04-46.28c92.61,0,161.14,70.95,161.14,170.15 c0,99.22-68.53,170.20-161.14,170.20c-42.66,0-74.57-13.24-96.82-41.49v54.11h32.48v87.19h-163.01v-87.19h36.12 V512.21z\"/><path fill=\"#FF510C\" d=\"M2086.5,672.16c42.09,0,76.39-36.05,76.39-81.76c0-46.30-33.72-81.78-76.39-81.78 c-42.11,0-76.94,35.47-76.94,81.78C2009.55,636.11,2044.38,672.16,2086.5,672.16 M1960.78,467.10 c33.10-32.45,77.56-50.49,125.71-50.49c48.15,0,92.01,18.03,125.07,50.49c33.05,32.48,50.52,74.59,50.52,123.29 c0,48.07-17.46,90.81-50.52,123.22c-33.05,32.50-76.92,49.97-125.07,49.97c-48.15,0-92.61-17.46-125.71-49.97 c-32.98-32.41-50.47-75.14-50.47-123.22C1910.30,542.30,1927.79,499.59,1960.78,467.10\"/><path fill=\"#FF510C\" d=\"M2316.35,512.22h-37.89v-86.57h126.29v48.10c18.63-36.67,47.50-52.29,80.32-53.51v91.98 c-52.67,3.01-76.08,29.49-76.08,89.59v66.74h37.82v87.19h-172.55v-87.19h42.09V512.22z\"/><polygon fill=\"#FF510C\" points=\"2544.96,512.22 2514.99,512.22 2514.99,425.64 2544.96,425.64 2544.96,328.24 2639.96,328.24 2639.96,425.64 2698.78,425.64 2698.78,512.22 2639.96,512.22 2639.96,668.55 2689.10,668.55 2689.10,755.75 2544.96,755.75 \"/></g></g></svg>","Rainews.it":"<svg width=\"56.4\" height=\"22\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1280.71 500\" aria-hidden=\"true\" focusable=\"false\"><g><g><rect fill=\"#000099\" width=\"500\" height=\"500\"/><path fill=\"#FFFFFF\" d=\"M113.12,191.64c16.62,0,35.30,3.11,35.30,24.42c0,21.28-18.68,24.39-35.30,24.39h-4.92 v-48.81H113.12 M220.11,348.50l-61.54-80.24c27.78-4.94,42.85-28.32,42.85-55.31c0-41.80-29.34-60.24-68.03-60.24 H57.29v195.80h50.90v-75.32h0.51l48.05,75.32L220.11,348.50L220.11,348.50z M441.66,348.50h-47.26V215.28h47.26 V348.50z M418.03,190.60c-14.53,0-26.48-11.95-26.48-26.48c0-14.53,11.95-26.48,26.48-26.48 c14.53,0,26.48,11.95,26.48,26.48C444.52,178.65,432.56,190.60,418.03,190.60 M367.19,348.50h-47.26v-14.81h-0.53 c-8.31,13.23-24.65,19.22-40.23,19.22c-39.48,0-67.27-32.98-67.27-71.15c0-38.18,27.27-70.89,66.73-70.89 c15.32,0,31.43,5.71,41.29,17.38v-12.97h47.26V348.50z M291.10,251.89c-19.22,0-30.38,13.76-30.38,30.13 c0,16.87,11.16,29.85,30.38,29.85s30.38-12.97,30.38-29.85C321.49,265.66,310.32,251.89,291.10,251.89\"/></g><g><polygon fill=\"#000099\" points=\"641.46,309.55 641.46,350.57 555.26,350.57 555.26,309.55 574.51,309.55 574.51,192.95 555.26,192.95 555.26,152.22 618.28,152.22 691.38,262.41 691.38,192.95 671.86,192.95 671.86,152.22 757.77,152.22 757.77,192.95 739.93,192.95 739.93,350.57 697.23,350.57 623.33,240.10 623.33,309.55 \"/><path fill=\"#000099\" d=\"M836.12,354.19c-23.42,0-42.40-7.24-58.28-23.15c-15.64-15.35-23.44-34.87-23.44-57.2 s8.09-42.09,23.44-57.16c15.33-15.06,35.97-23.42,58.28-23.42c28.16,0,53.27,13.38,68.33,35.68 c8.93,13.13,13.10,27.93,13.10,44.90c0,5.60-0.54,11.46-1.37,17.31H803.22c3.62,13.37,16.45,22.56,32.90,22.56 c8.65,0,15.91-2.77,22.87-8.63h52.73C898.04,336.33,869.88,354.19,836.12,354.19 M870.44,258.52 c-4.45-16.74-16.72-25.93-34.31-25.93c-16.18,0-28.99,9.47-34.02,25.93H870.44z\"/><polygon fill=\"#000099\" points=\"965.22,350.55 929.23,237.60 915.84,237.60 915.84,197.43 984.19,197.43 984.19,237.60 971.90,237.60 988.35,297.55 1014.86,197.43 1052.24,197.43 1078.75,297.55 1095.20,237.60 1082.91,237.60 1082.91,197.43 1151.27,197.43 1151.27,237.60 1137.88,237.60 1101.89,350.55 1058.94,350.55 1033.55,262.41 1008.18,350.55 \"/><path fill=\"#000099\" d=\"M1198.71,303.41c0.55,10.88,6.41,16.76,17.55,16.76c10.61,0,16.20-4.77,16.20-13.40 c0-12.29-12.83-11.69-33.19-17.57c-28.45-8.09-42.11-22.87-42.11-47.41c0-28.72,20.92-48.26,52.98-48.26 c12.29,0,22.04,2.77,31.53,9.78v-6.43h31.78v43.52h-40.43c-1.67-10.03-5.58-13.94-14.23-13.94 c-9.20,0-14.48,5.29-14.48,11.42c0,11.15,9.19,13.67,26.20,17.84c33.75,8.66,50.20,19.28,50.20,48.55 c0,29.86-22.85,50.20-56.04,50.20c-13.11,0-23.98-3.62-33.77-11.71v7.80h-33.44v-47.14L1198.71,303.41 L1198.71,303.41z\"/></g></g></svg>"};
   var lists = null;
   var params = new URLSearchParams(location.search);
   // The page lives at …/servizi (no trailing slash): relative links would resolve one level up.
@@ -463,7 +529,11 @@ function fmtRange(a, b) {
       var l = document.createElement("label");
       if (name === "rete") l.setAttribute("data-rete", v);
       var i = document.createElement("input"); i.type = "radio"; i.name = name; i.value = v;
-      var s = document.createElement("span"); s.textContent = v;
+      var s = document.createElement("span");
+      if (name === "rete" && LOGOS[v]) {
+        var lg = document.createElement("i"); lg.className = "logo"; lg.innerHTML = LOGOS[v]; // trusted constant above
+        s.appendChild(lg); s.appendChild(document.createTextNode(v));
+      } else s.textContent = v;
       l.appendChild(i); l.appendChild(s); box.appendChild(l);
     });
   }
@@ -521,6 +591,37 @@ function fmtRange(a, b) {
     var p = rete + " ";
     return value.toLowerCase().indexOf(p.toLowerCase()) === 0 ? value.slice(p.length) : value;
   }
+  var richSlots = [], richActive = -1;
+  function listOpen() { return !$("rich-list").hidden; }
+  function closeList() {
+    $("rich-list").hidden = true; $("rich-btn").setAttribute("aria-expanded", "false");
+    $("richiedente").removeAttribute("aria-activedescendant"); richActive = -1;
+  }
+  function setActive(n) {
+    var lis = $("rich-list").children; if (!lis.length) return;
+    richActive = (n + lis.length) % lis.length;
+    Array.prototype.forEach.call(lis, function (li, k) { li.className = (li.className.replace(/\bon\b/g, "").trim() + (k === richActive ? " on" : "")).trim(); li.setAttribute("aria-selected", k === richActive ? "true" : "false"); });
+    $("richiedente").setAttribute("aria-activedescendant", lis[richActive].id);
+    lis[richActive].scrollIntoView({ block: "nearest" });
+  }
+  function openList() {
+    var ul = $("rich-list"); ul.textContent = "";
+    var cur = $("richiedente").value.trim().toLowerCase(), at = -1;
+    richSlots.concat(["Altro\u2026 (aggiungi)"]).forEach(function (v, k) {
+      var li = document.createElement("li"); li.id = "rich-o" + k; li.setAttribute("role", "option"); li.textContent = v;
+      if (k === richSlots.length) li.className = "altro"; else if (v.toLowerCase() === cur) at = k;
+      li.setAttribute("data-k", String(k)); ul.appendChild(li);
+    });
+    ul.hidden = false; $("rich-btn").setAttribute("aria-expanded", "true");
+    setActive(at);
+  }
+  function chooseRich(k) {
+    var inp = $("richiedente");
+    closeList();
+    if (k >= richSlots.length) { inp.value = ""; inp.placeholder = "scrivi il programma o l'edizione"; }
+    else { inp.value = richSlots[k]; inp.placeholder = ""; }
+    inp.focus();
+  }
   function updateRichiedente() {
     var rete = checked("rete");
     var pre = PREFIXED.indexOf(rete) >= 0;
@@ -528,6 +629,8 @@ function fmtRange(a, b) {
     $("rich-pre").textContent = pre ? rete : "";
     var slots = slotsFor(rete).map(function (v) { return pre ? stripPrefix(rete, v) : v; });
     fillDatalist("l-richiedenti", slots);
+    richSlots = slots.filter(function (v, k) { return slots.indexOf(v) === k; });
+    closeList(); $("richiedente").placeholder = "";
     $("rich-hint").textContent = rete ? (slots.length ? "(edizione; anche testo libero)" : "(programma; testo libero)") : "(scegliere prima la rete)";
   }
   // The stored value: "Tg1 Ore 20" for the prefixed reti, as typed for the rest.
@@ -641,7 +744,7 @@ function fmtRange(a, b) {
       if (r.status === 200) {
         e.stato = "sincronizzato"; e.server_id = r.body.id; delete e.errore; attempt = 0;
         qsave(queue); renderPending(); renderRecent();
-        setStatus("sincronizzato", "Sincronizzato: " + e.payload.subject);
+        showLast(e);
         refreshServerRows();
         schedule(50);
       } else {
@@ -662,6 +765,31 @@ function fmtRange(a, b) {
       schedule(delay);
     });
   }
+  // The last record that reached the server can be voided from here (POST /api/void {id, reason}).
+  var lastSynced = null;
+  function showLast(e) {
+    lastSynced = { id: e.server_id, entry: e };
+    var p = e.payload;
+    $("last-text").textContent = "Registrata: " + p.journalist + " \u00b7 " + p.rete + (p.richiedente ? " " + p.richiedente : "") + " \u00b7 " + p.subject;
+    $("last").className = "last"; $("last").hidden = false; $("undo").hidden = false; $("undo").disabled = false;
+    setStatus("sincronizzato", "Sincronizzato");
+  }
+  $("undo").addEventListener("click", function () {
+    var l = lastSynced; if (!l || !l.id) return;
+    var b = $("undo"); b.disabled = true;
+    function fail(msg) { b.disabled = false; $("last-text").textContent = msg; $("last").className = "last errore"; }
+    api("/api/void", { method: "POST", body: JSON.stringify({ id: l.id, reason: "annullata dall'operatore" }) }).then(function (r) {
+      if (r.status === 200) {
+        lastSynced = null; b.hidden = true;
+        queue = queue.filter(function (x) { return x !== l.entry; }); qsave(queue);
+        $("last-text").textContent = "Registrazione annullata."; $("last").className = "last";
+        renderRecent(); refreshServerRows();
+      } else fail((r.body && r.body.error) || "Annullamento non riuscito.");
+    }, function (err) {
+      if (err.kind === "auth") { fail(err.message); authLost(); return; }
+      fail("Annullamento non riuscito: " + err.message);
+    });
+  });
   // Put a refused entry back into the form so it can be corrected and sent again.
   function restore(e) {
     var p = e.payload;
@@ -707,6 +835,29 @@ function fmtRange(a, b) {
     if (ev.key === "Tab" && !ev.shiftKey) completeFrom(ev.target, Array.prototype.map.call($("l-richiedenti").options, function (o) { return o.value; }));
   });
   chipTab("c-rete"); chipTab("c-mezzo");
+  // Richiedente dropdown (mouse button, not in the Tab order). While open: Up/Down move, Enter picks, Esc closes.
+  $("rich-btn").addEventListener("mousedown", function (ev) { ev.preventDefault(); }); // keep focus in the input
+  $("rich-btn").addEventListener("click", function () {
+    if (listOpen()) closeList(); else { openList(); }
+    $("richiedente").focus();
+  });
+  $("rich-list").addEventListener("mousedown", function (ev) { ev.preventDefault(); });
+  $("rich-list").addEventListener("click", function (ev) {
+    var li = ev.target.closest ? ev.target.closest("li") : null;
+    if (li) chooseRich(parseInt(li.getAttribute("data-k"), 10));
+  });
+  $("rich-wrap").addEventListener("keydown", function (ev) {
+    if (ev.altKey || ev.ctrlKey || ev.metaKey) return;
+    if (ev.key === "Tab") { closeList(); return; }
+    if (!listOpen()) return;
+    if (ev.key === "ArrowDown") { ev.preventDefault(); ev.stopPropagation(); setActive(richActive + 1); }
+    else if (ev.key === "ArrowUp") { ev.preventDefault(); ev.stopPropagation(); setActive(richActive < 0 ? -1 : richActive - 1); }
+    else if (ev.key === "Escape") { ev.preventDefault(); ev.stopPropagation(); closeList(); }
+    else if (ev.key === "Enter" && richActive >= 0) { ev.preventDefault(); ev.stopPropagation(); chooseRich(richActive); }
+    else if (ev.key === "Enter") closeList(); // nothing highlighted: Enter submits as usual
+  });
+  document.addEventListener("click", function (ev) { if (listOpen() && !$("rich-wrap").contains(ev.target)) closeList(); });
+  $("clear").addEventListener("click", function () { resetAll(); });
   form.addEventListener("submit", function (ev) {
     ev.preventDefault();
     var g = $("giornalista").value.trim();
@@ -781,15 +932,36 @@ function fmtRange(a, b) {
     if (ev.key === "Enter" && !ev.isComposing && ev.target.tagName !== "BUTTON") { ev.preventDefault(); form.requestSubmit(); }
   });
   document.addEventListener("keydown", function (ev) {
+    if (ev.key === "Escape" && !$("pwd").hidden && $("pwd").contains(ev.target)) { ev.preventDefault(); closePwd(); return; }
     if (ev.key === "Escape" && !form.hidden) { ev.preventDefault(); resetAll(); }
   });
+  // ---- change password ----
+  function closePwd() { $("pwd").hidden = true; $("pwd-new").value = ""; $("pwd-conf").value = ""; $("pwd-msg").textContent = ""; }
+  $("lnk-pwd").addEventListener("click", function (ev) {
+    ev.preventDefault();
+    if ($("pwd").hidden) { $("pwd").hidden = false; $("pwd-msg").textContent = ""; $("pwd-new").focus(); } else closePwd();
+  });
+  $("pwd-close").addEventListener("click", closePwd);
+  $("pwd").addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    var msg = $("pwd-msg"), a = $("pwd-new").value, c = $("pwd-conf").value;
+    function say(ok, t) { msg.className = "pwd-msg " + (ok ? "ok" : "ko"); msg.textContent = t; }
+    if (a.length < 5) { say(false, "La password deve avere almeno 5 caratteri."); $("pwd-new").focus(); return; }
+    if (a !== c) { say(false, "Le due password non coincidono."); $("pwd-conf").focus(); return; }
+    var b = $("pwd-save"); b.disabled = true; say(true, "Salvataggio\u2026");
+    changePassword(a).then(function (res) {
+      b.disabled = false;
+      if (res.ok) { $("pwd-new").value = ""; $("pwd-conf").value = ""; say(true, "Password aggiornata."); } else say(false, res.error);
+    });
+  });
+  document.addEventListener("rainyc:auth-lost", function () { $("lnk-pwd").hidden = true; closePwd(); });
   window.addEventListener("online", function () { attempt = 0; schedule(0); });
 
   // ---- start ----
   requireLogin(function () {
     loadLists().then(function () {
       buildForm();
-      form.hidden = false; $("recent-box").hidden = false;
+      form.hidden = false; $("recent-box").hidden = false; $("lnk-pwd").hidden = false;
       resetAll(); renderPending(); renderRecent();
       refreshServerRows();
       schedule(0);

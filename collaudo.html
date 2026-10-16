@@ -47,6 +47,16 @@ tr.tot td { text-align:right; font-weight:600; border-bottom:1.5px solid var(--i
 tr.tot td.k { text-align:center; }
 tr.empty td { color:var(--mute); font-style:italic; }
 .si { color:var(--red); font-weight:700; }
+.prn { display:none; }
+td.ed { cursor:text; }
+td.ed:hover { outline:1px dashed #9aa4b2; outline-offset:-2px; }
+td.ed.saving { opacity:.5; }
+td.ed .edin { width:100%; min-width:6em; font:inherit; padding:2px 4px; border:1.5px solid var(--focus); border-radius:4px; background:#fff; }
+td.act { white-space:nowrap; text-align:right; width:1%; }
+button.ic { border:0; background:transparent; color:var(--mute); font-size:15px; line-height:1; padding:4px 6px; cursor:pointer; border-radius:4px; }
+button.ic:hover, button.ic:focus-visible { background:#e6e9ee; color:var(--ink); outline:none; }
+button.ic[data-act=void]:hover { color:var(--red); }
+.rowerr { display:block; color:var(--red); font-weight:600; font-size:12px; white-space:normal; text-align:right; }
 .nowrap { white-space:nowrap; }
 footer.doc { margin-top:28px; display:flex; justify-content:space-between; align-items:flex-end; gap:24px; flex-wrap:wrap; }
 footer.doc .gen { font-size:11px; color:var(--mute); }
@@ -57,7 +67,8 @@ footer.doc .firma { font-size:13px; white-space:nowrap; }
 @media print {
   body { font-size:11px; }
   .page { max-width:none; padding:0; }
-  .tools { display:none; }
+  .tools, .np { display:none !important; }
+  .scr { display:none; } .prn { display:inline; }
   header.doc h1 { font-size:17px; }
   .counters .n { font-size:14px; } .counters .tot .n { font-size:15px; }
   .counters .c { padding:4px 9px; min-width:58px; }
@@ -86,6 +97,7 @@ footer.doc .firma { font-size:13px; white-space:nowrap; }
     <button type="button" class="sec" id="next" title="Settimana successiva">▶</button>
     <button type="submit">Vai</button>
     <button type="button" id="print">Stampa</button>
+    <button type="button" class="sec" id="undo" disabled>Annulla ultima modifica</button>
     <a class="btn" href="." id="lnk-form">Nuova registrazione</a>
     <span class="msg" id="msg"></span>
   </form>
@@ -238,6 +250,37 @@ function requireLogin(onReady) {
 
 function authLost() { Session.clear(); document.dispatchEvent(new Event("rainyc:auth-lost")); }
 
+/**
+ * Change the signed-in user's password (Supabase Auth: PUT /auth/v1/user with the access token).
+ * @returns {Promise<{ok:boolean, error?:string}>} error is Italian, ready to show.
+ */
+function changePassword(newPassword, retried) {
+  var s = Session.get();
+  if (!s) return Promise.resolve({ ok: false, error: "Sessione scaduta: accedere di nuovo." });
+  var soon = (s.expires_at || 0) * 1000 - Date.now() < 60000;
+  var ready = soon ? refreshSession() : Promise.resolve(true);
+  return ready.then(function (ok) {
+    var cur = Session.get();
+    if (!ok || !cur) return { ok: false, error: "Sessione scaduta: accedere di nuovo." };
+    return fetch(AUTH_URL + "/user", {
+      method: "PUT",
+      headers: { apikey: ANON_KEY, Authorization: "Bearer " + cur.access_token, "Content-Type": "application/json" },
+      body: JSON.stringify({ password: newPassword })
+    }).then(function (r) {
+      return r.json().catch(function () { return {}; }).then(function (b) {
+        if (r.ok) return { ok: true };
+        if (r.status === 401 && !retried) return refreshSession().then(function (ok2) { return ok2 ? changePassword(newPassword, true) : { ok: false, error: "Sessione scaduta: accedere di nuovo." }; });
+        var code = b.error_code || b.code || "";
+        if (code === "same_password") return { ok: false, error: "La nuova password deve essere diversa da quella attuale." };
+        if (code === "weak_password") return { ok: false, error: "Password troppo debole: sceglierne una piu lunga o meno comune." };
+        if (r.status === 401 || r.status === 403) return { ok: false, error: "Sessione scaduta: accedere di nuovo." };
+        if (r.status === 429) return { ok: false, error: "Troppi tentativi. Riprovare tra qualche minuto." };
+        return { ok: false, error: "Password non aggiornata (" + r.status + "). Riprovare." };
+      });
+    }, function () { return { ok: false, error: "Rete non raggiungibile." }; });
+  });
+}
+
 // ---- end pages/shared.js ----
 // ---- lib/week.js ----
 // ISO week helpers. Plain JS so the same file runs in Deno (server) and, inlined by
@@ -365,9 +408,59 @@ const CATEGORIE = ["pezzo", "radio", "live", "tappeto"];
 const CAT_LABEL = { pezzo: "Pezzi", radio: "Radio", live: "Live", tappeto: "Tappeti" };
 // Per-rete counters in the sheet's order. Tappeto rows count only under Tappeti.
 const RETI = ["Rainews.it", "Tg1", "Tg2", "Tg3", "RAN", "Rai Sport", "GR", "Altre"];
+// Screen columns. The last four (assistenza, operatore, data, azioni) never print: the printed
+// sheet has exactly Rome's columns (PRINT_COLS), in this order.
 const COLS = ["Titolo", "Giornalista", "Richiedente", "Rete", "Durata",
-  "Pezzi", "Radio", "Live", "Trasferta", "Mezzo", "Tappeti", "Ass. tecnica", "Operatore"];
+  "Pezzi", "Radio", "Live", "Trasferta", "Mezzo", "Tappeti", "Ass. tecnica", "Operatore", "Data", ""];
 const CHECK_COLS = ["Pezzi", "Radio", "Live", "Tappeti", "Ass. tecnica"];
+const SCREEN_ONLY = ["Ass. tecnica", "Operatore", "Data", ""];
+const ROME_LABEL = { Titolo: "Titolo del servizio", Mezzo: "Mezzo di trasmissione" };
+/** Column headings as printed, in Rome's order. */
+const PRINT_COLS = COLS.filter((c) => !SCREEN_ONLY.includes(c)).map((c) => ROME_LABEL[c] || c);
+
+// Collaudo column -> field name of POST /api/update (patch key) and the editor to use.
+const EDIT_FIELDS = {
+  titolo: { api: "subject", kind: "text" },
+  giornalista: { api: "journalist", kind: "select" },
+  richiedente: { api: "richiedente", kind: "datalist" },
+  rete: { api: "rete", kind: "select" },
+  durata: { api: "duration_text", kind: "text" },
+  trasferta: { api: "trasferta", kind: "bool" },
+  mezzo: { api: "mezzo", kind: "select" },
+  operatore: { api: "operator", kind: "select" },
+  data: { api: "delivery_date", kind: "date" },
+};
+const API_KIND = Object.fromEntries(Object.values(EDIT_FIELDS).map((f) => [f.api, f.kind]));
+
+/** Editor kind for an API field name: text | select | datalist | bool | date. */
+function editorKind(apiField) {
+  return API_KIND[apiField] || "text";
+}
+
+/** Cell text (data-v) -> value for the update patch: "true"/"false" become booleans, text is trimmed. */
+function toPatchValue(apiField, raw) {
+  if (editorKind(apiField) === "bool") return String(raw) === "true";
+  return String(raw == null ? "" : raw).trim();
+}
+
+/** Names from /api/lists entries that are either strings or {display_name}. */
+function listNames(items) {
+  return (Array.isArray(items) ? items : [])
+    .map((x) => (typeof x === "string" ? x : x && (x.display_name || x.value)) || "")
+    .filter((x) => x !== "");
+}
+
+/** Options for a <select>: the list, plus the current value if the list lacks it, plus a blank when empty. */
+function selectOptions(names, current) {
+  const out = names.slice();
+  const cur = String(current == null ? "" : current);
+  if (cur !== "" && !out.includes(cur)) out.unshift(cur);
+  if (cur === "") out.unshift("");
+  return out;
+}
+
+// Trailing cell of day/total rows: spans the screen-only columns (hidden in print).
+const NP_TAIL = `<td class="np" colspan="${COLS.length - PRINT_COLS.length}"></td>`;
 
 /** @param {string} rete @returns {string|null} */
 function reteBucket(rete) {
@@ -454,9 +547,9 @@ function renderCollaudo(w, rows, generated) {
     const dayRows = byDay[d];
     const trips = trasferteOn(d, rows);
     const tripNote = trips.length ? ` <span class="trip">Trasferta: ${esc(trips.join(" · "))}</span>` : "";
-    body.push(`<tr class="day"><td colspan="${COLS.length}">${esc(fmtDay(d))}${tripNote}</td></tr>`);
+    body.push(`<tr class="day"><td colspan="${PRINT_COLS.length}">${esc(fmtDay(d))}${tripNote}</td>${NP_TAIL}</tr>`);
     if (!dayRows.length) {
-      body.push(`<tr class="empty"><td colspan="${COLS.length}">Nessuna registrazione</td></tr>`);
+      body.push(`<tr class="empty"><td colspan="${PRINT_COLS.length}">Nessuna registrazione</td>${NP_TAIL}</tr>`);
       continue;
     }
     const dayTot = Object.fromEntries(CATEGORIE.map((c) => [c, 0]));
@@ -465,25 +558,31 @@ function renderCollaudo(w, rows, generated) {
       if (cat in dayTot) dayTot[cat] += 1;
       const si = r.trasferta === true;
       const k = (c) => `<td class="k">${cat === c ? "✓" : ""}</td>`;
-      body.push('<tr class="r">' +
-        `<td>${esc(r.titolo)}</td>` +
-        `<td class="nowrap">${esc(r.giornalista)}</td>` +
-        `<td>${esc(r.richiedente)}</td>` +
-        `<td class="nowrap">${esc(r.rete)}</td>` +
-        `<td class="nowrap">${esc(r.durata)}</td>` +
+      const ed = (col, cls, shown, value) =>
+        `<td class="ed${cls ? " " + cls : ""}" data-f="${EDIT_FIELDS[col].api}" data-v="${esc(value)}">${shown}</td>`;
+      body.push(`<tr class="r" data-id="${esc(r.record_id)}">` +
+        ed("titolo", "", esc(r.titolo), r.titolo) +
+        ed("giornalista", "nowrap", esc(r.giornalista), r.giornalista) +
+        ed("richiedente", "", esc(r.richiedente), r.richiedente) +
+        ed("rete", "nowrap", esc(r.rete), r.rete) +
+        ed("durata", "nowrap", esc(r.durata), r.durata) +
         k("pezzo") + k("radio") + k("live") +
-        `<td class="k">${si ? '<span class="si">SI</span>' : ""}</td>` +
-        `<td class="nowrap">${esc(r.mezzo)}</td>` +
+        ed("trasferta", "k", si ? '<span class="si">SI</span>' : "", si ? "true" : "false") +
+        ed("mezzo", "nowrap", esc(r.mezzo), r.mezzo) +
         k("tappeto") +
-        `<td class="k">X</td>` +
-        `<td class="nowrap">${esc(r.operatore)}</td>` +
+        `<td class="k np">X</td>` +
+        ed("operatore", "nowrap np", esc(r.operatore), r.operatore) +
+        ed("data", "nowrap np", esc(shortDate(String(r.data))), r.data) +
+        '<td class="np act"><button type="button" class="ic" data-act="edit" title="Modifica" aria-label="Modifica">✎</button>' +
+        '<button type="button" class="ic" data-act="void" title="Annulla registrazione" aria-label="Annulla registrazione">✕</button>' +
+        '<span class="rowerr" role="alert"></span></td>' +
         "</tr>");
     }
     const dd = new Date(d + "T00:00:00Z");
     body.push(`<tr class="tot"><td colspan="5">Totale ${esc(GIORNI[(dd.getUTCDay() + 6) % 7].toLowerCase())} ${dd.getUTCDate()} ` +
       `(${dayRows.length} registrazioni)</td>` +
       `<td class="k">${dayTot.pezzo}</td><td class="k">${dayTot.radio}</td><td class="k">${dayTot.live}</td>` +
-      `<td></td><td></td><td class="k">${dayTot.tappeto}</td><td></td><td></td></tr>`);
+      `<td></td><td></td><td class="k">${dayTot.tappeto}</td>${NP_TAIL}</tr>`);
   }
 
   const counter = (n, label, cls) =>
@@ -491,7 +590,11 @@ function renderCollaudo(w, rows, generated) {
   const tot = CATEGORIE.map((c) => counter(t.cat[c], CAT_LABEL[c], "c tot")).join("");
   const reti = RETI.map((k) => counter(t.rete[k], k === "GR" ? "GR 1,2,3" : k)).join("");
   const extra = counter(t.trasferte, "Trasferte");
-  const head = COLS.map((c) => CHECK_COLS.includes(c) || c === "Trasferta" ? `<th class="k">${c}</th>` : `<th>${c}</th>`).join("");
+  const head = COLS.map((c) => {
+    const cls = [CHECK_COLS.includes(c) || c === "Trasferta" ? "k" : "", SCREEN_ONLY.includes(c) ? "np" : ""].filter(Boolean).join(" ");
+    const label = ROME_LABEL[c] ? `<span class="scr">${c}</span><span class="prn">${ROME_LABEL[c]}</span>` : c;
+    return `<th${cls ? ` class="${cls}"` : ""}>${label}</th>`;
+  }).join("");
   const titleWeek = `Settimana ${w.week} (${fmtRange(days[0], days[6])})`;
   const g = new Date(generated + "T00:00:00Z");
   const gen = `${g.getUTCDate()} ${MESI[g.getUTCMonth()]} ${g.getUTCFullYear()}`;
@@ -529,7 +632,7 @@ ${body.join("\n")}
 
   function setMsg(text, isErr) { var m = $("msg"); m.textContent = text; m.className = isErr ? "err" : "msg"; }
 
-  function load(w) {
+  function load(w, note) {
     current = w;
     $("week").value = formatWeek(w);
     try { history.replaceState(null, "", location.pathname + "?week=" + formatWeek(w)); } catch (e) { /* ignore */ }
@@ -538,12 +641,166 @@ ${body.join("\n")}
     return api("/api/collaudo?week=" + formatWeek(w)).then(function (r) {
       if (r.status !== 200) { setMsg((r.body && r.body.error) || "Errore.", true); return; }
       $("doc").innerHTML = renderCollaudo(w, r.body.rows, todayNewYork());
-      setMsg(r.body.rows.length + " registrazioni");
+      setMsg(note || (r.body.rows.length + " registrazioni"));
     }, function (e) {
       if (e.kind === "auth") { authLost(); return; }
       setMsg(e.message, true);
     });
   }
+
+  // ---- editing, void and undo ----
+  var undoStack = [];   // last 20 actions: {kind:"edit", id, field, old} | {kind:"void", id}
+  var busy = false;
+  var lists = null;
+
+  function pushUndo(a) { undoStack.push(a); if (undoStack.length > 20) undoStack.shift(); syncUndo(); }
+  function syncUndo() { $("undo").disabled = busy || !undoStack.length; }
+  function setBusy(b) { busy = b; syncUndo(); }
+
+  function post(path, body) {
+    return api(path, { method: "POST", body: JSON.stringify(body) }).then(null, function (e) {
+      if (e.kind === "auth") { authLost(); return null; }
+      return { status: 0, body: { error: e.message } };
+    });
+  }
+  function rowOf(id) {
+    var rows = $("doc").querySelectorAll("tr.r");
+    for (var i = 0; i < rows.length; i++) if (rows[i].getAttribute("data-id") === id) return rows[i];
+    return null;
+  }
+  function rowError(id, text) {
+    var tr = rowOf(id), span = tr && tr.querySelector(".rowerr");
+    if (span) span.textContent = text; else setMsg(text, true);
+  }
+  function errText(r) { return (r.body && r.body.error) || "Operazione non riuscita (" + r.status + ")."; }
+
+  function ensureLists() {
+    if (lists) return Promise.resolve(lists);
+    return api("/api/lists").then(function (r) {
+      if (r.status !== 200 || !r.body) return null;
+      lists = r.body;
+      var dl = document.createElement("datalist");
+      dl.id = "dl-richiedenti";
+      (lists.richiedenti || []).forEach(function (x) {
+        var o = document.createElement("option"); o.value = typeof x === "string" ? x : x.value; dl.appendChild(o);
+      });
+      document.body.appendChild(dl);
+      return lists;
+    }, function () { return null; });
+  }
+  var LIST_OF = { journalist: "giornalisti", operator: "operatori", rete: "reti", mezzo: "mezzi" };
+
+  function makeEditor(field, old, l) {
+    var kind = editorKind(field), el;
+    if (kind === "bool") {
+      el = document.createElement("select");
+      [["false", "No"], ["true", "Sì"]].forEach(function (p) {
+        var o = document.createElement("option"); o.value = p[0]; o.textContent = p[1]; el.appendChild(o);
+      });
+      el.value = old;
+    } else if (kind === "select" && l) {
+      el = document.createElement("select");
+      selectOptions(listNames(l[LIST_OF[field]]), old).forEach(function (n) {
+        var o = document.createElement("option"); o.value = n; o.textContent = n; el.appendChild(o);
+      });
+      el.value = old;
+    } else {
+      el = document.createElement("input");
+      el.type = kind === "date" ? "date" : "text";
+      el.value = old;
+      if (kind === "datalist" && l) el.setAttribute("list", "dl-richiedenti");
+    }
+    el.className = "edin";
+    return el;
+  }
+
+  function startEdit(td) {
+    if (busy || td.getAttribute("data-editing")) return;
+    td.setAttribute("data-editing", "1");
+    var field = td.getAttribute("data-f"), old = td.getAttribute("data-v") || "";
+    var id = td.parentNode.getAttribute("data-id"), html = td.innerHTML, done = false;
+    ensureLists().then(function (l) {
+      var el = makeEditor(field, old, l);
+      td.textContent = "";
+      td.appendChild(el);
+      el.focus();
+      function finish(save) {
+        if (done) return; done = true;
+        var raw = el.value;
+        td.innerHTML = html;
+        td.removeAttribute("data-editing");
+        if (save && raw.trim() !== old) saveEdit(td, id, field, old, raw);
+      }
+      el.addEventListener("keydown", function (ev) {
+        if (ev.key === "Enter") { ev.preventDefault(); finish(true); }
+        else if (ev.key === "Escape") { ev.preventDefault(); finish(false); }
+      });
+      el.addEventListener("blur", function () { finish(true); });
+      if (el.tagName === "SELECT") el.addEventListener("change", function () { finish(true); });
+    });
+  }
+
+  function saveEdit(td, id, field, old, raw) {
+    var patch = {}; patch[field] = toPatchValue(field, raw);
+    td.classList.add("saving");
+    setBusy(true);
+    post("/api/update", { id: id, patch: patch }).then(function (r) {
+      setBusy(false);
+      td.classList.remove("saving");
+      if (!r) return;
+      if (r.status !== 200) { rowError(id, errText(r)); return; }
+      pushUndo({ kind: "edit", id: id, field: field, old: toPatchValue(field, old) });
+      load(current, "Modifica salvata.");
+    });
+  }
+
+  function voidRow(tr) {
+    if (busy || !window.confirm("Annullare questa registrazione?")) return;
+    var id = tr.getAttribute("data-id");
+    setBusy(true);
+    post("/api/void", { id: id, reason: "annullata dal collaudo" }).then(function (r) {
+      setBusy(false);
+      if (!r) return;
+      if (r.status !== 200) { rowError(id, errText(r)); return; }
+      pushUndo({ kind: "void", id: id });
+      load(current, "Registrazione annullata.");
+    });
+  }
+
+  function undo() {
+    if (busy || !undoStack.length) return;
+    var a = undoStack[undoStack.length - 1], req;
+    if (a.kind === "void") req = post("/api/unvoid", { id: a.id });
+    else { var patch = {}; patch[a.field] = a.old; req = post("/api/update", { id: a.id, patch: patch }); }
+    setBusy(true);
+    req.then(function (r) {
+      setBusy(false);
+      if (!r) return;
+      if (r.status !== 200) { setMsg(errText(r), true); return; }
+      undoStack.pop(); syncUndo();
+      load(current, a.kind === "void" ? "Registrazione ripristinata." : "Modifica annullata.");
+    });
+  }
+
+  $("doc").addEventListener("dblclick", function (ev) {
+    var td = ev.target.closest && ev.target.closest("td.ed");
+    if (td) startEdit(td);
+  });
+  $("doc").addEventListener("click", function (ev) {
+    var b = ev.target.closest && ev.target.closest("button[data-act]");
+    if (!b) return;
+    var tr = b.closest("tr.r");
+    if (b.getAttribute("data-act") === "void") voidRow(tr);
+    else startEdit(tr.querySelector("td.ed"));
+  });
+  $("undo").addEventListener("click", undo);
+  document.addEventListener("keydown", function (ev) {
+    if (!(ev.ctrlKey || ev.metaKey) || ev.shiftKey || ev.key.toLowerCase() !== "z") return;
+    var t = ev.target && ev.target.tagName;
+    if (t === "INPUT" || t === "TEXTAREA" || t === "SELECT") return;
+    ev.preventDefault();
+    undo();
+  });
 
   $("tools").addEventListener("submit", function (ev) {
     ev.preventDefault();
