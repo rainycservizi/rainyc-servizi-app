@@ -112,12 +112,19 @@ td.dim { color:var(--dim); } tr.off td { color:var(--dim); } tr.off td:first-chi
 .aud td { font-size:12.5px; } .aud td.t { white-space:nowrap; color:var(--dim); font-family:var(--mono); font-size:11.5px; }
 .aud .pl { font:11px/1.4 var(--mono); color:var(--dim); max-width:48em; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; display:block; }
 @media (max-width:760px) { .page { padding:10px; gap:10px; } .brand .pg, .brand .mk { display:none; } .hlink { padding:0 8px; font-size:13px; } .tile .v { font-size:18px; } }
+/* ── admin "Link ▾" menu (shared.js mountLinks) ── */
+.lmenu { position:relative; }
+.lmenu button.hlink { border:0; background:transparent; cursor:pointer; font:inherit; font-size:14px; }
+.lmenu ul { position:absolute; right:0; top:40px; z-index:50; margin:0; padding:6px; list-style:none; min-width:240px; background:var(--panel); border:1px solid var(--line2); border-radius:8px; box-shadow:var(--pop); }
+.lmenu li a { display:block; padding:9px 10px; border-radius:5px; font-size:14px; color:var(--fg); text-decoration:none; white-space:nowrap; }
+.lmenu li a:hover { background:var(--hover); color:var(--accent-text); }
+.lmenu li.stamp { padding:8px 10px 4px; border-top:1px solid var(--line); margin-top:4px; font:600 11px/1.3 var(--mono); color:var(--dim); white-space:nowrap; }
 @media (prefers-reduced-motion:reduce) { * { transition:none !important; } }
 </style>
 </head>
 <body data-gestione>
 <header class="appbar">
-  <div class="brand"><span class="mk">Rai · NY</span><span class="nm">RAI NYC Servizi</span><span class="pg">Gestione</span></div>
+  <div class="brand" id="brand" title="Pagina costruita 2026-10-16 21:33 UTC · 8896da9"><span class="mk">Rai · NY</span><span class="nm">RAI NYC Servizi</span><span class="pg">Gestione</span></div>
   <nav class="hright" id="hright" aria-label="Pagine">
     <button type="button" class="icbtn" id="theme" aria-label="Cambia tema" title="Cambia tema">
       <svg class="ic-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
@@ -189,7 +196,7 @@ td.dim { color:var(--dim); } tr.off td { color:var(--dim); } tr.off td:first-chi
 # RAI NYC Servizi — STATE (repo copy)
 
 &gt; **Short read-only copy for agents with no vault access (cloud agents).**
-&gt; Source of truth: `~/vault/10 Work/12 KIMA Creative/12.01 Active Clients/gvg-global-vision-group/rai-nyc-servizi/STATE.md` (on the Mac). Vault STATE updated: 2026-10-16T16:55-04:00 by Claude Code (Fable 5.1) on MacBook.
+&gt; Source of truth: `~/vault/10 Work/12 KIMA Creative/12.01 Active Clients/gvg-global-vision-group/rai-nyc-servizi/STATE.md` (on the Mac). Vault STATE updated: 2026-10-16T17:30-04:00 by Claude Code (Fable 5.1) on MacBook.
 &gt; Cloud agents: read this; do not edit it. At END, put your end state (done / next / blockers) in the PR description.
 &gt; The next Mac session merges it into the vault STATE.md, then refreshes this copy.
 
@@ -197,20 +204,20 @@ td.dim { color:var(--dim); } tr.off td { color:var(--dim); } tr.off td:first-chi
 Marco's day job at RAI NY (GVG): a startup popup on the Avid edit machines NYC-EDIT-MC01/02/03 (C#, .NET 8, WPF) where editors log each tappeto or servizio. Supabase is the truth; the Google Sheet "2026 Report Rai NYC, Servizi Giornalistici" is a reporting mirror. The collaudo forms go to Rome for overtime and travel. Host `supervisor` (Linux Mint, user `rainyc`, Tailscale only). Owner account for everything: `rainyc.servizi@gmail.com`.
 
 ## Current goal
-**2026-10-16 (16:55):** Marco is testing for approval (live entries from edit 3 arrive as caruso@rainyc.nyc); workbook to be retired soon (conflicts ok, no mirroring needed). Live now (commit dc922bb, function deployed 16:43 ET, pages rsync'd to supervisor 16:45; GitHub Pages NOT yet pushed — needs Marco's OK): (1) **Trasferta is a state of the session** — panel 05 "Imposta trasferta…" sets giornalista/destinazione/dal/al once (saved in the browser, `rainyc.trasferta`), every entry of THAT journalist goes out with trasferta SI + details until "Rimuovi trasferta" or the "al" date passes; the panel shows "Questa registrazione: SI / NO (altro giornalista)" live; rule: never other people's rows (legacy data agrees), ALL of the traveller's entries while set (Marco's words; legacy marked only part of the traveller's rows on 13/13 trasferta days — confirm or correct). (2) **Fits 1920×930**: measured worst state (trasferta set + status + last + error) ends at 861 px; a compact tier kicks in under 900 px of height (keys legend hidden); the integration test asserts no page scroll at 1920×930. Collaudo at 1920 and 1366 wide: no horizontal scroll (table 1454/1288 px inside the wrap). (3) **Collaudo**: ONE click edits a cell; the ✎ pencil and a click on the trasferta cell open the trasferta editor (now position:fixed, clamped inside the viewport). (4) **E-mail**: "Invia per e-mail" opens a dialog — suggested addresses (secret COLLAUDO_TO, ticked) + "aggiungi un indirizzo" (kept per browser) + "Invia a N"; `GET /api/email-recipients {allowed, suggested}`, `POST /api/email-collaudo {week, to[]}` (1..15 valid addresses, Italian errors). **Only erika, caruso, pippo may send** (Marco ruled 16:35; server-side list `SENDERS` in lib/mail.ts, override secret COLLAUDO_SENDERS; other accounts get 403 and no button). COLLAUDO_TO = caruso@kimacreative.com only (hash verified), COLLAUDO_FROM = rainyc.servizi@gmail.com, GMAIL_* secrets set, Gmail API enabled. **First real send not done**: it needs a logged-in erika/caruso/pippo session — Marco's click (collaudo → Invia per e-mail → tick his address → Invia). Data today: ballot applied (12 moved, 102 inserted), trasferta Washington D.C. 15–16/10 on Lo Prete's rows, operator Corti + login corti@rainyc.nyc, erika/pippo logins, Marco's 3 test rows voided, Oct 13 aligned to the sheet, 3 conflicts kept DB-side. Tests: 109/109 local integration, 31 deno. Known small gaps: print shows "SI" for trasferta (Rome's sheet does too); form `slotsFor('Tappeto')`; notes not editable in the collaudo; Supabase Auth itself still lets any user change their own password (page hides the link only). Reference found by a subagent: the GVG RAI bando pages (`~/Library/CloudStorage/GoogleDrive-m.caruso@freedomview.org/My Drive/40-02-gvg-rai-ny-master/gvg-rai-bando-workbook.html`) use measured sticky heights in CSS variables + inner scroll boxes, "one window, one scroll bar" — the collaudo already follows that; the form is a no-scroll grid.
+**2026-10-16 (17:30):** Marco is testing for approval (as caruso@rainyc.nyc); workbook to be retired soon. **GitHub Pages is the main test site and is pushed on every page change** (Marco 17:00): `https://rainycservizi.github.io/rainyc-servizi-app/` (form), `…/collaudo.html`, `…/gestione.html` — Pages commit 5b73d63 17:25. Function deployed 17:16 (commit 2a3471e); supervisor LAN pages rsync'd too (use **http://**supervisor.gvgrai.net/ — no https, nginx has no certificate; https:// is why go-boxx "cannot access" it). Live: (1) trasferta as a session state on the form (set once, applies to that journalist's entries — Marco 17:00 "just journalist" — until removed or expired); (2) 1920×930 fit, asserted by the test; (3) collaudo one-click cell edit, ✎ pencil = trasferta editor; (4) e-mail dialog with recipients to tick + add; senders erika/caruso/pippo only (403 otherwise); COLLAUDO_TO = erika@gvgusa.com, leotta@gvgusa.com, caruso@kimacreative.com (Marco 17:00 "only those three"; pippo = Ippolito Leotta assumed); (5) **Esci** link on every page; (6) **Gestione page** (`/gestione`, admin = caruso@rainyc.nyc only, secret ADMIN_LOGINS overrides): status tiles (API health, rows week/today/total/voided/legacy, active names), links, logins with new-password + create login, lists (giornalisti/operatori/reti/mezzi/richiedenti) with Ritira/Riattiva/Aggiungi, audit register (last 100), the repo STATE.md embedded at build; routes `/api/admin/{stats,lists,logins,audit}` write their own audit rows. (7) **Durations corrected**: 3033 legacy rows "hh:mm:00" → "hh:mm" read as mm:ss (Marco 17:10: nothing lasts over an hour; "01:22:00" = 1′22″) via `scripts/fix_durations.py`, audited (actor script, old+new in payload → reversible), applied to production and the local stack; untouched: "5 minuti", ":50", "01:22" etc. **E-mail send FAILED for a real reason**: Google answers "Gmail API has not been used in project 795395663194 before or it is disabled" — Marco must enable it (link in Next 1) as rainyc.servizi; the OAuth client, refresh token and route are fine (proved with a throwaway sender login, deleted; COLLAUDO_SENDERS secret removed again). Tests: 127/127 local integration, 34 deno. Known small gaps: print "SI" for trasferta; form `slotsFor('Tappeto')`; notes not editable in the collaudo; Auth password self-change not blocked server-side; nginx `/gestione` without `.html` needs a sudo nginx edit (link uses gestione.html).
 
 ## Last 3 decisions
-1. 2026-10-16 16:35 — Marco: "only user erika, caruso and pippo can email. ruled."; the GVG RAI bando pages are a layout reference (looked at by a subagent). Agent: trasferta attaches by journalist match, all entries while set (legacy never marks other people's rows, but marked only part of the traveller's), one click edits a collaudo cell and the pencil opens the trasferta editor (Marco's words), function deployed and supervisor pages refreshed without a separate go (additive, Marco is testing), GitHub Pages push held for his OK. (Claude Code)
-2. 2026-10-16 16:00 — Marco: ballot ruled (117 ticks; rule 5: pieces typed on the air day must move to the sending day); e-mail = yes, recipients given; workbook will be retired, conflicts ok; prefer logos; Enter must select not send; wide panel layout, dark/light, responsive, Crop Studio look; collapsible collaudo days; trasferta editable; passwords changed only by caruso and the agent; Oct 16 group of the ballot dropped (being worked). Agent: Gmail API send from rainyc.servizi (needs Marco's click + Gmail API enabled); Ctrl+Enter is the keyboard submit. (Claude Code)
-3. 2026-10-16 15:00 — Marco: the workbook stays master until ~Monday and he updates both workbook and form "contemporaneously"; the database will never BE a sheet (Phase 7 = one-way mirror DB → read-only sheet); conflicts answered (De Marco ×2, Tg3 Sera, Contini); logos preferred over colours; new users erika/pippo (not operators); needed: future items, clear, undo, collaudo cell editing/delete/undo, print = Rome's columns only, e-mail from the collaudo, richiedente menu with "other/add". Agent: corrections = soft void + audited update RPCs; sheet sync content-based with CONFLICT rows never auto-overwritten (`--sheet-wins` explicit); migration applied + function deployed without a separate go because Marco is testing these features now and the change is additive (backup first). (Claude Code)
+1. 2026-10-16 17:00–17:10 — Marco: GitHub Pages = main test site, always push it; a logout button; COLLAUDO_TO = only erika, caruso, pippo; trasferta rule = just the journalist; build an HTML page to maintain the project + a dashboard (hosted on the Pages site); durations in the collaudo: all hh:mm:ss values are minutes and seconds — update only the wrong ones. Agent: Gestione page v1 with admin API (caruso only); 3033 legacy durations rewritten with audit; sender rule proved end-to-end up to Google's "Gmail API disabled" answer. (Claude Code)
+2. 2026-10-16 16:35 — Marco: "only user erika, caruso and pippo can email. ruled."; the GVG RAI bando pages are a layout reference (looked at by a subagent). Agent: trasferta attaches by journalist match, all entries while set (legacy never marks other people's rows, but marked only part of the traveller's), one click edits a collaudo cell and the pencil opens the trasferta editor (Marco's words), function deployed and supervisor pages refreshed without a separate go (additive, Marco is testing), GitHub Pages push held for his OK. (Claude Code)
+3. 2026-10-16 16:00 — Marco: ballot ruled (117 ticks; rule 5: pieces typed on the air day must move to the sending day); e-mail = yes, recipients given; workbook will be retired, conflicts ok; prefer logos; Enter must select not send; wide panel layout, dark/light, responsive, Crop Studio look; collapsible collaudo days; trasferta editable; passwords changed only by caruso and the agent; Oct 16 group of the ballot dropped (being worked). Agent: Gmail API send from rainyc.servizi (needs Marco's click + Gmail API enabled); Ctrl+Enter is the keyboard submit. (Claude Code)
 
 ## Next 3 actions
-1. Marco — (a) test on Windows/Chrome at the edit machine: Registrazione with a trasferta set, no scroll; collaudo one-click edit + pencil; (b) first e-mail test: collaudo → "Invia per e-mail" → tick caruso@kimacreative.com → Invia (logged in as caruso; others cannot); then say which addresses go into COLLAUDO_TO (Erika, Pippo, Marco?) — the agent sets the secret, no redeploy; (c) "go"/OK for the GitHub Pages push (publishes the new pages outside the office); (d) decide: trasferta "SI" vs ✓ in print; keep the Note field.
-2. Agent ("go") — after Marco's OK: push dist/ to `~/work/rai/rainyc-servizi-app` (OPERATIONS.md recipe); set COLLAUDO_TO to the chosen list; then Phase 7 mirror once the workbook is retired, cron on supervisor (sheet sync dry-run report + DB backup), Gemini UI review, small fixes (Tappeto richiedenti in slotsFor, notes editable in the collaudo, Supabase Auth password change restriction server-side), history rewrite of 280a9b1 only on explicit go.
-3. Agent — Claude Code Projects: candidate once the waitlist opens (intel 2026-10-09); repo-only rules are in CLAUDE.md, STATE.md stays the handoff; Marco should check Thread model/effort.
+1. Marco — (a) **enable the Gmail API** as rainyc.servizi@gmail.com: https://console.developers.google.com/apis/api/gmail.googleapis.com/overview?project=795395663194 → "Abilita"; wait 2 minutes; then collaudo → Invia per e-mail → tick your address → Invia (only erika/caruso/pippo see the button). (b) Test on the Pages site: form (trasferta once, no scroll at 1920×1080), collaudo (one click edits, pencil = trasferta, durations now mm:ss), Gestione (`…/gestione.html`, as caruso). (c) Confirm pippo = leotta@gvgusa.com in the suggested recipients. (d) Decide: trasferta "SI" vs ✓ in print; keep the Note field.
+2. Agent ("go") — Gestione v2 on Marco's feedback (candidates: edit a login's operator mapping, sort_order for lists, weekly/monthly charts from v_monthly_topsheet, backup status from supervisor); Phase 7 mirror once the workbook is retired; cron on supervisor (sheet sync dry-run report + DB backup); Gemini UI review; small fixes (Tappeto richiedenti in slotsFor, notes editable in the collaudo, Auth password change restriction server-side, nginx `/gestione` alias); history rewrite of 280a9b1 only on explicit go.
+3. Agent — Claude Code Projects: candidate once the waitlist opens (intel 2026-10-09); Marco should check Thread model/effort. Marco mentioned X bookmarks about this kind of dashboard: ask Grok Bot to pull them into CLAUDE-INTEL before v2.
 
 ## Blockers
-- Marco — Windows test of the new form/collaudo, first e-mail send (only erika/caruso/pippo can), GitHub Pages OK. Still pending: key-only SSH on supervisor, CLT update, WhatsApp images route, Durata required/optional.
+- Marco — Gmail API not enabled in Google Cloud project 795395663194 (blocks every send); Windows test of the new pages. Still pending: key-only SSH on supervisor, CLT update, WhatsApp images route, Durata required/optional.
 
 ## Live warnings
 - **No credentials in this file, the repo or chat.** 1Password item names only. The plan text held the Linux password in clear; the repo copy is redacted, the Desktop original is not.
@@ -241,6 +248,16 @@ var AUTH_URL = ("https://wyrthfwrkgdobllzssdv.supabase.co" || location.origin) +
 var PAGE_FORM = "./" || APP_BASE;
 var PAGE_COLLAUDO = "./collaudo.html" || APP_BASE + "/collaudo";
 var PAGE_GESTIONE = "./gestione.html" || APP_BASE + "/gestione";
+var BUILD = "2026-10-16 21:33 UTC · 8896da9"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
+// Every place the project lives (shown in the admin's header menu and on the Gestione page).
+var LINKS = [
+  ["Pagine pubbliche", "https://rainycservizi.github.io/rainyc-servizi-app/", "GitHub Pages: il sito di prova principale"],
+  ["Pagine in ufficio", "http://supervisor.gvgrai.net/", "supervisor, solo http (senza s), rete dell'ufficio"],
+  ["Stato API", "https://wyrthfwrkgdobllzssdv.supabase.co/functions/v1/servizi" ? "https://wyrthfwrkgdobllzssdv.supabase.co/functions/v1/servizi" + "/health" : "", "risposta {ok:true} = funzione e database raggiungibili"],
+  ["Repository", "https://github.com/rainycservizi/rai-nyc-servizi", "codice, OPERATIONS.md, SECURITY.md (privato)"],
+  ["Sito (repo Pages)", "https://github.com/rainycservizi/rainyc-servizi-app", "le pagine pubblicate"],
+  ["Supabase", "https://supabase.com/dashboard/project/wyrthfwrkgdobllzssdv", "database e funzione (accesso rainyc.servizi)"]
+].filter(function (x) { return x[1]; });
 
 function ApiError(kind, message) { this.kind = kind; this.message = message; }
 ApiError.prototype = Object.create(Error.prototype);
@@ -370,6 +387,28 @@ function requireLogin(onReady) {
 
 function authLost() { Session.clear(); document.dispatchEvent(new Event("rainyc:auth-lost")); }
 
+/** "Link ▾" menu in the header for the admin: every place the project lives (LINKS). */
+function mountLinks(slot) {
+  var old = document.getElementById("lnk-menu");
+  if (old) old.parentNode.removeChild(old);
+  if (!slot || !canChangePassword()) return;
+  var wrap = document.createElement("div"); wrap.id = "lnk-menu"; wrap.className = "lmenu";
+  var b = document.createElement("button"); b.type = "button"; b.className = "hlink"; b.textContent = "Link \u25BE"; b.setAttribute("aria-haspopup", "menu"); b.setAttribute("aria-expanded", "false");
+  var ul = document.createElement("ul"); ul.setAttribute("role", "menu"); ul.hidden = true;
+  LINKS.forEach(function (x) {
+    var li = document.createElement("li"); li.setAttribute("role", "none");
+    var a = document.createElement("a"); a.href = x[1]; a.textContent = x[0]; a.title = x[2]; a.target = "_blank"; a.rel = "noopener"; a.setAttribute("role", "menuitem");
+    li.appendChild(a); ul.appendChild(li);
+  });
+  if (BUILD) { var li2 = document.createElement("li"); li2.className = "stamp"; li2.textContent = "Pagina costruita " + BUILD; ul.appendChild(li2); }
+  function close() { ul.hidden = true; b.setAttribute("aria-expanded", "false"); }
+  b.addEventListener("click", function () { ul.hidden = !ul.hidden; b.setAttribute("aria-expanded", ul.hidden ? "false" : "true"); });
+  document.addEventListener("click", function (ev) { if (!wrap.contains(ev.target)) close(); });
+  wrap.addEventListener("keydown", function (ev) { if (ev.key === "Escape") { close(); b.focus(); } });
+  wrap.appendChild(b); wrap.appendChild(ul);
+  slot.insertBefore(wrap, slot.firstChild);
+}
+
 /** "Esci" in the header `slot`: clears the session and shows the login again (the queue stays in this browser). */
 function mountLogout(slot) {
   var old = document.getElementById("lnk-esci");
@@ -468,6 +507,7 @@ function mountPassword(slot) {
     g.href = PAGE_GESTIONE; g.id = "lnk-gestione"; g.className = "hlink"; g.textContent = "Gestione";
     slot.insertBefore(g, slot.firstChild);
   }
+  mountLinks(slot);
   var a = document.createElement("a");
   a.href = "#"; a.id = "lnk-pwd"; a.className = "hlink"; a.textContent = "Cambia password";
   slot.insertBefore(a, slot.firstChild);
@@ -623,7 +663,6 @@ function fmtRange(a, b) {
 (function () {
   "use strict";
   var $ = function (id) { return document.getElementById(id); };
-  var BUILD = "2026-10-16 21:16 UTC · 2a3471e";
   $("lnk-form").href = PAGE_FORM; $("lnk-collaudo").href = PAGE_COLLAUDO;
   initTheme("theme");
   function boot(text, isErr) { var b = $("boot"); b.hidden = !text; b.textContent = text || ""; b.className = "panel wide state" + (isErr ? " ko" : ""); }
@@ -675,15 +714,7 @@ function fmtRange(a, b) {
 
   // ---- 02 collegamenti ----
   function loadLinks() {
-    var L = [
-      ["Registrazione", PAGE_FORM, "il modulo dei montatori"],
-      ["Collaudo", PAGE_COLLAUDO, "la settimana da stampare o inviare"],
-      ["Pagine pubbliche", "https://rainycservizi.github.io/rainyc-servizi-app/", "GitHub Pages: il sito di prova principale"],
-      ["Pagine in ufficio", "http://supervisor.gvgrai.net/", "supervisor, solo http (senza s), rete dell'ufficio"],
-      ["Stato API", APP_BASE + "/health", "risposta {ok:true} = funzione e database raggiungibili"],
-      ["Repository", "https://github.com/rainycservizi/rai-nyc-servizi", "codice, OPERATIONS.md, SECURITY.md (privato)"],
-      ["Supabase", "https://supabase.com/dashboard/project/wyrthfwrkgdobllzssdv", "database e funzione (accesso rainyc.servizi)"],
-    ];
+    var L = [["Registrazione", PAGE_FORM, "il modulo dei montatori"], ["Collaudo", PAGE_COLLAUDO, "la settimana da stampare o inviare"]].concat(LINKS);
     var ul = $("links"); ul.textContent = "";
     L.forEach(function (x) { var li = document.createElement("li"); var a = document.createElement("a"); a.href = x[1]; a.textContent = x[0]; a.target = "_blank"; a.rel = "noopener"; var sp = document.createElement("span"); sp.textContent = x[2]; li.appendChild(a); li.appendChild(sp); ul.appendChild(li); });
     api("/api/email-recipients").then(function (r) {
