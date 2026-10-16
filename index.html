@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Nuova registrazione · RAI NYC Servizi</title>
+<title>RAI NYC Servizi</title>
 <style>
 :root { --ink:#15171a; --mute:#5d636b; --line:#c9cdd2; --bg:#eceef0; --card:#fff; --accent:#1f3a5f; --accent-ink:#fff; --ok:#1d6b3a; --warn:#8a5a00; --err:#b00020; --focus:#2f6fd6; }
 * { box-sizing:border-box; }
@@ -26,6 +26,24 @@ input:focus-visible, select:focus-visible { outline:3px solid var(--focus); outl
 .chips span { display:inline-block; min-height:44px; padding:10px 14px; border:1.5px solid var(--line); border-radius:22px; font-size:15px; line-height:1.4; cursor:pointer; user-select:none; background:#fff; }
 .chips input:checked + span { background:var(--accent); border-color:var(--accent); color:var(--accent-ink); font-weight:600; }
 .chips input:focus-visible + span { outline:3px solid var(--focus); outline-offset:2px; }
+/* Rete chips carry the colour of their Rai brand. --b = brand colour (border); --d = same colour, darkened only where
+   white text on it would be under 4.5:1 (checked background and unchecked text/border text). Sources (hex read from the
+   official logo SVGs on Wikimedia Commons, 2026-10-16):
+   Rai 1 #4144C5  https://commons.wikimedia.org/wiki/File:Rai_1_-_Logo_2016.svg
+   Rai 2 #E61C23  https://commons.wikimedia.org/wiki/File:Rai_2_-_Logo_2016.svg
+   Rai 3 #00B46E  https://commons.wikimedia.org/wiki/File:Rai_3_-_Logo_2016.svg (darkened to #007A4A for text)
+   Rai News 24 #000099  https://commons.wikimedia.org/wiki/File:Rai_News_24_logo_(2022).svg (logo.dev lists #020199)
+   Rai Radio (GR) #000099  https://commons.wikimedia.org/wiki/File:Logo_of_RAI_Radio.svg
+   Rai Sport #FF510C  https://commons.wikimedia.org/wiki/File:Rai_Sport_-_Logo_2017.svg (darkened to #C73A00 for text)
+   Tappeto: not a channel, neutral dark grey. */
+#c-rete label { --b:#4b5563; --d:#4b5563; }
+#c-rete label[data-rete="Tg1"], #c-rete label[data-rete="Tv7"], #c-rete label[data-rete="Rai 1"] { --b:#4144c5; --d:#4144c5; }
+#c-rete label[data-rete="Tg2"], #c-rete label[data-rete="Rai 2"] { --b:#e61c23; --d:#e61c23; }
+#c-rete label[data-rete="Tg3"], #c-rete label[data-rete="Rai 3"] { --b:#00b46e; --d:#007a4a; }
+#c-rete label[data-rete="RAN"], #c-rete label[data-rete="Rainews.it"], #c-rete label[data-rete="GR"] { --b:#000099; --d:#000099; }
+#c-rete label[data-rete="Rai Sport"] { --b:#ff510c; --d:#c73a00; }
+#c-rete span { border:2px solid var(--b); color:var(--d); background:#fff; }
+#c-rete input:checked + span { background:var(--d); border-color:var(--d); color:#fff; }
 .prefixed { display:flex; align-items:stretch; }
 .prefixed .pre { display:none; align-items:center; padding:0 10px; border:1.5px solid var(--line); border-right:0; border-radius:6px 0 0 6px; background:#f3f4f6; font-weight:600; font-size:15px; white-space:nowrap; }
 .prefixed.has-pre .pre { display:flex; }
@@ -137,7 +155,7 @@ button:focus-visible { outline:3px solid var(--focus); outline-offset:2px; }
     <div class="cat" aria-live="polite">Categoria: <b id="categoria">–</b></div>
     <button type="submit" id="send">Invia registrazione</button>
     <div class="err" id="err" role="alert"></div>
-    <p class="keys">Invio = invia · Esc = svuota · Tab = completa il nome e passa al campo successivo · frecce = scelta nella riga</p>
+    <p class="keys">Invio = invia · Esc = svuota · Tab = completa il nome e passa al campo successivo; nella Rete e nel Mezzo Tab scorre le scelte (Maiusc+Tab torna indietro) · frecce = scelta nella riga</p>
   </form>
   <div class="status" id="status" aria-live="polite"></div>
   <section class="recent" id="recent-box" hidden>
@@ -443,9 +461,25 @@ function fmtRange(a, b) {
     var box = $(id); box.textContent = "";
     items.forEach(function (v) {
       var l = document.createElement("label");
+      if (name === "rete") l.setAttribute("data-rete", v);
       var i = document.createElement("input"); i.type = "radio"; i.name = name; i.value = v;
       var s = document.createElement("span"); s.textContent = v;
       l.appendChild(i); l.appendChild(s); box.appendChild(l);
+    });
+  }
+  // Tab / Shift+Tab walk through a chip group (and select the chip, like the arrow keys); the ends let focus leave.
+  function chipTab(id) {
+    $(id).addEventListener("keydown", function (ev) {
+      if (ev.key !== "Tab" || ev.altKey || ev.ctrlKey || ev.metaKey) return;
+      var radios = Array.prototype.slice.call($(id).querySelectorAll("input[type=radio]"));
+      var at = radios.indexOf(ev.target), to = at + (ev.shiftKey ? -1 : 1);
+      if (at < 0) return;
+      // Focus arrived on an unselected chip (nothing chosen yet): the first Tab selects it and stays.
+      if (!ev.target.checked && !ev.shiftKey) to = at;
+      if (to < 0 || to >= radios.length) return;
+      ev.preventDefault();
+      radios[to].checked = true; radios[to].focus();
+      radios[to].dispatchEvent(new Event("change", { bubbles: true }));
     });
   }
   function fillSelect(id, items) {
@@ -672,6 +706,7 @@ function fmtRange(a, b) {
   $("richiedente").addEventListener("keydown", function (ev) {
     if (ev.key === "Tab" && !ev.shiftKey) completeFrom(ev.target, Array.prototype.map.call($("l-richiedenti").options, function (o) { return o.value; }));
   });
+  chipTab("c-rete"); chipTab("c-mezzo");
   form.addEventListener("submit", function (ev) {
     ev.preventDefault();
     var g = $("giornalista").value.trim();
