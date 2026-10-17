@@ -11,18 +11,19 @@
 :root {
   --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --mono: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, monospace;
-  --bg:#f3f1ed; --panel:#ffffff; --raise:#f7f5f2; --input:#ffffff; --hover:#efece7; --line:#e0dcd5; --line2:#c9c3b9;
-  --fg:#1b1a1c; --dim:#666159; --accent:#e85d04; --accent-ink:#140a03; --accent-text:#b04400; --accent-soft:#fdeee3;
-  --ok:#1d6b3a; --ok-bg:#e5f2e9; --warn:#8a5a00; --warn-bg:#fcf1d8; --bad:#b3261e; --bad-bg:#fbe8e5;
-  --focus:#c24e00; --shadow:0 1px 2px rgba(40,30,20,.06), 0 4px 14px rgba(40,30,20,.05); --pop:0 10px 30px rgba(30,20,10,.18);
-  --zebra:#faf8f5; --band:#f0ece6; --rule:#1b1a1c; --red:#b3261e;
+  --serif: "Sitka Heading", "Sitka Text", Charter, "Bitstream Charter", Cambria, "Palatino Linotype", Palatino, Georgia, serif; /* system serif for titles: Sitka/Cambria on Windows, Charter on macOS; no font download */
+  --bg:#f5f4f0; --panel:#ffffff; --raise:#faf9f6; --input:#ffffff; --hover:#eeece6; --line:#e2ded6; --line2:#cac4ba;
+  --fg:#0f141c; --dim:#5c667a; --accent:#d94e00; --accent-ink:#140a03; --accent-text:#b54708; --accent-soft:#fef3eb; /* dark ink on the accent: white on #d94e00 is 4.2:1, under the 4.5 floor */
+  --ok:#156936; --ok-bg:#eaf5ee; --warn:#8c5800; --warn-bg:#fdf3dc; --bad:#b5221a; --bad-bg:#fdeae8;
+  --focus:#c24e00; --shadow:0 1px 3px rgba(15,20,28,.05), 0 4px 14px rgba(15,20,28,.04); --pop:0 12px 32px -4px rgba(15,20,28,.14), 0 4px 10px rgba(15,20,28,.06);
+  --zebra:#f9f8f5; --band:#eeece6; --rule:#0f141c; --red:#b5221a;
 }
 :root[data-theme=dark] {
-  --bg:#111012; --panel:#171619; --raise:#1e1d21; --input:#0d0c0f; --hover:#232227; --line:#2a292e; --line2:#3a3940;
-  --fg:#f0eeea; --dim:#9a958e; --accent:#e85d04; --accent-ink:#140a03; --accent-text:#ff8a3d; --accent-soft:#2a1a10;
-  --ok:#6fd39b; --ok-bg:#12241a; --warn:#e9b44c; --warn-bg:#2a2210; --bad:#ff7b66; --bad-bg:#2c1613;
-  --focus:#ff8a3d; --shadow:0 1px 0 rgba(0,0,0,.35); --pop:0 14px 40px rgba(0,0,0,.6);
-  --zebra:#1b1a1e; --band:#222126; --rule:#5a5860; --red:#ff7b66;
+  --bg:#0b0f19; --panel:#111726; --raise:#182033; --input:#0d121f; --hover:#1c263d; --line:#202c44; --line2:#2f3f61; /* midnight navy, not an inverted grey (si.gov) */
+  --fg:#f4f6fa; --dim:#8fa1bb; --accent:#ff6b1a; --accent-ink:#0b0f19; --accent-text:#ff8a3d; --accent-soft:#2d2126;
+  --ok:#5bd48f; --ok-bg:#10291c; --warn:#f5b745; --warn-bg:#2d2411; --bad:#ff725c; --bad-bg:#301614;
+  --focus:#ff8a3d; --shadow:0 2px 6px rgba(0,0,0,.45); --pop:0 16px 44px rgba(0,0,0,.75);
+  --zebra:#141c2e; --band:#19233b; --rule:#36486e; --red:#ff725c;
 }
 :root { color-scheme:light; } :root[data-theme=dark] { color-scheme:dark; }
 * { box-sizing:border-box; }
@@ -35,18 +36,19 @@ body { font:14px/1.45 var(--sans); -webkit-font-smoothing:antialiased; }
 .top { position:sticky; top:0; z-index:20; }
 .appbar { height:52px; display:flex; align-items:center; gap:16px; padding:0 16px; background:var(--panel); border-bottom:1px solid var(--line); }
 .brand { display:flex; align-items:baseline; gap:10px; min-width:0; overflow:hidden; }
-.brand .mk { font:700 11px/1 var(--mono); letter-spacing:.16em; text-transform:uppercase; color:var(--accent-text); }
-.brand .nm { font-weight:650; font-size:15px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; min-width:0; }
-.brand .pg { font:600 11px/1 var(--mono); letter-spacing:.12em; text-transform:uppercase; color:var(--dim); }
+.brand .mk { font:700 10.5px/1 var(--mono); letter-spacing:.16em; text-transform:uppercase; color:var(--accent-text); background:var(--accent-soft); border:1px solid color-mix(in srgb, var(--accent) 30%, transparent); padding:3px 6px; border-radius:4px; }
+.brand .nm { font-family:var(--serif); font-weight:600; font-size:17px; letter-spacing:-.01em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; min-width:0; }
+.brand .pg { font:600 11px/1 var(--mono); letter-spacing:.12em; text-transform:uppercase; color:var(--dim); border-left:1px solid var(--line2); padding-left:10px; margin-left:2px; }
 .hright { margin-left:auto; display:flex; align-items:center; gap:6px; }
 .hlink { display:inline-flex; align-items:center; height:36px; padding:0 12px; border-radius:6px; font-size:14px; color:var(--dim); text-decoration:none; white-space:nowrap; }
 .hlink:hover { color:var(--fg); background:var(--hover); }
 .hlink.go { color:var(--fg); border:1px solid var(--line2); }
 .hlink.go:hover { border-color:var(--accent); color:var(--accent-text); background:transparent; }
 /* One nav on every page, same order everywhere: Registrazione · Collaudo · Mensile (· Gestione for the admin). */
-.nav { display:flex; align-items:center; gap:2px; padding:2px; border:1px solid var(--line2); border-radius:7px; }
-.nav .hlink { height:30px; padding:0 11px; border-radius:5px; }
-.nav .hlink.cur { color:var(--accent-text); background:var(--accent-soft); font-weight:600; }
+.nav { display:flex; align-items:center; gap:2px; padding:2px; border:1px solid var(--line2); border-radius:8px; background:var(--raise); }
+.nav .hlink { height:30px; padding:0 12px; border-radius:6px; font-size:13.5px; font-weight:500; transition:color .12s, background .12s; }
+.nav .hlink.cur { color:var(--accent-text); background:var(--panel); font-weight:600; box-shadow:0 1px 3px rgba(0,0,0,.08); }
+:root[data-theme=dark] .nav .hlink.cur { box-shadow:0 1px 3px rgba(0,0,0,.4); }
 /* Wide monitors (2K, ultrawide, 4K at 100 %): scale the page instead of stretching 14 px text across 3400 px. 1920 untouched. */
 :root { --z:1; } /* the zoom factor, for rules that use vh/vw inside the zoomed body */
 @media screen and (min-width:2000px) { :root { --z:1.15; } body { zoom:1.15; } }
@@ -102,21 +104,21 @@ input:focus-visible, select:focus-visible { outline:none; border-color:var(--foc
 .sheet > .counters { grid-column:2; align-self:end; margin-bottom:14px; }
 .dochead { display:flex; flex-wrap:wrap; align-items:flex-end; justify-content:space-between; gap:12px 24px; margin:0 0 14px; }
 header.doc { padding:0; margin:0; }
-header.doc .ente { font:600 11px/1.2 var(--mono); letter-spacing:.12em; text-transform:uppercase; color:var(--dim); }
-header.doc h1 { font-size:22px; margin:6px 0 2px; font-weight:700; letter-spacing:-.01em; }
-header.doc .sett { font-size:14px; color:var(--dim); }
-.counters { display:flex; flex-wrap:wrap; gap:0; border:1px solid var(--line2); border-radius:6px; margin:0; overflow:hidden; background:var(--raise); }
+header.doc .ente { font:700 11px/1.2 var(--mono); letter-spacing:.16em; text-transform:uppercase; color:var(--accent-text); margin-bottom:4px; }
+header.doc h1 { font-family:var(--serif); font-size:26px; margin:4px 0 2px; font-weight:700; letter-spacing:-.02em; color:var(--fg); }
+header.doc .sett { font-size:14px; color:var(--dim); font-weight:500; }
+.counters { display:flex; flex-wrap:wrap; gap:0; border:1px solid var(--line2); border-radius:8px; margin:0; overflow:hidden; background:var(--panel); box-shadow:var(--shadow); }
 .counters .grp { display:flex; flex-wrap:wrap; }
-.counters .grp + .grp { border-left:1px solid var(--line2); }
-.counters .c { padding:6px 10px; text-align:center; min-width:58px; }
+.counters .grp + .grp { border-left:1.5px solid var(--line2); }
+.counters .c { padding:6px 12px; text-align:center; min-width:62px; }
 .counters .c + .c { border-left:1px solid var(--line); }
-.counters .n { font:700 17px/1.2 var(--mono); font-variant-numeric:tabular-nums; display:block; }
-.counters .l { font-size:10.5px; color:var(--dim); white-space:nowrap; }
+.counters .n { font:700 18px/1.2 var(--mono); font-variant-numeric:tabular-nums; display:block; }
+.counters .l { font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:.05em; color:var(--dim); white-space:nowrap; }
 .counters .tot .n { color:var(--accent-text); }
 
 table { width:100%; border-collapse:separate; border-spacing:0; font-variant-numeric:tabular-nums; font-size:13.5px; }
-thead th { position:sticky; top:var(--toph, 0px); z-index:5; background:var(--panel); text-align:left; font:600 10.5px/1.2 var(--mono); text-transform:uppercase; letter-spacing:.06em; color:var(--dim);
-  border-top:1px solid var(--line2); border-bottom:1.5px solid var(--rule); padding:9px 8px; white-space:nowrap; }
+thead th { position:sticky; top:var(--toph, 0px); z-index:5; background:var(--panel); text-align:left; font:700 10.5px/1.2 var(--mono); text-transform:uppercase; letter-spacing:.08em; color:var(--dim);
+  border-top:1px solid var(--line2); border-bottom:2px solid var(--rule); padding:9px 8px; white-space:nowrap; }
 td { padding:7px 8px; line-height:20px; border-bottom:1px solid var(--line); vertical-align:top; }
 tbody tr.r:nth-of-type(even) td { background:var(--zebra); }
 tbody tr.r:hover td { background:var(--hover); }
@@ -124,12 +126,12 @@ th.k, td.k { text-align:center; width:3.6em; }
 td.k { font-weight:700; }
 td.k.tcell { width:auto; min-width:4.2em; }
 tr.day td { background:var(--band); border-top:1px solid var(--line2); border-bottom:1px solid var(--line2); padding:0 8px 0 0; }
-button.dt { all:unset; box-sizing:border-box; display:inline-flex; align-items:center; gap:8px; min-height:36px; padding:0 10px 0 8px; font-weight:700; font-size:13.5px; cursor:pointer; border-radius:4px; color:var(--fg); }
+button.dt { all:unset; box-sizing:border-box; display:inline-flex; align-items:center; gap:8px; min-height:38px; padding:0 10px 0 8px; font-weight:700; font-size:14px; cursor:pointer; border-radius:4px; color:var(--fg); }
 button.dt:hover { color:var(--accent-text); }
 button.dt:focus-visible { outline:2px solid var(--focus); outline-offset:-2px; }
 button.dt .chev { transition:transform .15s; color:var(--dim); flex:none; }
 button.dt[aria-expanded=false] .chev { transform:rotate(-90deg); }
-.dn { font:700 11px/1 var(--mono); color:var(--dim); background:var(--panel); border:1px solid var(--line2); border-radius:999px; padding:3px 7px; }
+.dn { font:700 11px/1 var(--mono); color:var(--accent-text); background:var(--panel); border:1px solid var(--line2); border-radius:999px; padding:3px 8px; }
 tr.day .trip { font-weight:600; color:var(--red); margin-left:6px; font-size:13px; }
 tr.tot td { text-align:right; font-size:12.5px; color:var(--dim); border-bottom:1px solid var(--line2); background:var(--panel); padding-top:5px; padding-bottom:5px; }
 tr.tot td.k { text-align:center; color:var(--fg); }
@@ -221,7 +223,7 @@ footer.doc .firma { font-size:13px; white-space:nowrap; }
   .scr, .chev { display:none !important; } .prn { display:inline; }
   tbody.dg.chiuso tr.r, tbody.dg.chiuso tr.empty { display:table-row !important; }
   button.dt { min-height:0; padding:0; font-size:inherit; }
-  .counters { border-radius:0; border-color:#111; background:#fff; }
+  .counters { border-radius:0; border-color:#111; background:#fff; box-shadow:none; }
   .counters .grp + .grp { border-left-color:#111; } .counters .c + .c { border-left-color:#bbb; }
   header.doc h1 { font-size:17px; }
   .counters .n { font-size:14px; } .counters .c { padding:4px 9px; min-width:54px; }
@@ -241,7 +243,7 @@ footer.doc .firma { font-size:13px; white-space:nowrap; }
 <body>
 <div class="top" id="top">
   <header class="appbar">
-    <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-10-17 02:11 UTC · a304278"><span class="mk">Rai · NY</span><span class="nm">RAI NYC Servizi</span><span class="pg" data-i18n>Collaudo</span></div>
+    <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-10-17 03:08 UTC · abd3746"><span class="mk">Rai · NY</span><span class="nm">RAI NYC Servizi</span><span class="pg" data-i18n>Collaudo</span></div>
     <nav class="hright" id="hright" aria-label="Pagine">
       <button type="button" class="icbtn" id="theme" aria-label="Cambia tema" title="Cambia tema">
         <svg class="ic-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
@@ -337,7 +339,7 @@ var PAGE_FORM = "./" || APP_BASE;
 var PAGE_COLLAUDO = "./collaudo.html" || APP_BASE + "/collaudo";
 var PAGE_GESTIONE = "./gestione.html" || APP_BASE + "/gestione";
 var PAGE_MENSILE = "./mensile.html" || APP_BASE + "/mensile";
-var BUILD = "2026-10-17 02:11 UTC · a304278"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
+var BUILD = "2026-10-17 03:08 UTC · abd3746"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
 // Every place the project lives (shown in the admin's header menu and on the Gestione page).
 var LINKS = [
   ["Pagine pubbliche", "https://rainycservizi.github.io/rainyc-servizi-app/", "GitHub Pages: il sito di prova principale"],

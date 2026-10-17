@@ -12,18 +12,19 @@
 :root {
   --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --mono: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, monospace;
-  --bg:#f3f1ed; --panel:#ffffff; --raise:#f7f5f2; --input:#ffffff; --hover:#efece7; --line:#e0dcd5; --line2:#c9c3b9;
-  --fg:#1b1a1c; --dim:#666159; --accent:#e85d04; --accent-ink:#140a03; --accent-text:#b04400; --accent-soft:#fdeee3;
-  --ok:#1d6b3a; --ok-bg:#e5f2e9; --warn:#8a5a00; --warn-bg:#fcf1d8; --bad:#b3261e; --bad-bg:#fbe8e5;
-  --focus:#c24e00; --shadow:0 1px 2px rgba(40,30,20,.06), 0 4px 14px rgba(40,30,20,.05); --pop:0 10px 30px rgba(30,20,10,.18);
-  --sw-off:#cbc5bb;
+  --serif: "Sitka Heading", "Sitka Text", Charter, "Bitstream Charter", Cambria, "Palatino Linotype", Palatino, Georgia, serif; /* system serif for titles: Sitka/Cambria on Windows, Charter on macOS; no font download */
+  --bg:#f5f4f0; --panel:#ffffff; --raise:#faf9f6; --input:#ffffff; --hover:#eeece6; --line:#e2ded6; --line2:#cac4ba;
+  --fg:#0f141c; --dim:#5c667a; --accent:#d94e00; --accent-ink:#140a03; --accent-text:#b54708; --accent-soft:#fef3eb; /* dark ink on the accent: white on #d94e00 is 4.2:1, under the 4.5 floor */
+  --ok:#156936; --ok-bg:#eaf5ee; --warn:#8c5800; --warn-bg:#fdf3dc; --bad:#b5221a; --bad-bg:#fdeae8;
+  --focus:#c24e00; --shadow:0 1px 3px rgba(15,20,28,.05), 0 4px 14px rgba(15,20,28,.04); --pop:0 12px 32px -4px rgba(15,20,28,.14), 0 4px 10px rgba(15,20,28,.06);
+  --sw-off:#cac4ba;
 }
 :root[data-theme=dark] {
-  --bg:#111012; --panel:#171619; --raise:#1e1d21; --input:#0d0c0f; --hover:#232227; --line:#2a292e; --line2:#3a3940;
-  --fg:#f0eeea; --dim:#9a958e; --accent:#e85d04; --accent-ink:#140a03; --accent-text:#ff8a3d; --accent-soft:#2a1a10;
-  --ok:#6fd39b; --ok-bg:#12241a; --warn:#e9b44c; --warn-bg:#2a2210; --bad:#ff7b66; --bad-bg:#2c1613;
-  --focus:#ff8a3d; --shadow:0 1px 0 rgba(0,0,0,.35); --pop:0 14px 40px rgba(0,0,0,.6);
-  --sw-off:#3a3940;
+  --bg:#0b0f19; --panel:#111726; --raise:#182033; --input:#0d121f; --hover:#1c263d; --line:#202c44; --line2:#2f3f61; /* midnight navy, not an inverted grey (si.gov) */
+  --fg:#f4f6fa; --dim:#8fa1bb; --accent:#ff6b1a; --accent-ink:#0b0f19; --accent-text:#ff8a3d; --accent-soft:#2d2126;
+  --ok:#5bd48f; --ok-bg:#10291c; --warn:#f5b745; --warn-bg:#2d2411; --bad:#ff725c; --bad-bg:#301614;
+  --focus:#ff8a3d; --shadow:0 2px 6px rgba(0,0,0,.45); --pop:0 16px 44px rgba(0,0,0,.75);
+  --sw-off:#2f3f61;
 }
 :root { color-scheme:light; } :root[data-theme=dark] { color-scheme:dark; }
 * { box-sizing:border-box; }
@@ -36,18 +37,19 @@ a { color:inherit; }
 /* ── header bar ── */
 .appbar { height:52px; display:flex; align-items:center; gap:16px; padding:0 16px; background:var(--panel); border-bottom:1px solid var(--line); position:relative; z-index:20; }
 .brand { display:flex; align-items:baseline; gap:10px; min-width:0; }
-.brand .mk { font:700 11px/1 var(--mono); letter-spacing:.16em; text-transform:uppercase; color:var(--accent-text); }
-.brand #t { font-weight:650; font-size:15px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.brand .pg { font:600 11px/1 var(--mono); letter-spacing:.12em; text-transform:uppercase; color:var(--dim); }
+.brand .mk { font:700 10.5px/1 var(--mono); letter-spacing:.16em; text-transform:uppercase; color:var(--accent-text); background:var(--accent-soft); border:1px solid color-mix(in srgb, var(--accent) 30%, transparent); padding:3px 6px; border-radius:4px; }
+.brand #t { font-family:var(--serif); font-weight:600; font-size:17px; letter-spacing:-.01em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.brand .pg { font:600 11px/1 var(--mono); letter-spacing:.12em; text-transform:uppercase; color:var(--dim); border-left:1px solid var(--line2); padding-left:10px; margin-left:2px; }
 .hright { margin-left:auto; display:flex; align-items:center; gap:6px; }
 .hlink { display:inline-flex; align-items:center; height:36px; padding:0 12px; border-radius:6px; font-size:14px; color:var(--dim); text-decoration:none; white-space:nowrap; }
 .hlink:hover { color:var(--fg); background:var(--hover); }
 .hlink.go { color:var(--fg); border:1px solid var(--line2); }
 .hlink.go:hover { border-color:var(--accent); color:var(--accent-text); background:transparent; }
 /* One nav on every page, same order everywhere: Registrazione · Collaudo · Mensile (· Gestione for the admin). */
-.nav { display:flex; align-items:center; gap:2px; padding:2px; border:1px solid var(--line2); border-radius:7px; }
-.nav .hlink { height:30px; padding:0 11px; border-radius:5px; }
-.nav .hlink.cur { color:var(--accent-text); background:var(--accent-soft); font-weight:600; }
+.nav { display:flex; align-items:center; gap:2px; padding:2px; border:1px solid var(--line2); border-radius:8px; background:var(--raise); }
+.nav .hlink { height:30px; padding:0 12px; border-radius:6px; font-size:13.5px; font-weight:500; transition:color .12s, background .12s; }
+.nav .hlink.cur { color:var(--accent-text); background:var(--panel); font-weight:600; box-shadow:0 1px 3px rgba(0,0,0,.08); }
+:root[data-theme=dark] .nav .hlink.cur { box-shadow:0 1px 3px rgba(0,0,0,.4); }
 /* Wide monitors (2K, ultrawide, 4K at 100 %): scale the page instead of stretching 14 px text across 3400 px. 1920 untouched. */
 :root { --z:1; } /* the zoom factor, for rules that use vh/vw inside the zoomed body */
 @media screen and (min-width:2000px) { :root { --z:1.15; } body { zoom:1.15; } }
@@ -63,10 +65,11 @@ a { color:inherit; }
 /* ── panels ("little windows") ── */
 .desk { padding:16px; display:grid; gap:14px; grid-template-columns:minmax(0,1fr); max-width:1920px; margin:0 auto; }
 .entry { display:grid; gap:12px; grid-template-columns:minmax(0,1fr); align-content:start; margin:0; }
-.panel { background:var(--panel); border:1px solid var(--line); border-radius:8px; box-shadow:var(--shadow); padding:14px 16px 16px; min-width:0; margin:0; }
+.panel { background:var(--panel); border:1px solid var(--line); border-radius:8px; box-shadow:var(--shadow); padding:14px 16px 16px; min-width:0; margin:0; transition:border-color .15s ease; }
+.panel:focus-within { border-color:color-mix(in srgb, var(--accent) 40%, var(--line)); }
 fieldset.panel { min-inline-size:0; }
 .ph { font:600 11px/1 var(--mono); letter-spacing:.13em; text-transform:uppercase; color:var(--dim); margin:0 0 14px; padding:0; display:flex; align-items:center; gap:8px; width:100%; }
-.ph .n { color:var(--accent-text); }
+.ph .n { display:inline-flex; align-items:center; justify-content:center; min-width:20px; height:18px; margin:-4px 0; padding:0 4px; border-radius:3px; font-size:10px; font-weight:700; color:var(--accent-text); background:var(--accent-soft); border:1px solid color-mix(in srgb, var(--accent) 25%, transparent); }
 .ph .aside { margin-left:auto; letter-spacing:.04em; text-transform:none; font-family:var(--sans); font-weight:500; font-size:12px; color:var(--dim); }
 legend.ph { float:left; }
 legend.ph + * { clear:both; }
@@ -90,12 +93,12 @@ input:focus-visible, select:focus-visible { outline:none; border-color:var(--foc
 .chips span { display:flex; align-items:center; justify-content:center; gap:7px; min-height:44px; padding:6px 8px; border:1px solid var(--line2); border-radius:6px;
   font-size:14px; line-height:1.2; cursor:pointer; user-select:none; background:var(--raise); color:var(--fg); text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
   transition:background .12s, border-color .12s, color .12s; }
-.chips span:hover { border-color:var(--dim); }
-.chips input:checked + span { background:var(--accent); border-color:var(--accent); color:var(--accent-ink); font-weight:650; }
+.chips span:hover { border-color:var(--dim); background:var(--hover); }
+.chips input:checked + span { background:var(--accent); border-color:var(--accent); color:var(--accent-ink); font-weight:700; box-shadow:0 1px 3px rgba(0,0,0,.12); }
 .chips input:focus-visible + span { outline:2px solid var(--focus); outline-offset:2px; }
 /* Rete chips carry the colour of their Rai brand. --c = brand colour as a background under white text
    (darkened only where white on it would be under 4.5:1); --k = text/border on the light panel;
-   --kd = text/border on the dark panel (lightened for contrast on #171619). Sources (hex read from the
+   --kd = text/border on the dark panel (lightened for contrast on the navy #182033). Sources (hex read from the
    official logo SVGs on Wikimedia Commons, 2026-10-16):
    Rai 1 #4144C5  https://commons.wikimedia.org/wiki/File:Rai_1_-_Logo_2016.svg
    Rai 2 #E61C23  https://commons.wikimedia.org/wiki/File:Rai_2_-_Logo_2016.svg
@@ -163,11 +166,11 @@ input:focus-visible, select:focus-visible { outline:none; border-color:var(--foc
 .btn.pri { background:var(--accent); border-color:var(--accent); color:var(--accent-ink); font-weight:700; }
 .btn.pri:hover { filter:brightness(1.07); }
 .btn:disabled { opacity:.5; cursor:default; }
-#send { height:52px; padding:0 26px; font-size:16px; letter-spacing:.01em; }
+#send { height:52px; padding:0 26px; font-size:16px; letter-spacing:.01em; box-shadow:0 1px 3px rgba(0,0,0,.12); }
 #send kbd { font:600 11px/1 var(--mono); margin-left:10px; padding:4px 6px; border-radius:4px; background:rgba(0,0,0,.12); }
 .btn.mini { height:34px; padding:0 12px; font-size:13px; color:var(--bad); border-color:color-mix(in srgb, var(--bad) 50%, transparent); background:transparent; }
 .cat { font-size:13px; color:var(--dim); display:flex; align-items:center; gap:8px; }
-.cat b { font:700 12px/1 var(--mono); letter-spacing:.08em; text-transform:uppercase; color:var(--fg); background:var(--raise); border:1px solid var(--line2); padding:6px 9px; border-radius:4px; }
+.cat b { font:700 12px/1 var(--mono); letter-spacing:.08em; text-transform:uppercase; color:var(--accent-text); background:var(--accent-soft); border:1px solid color-mix(in srgb, var(--accent) 30%, transparent); padding:6px 9px; border-radius:4px; }
 .msgs { display:flex; flex-direction:column; gap:6px; min-width:0; }
 .err { color:var(--bad); font-size:14px; font-weight:600; margin:0; }
 .err:empty { display:none; }
@@ -185,7 +188,8 @@ kbd { font:600 11px/1 var(--mono); padding:2px 5px; border:1px solid var(--line2
 /* ── today (side panel) ── */
 .side { display:flex; flex-direction:column; min-height:0; }
 .side ol { list-style:none; margin:0 -6px; padding:0; overflow:auto; min-height:0; flex:1; }
-.side li { padding:7px 6px; border-bottom:1px solid var(--line); display:grid; grid-template-columns:minmax(0,1fr) auto; gap:2px 10px; align-items:center; }
+.side li { padding:7px 6px; border-bottom:1px solid var(--line); display:grid; grid-template-columns:minmax(0,1fr) auto; gap:2px 10px; align-items:center; border-radius:4px; transition:background .12s ease; }
+.side li:hover { background:var(--hover); }
 .side li:last-child { border-bottom:0; }
 /* line 1: time · day · edition (Tg1 Ore 20) · operator; line 2: journalist · title · kind and duration · means */
 .side li .o { grid-column:1 / -1; font:600 12px/1.4 var(--mono); color:var(--dim); min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
@@ -258,7 +262,7 @@ kbd { font:600 11px/1 var(--mono); padding:2px 5px; border:1px solid var(--line2
 </head>
 <body>
 <header class="appbar">
-  <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-10-17 02:11 UTC · a304278"><span class="mk">Rai · NY</span><span id="t">RAI NYC Servizi</span><span class="pg" data-i18n>Registrazione</span></div>
+  <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-10-17 03:08 UTC · abd3746"><span class="mk">Rai · NY</span><span id="t">RAI NYC Servizi</span><span class="pg" data-i18n>Registrazione</span></div>
   <nav class="hright" id="hright" aria-label="Pagine">
     <span class="pend" id="pend" hidden></span>
     <button type="button" class="icbtn" id="theme" aria-label="Cambia tema" title="Cambia tema">
@@ -411,7 +415,7 @@ var PAGE_FORM = "./" || APP_BASE;
 var PAGE_COLLAUDO = "./collaudo.html" || APP_BASE + "/collaudo";
 var PAGE_GESTIONE = "./gestione.html" || APP_BASE + "/gestione";
 var PAGE_MENSILE = "./mensile.html" || APP_BASE + "/mensile";
-var BUILD = "2026-10-17 02:11 UTC · a304278"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
+var BUILD = "2026-10-17 03:08 UTC · abd3746"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
 // Every place the project lives (shown in the admin's header menu and on the Gestione page).
 var LINKS = [
   ["Pagine pubbliche", "https://rainycservizi.github.io/rainyc-servizi-app/", "GitHub Pages: il sito di prova principale"],
