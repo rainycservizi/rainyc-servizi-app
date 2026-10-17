@@ -42,6 +42,15 @@ a { color:inherit; }
 .hlink:hover { color:var(--fg); background:var(--hover); }
 .hlink.go { color:var(--fg); border:1px solid var(--line2); }
 .hlink.go:hover { border-color:var(--accent); color:var(--accent-text); background:transparent; }
+/* One nav on every page, same order everywhere: Registrazione · Collaudo · Mensile (· Gestione for the admin). */
+.nav { display:flex; align-items:center; gap:2px; padding:2px; border:1px solid var(--line2); border-radius:7px; }
+.nav .hlink { height:30px; padding:0 11px; border-radius:5px; }
+.nav .hlink.cur { color:var(--accent-text); background:var(--accent-soft); font-weight:600; }
+/* Wide monitors (2K, ultrawide, 4K at 100 %): scale the page instead of stretching 14 px text across 3400 px. 1920 untouched. */
+:root { --z:1; } /* the zoom factor, for rules that use vh/vw inside the zoomed body */
+@media screen and (min-width:2000px) { :root { --z:1.15; } body { zoom:1.15; } }
+@media screen and (min-width:2560px) { :root { --z:1.3; } body { zoom:1.3; } }
+@media screen and (min-width:3400px) { :root { --z:1.5; } body { zoom:1.5; } }
 .icbtn { width:36px; height:36px; display:inline-grid; place-items:center; border:1px solid var(--line2); border-radius:6px; background:transparent; color:var(--fg); cursor:pointer; padding:0; }
 .icbtn.lang { width:auto; padding:0 9px; font:700 12px/1 var(--mono); }
 .icbtn:hover { border-color:var(--accent); color:var(--accent-text); }
@@ -50,7 +59,7 @@ a { color:inherit; }
 .tools { display:flex; flex-wrap:wrap; align-items:center; gap:8px; padding:8px 16px; margin:0; background:color-mix(in srgb, var(--bg) 88%, transparent); border-bottom:1px solid var(--line); backdrop-filter:blur(6px); }
 .tools .grp { display:flex; align-items:center; gap:6px; }
 .tools label.wk { display:flex; align-items:center; gap:8px; font:600 11px/1 var(--mono); letter-spacing:.1em; text-transform:uppercase; color:var(--dim); }
-.tools input[type=month], .tools input[type=text] { width:9.5em; height:36px; font:600 14px/1 var(--mono); padding:0 10px; border:1px solid var(--line2); border-radius:6px; background:var(--input); color:var(--fg); }
+.tools input[type=month], .tools input[type=text] { width:13em; min-width:13em; height:36px; font:600 14px/1 var(--mono); padding:0 10px; border:1px solid var(--line2); border-radius:6px; background:var(--input); color:var(--fg); }
 .tools .msg { color:var(--dim); font-size:13px; margin-left:auto; }
 .tools .err { color:var(--bad); font-weight:600; font-size:13px; margin-left:auto; }
 .btn { height:36px; padding:0 12px; font:inherit; font-size:14px; font-weight:600; border-radius:6px; border:1px solid var(--line2); background:var(--raise); color:var(--fg); cursor:pointer; white-space:nowrap; display:inline-flex; align-items:center; gap:6px; text-decoration:none; }
@@ -85,7 +94,8 @@ thead th { text-align:right; font:600 10.5px/1.2 var(--mono); text-transform:upp
 thead th:first-child, td:first-child { text-align:left; }
 td { padding:7px 8px; line-height:20px; border-bottom:1px solid var(--line); text-align:right; white-space:nowrap; }
 tbody tr:nth-child(even) td { background:var(--zebra); }
-tr.sel td { background:var(--accent-soft) !important; font-weight:700; box-shadow:inset 3px 0 0 var(--accent); }
+tr.sel td { background:var(--accent-soft) !important; font-weight:700; }
+tr[data-ym] { cursor:pointer; } tr[data-ym]:not(.sel):hover td { background:var(--hover) !important; } tr[data-ym]:focus-visible { outline:2px solid var(--focus); outline-offset:-2px; }
 tr.tot td { font-weight:700; border-top:1.5px solid var(--rule); border-bottom:1.5px solid var(--rule); background:var(--band) !important; }
 td.src { font:600 10px/1 var(--mono); letter-spacing:.06em; text-transform:uppercase; color:var(--dim); text-align:left; }
 td.src.storico { color:var(--warn); }
@@ -96,7 +106,9 @@ td a { color:var(--accent-text); font-weight:600; text-decoration:none; } td a:h
 .table-wrap { overflow-x:auto; }
 footer.doc { margin-top:22px; font-size:11px; color:var(--dim); }
 .prn { display:none; }
-@media screen and (max-width:760px) { .page { padding:10px; } .sheet { padding:14px; } .brand .pg, .brand .mk { display:none; } .appbar { padding:0 10px; gap:8px; } .tools { padding:8px 10px; } .btn .tx { display:none; } }
+@media screen and (max-width:760px) { .page { padding:10px; } .sheet { padding:14px; } .brand .pg, .brand .mk { display:none; } .tools { padding:8px 10px; } .btn .tx { display:none; }
+  .appbar { height:auto; min-height:52px; flex-wrap:wrap; padding:6px 10px; gap:6px 8px; } .hright { flex-wrap:wrap; justify-content:flex-end; row-gap:6px; } .nav .hlink { padding:0 8px; font-size:13px; } .tools .grp { flex-wrap:wrap; }
+}
 /* ── admin "Link ▾" menu (shared.js mountLinks) ── */
 .lmenu { position:relative; }
 .lmenu button.hlink { border:0; background:transparent; cursor:pointer; font:inherit; font-size:14px; }
@@ -104,19 +116,19 @@ footer.doc { margin-top:22px; font-size:11px; color:var(--dim); }
 .lmenu li a { display:block; padding:9px 10px; border-radius:5px; font-size:14px; color:var(--fg); text-decoration:none; white-space:nowrap; }
 .lmenu li a:hover { background:var(--hover); color:var(--accent-text); }
 .lmenu li.stamp { padding:8px 10px 4px; border-top:1px solid var(--line); margin-top:4px; font:600 11px/1.3 var(--mono); color:var(--dim); white-space:nowrap; }
-.pop-pwd { position:absolute; top:58px; right:16px; z-index:40; width:340px; max-width:calc(100vw - 32px); background:var(--panel); border:1px solid var(--line2); border-radius:8px; box-shadow:var(--pop); padding:14px 16px 16px; }
+.pop-pwd { position:absolute; top:58px; right:16px; z-index:40; width:340px; max-width:calc(100vw / var(--z, 1) - 32px); background:var(--panel); border:1px solid var(--line2); border-radius:8px; box-shadow:var(--pop); padding:14px 16px 16px; }
 .pop-pwd .fld label { display:block; font-weight:600; font-size:13px; margin:0 0 6px; } .pop-pwd .hint { font-weight:400; color:var(--dim); font-size:12px; }
 .pop-pwd input { width:100%; height:40px; font:inherit; font-size:15px; padding:0 10px; border:1px solid var(--line2); border-radius:6px; background:var(--input); color:var(--fg); margin-bottom:10px; }
 .pop-pwd .row { display:flex; gap:8px; } .pop-pwd .row .btn { flex:1; justify-content:center; height:40px; }
 .pwd-msg { font-size:13px; margin:10px 0 0; font-weight:600; } .pwd-msg:empty { display:none; } .pwd-msg.ok { color:var(--ok); } .pwd-msg.ko { color:var(--bad); }
-@page { size: A4 landscape; margin: 12mm; }
+@page { size: letter landscape; margin: 12mm; } /* US Letter: printed in New York first (Marco, 2026-10-16) */
 @media print {
   :root, :root[data-theme=dark] { --bg:#fff; --panel:#fff; --raise:#fff; --fg:#111; --dim:#555; --line:#e6e6e6; --line2:#bbb; --rule:#111; --zebra:#f4f4f4; --band:#e2e2e2; --accent-text:#111; --accent-soft:#fff3e8; color-scheme:light; }
   html, body { background:#fff; color:#111; } body { font-size:11px; }
   .top, .tools, .pop-pwd, #login, .np { display:none !important; }
   .page { padding:0; } .panel { border:0; box-shadow:none; border-radius:0; } .sheet { max-width:none; padding:0; }
   .scr { display:none !important; } .prn { display:inline; }
-  thead th { font-size:9px; color:#111; border-top:1.5px solid #111; padding:4px 5px; } table { font-size:11px; } td { padding:2.5px 5px; line-height:1.3; }
+  thead th { font-size:8.5px; color:#111; border-top:1.5px solid #111; padding:4px 4px; white-space:normal; } table { font-size:10px; } td { padding:2.5px 4px; line-height:1.3; }
   tr { break-inside:avoid; } h2.sec { break-after:avoid; }
   * { -webkit-print-color-adjust:exact; print-color-adjust:exact; }
 }
@@ -125,15 +137,19 @@ footer.doc { margin-top:22px; font-size:11px; color:var(--dim); }
 <body>
 <div class="top" id="top">
   <header class="appbar">
-    <div class="brand" id="brand" title="Pagina costruita 2026-10-16 22:02 UTC · 4bd5cf0"><span class="mk">Rai · NY</span><span class="nm">RAI NYC Servizi</span><span class="pg" data-i18n>Mensile</span></div>
+    <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-10-17 01:34 UTC · 6fba59d"><span class="mk">Rai · NY</span><span class="nm">RAI NYC Servizi</span><span class="pg" data-i18n>Mensile</span></div>
     <nav class="hright" id="hright" aria-label="Pagine">
       <button type="button" class="icbtn" id="theme" aria-label="Cambia tema" title="Cambia tema">
         <svg class="ic-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
         <svg class="ic-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.2M12 19.8V22M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M2 12h2.2M19.8 12H22M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6"/></svg>
       </button>
       <button type="button" class="icbtn lang" id="lang" aria-label="Switch to English" title="Switch to English">EN</button>
-      <a class="hlink go" href="." id="lnk-form" data-i18n>Registrazione</a>
-      <a class="hlink go" href="collaudo" id="lnk-collaudo" data-i18n>Collaudo</a>
+      <span class="nav" id="nav">
+        <a class="hlink" href="." id="lnk-form" data-i18n>Registrazione</a>
+        <a class="hlink" href="collaudo" id="lnk-collaudo" data-i18n>Collaudo</a>
+        <a class="hlink cur" aria-current="page" href="mensile" id="lnk-mensile" data-i18n>Mensile</a>
+        <a class="hlink" href="gestione" id="lnk-gestione" hidden data-i18n>Gestione</a>
+      </span>
     </nav>
   </header>
   <form class="tools" id="tools" hidden>
@@ -142,6 +158,7 @@ footer.doc { margin-top:22px; font-size:11px; color:var(--dim); }
       <label class="wk"><span data-i18n>Mese</span> <input type="month" id="month" min="2026-01"></label>
       <button type="button" class="btn sq" id="next" title="Mese successivo" aria-label="Mese successivo" data-i18n-attr="title|aria-label"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M6 3l5 5-5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
       <button type="submit" class="btn" data-i18n>Vai</button>
+      <button type="button" class="btn" id="today" title="Mese corrente" aria-label="Mese corrente" data-i18n-attr="title|aria-label" data-i18n>Oggi</button>
     </div>
     <span class="msg" id="msg" role="status" aria-live="polite"></span>
     <button type="button" class="btn pri" id="print"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 6V2h8v4M4 12H2.5V7h11v5H12M4.5 10h7v4h-7z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg><span data-i18n>Stampa</span></button>
@@ -179,7 +196,7 @@ var PAGE_FORM = "./" || APP_BASE;
 var PAGE_COLLAUDO = "./collaudo.html" || APP_BASE + "/collaudo";
 var PAGE_GESTIONE = "./gestione.html" || APP_BASE + "/gestione";
 var PAGE_MENSILE = "./mensile.html" || APP_BASE + "/mensile";
-var BUILD = "2026-10-16 22:02 UTC · 4bd5cf0"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
+var BUILD = "2026-10-17 01:34 UTC · 6fba59d"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
 // Every place the project lives (shown in the admin's header menu and on the Gestione page).
 var LINKS = [
   ["Pagine pubbliche", "https://rainycservizi.github.io/rainyc-servizi-app/", "GitHub Pages: il sito di prova principale"],
@@ -199,10 +216,11 @@ var LINKS = [
 // Page code re-renders its dynamic parts on the "rainyc:lang" event.
 var LANG_KEY = "rainyc.lingua";
 var I18N = { en: {
+  "Oggi": "Today", "Settimana corrente": "Current week", "Mese corrente": "Current month", "Comprimi sezione": "Collapse section", "Espandi sezione": "Expand section",
   // header, login, shared
   "Mensile": "Monthly", "Mensile →": "Monthly →", "Mese": "Month", "Mese precedente": "Previous month", "Mese successivo": "Next month", "Accesso · mensile": "Login · monthly",
   "Report mensile": "Monthly report", "Sede di corrispondenza di New York": "New York bureau", "il prospetto per Roma": "the sheet for Rome", "Settimane del mese": "Weeks of the month", "Settimana": "Week", "Giornalisti": "Journalists",
-  "Servizi video": "Video stories", "Servizi radio": "Radio stories", "Totale video": "Total video", "Totale radio": "Total radio", "Radio GR 1": "Radio GR 1", "storico, inviato": "historical, sent", "dal database": "from the database",
+  "Servizi video": "Video stories", "Servizi radio": "Radio stories", "Totale video": "Total video", "Totale radio": "Total radio", "Radio GR 1": "Radio GR 1", "inviato": "sent", "dal database": "from the database",
   "{0} registrazioni nel mese": "{0} entries in the month", "Caricamento del mese {0}…": "Loading {0}…", "Mensile {0} · RAI NYC Servizi": "Monthly {0} · RAI NYC Servizi", "Mese non valido: usare la forma 2026-10.": "Invalid month: use the form 2026-10.",
   "Top Sheet {0}: cifre di Gennaio–Luglio come inviate a Roma; da Agosto dal database (registrazioni annullate escluse). GR 1, 2, 3 ripetono il conteggio radio, come nel foglio.": "Top Sheet {0}: January–July as sent to Rome; from August from the database (voided entries excluded). GR 1, 2, 3 repeat the radio count, as in the sheet.",
   "Generato il {0} dal sistema RAI NYC Servizi · fonte: database": "Generated on {0} by RAI NYC Servizi · source: database",
@@ -344,7 +362,7 @@ function applyLang() {
     });
   });
   var br = document.getElementById("brand");
-  if (br) br.title = t("Pagina costruita") + " " + BUILD;
+  if (br) br.title = "Built by Caruso" + (BUILD ? " \u00b7 " + t("Pagina costruita") + " " + BUILD : "");
   var out = document.getElementById("lnk-esci");
   if (out && out.getAttribute("data-user")) out.title = tf("Esci ({0})", out.getAttribute("data-user"));
   var stamp = document.querySelector("#lnk-menu .stamp");
@@ -611,14 +629,10 @@ function mountPassword(slot) {
   if (old) old.parentNode.removeChild(old);
   var oldLink = document.getElementById("lnk-pwd");
   if (oldLink) oldLink.parentNode.removeChild(oldLink);
-  var oldG = document.getElementById("lnk-gestione");
-  if (oldG) oldG.parentNode.removeChild(oldG);
+  // The Gestione link sits in the page's nav (hidden unless the admin is signed in; always shown on Gestione itself).
+  var g = document.getElementById("lnk-gestione");
+  if (g && !document.body.hasAttribute("data-gestione")) g.hidden = !(slot && canChangePassword());
   if (!slot || !canChangePassword()) return;
-  if (!document.body.hasAttribute("data-gestione")) {
-    var g = document.createElement("a");
-    g.href = PAGE_GESTIONE; g.id = "lnk-gestione"; g.className = "hlink"; L(g, "Gestione");
-    slot.insertBefore(g, slot.firstChild);
-  }
   mountLinks(slot);
   var a = document.createElement("a");
   a.href = "#"; a.id = "lnk-pwd"; a.className = "hlink"; L(a, "Cambia password");
@@ -902,7 +916,7 @@ function journalistsOf(rows) {
   "use strict";
   var $ = function (id) { return document.getElementById(id); };
   var current = null, data = null, loadedOnce = false;
-  $("lnk-form").href = PAGE_FORM; $("lnk-collaudo").href = PAGE_COLLAUDO;
+  $("lnk-form").href = PAGE_FORM; $("lnk-collaudo").href = PAGE_COLLAUDO; $("lnk-mensile").href = PAGE_MENSILE; $("lnk-gestione").href = PAGE_GESTIONE;
   initTheme("theme"); initLang("lang");
   function setMsg(text, isErr) { var m = $("msg"); m.textContent = text; m.className = isErr ? "err" : "msg"; }
   function esc(s) { return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); }
@@ -916,8 +930,8 @@ function journalistsOf(rows) {
     var th = function (keys, cls) { return keys.map(function (k, i) { return "<th" + (cls && i === 0 ? ' class="grpa"' : "") + ">" + hd(label[k]) + "</th>"; }).join(""); };
     var td = function (r, keys, cls) { return keys.map(function (k, i) { return "<td" + (cls && i === 0 ? ' class="grpa"' : "") + ">" + n(r[k]) + "</td>"; }).join(""); };
     var rows = y.rows.map(function (r) {
-      return '<tr class="' + (r.ym === ym ? "sel" : "") + '"><td>' + esc(r.mese) + "</td>" + td(r, groupA) + td(r, groupB, true) + td(r, groupC, true) +
-        '<td class="src ' + r.source + '">' + esc(t(r.source === "storico" ? "storico, inviato" : r.source === "db" ? "dal database" : "")) + "</td></tr>";
+      return '<tr data-ym="' + esc(r.ym) + '" tabindex="0" class="' + (r.ym === ym ? "sel" : "") + '"><td>' + esc(r.mese) + "</td>" + td(r, groupA) + td(r, groupB, true) + td(r, groupC, true) +
+        '<td class="src ' + r.source + '">' + esc(t(r.source === "storico" ? "inviato" : r.source === "db" ? "dal database" : "")) + "</td></tr>";
     }).join("");
     var tot = y.total;
     var top = "<thead><tr><th>" + hd("Mese") + "</th>" + th(groupA) + th(groupB, true) + th(groupC, true) + "<th></th></tr></thead><tbody>" + rows +
@@ -936,7 +950,7 @@ function journalistsOf(rows) {
       '<h2 class="sec">' + esc(t("Top Sheet")) + " " + m.year + '<span class="aside">' + esc(t("il prospetto per Roma")) + '</span></h2><div class="table-wrap"><table>' + top + "</table></div>" +
       '<div class="two"><div><h2 class="sec">' + esc(t("Settimane del mese")) + '<span class="aside">' + esc(tf("{0} registrazioni nel mese", data.rows)) + '</span></h2><div class="table-wrap"><table>' + small.replace("{0}", hd("Settimana")) + "<tbody>" + (weeks || '<tr><td colspan="7">' + esc(t("Nessuna registrazione")) + "</td></tr>") + "</tbody></table></div></div>" +
       '<div><h2 class="sec">' + esc(t("Giornalisti")) + '</h2><div class="table-wrap"><table>' + small.replace("{0}", hd("Giornalista")) + "<tbody>" + (jour || '<tr><td colspan="7">' + esc(t("Nessuna registrazione")) + "</td></tr>") + "</tbody></table></div></div></div>" +
-      '<footer class="doc">' + esc(tf("Generato il {0} dal sistema RAI NYC Servizi · fonte: database", todayNewYork())) + "</footer>";
+      '<footer class="doc">' + esc(tf("Generato il {0} dal sistema RAI NYC Servizi · fonte: database", todayNewYork())) + '<span class="scr"> · built by Caruso</span></footer>';
   }
   function load(m) {
     current = m;
@@ -959,6 +973,11 @@ function journalistsOf(rows) {
   $("tools").addEventListener("submit", function (ev) { ev.preventDefault(); var m = parseMonth($("month").value); if (!m) { setMsg(t("Mese non valido: usare la forma 2026-10."), true); return; } load(m); });
   $("prev").addEventListener("click", function () { if (current) load(shiftMonth(current, -1)); });
   $("next").addEventListener("click", function () { if (current) load(shiftMonth(current, 1)); });
+  $("today").addEventListener("click", function () { load(monthOf(todayNewYork())); });
+  // A click (or Enter) on a month row of the Top Sheet opens that month.
+  function rowMonth(ev) { var tr = ev.target && ev.target.closest ? ev.target.closest("tr[data-ym]") : null; return tr ? parseMonth(tr.getAttribute("data-ym")) : null; }
+  $("doc").addEventListener("click", function (ev) { var m = rowMonth(ev); if (m) load(m); });
+  $("doc").addEventListener("keydown", function (ev) { if (ev.key !== "Enter" && ev.key !== " ") return; var m = rowMonth(ev); if (m && ev.target.hasAttribute("data-ym")) { ev.preventDefault(); load(m); } });
   $("print").addEventListener("click", function () { window.print(); });
   document.addEventListener("rainyc:lang", function () { if (data) render(); });
   requireLogin(function () {

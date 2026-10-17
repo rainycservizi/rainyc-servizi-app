@@ -43,6 +43,15 @@ body { font:14px/1.45 var(--sans); -webkit-font-smoothing:antialiased; }
 .hlink:hover { color:var(--fg); background:var(--hover); }
 .hlink.go { color:var(--fg); border:1px solid var(--line2); }
 .hlink.go:hover { border-color:var(--accent); color:var(--accent-text); background:transparent; }
+/* One nav on every page, same order everywhere: Registrazione · Collaudo · Mensile (· Gestione for the admin). */
+.nav { display:flex; align-items:center; gap:2px; padding:2px; border:1px solid var(--line2); border-radius:7px; }
+.nav .hlink { height:30px; padding:0 11px; border-radius:5px; }
+.nav .hlink.cur { color:var(--accent-text); background:var(--accent-soft); font-weight:600; }
+/* Wide monitors (2K, ultrawide, 4K at 100 %): scale the page instead of stretching 14 px text across 3400 px. 1920 untouched. */
+:root { --z:1; } /* the zoom factor, for rules that use vh/vw inside the zoomed body */
+@media screen and (min-width:2000px) { :root { --z:1.15; } body { zoom:1.15; } }
+@media screen and (min-width:2560px) { :root { --z:1.3; } body { zoom:1.3; } }
+@media screen and (min-width:3400px) { :root { --z:1.5; } body { zoom:1.5; } }
 .icbtn { width:36px; height:36px; display:inline-grid; place-items:center; border:1px solid var(--line2); border-radius:6px; background:transparent; color:var(--fg); cursor:pointer; padding:0; }
 .icbtn:hover { border-color:var(--accent); color:var(--accent-text); }
 .icbtn svg { width:18px; height:18px; }
@@ -145,7 +154,7 @@ footer.doc .gen { font-size:11px; color:var(--dim); }
 footer.doc .firma { font-size:13px; white-space:nowrap; }
 
 /* ── trasferta popover ── */
-.pop { position:fixed; z-index:40; width:360px; max-width:calc(100vw - 24px); background:var(--panel); border:1px solid var(--line2); border-radius:8px; box-shadow:var(--pop); padding:14px 16px 16px; font-size:14px; }
+.pop { position:fixed; z-index:40; width:360px; max-width:calc(100vw / var(--z, 1) - 24px); background:var(--panel); border:1px solid var(--line2); border-radius:8px; box-shadow:var(--pop); padding:14px 16px 16px; font-size:14px; }
 .pop .fld label { display:block; font-weight:600; font-size:13px; margin:0 0 6px; }
 .pop .row2 { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:10px; }
 .pop .row2 > * { min-width:0; }
@@ -167,7 +176,7 @@ footer.doc .firma { font-size:13px; white-space:nowrap; }
 .rcp input[type=checkbox] { width:18px; height:18px; margin:0; accent-color:var(--accent); flex:none; }
 .rcp .rm { all:unset; cursor:pointer; color:var(--dim); font-size:16px; padding:4px 6px; border-radius:4px; } .rcp .rm:hover { color:var(--bad); background:var(--raise); }
 .addr { display:flex; gap:6px; margin:0 0 4px; } .addr input { flex:1; min-width:0; height:40px; margin:0; font-size:15px; } .addr .btn { height:40px; }
-.pop-pwd { position:absolute; top:58px; right:16px; z-index:40; width:340px; max-width:calc(100vw - 32px); background:var(--panel); border:1px solid var(--line2); border-radius:8px; box-shadow:var(--pop); padding:14px 16px 16px; }
+.pop-pwd { position:absolute; top:58px; right:16px; z-index:40; width:340px; max-width:calc(100vw / var(--z, 1) - 32px); background:var(--panel); border:1px solid var(--line2); border-radius:8px; box-shadow:var(--pop); padding:14px 16px 16px; }
 .pop-pwd .fld label { display:block; font-weight:600; font-size:13px; margin:0 0 6px; }
 .pop-pwd .hint { font-weight:400; color:var(--dim); font-size:12px; }
 .pop-pwd .row { display:flex; gap:8px; }
@@ -180,6 +189,7 @@ footer.doc .firma { font-size:13px; white-space:nowrap; }
 @media screen and (max-width:1199.98px) { .table-wrap { overflow-x:auto; } thead th { position:static; } td[data-f="subject"] { min-width:15em; } td[data-f="richiedente"] { min-width:8em; } .sheet > header.doc, .sheet > .counters { grid-column:1 / -1; } .sheet > .counters { justify-self:start; } }
 @media screen and (max-width:760px) {
   .page { padding:10px; } .sheet { padding:14px; }
+  .appbar { height:auto; min-height:52px; flex-wrap:wrap; padding:6px 10px; gap:6px 8px; } .hright { flex-wrap:wrap; justify-content:flex-end; row-gap:6px; } .nav .hlink { padding:0 8px; font-size:13px; } .tools .grp { flex-wrap:wrap; }
   .brand .pg, .brand .mk { display:none; } .appbar { padding:0 10px; gap:8px; } .tools { padding:8px 10px; }
   .tools .msg, .tools .err { margin-left:0; flex-basis:100%; }
   .btn .tx { display:none; } .tools .sep { display:none; } .hlink { padding:0 8px; font-size:13px; }
@@ -194,7 +204,7 @@ footer.doc .firma { font-size:13px; white-space:nowrap; }
 @media (prefers-reduced-motion:reduce) { * { transition:none !important; } }
 
 /* ── print: always light, every day expanded, Rome's columns only ── */
-@page { size: A4 landscape; margin: 12mm; }
+@page { size: letter landscape; margin: 12mm; } /* US Letter: printed in New York first (Marco, 2026-10-16) */
 @media print {
   :root, :root[data-theme=dark] {
     --bg:#fff; --panel:#fff; --raise:#fff; --fg:#111; --dim:#555; --line:#e6e6e6; --line2:#bbb; --rule:#111;
@@ -231,14 +241,19 @@ footer.doc .firma { font-size:13px; white-space:nowrap; }
 <body>
 <div class="top" id="top">
   <header class="appbar">
-    <div class="brand" id="brand" title="Pagina costruita 2026-10-16 22:02 UTC · 4bd5cf0"><span class="mk">Rai · NY</span><span class="nm">RAI NYC Servizi</span><span class="pg" data-i18n>Collaudo</span></div>
+    <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-10-17 01:34 UTC · 6fba59d"><span class="mk">Rai · NY</span><span class="nm">RAI NYC Servizi</span><span class="pg" data-i18n>Collaudo</span></div>
     <nav class="hright" id="hright" aria-label="Pagine">
       <button type="button" class="icbtn" id="theme" aria-label="Cambia tema" title="Cambia tema">
         <svg class="ic-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
         <svg class="ic-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.2M12 19.8V22M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M2 12h2.2M19.8 12H22M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6"/></svg>
       </button>
       <button type="button" class="icbtn lang" id="lang" aria-label="Switch to English" title="Switch to English">EN</button>
-      <a class="hlink go" href="." id="lnk-form" data-i18n>&larr; Nuova registrazione</a>
+      <span class="nav" id="nav">
+        <a class="hlink" href="." id="lnk-form" data-i18n>Registrazione</a>
+        <a class="hlink cur" aria-current="page" href="collaudo" id="lnk-collaudo" data-i18n>Collaudo</a>
+        <a class="hlink" href="mensile" id="lnk-mensile" data-i18n>Mensile</a>
+        <a class="hlink" href="gestione" id="lnk-gestione" hidden data-i18n>Gestione</a>
+      </span>
     </nav>
   </header>
   <form class="tools" id="tools" hidden>
@@ -247,13 +262,13 @@ footer.doc .firma { font-size:13px; white-space:nowrap; }
       <label class="wk" data-i18n>Settimana <input type="text" id="week" pattern="\d{4}-W\d{1,2}" placeholder="2026-W41"></label>
       <button type="button" class="btn sq" id="next" data-i18n-attr="title|aria-label" title="Settimana successiva" aria-label="Settimana successiva"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M6 3l5 5-5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
       <button type="submit" class="btn" data-i18n>Vai</button>
+      <button type="button" class="btn" id="today" title="Settimana corrente" aria-label="Settimana corrente" data-i18n-attr="title|aria-label" data-i18n>Oggi</button>
     </div>
     <span class="sep" aria-hidden="true"></span>
     <div class="grp">
       <button type="button" class="btn" id="fold" aria-controls="doc"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="fold-t">Comprimi tutto</span></button>
       <button type="button" class="btn" id="undo" disabled title="Ctrl+Z"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M5 4L2 7l3 3M2.5 7H10a4 4 0 0 1 0 8H8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="tx" data-i18n>Annulla ultima modifica</span></button>
     </div>
-    <a class="btn" id="lnk-mensile" href="mensile" data-i18n>Mensile →</a>
     <span class="msg" id="msg" role="status" aria-live="polite"></span>
     <button type="button" class="btn" id="email"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M2 4h12v8H2zM2.5 4.5L8 9l5.5-4.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg><span id="email-t" data-i18n>Invia per e-mail</span></button>
     <button type="button" class="btn pri" id="print" data-i18n><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 6V2h8v4M4 12H2.5V7h11v5H12M4.5 10h7v4h-7z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>Stampa</button>
@@ -322,7 +337,7 @@ var PAGE_FORM = "./" || APP_BASE;
 var PAGE_COLLAUDO = "./collaudo.html" || APP_BASE + "/collaudo";
 var PAGE_GESTIONE = "./gestione.html" || APP_BASE + "/gestione";
 var PAGE_MENSILE = "./mensile.html" || APP_BASE + "/mensile";
-var BUILD = "2026-10-16 22:02 UTC · 4bd5cf0"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
+var BUILD = "2026-10-17 01:34 UTC · 6fba59d"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
 // Every place the project lives (shown in the admin's header menu and on the Gestione page).
 var LINKS = [
   ["Pagine pubbliche", "https://rainycservizi.github.io/rainyc-servizi-app/", "GitHub Pages: il sito di prova principale"],
@@ -342,10 +357,11 @@ var LINKS = [
 // Page code re-renders its dynamic parts on the "rainyc:lang" event.
 var LANG_KEY = "rainyc.lingua";
 var I18N = { en: {
+  "Oggi": "Today", "Settimana corrente": "Current week", "Mese corrente": "Current month", "Comprimi sezione": "Collapse section", "Espandi sezione": "Expand section",
   // header, login, shared
   "Mensile": "Monthly", "Mensile →": "Monthly →", "Mese": "Month", "Mese precedente": "Previous month", "Mese successivo": "Next month", "Accesso · mensile": "Login · monthly",
   "Report mensile": "Monthly report", "Sede di corrispondenza di New York": "New York bureau", "il prospetto per Roma": "the sheet for Rome", "Settimane del mese": "Weeks of the month", "Settimana": "Week", "Giornalisti": "Journalists",
-  "Servizi video": "Video stories", "Servizi radio": "Radio stories", "Totale video": "Total video", "Totale radio": "Total radio", "Radio GR 1": "Radio GR 1", "storico, inviato": "historical, sent", "dal database": "from the database",
+  "Servizi video": "Video stories", "Servizi radio": "Radio stories", "Totale video": "Total video", "Totale radio": "Total radio", "Radio GR 1": "Radio GR 1", "inviato": "sent", "dal database": "from the database",
   "{0} registrazioni nel mese": "{0} entries in the month", "Caricamento del mese {0}…": "Loading {0}…", "Mensile {0} · RAI NYC Servizi": "Monthly {0} · RAI NYC Servizi", "Mese non valido: usare la forma 2026-10.": "Invalid month: use the form 2026-10.",
   "Top Sheet {0}: cifre di Gennaio–Luglio come inviate a Roma; da Agosto dal database (registrazioni annullate escluse). GR 1, 2, 3 ripetono il conteggio radio, come nel foglio.": "Top Sheet {0}: January–July as sent to Rome; from August from the database (voided entries excluded). GR 1, 2, 3 repeat the radio count, as in the sheet.",
   "Generato il {0} dal sistema RAI NYC Servizi · fonte: database": "Generated on {0} by RAI NYC Servizi · source: database",
@@ -487,7 +503,7 @@ function applyLang() {
     });
   });
   var br = document.getElementById("brand");
-  if (br) br.title = t("Pagina costruita") + " " + BUILD;
+  if (br) br.title = "Built by Caruso" + (BUILD ? " \u00b7 " + t("Pagina costruita") + " " + BUILD : "");
   var out = document.getElementById("lnk-esci");
   if (out && out.getAttribute("data-user")) out.title = tf("Esci ({0})", out.getAttribute("data-user"));
   var stamp = document.querySelector("#lnk-menu .stamp");
@@ -754,14 +770,10 @@ function mountPassword(slot) {
   if (old) old.parentNode.removeChild(old);
   var oldLink = document.getElementById("lnk-pwd");
   if (oldLink) oldLink.parentNode.removeChild(oldLink);
-  var oldG = document.getElementById("lnk-gestione");
-  if (oldG) oldG.parentNode.removeChild(oldG);
+  // The Gestione link sits in the page's nav (hidden unless the admin is signed in; always shown on Gestione itself).
+  var g = document.getElementById("lnk-gestione");
+  if (g && !document.body.hasAttribute("data-gestione")) g.hidden = !(slot && canChangePassword());
   if (!slot || !canChangePassword()) return;
-  if (!document.body.hasAttribute("data-gestione")) {
-    var g = document.createElement("a");
-    g.href = PAGE_GESTIONE; g.id = "lnk-gestione"; g.className = "hlink"; L(g, "Gestione");
-    slot.insertBefore(g, slot.firstChild);
-  }
   mountLinks(slot);
   var a = document.createElement("a");
   a.href = "#"; a.id = "lnk-pwd"; a.className = "hlink"; L(a, "Cambia password");
@@ -1225,7 +1237,7 @@ ${groups.join("\n")}
   var $ = function (id) { return document.getElementById(id); };
   var current = null;
   var loadedOnce = false;
-  $("lnk-form").href = PAGE_FORM;
+  $("lnk-form").href = PAGE_FORM; $("lnk-collaudo").href = PAGE_COLLAUDO; $("lnk-gestione").href = PAGE_GESTIONE;
   initTheme("theme");
   initLang("lang");
 
@@ -1602,6 +1614,16 @@ ${groups.join("\n")}
   });
   $("prev").addEventListener("click", function () { if (current) load(shiftWeek(current, -1)); });
   $("next").addEventListener("click", function () { if (current) load(shiftWeek(current, 1)); });
+  // "Oggi": this week, today's day opened and brought under the header.
+  $("today").addEventListener("click", function () {
+    var d = todayNewYork();
+    load(isoWeekOf(d)).then(function () {
+      var g = $("doc").querySelector('tbody.dg[data-day="' + d + '"]'); if (!g) return;
+      if (g.classList.contains("chiuso")) { g.classList.remove("chiuso"); var b = g.querySelector("button.dt"); if (b) b.setAttribute("aria-expanded", "true"); saveFold(); syncFoldBtn(); }
+      var y = g.getBoundingClientRect().top + window.pageYOffset - $("top").offsetHeight - 44;
+      window.scrollTo({ top: Math.max(0, y), behavior: "smooth" });
+    });
+  });
   $("print").addEventListener("click", function () { closeTrip(false); window.print(); });
   // E-mail the week (POST /api/email-collaudo {week, to}). Only the accounts the server allows see the button
   // (GET /api/email-recipients: {allowed, suggested}); the dialog ticks the suggested addresses and takes new ones.

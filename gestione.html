@@ -41,13 +41,31 @@ a { color:inherit; }
 .hlink:hover { color:var(--fg); background:var(--hover); }
 .hlink.go { color:var(--fg); border:1px solid var(--line2); }
 .hlink.go:hover { border-color:var(--accent); color:var(--accent-text); background:transparent; }
+/* One nav on every page, same order everywhere: Registrazione · Collaudo · Mensile (· Gestione for the admin). */
+.nav { display:flex; align-items:center; gap:2px; padding:2px; border:1px solid var(--line2); border-radius:7px; }
+.nav .hlink { height:30px; padding:0 11px; border-radius:5px; }
+.nav .hlink.cur { color:var(--accent-text); background:var(--accent-soft); font-weight:600; }
+/* Wide monitors (2K, ultrawide, 4K at 100 %): scale the page instead of stretching 14 px text across 3400 px. 1920 untouched. */
+:root { --z:1; } /* the zoom factor, for rules that use vh/vw inside the zoomed body */
+@media screen and (min-width:2000px) { :root { --z:1.15; } body { zoom:1.15; } }
+@media screen and (min-width:2560px) { :root { --z:1.3; } body { zoom:1.3; } }
+@media screen and (min-width:3400px) { :root { --z:1.5; } body { zoom:1.5; } }
+/* collapse arrow in every section header */
+.ph .fold { all:unset; box-sizing:border-box; display:inline-grid; place-items:center; width:28px; height:28px; margin:-8px -6px -8px auto; border-radius:4px; cursor:pointer; color:var(--dim); flex:none; }
+.ph .aside ~ .fold { margin-left:0; }
+.ph .fold:hover { background:var(--hover); color:var(--fg); }
+.ph .fold:focus-visible { outline:2px solid var(--focus); }
+.ph .fold svg { width:16px; height:16px; transition:transform .15s; }
+.ph .fold[aria-expanded=false] svg { transform:rotate(-90deg); }
+.panel.chiuso > :not(.ph) { display:none; }
+.panel.chiuso > .ph { margin-bottom:0; }
 .icbtn { width:36px; height:36px; display:inline-grid; place-items:center; border:1px solid var(--line2); border-radius:6px; background:transparent; color:var(--fg); cursor:pointer; padding:0; }
 .icbtn:hover { border-color:var(--accent); color:var(--accent-text); }
 .icbtn svg { width:18px; height:18px; }
 .icbtn.lang { width:auto; min-width:36px; padding:0 9px; font:700 12px/1 var(--mono); letter-spacing:.06em; }
 :root[data-theme=dark] .ic-moon, :root:not([data-theme=dark]) .ic-sun { display:none; }
 
-.page { padding:16px; display:grid; gap:14px; grid-template-columns:repeat(auto-fit, minmax(min(100%, 420px), 1fr)); align-items:start; }
+.page { padding:16px; display:grid; gap:14px; grid-template-columns:repeat(auto-fit, minmax(min(100%, 420px), 1fr)); align-items:start; max-width:1920px; margin:0 auto; }
 .panel { background:var(--panel); border:1px solid var(--line); border-radius:8px; box-shadow:var(--shadow); padding:14px 16px 16px; min-width:0; }
 .panel.wide { grid-column:1 / -1; }
 .ph { font:600 11px/1 var(--mono); letter-spacing:.13em; text-transform:uppercase; color:var(--dim); margin:0 0 12px; display:flex; align-items:center; gap:8px; }
@@ -112,7 +130,9 @@ td.dim { color:var(--dim); } tr.off td { color:var(--dim); } tr.off td:first-chi
 .inline-pw input { width:11em; height:30px; font-size:13px; }
 .aud td { font-size:12.5px; } .aud td.t { white-space:nowrap; color:var(--dim); font-family:var(--mono); font-size:11.5px; }
 .aud .pl { font:11px/1.4 var(--mono); color:var(--dim); max-width:48em; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; display:block; }
-@media (max-width:760px) { .page { padding:10px; gap:10px; } .brand .pg, .brand .mk { display:none; } .hlink { padding:0 8px; font-size:13px; } .tile .v { font-size:18px; } }
+@media (max-width:760px) { .page { padding:10px; gap:10px; } .brand .pg, .brand .mk { display:none; } .hlink { padding:0 8px; font-size:13px; } .tile .v { font-size:18px; }
+  .appbar { height:auto; min-height:52px; flex-wrap:wrap; padding:6px 10px; gap:6px 8px; } .hright { flex-wrap:wrap; justify-content:flex-end; row-gap:6px; } .nav .hlink { padding:0 8px; font-size:13px; }
+}
 /* ── admin "Link ▾" menu (shared.js mountLinks) ── */
 .lmenu { position:relative; }
 .lmenu button.hlink { border:0; background:transparent; cursor:pointer; font:inherit; font-size:14px; }
@@ -125,16 +145,19 @@ td.dim { color:var(--dim); } tr.off td { color:var(--dim); } tr.off td:first-chi
 </head>
 <body data-gestione>
 <header class="appbar">
-  <div class="brand" id="brand" title="Pagina costruita 2026-10-16 22:02 UTC · 4bd5cf0"><span class="mk">Rai · NY</span><span class="nm">RAI NYC Servizi</span><span class="pg" data-i18n>Gestione</span></div>
+  <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-10-17 01:34 UTC · 6fba59d"><span class="mk">Rai · NY</span><span class="nm">RAI NYC Servizi</span><span class="pg" data-i18n>Gestione</span></div>
   <nav class="hright" id="hright" aria-label="Pagine">
     <button type="button" class="icbtn" id="theme" aria-label="Cambia tema" title="Cambia tema">
       <svg class="ic-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
       <svg class="ic-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.2M12 19.8V22M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M2 12h2.2M19.8 12H22M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6"/></svg>
     </button>
     <button type="button" class="icbtn lang" id="lang" aria-label="Switch to English" title="Switch to English">EN</button>
-    <a class="hlink go" href="." id="lnk-form" data-i18n>Registrazione</a>
-    <a class="hlink go" href="collaudo" id="lnk-collaudo" data-i18n>Collaudo</a>
-    <a class="hlink go" href="mensile" id="lnk-mensile" data-i18n>Mensile</a>
+    <span class="nav" id="nav">
+      <a class="hlink" href="." id="lnk-form" data-i18n>Registrazione</a>
+      <a class="hlink" href="collaudo" id="lnk-collaudo" data-i18n>Collaudo</a>
+      <a class="hlink" href="mensile" id="lnk-mensile" data-i18n>Mensile</a>
+      <a class="hlink cur" aria-current="page" href="gestione" id="lnk-gestione" data-i18n>Gestione</a>
+    </span>
   </nav>
 </header>
 <div class="page">
@@ -199,7 +222,7 @@ td.dim { color:var(--dim); } tr.off td { color:var(--dim); } tr.off td:first-chi
 # RAI NYC Servizi — STATE (repo copy)
 
 &gt; **Short read-only copy for agents with no vault access (cloud agents).**
-&gt; Source of truth: `~/vault/10 Work/12 KIMA Creative/12.01 Active Clients/gvg-global-vision-group/rai-nyc-servizi/STATE.md` (on the Mac). Vault STATE updated: 2026-10-16T18:10-04:00 by Claude Code (Fable 5.1) on MacBook.
+&gt; Source of truth: `~/vault/10 Work/12 KIMA Creative/12.01 Active Clients/gvg-global-vision-group/rai-nyc-servizi/STATE.md` (on the Mac). Vault STATE updated: 2026-10-16T21:50-04:00 by Claude Code (Fable 5.1) on MacBook.
 &gt; Cloud agents: read this; do not edit it. At END, put your end state (done / next / blockers) in the PR description.
 &gt; The next Mac session merges it into the vault STATE.md, then refreshes this copy.
 
@@ -207,22 +230,25 @@ td.dim { color:var(--dim); } tr.off td { color:var(--dim); } tr.off td:first-chi
 Marco's day job at RAI NY (GVG): a startup popup on the Avid edit machines NYC-EDIT-MC01/02/03 (C#, .NET 8, WPF) where editors log each tappeto or servizio. Supabase is the truth; the Google Sheet "2026 Report Rai NYC, Servizi Giornalistici" is a reporting mirror. The collaudo forms go to Rome for overtime and travel. Host `supervisor` (Linux Mint, user `rainyc`, Tailscale only). Owner account for everything: `rainyc.servizi@gmail.com`.
 
 ## Current goal
-**2026-10-16 (18:10):** Marco is testing on the Pages site (main test site, pushed on every page change: `https://rainycservizi.github.io/rainyc-servizi-app/` + `collaudo.html` + `gestione.html`, Pages commit 31b2d1a 18:05, build stamp `2026-10-16 21:43 UTC · 398378a` visible on the brand tooltip and in the admin "Link ▾" menu). Function deployed 17:43 (398378a). Supervisor LAN pages rsync'd (http only). **E-mail works**: after Marco enabled the Gmail API, W42 was sent to caruso@gvgusa.com (Gmail id 1a146a0b3af5bf2b) and landed in his gvgusa inbox 17:31; COLLAUDO_TO = erika@gvgusa.com, leotta@gvgusa.com, caruso@gvgusa.com (Marco 17:35; pippo = Ippolito Leotta assumed). Live since the last STATE: Esci; admin header for caruso = Gestione · Link ▾ (Pages, office, API health, both repos, Supabase, build stamp) · Cambia password · Esci; **IT/EN switch** next to the theme button on all three pages (Italian default, `rainyc.lingua`; server messages stay Italian; print stays Italian; built by a sonnet subagent, 127/127 integration checks); **collaudo reading order** per day = network (Tg1, Tg2, Tg3, RAN, Rainews.it, GR, Rai Sport, Rai 1/2/3, Tv7), then the edition slot (lookup sort_order, unknown slots by their "Ore" time), tappeto before the piece, then submission time — server-side in `/api/collaudo` and in the e-mail (`orderRows` in lib/collaudo.js; verified on production W42 13/10); tappeti were already counted only under "Tappeti" (rete = "Tappeto" → `reteBucket` null), confirmed to Marco. Trasferta edit in the collaudo re-verified on the Pages site with a throwaway login (pencil, save, undo, cell click all work); Marco's "still cannot edit" was most likely a cached page → build stamp added. Gestione page, durations fix (3033 rows), sender rule: see the 17:30 entry below. Tests: 127/127 local integration, 35 deno. Known small gaps: print "SI" for trasferta; form `slotsFor('Tappeto')`; notes not editable in the collaudo; Auth password self-change not blocked server-side; nginx `/gestione` without `.html` needs sudo; Gestione not yet checked against production data by Marco.
+**2026-10-16 (21:50, Marco's evening screenshots → one commit 65e6cc3 + STATE commit, Pages and supervisor republished):** (1) **One nav on every page**: Registrazione · Collaudo · Mensile (· Gestione when caruso is signed in), same order and place on all four pages, current page marked; the collaudo's "Mensile →" button left the tools bar (the header link still carries the month). (2) **Wide monitors**: ≥2000 px the body zooms 1.15 / 1.3 (≥2560) / 1.5 (≥3400) and the content is capped at 1920 px and centred (vh/vw rules divided by the factor, otherwise the form scrolled at 2560); 1920 untouched; phones: the header wraps, no sideways scroll. (3) **Gestione**: a chevron on every section (01–06), state remembered in the browser. (4) **"Oggi"** on the collaudo (current week, today's day opened and scrolled under the header) and on the Mensile (current month). (5) **Mensile**: month picker wide enough ("September 2026" was cut), click on a Top Sheet row opens that month, "inviato" instead of "storico, inviato", no inset bar on the selected row (the glow stays), footer "built by Caruso" on screen only (not in Rome's print — flip if Marco wants it printed); brand tooltip "Built by Caruso · pagina costruita &lt;stamp&gt;" everywhere. (6) **Print on US Letter landscape** (both reports); the 16-column Top Sheet needed 10 px to fit the 965 px printable width. (7) `docs/ui-design-brief.md`: handover brief for the Gemini design pass (page inventory, tokens, hard constraints, america.gov / si.gov palettes). Checks: 39 deno, integration ALL PASSED (--quick, after re-serving the function), layout script 93/93 at 3440×1440, 2560×1300, 1920×930, 1536×750, 1366×700, 1100×1400, 390×844 + Letter PDFs. Hosting answer given to Marco: Cloudflare Pages = free `*.pages.dev`, no domain needed; the dashboard "Enable access policy" covers previews only, the production `&lt;project&gt;.pages.dev` needs a self-hosted Access application in Zero Trust (free ≤50 users); Vercel = free `*.vercel.app` but Password Protection is Pro, $20/month per project (verified on vercel.com/docs 2026-10-16).
 
-**17:30 entry (kept for the record):** Gestione page (`/gestione`, admin = caruso@rainyc.nyc only, secret ADMIN_LOGINS overrides): status tiles, links, logins with new-password + create login, lists with Ritira/Riattiva/Aggiungi, audit register, repo STATE.md embedded; routes `/api/admin/{stats,lists,logins,audit}` write their own audit rows. Durations: 3033 legacy rows "hh:mm:00" → "hh:mm" (= mm:ss) via `scripts/fix_durations.py`, audited with old+new (reversible). Senders erika/caruso/pippo only (403 otherwise).
+**2026-10-16 (19:15, wrap up):** Marco tests on the Pages site (main test site, pushed on every page change): `https://rainycservizi.github.io/rainyc-servizi-app/` + `collaudo.html` + `mensile.html` + `gestione.html`; Pages commit d8151a4 19:10; build stamp on every page (brand tooltip / Link ▾). Function deployed 18:02 ET (cc0ead8); migration **0006 trasferte applied to production** 18:00 (after a backup run on supervisor); supervisor LAN pages rsync'd (http only). Live since the 18:10 entry: (1) **Trasferte in the database** (Marco: "straight to the database, not one browser"): table `trasferte` + RPCs `set_trasferta`/`end_trasferta` (audited, rows never deleted), view `v_trasferte_aperte`, routes `GET /api/trasferte`, `POST /api/trasferta`, `POST /api/trasferta/end`; panel 05 lists the open trips from the server on every machine, "Imposta trasferta…" opens one, "Termina" ends it; an entry gets trasferta SI when its journalist has an open trip covering the entry date; offline copy cached (`rainyc.trasferte`); the old per-browser key is gone. (2) **Mensile page** (`mensile.html`, link from the form, the collaudo tools "Mensile →" and Gestione): month picker, the year **Top Sheet in Rome's columns** (Gennaio–Luglio 2026 = frozen figures already sent, from Agosto = `v_monthly_topsheet`, voided rows excluded; GR 1/2/3 repeat the radio count as the sheet did), the month's ISO weeks (links to the collaudo) and per-journalist counts; print A4 landscape, Italian; `GET /api/mensile?month=`; **no e-mail of the Top Sheet yet** (Stampa only). (3) English wording: Servizio = Package, Pezzi = Packages, Tappeti = B-Roll. (4) **Logins regenerated**: Marco never received the 16:00 list; all 20 passwords except caruso's were reset 18:35 and the printable list is `~/Desktop/RAI-NYC-accessi-stampa-2026-10-16.txt` (600) on the Mac — print, hand out, shred; from now on caruso can reset any password on the Gestione page. **Top Sheet cross-check (finding for Marco):** against the workbook copy of 2026-10-16 the per-network counts and tappeti match for Agosto (TG1 115, TG2 83, TG3 69, RAN 43, altre 1, tappeti 162) but pezzi/radio/live differ (DB 150/46/161 vs sheet 190/48/192): the sheet's Pezzi/Radio/Live are independent ticks per row (one row can count twice) while the database gives one categoria per row; Settembre and Ottobre also include the 102 next-day pezzi backfilled today. Tests: 138/138 local integration, 39 deno. Known small gaps: print "SI" for trasferta; form `slotsFor('Tappeto')`; notes not editable in the collaudo; Auth password self-change not blocked server-side; nginx `/gestione` and `/mensile` without `.html` need sudo; Gestione and Mensile not yet seen by Marco; collaudo day header still shows legacy "sì (dettagli non registrati)".
+
+**Earlier today (kept short):** e-mail works (Gmail API enabled by Marco; W42 delivered to caruso@gvgusa.com; COLLAUDO_TO = erika@gvgusa.com, leotta@gvgusa.com, caruso@gvgusa.com; senders erika/caruso/pippo only); IT/EN switch; collaudo reading order per edition; Gestione page (admin = caruso); durations fix (3033 rows); trasferta editor verified on the Pages site; Esci; Link ▾ menu.
 
 ## Last 3 decisions
-1. 2026-10-16 17:35–17:55 — Marco: caruso's recipient address = caruso@gvgusa.com; pages in English AND Italian with a button next to the theme toggle; wants the git site password-protected ("nothing exposed"); asks whether no certificate on supervisor is a problem; when caruso is logged in, Gestione + every link up top; tappeti must never count under a Tg (they don't); collaudo rows sorted by Tg and by time so tappeto and piece of the same edition sit together. Agent: IT/EN via a dictionary keyed by the Italian strings (sonnet subagent); reading order server-side; password gate = Cloudflare Pages + Access proposed (needs a Cloudflare account under rainyc.servizi); LAN http judged acceptable (auth and data go to Supabase over https). (Claude Code)
-2. 2026-10-16 17:00–17:10 — Marco: GitHub Pages = main test site, always push it; a logout button; COLLAUDO_TO = only erika, caruso, pippo; trasferta rule = just the journalist; build an HTML page to maintain the project + a dashboard (hosted on the Pages site); durations in the collaudo: all hh:mm:ss values are minutes and seconds — update only the wrong ones. Agent: Gestione page v1 with admin API (caruso only); 3033 legacy durations rewritten with audit; sender rule proved end-to-end up to Google's "Gmail API disabled" answer. (Claude Code)
-3. 2026-10-16 16:35 — Marco: "only user erika, caruso and pippo can email. ruled."; the GVG RAI bando pages are a layout reference (looked at by a subagent). Agent: trasferta attaches by journalist match, all entries while set (legacy never marks other people's rows, but marked only part of the traveller's), one click edits a collaudo cell and the pencil opens the trasferta editor (Marco's words), function deployed and supervisor pages refreshed without a separate go (additive, Marco is testing), GitHub Pages push held for his OK. (Claude Code)
+1. 2026-10-16 21:00–21:50 — Marco (three screenshots): month picker too narrow; "responsive is a joke" on the large monitor, true latitude on small and large screens; collapse arrows on the Gestione sections; the weekly/monthly buttons were unbalanced (one left, one right); click a month row to highlight it; "historical, sent" → "sent"; drop the orange lines on the highlighted month, keep the glow; a Today button on both reports; "built by Caruso" on hover / in the footer; print on US Letter first. Agent: all of it in 65e6cc3 (zoom tiers for wide screens, one shared nav, footer credit on screen only). (Claude Code)
+2. 2026-10-16 18:20–18:45 — Marco: tappeti = "MOS or B-Roll" (agent picked B-Roll), Servizio = Package; the collaudo must let him choose the month and there must be a master page with the monthly totals and the page sent to Rai at month end; from home use the site without remoting in; the trasferta must live in the database like everything else ("not cherry pick"); he never received the login list; "after you're done wrap up". Agent: trasferte table + RPCs (migration 0006 to production after a backup), Mensile page with the Top Sheet, passwords regenerated into a new Desktop file, Top Sheet cross-check reported as a finding. (Claude Code)
+3. 2026-10-16 17:35–17:55 — Marco: caruso's recipient address = caruso@gvgusa.com; pages in English AND Italian with a button next to the theme toggle; wants the git site password-protected ("nothing exposed"); asks whether no certificate on supervisor is a problem; when caruso is logged in, Gestione + every link up top; tappeti must never count under a Tg (they don't); collaudo rows sorted by Tg and by time so tappeto and piece of the same edition sit together. Agent: IT/EN via a dictionary keyed by the Italian strings (sonnet subagent); reading order server-side; password gate = Cloudflare Pages + Access proposed (needs a Cloudflare account under rainyc.servizi); LAN http judged acceptable (auth and data go to Supabase over https). (Claude Code)
 
 ## Next 3 actions
-1. Marco — (a) Ctrl+F5 on the Pages site and check the build stamp (hover "Rai · NY" or open Link ▾): must read `2026-10-16 21:43 UTC · 398378a`; then test: trasferta edit in the collaudo (pencil or click on the cell), the EN button, the day order, Gestione as caruso. (b) Decide the password gate for the public pages: Cloudflare Pages + Cloudflare Access (free, e-mail one-time code for allowed addresses) needs a Cloudflare account under rainyc.servizi@gmail.com — create it and say "go", or keep GitHub Pages (login-gated page, only the HTML and the public anon key are visible). (c) Decide: trasferta "SI" vs ✓ in print; keep the Note field.
-2. Agent ("go") — if Cloudflare: move the pages (wrangler pages, Access policy with the allowed e-mails), add the origin to APP_ORIGINS, update OPERATIONS.md and the Link menu. Then Gestione v2 on Marco's feedback (edit a login's operator mapping, sort_order editing for lists, monthly charts from v_monthly_topsheet, backup status), Phase 7 mirror once the workbook is retired, cron on supervisor (sheet sync dry-run report + DB backup), Gemini UI review, small fixes (Tappeto richiedenti in slotsFor, notes editable in the collaudo, Auth password change restriction server-side, nginx `/gestione` alias, Tailscale cert for supervisor with Marco at the keyboard).
+1. Marco — (a) Ctrl+F5 on the Pages site (stamp must show 65e6cc3 or later, hover "Rai · NY"): nav on every page, the big monitor, Gestione chevrons, Oggi, click a month row, one Letter print of the collaudo and of the Mensile. (b) Decide the Top Sheet rule for Rome: one categoria per row (database) or the sheet's double ticks (see the discrepancy finding in the 19:15 entry). (c) Cloudflare: create the account under rainyc.servizi and say "go" (Pages + a Zero Trust Access application on `&lt;project&gt;.pages.dev`), or stay on GitHub Pages. (d) Say when to hand the design pass to Gemini (`docs/ui-design-brief.md` is ready). (e) Still open: print and hand out the login list; "built by Caruso" also in print? trasferta "SI" vs ✓; Note field; legacy "sì (dettagli non registrati)".
+1b. (earlier list, still valid) Marco — (a) print `~/Desktop/RAI-NYC-accessi-stampa-2026-10-16.txt` (Mac), hand the passwords out, shred the file (or ask the agent to). (b) On the Pages site (Ctrl+F5; stamp must show cc0ead8 or later): set a trasferta on one machine and see it on another; open `mensile.html` and judge the Top Sheet (is "one categoria per row" the rule Rome wants, or the sheet's double ticks? GR 1/2/3 = same number three times?); try the EN button, the collaudo order, Gestione. (c) Decide the password gate for the public pages (Cloudflare account under rainyc.servizi → "go", or keep GitHub Pages). (d) Decide: trasferta "SI" vs ✓ in print; keep the Note field; the legacy "sì (dettagli non registrati)" day note.
+2. Agent ("go") — Top Sheet by e-mail (dialog factored into shared.js, route `/api/email-topsheet`, same senders rule); Gestione v2 (login→operator mapping, list sort_order, backup status); Cloudflare move if Marco says go; Phase 7 mirror once the workbook is retired; cron on supervisor (sheet sync dry-run report + DB backup check); Gemini UI review; small fixes (Tappeto richiedenti in slotsFor, notes editable in the collaudo, Auth password change restriction server-side, nginx aliases, Tailscale cert with Marco at the keyboard).
 3. Agent — Claude Code Projects: candidate once the waitlist opens (intel 2026-10-09); ask Grok Bot to pull Marco's X bookmarks about dashboards into CLAUDE-INTEL before Gestione v2.
 
 ## Blockers
-- Marco — Windows test of the new pages (with the build stamp check); Cloudflare account decision for the password gate. Still pending: key-only SSH on supervisor, CLT update, WhatsApp images route, Durata required/optional.
+- Marco — print and distribute the new login list; Windows test of the new pages (build stamp check); Top Sheet rule (one categoria per row vs the sheet's double ticks); Cloudflare decision. Still pending: key-only SSH on supervisor, CLT update, WhatsApp images route, Durata required/optional.
 
 ## Live warnings
 - **No credentials in this file, the repo or chat.** 1Password item names only. The plan text held the Linux password in clear; the repo copy is redacted, the Desktop original is not.
@@ -255,7 +281,7 @@ var PAGE_FORM = "./" || APP_BASE;
 var PAGE_COLLAUDO = "./collaudo.html" || APP_BASE + "/collaudo";
 var PAGE_GESTIONE = "./gestione.html" || APP_BASE + "/gestione";
 var PAGE_MENSILE = "./mensile.html" || APP_BASE + "/mensile";
-var BUILD = "2026-10-16 22:02 UTC · 4bd5cf0"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
+var BUILD = "2026-10-17 01:34 UTC · 6fba59d"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
 // Every place the project lives (shown in the admin's header menu and on the Gestione page).
 var LINKS = [
   ["Pagine pubbliche", "https://rainycservizi.github.io/rainyc-servizi-app/", "GitHub Pages: il sito di prova principale"],
@@ -275,10 +301,11 @@ var LINKS = [
 // Page code re-renders its dynamic parts on the "rainyc:lang" event.
 var LANG_KEY = "rainyc.lingua";
 var I18N = { en: {
+  "Oggi": "Today", "Settimana corrente": "Current week", "Mese corrente": "Current month", "Comprimi sezione": "Collapse section", "Espandi sezione": "Expand section",
   // header, login, shared
   "Mensile": "Monthly", "Mensile →": "Monthly →", "Mese": "Month", "Mese precedente": "Previous month", "Mese successivo": "Next month", "Accesso · mensile": "Login · monthly",
   "Report mensile": "Monthly report", "Sede di corrispondenza di New York": "New York bureau", "il prospetto per Roma": "the sheet for Rome", "Settimane del mese": "Weeks of the month", "Settimana": "Week", "Giornalisti": "Journalists",
-  "Servizi video": "Video stories", "Servizi radio": "Radio stories", "Totale video": "Total video", "Totale radio": "Total radio", "Radio GR 1": "Radio GR 1", "storico, inviato": "historical, sent", "dal database": "from the database",
+  "Servizi video": "Video stories", "Servizi radio": "Radio stories", "Totale video": "Total video", "Totale radio": "Total radio", "Radio GR 1": "Radio GR 1", "inviato": "sent", "dal database": "from the database",
   "{0} registrazioni nel mese": "{0} entries in the month", "Caricamento del mese {0}…": "Loading {0}…", "Mensile {0} · RAI NYC Servizi": "Monthly {0} · RAI NYC Servizi", "Mese non valido: usare la forma 2026-10.": "Invalid month: use the form 2026-10.",
   "Top Sheet {0}: cifre di Gennaio–Luglio come inviate a Roma; da Agosto dal database (registrazioni annullate escluse). GR 1, 2, 3 ripetono il conteggio radio, come nel foglio.": "Top Sheet {0}: January–July as sent to Rome; from August from the database (voided entries excluded). GR 1, 2, 3 repeat the radio count, as in the sheet.",
   "Generato il {0} dal sistema RAI NYC Servizi · fonte: database": "Generated on {0} by RAI NYC Servizi · source: database",
@@ -420,7 +447,7 @@ function applyLang() {
     });
   });
   var br = document.getElementById("brand");
-  if (br) br.title = t("Pagina costruita") + " " + BUILD;
+  if (br) br.title = "Built by Caruso" + (BUILD ? " \u00b7 " + t("Pagina costruita") + " " + BUILD : "");
   var out = document.getElementById("lnk-esci");
   if (out && out.getAttribute("data-user")) out.title = tf("Esci ({0})", out.getAttribute("data-user"));
   var stamp = document.querySelector("#lnk-menu .stamp");
@@ -687,14 +714,10 @@ function mountPassword(slot) {
   if (old) old.parentNode.removeChild(old);
   var oldLink = document.getElementById("lnk-pwd");
   if (oldLink) oldLink.parentNode.removeChild(oldLink);
-  var oldG = document.getElementById("lnk-gestione");
-  if (oldG) oldG.parentNode.removeChild(oldG);
+  // The Gestione link sits in the page's nav (hidden unless the admin is signed in; always shown on Gestione itself).
+  var g = document.getElementById("lnk-gestione");
+  if (g && !document.body.hasAttribute("data-gestione")) g.hidden = !(slot && canChangePassword());
   if (!slot || !canChangePassword()) return;
-  if (!document.body.hasAttribute("data-gestione")) {
-    var g = document.createElement("a");
-    g.href = PAGE_GESTIONE; g.id = "lnk-gestione"; g.className = "hlink"; L(g, "Gestione");
-    slot.insertBefore(g, slot.firstChild);
-  }
   mountLinks(slot);
   var a = document.createElement("a");
   a.href = "#"; a.id = "lnk-pwd"; a.className = "hlink"; L(a, "Cambia password");
@@ -852,9 +875,28 @@ function fmtRange(a, b) {
 (function () {
   "use strict";
   var $ = function (id) { return document.getElementById(id); };
-  $("lnk-form").href = PAGE_FORM; $("lnk-collaudo").href = PAGE_COLLAUDO; $("lnk-mensile").href = PAGE_MENSILE;
+  $("lnk-form").href = PAGE_FORM; $("lnk-collaudo").href = PAGE_COLLAUDO; $("lnk-mensile").href = PAGE_MENSILE; $("lnk-gestione").href = PAGE_GESTIONE;
   initTheme("theme");
   initLang("lang");
+  // ---- collapse a section with the chevron in its header; remembered in this browser ----
+  var FOLD_KEY = "rainyc.gestione.chiusi";
+  function foldGet() { try { return JSON.parse(localStorage.getItem(FOLD_KEY) || "[]"); } catch (e) { return []; } }
+  function foldSet(ids) { try { localStorage.setItem(FOLD_KEY, JSON.stringify(ids)); } catch (e) { /* storage blocked: this view only */ } }
+  Array.prototype.forEach.call(document.querySelectorAll("section.panel > .ph"), function (h) {
+    var sec = h.parentNode, b = document.createElement("button");
+    b.type = "button"; b.className = "fold"; b.setAttribute("aria-controls", sec.id);
+    b.innerHTML = '<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    function paint() { var shut = sec.classList.contains("chiuso"); b.setAttribute("aria-expanded", shut ? "false" : "true"); var lab = t(shut ? "Espandi sezione" : "Comprimi sezione"); b.title = lab; b.setAttribute("aria-label", lab); }
+    b.addEventListener("click", function () {
+      sec.classList.toggle("chiuso");
+      var ids = foldGet().filter(function (x) { return x !== sec.id; });
+      if (sec.classList.contains("chiuso")) ids.push(sec.id);
+      foldSet(ids); paint();
+    });
+    sec.classList.toggle("chiuso", foldGet().indexOf(sec.id) >= 0);
+    h.appendChild(b); paint();
+    document.addEventListener("rainyc:lang", paint);
+  });
   function boot(text, isErr) { var b = $("boot"); b.hidden = !text; b.textContent = text || ""; b.className = "panel wide state" + (isErr ? " ko" : ""); }
   function show(on) { ["p-stato", "p-link", "p-accessi", "p-elenchi", "p-registro", "p-progetto"].forEach(function (id) { $(id).hidden = !on; }); }
   function errText(r) { return (r.body && r.body.error) || tf("Operazione non riuscita ({0}).", r.status); }

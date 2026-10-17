@@ -28,7 +28,7 @@
 :root { color-scheme:light; } :root[data-theme=dark] { color-scheme:dark; }
 * { box-sizing:border-box; }
 html, body { margin:0; background:var(--bg); color:var(--fg); }
-body { font:15px/1.45 var(--sans); min-height:100vh; -webkit-font-smoothing:antialiased; }
+body { font:15px/1.45 var(--sans); min-height:calc(100vh / var(--z, 1)); -webkit-font-smoothing:antialiased; }
 [hidden] { display:none !important; }
 a { color:inherit; }
 :focus-visible { outline:2px solid var(--focus); outline-offset:2px; }
@@ -44,6 +44,15 @@ a { color:inherit; }
 .hlink:hover { color:var(--fg); background:var(--hover); }
 .hlink.go { color:var(--fg); border:1px solid var(--line2); }
 .hlink.go:hover { border-color:var(--accent); color:var(--accent-text); background:transparent; }
+/* One nav on every page, same order everywhere: Registrazione · Collaudo · Mensile (· Gestione for the admin). */
+.nav { display:flex; align-items:center; gap:2px; padding:2px; border:1px solid var(--line2); border-radius:7px; }
+.nav .hlink { height:30px; padding:0 11px; border-radius:5px; }
+.nav .hlink.cur { color:var(--accent-text); background:var(--accent-soft); font-weight:600; }
+/* Wide monitors (2K, ultrawide, 4K at 100 %): scale the page instead of stretching 14 px text across 3400 px. 1920 untouched. */
+:root { --z:1; } /* the zoom factor, for rules that use vh/vw inside the zoomed body */
+@media screen and (min-width:2000px) { :root { --z:1.15; } body { zoom:1.15; } }
+@media screen and (min-width:2560px) { :root { --z:1.3; } body { zoom:1.3; } }
+@media screen and (min-width:3400px) { :root { --z:1.5; } body { zoom:1.5; } }
 .pend { font:700 12px/1 var(--mono); background:var(--warn-bg); color:var(--warn); border:1px solid currentColor; border-radius:999px; padding:5px 10px; white-space:nowrap; }
 .icbtn { width:36px; height:36px; display:inline-grid; place-items:center; border:1px solid var(--line2); border-radius:6px; background:transparent; color:var(--fg); cursor:pointer; padding:0; }
 .icbtn:hover { border-color:var(--accent); color:var(--accent-text); }
@@ -52,7 +61,7 @@ a { color:inherit; }
 :root[data-theme=dark] .ic-moon, :root:not([data-theme=dark]) .ic-sun { display:none; }
 
 /* ── panels ("little windows") ── */
-.desk { padding:16px; display:grid; gap:14px; grid-template-columns:minmax(0,1fr); }
+.desk { padding:16px; display:grid; gap:14px; grid-template-columns:minmax(0,1fr); max-width:1920px; margin:0 auto; }
 .entry { display:grid; gap:12px; grid-template-columns:minmax(0,1fr); align-content:start; margin:0; }
 .panel { background:var(--panel); border:1px solid var(--line); border-radius:8px; box-shadow:var(--shadow); padding:14px 16px 16px; min-width:0; margin:0; }
 fieldset.panel { min-inline-size:0; }
@@ -192,7 +201,7 @@ kbd { font:600 11px/1 var(--mono); padding:2px 5px; border:1px solid var(--line2
 .lead { margin:0 0 16px; color:var(--dim); font-size:14px; }
 .boot { max-width:520px; margin:12vh auto 0; text-align:center; color:var(--dim); font-size:15px; }
 .boot.ko { color:var(--bad); font-weight:600; }
-.pop-pwd { position:absolute; top:58px; right:16px; z-index:40; width:340px; max-width:calc(100vw - 32px); background:var(--panel); border:1px solid var(--line2); border-radius:8px; box-shadow:var(--pop); padding:14px 16px 16px; }
+.pop-pwd { position:absolute; top:58px; right:16px; z-index:40; width:340px; max-width:calc(100vw / var(--z, 1) - 32px); background:var(--panel); border:1px solid var(--line2); border-radius:8px; box-shadow:var(--pop); padding:14px 16px 16px; }
 .pop-pwd .row { display:flex; gap:8px; }
 .pop-pwd .row .btn { flex:1; }
 .pwd-msg { font-size:13px; margin:10px 0 0; font-weight:600; }
@@ -206,7 +215,7 @@ kbd { font:600 11px/1 var(--mono); padding:2px 5px; border:1px solid var(--line2
   .desk { grid-template-columns:minmax(0,1fr) clamp(320px, 24vw, 420px); align-items:start; }
   .entry { grid-template-columns:minmax(0,1fr) minmax(0,1.3fr) minmax(0,1fr); }
   .p-act { grid-column:1 / -1; }
-  .side { position:sticky; top:16px; max-height:calc(100vh - 52px - 32px); }
+  .side { position:sticky; top:16px; max-height:calc(100vh / var(--z, 1) - 52px - 32px); }
 }
 /* Tablet: two columns of panels, today's list below. */
 @media (min-width:700px) and (max-width:1099.98px) {
@@ -218,9 +227,9 @@ kbd { font:600 11px/1 var(--mono); padding:2px 5px; border:1px solid var(--line2
 @media (max-width:699.98px) {
   body { font-size:16px; }
   .desk { padding:12px; gap:12px; }
-  .appbar { padding:0 12px; gap:8px; }
   .brand .pg, .brand .mk { display:none; }
   .hlink { padding:0 8px; }
+  .appbar { height:auto; min-height:52px; flex-wrap:wrap; padding:6px 12px; gap:6px 8px; } .hright { flex-wrap:wrap; justify-content:flex-end; row-gap:6px; } .nav .hlink { padding:0 8px; font-size:13px; }
   .actions { grid-template-columns:minmax(0,1fr); }
   .btns { flex-wrap:wrap; }
   #send { flex:1 1 100%; }
@@ -232,7 +241,7 @@ kbd { font:600 11px/1 var(--mono); padding:2px 5px; border:1px solid var(--line2
   .desk { padding:12px; gap:10px; } .entry { gap:10px; }
   .panel { padding:10px 14px 12px; } .ph { margin-bottom:10px; } .fld { margin-bottom:8px; }
   input[type=text], input[type=date], input[type=email], input[type=password], select, .chips span { height:40px; min-height:40px; }
-  .side { max-height:calc(100vh - 52px - 24px); top:12px; }
+  .side { max-height:calc(100vh / var(--z, 1) - 52px - 24px); top:12px; }
   .keys { display:none; }
 }
 /* ── admin "Link ▾" menu (shared.js mountLinks) ── */
@@ -247,7 +256,7 @@ kbd { font:600 11px/1 var(--mono); padding:2px 5px; border:1px solid var(--line2
 </head>
 <body>
 <header class="appbar">
-  <div class="brand" id="brand" title="Pagina costruita 2026-10-16 22:02 UTC · 4bd5cf0"><span class="mk">Rai · NY</span><span id="t">RAI NYC Servizi</span><span class="pg" data-i18n>Registrazione</span></div>
+  <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-10-17 01:34 UTC · 6fba59d"><span class="mk">Rai · NY</span><span id="t">RAI NYC Servizi</span><span class="pg" data-i18n>Registrazione</span></div>
   <nav class="hright" id="hright" aria-label="Pagine">
     <span class="pend" id="pend" hidden></span>
     <button type="button" class="icbtn" id="theme" aria-label="Cambia tema" title="Cambia tema">
@@ -255,8 +264,12 @@ kbd { font:600 11px/1 var(--mono); padding:2px 5px; border:1px solid var(--line2
       <svg class="ic-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.2M12 19.8V22M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M2 12h2.2M19.8 12H22M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6"/></svg>
     </button>
     <button type="button" class="icbtn lang" id="lang" aria-label="Switch to English" title="Switch to English">EN</button>
-    <a href="mensile" id="lnk-mensile" class="hlink" data-i18n>Mensile</a>
-    <a href="collaudo" id="lnk-collaudo" class="hlink go" data-i18n>Collaudo &rarr;</a>
+    <span class="nav" id="nav">
+      <a class="hlink cur" aria-current="page" href="." id="lnk-form" data-i18n>Registrazione</a>
+      <a class="hlink" href="collaudo" id="lnk-collaudo" data-i18n>Collaudo</a>
+      <a class="hlink" href="mensile" id="lnk-mensile" data-i18n>Mensile</a>
+      <a class="hlink" href="gestione" id="lnk-gestione" hidden data-i18n>Gestione</a>
+    </span>
   </nav>
 </header>
 
@@ -396,7 +409,7 @@ var PAGE_FORM = "./" || APP_BASE;
 var PAGE_COLLAUDO = "./collaudo.html" || APP_BASE + "/collaudo";
 var PAGE_GESTIONE = "./gestione.html" || APP_BASE + "/gestione";
 var PAGE_MENSILE = "./mensile.html" || APP_BASE + "/mensile";
-var BUILD = "2026-10-16 22:02 UTC · 4bd5cf0"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
+var BUILD = "2026-10-17 01:34 UTC · 6fba59d"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
 // Every place the project lives (shown in the admin's header menu and on the Gestione page).
 var LINKS = [
   ["Pagine pubbliche", "https://rainycservizi.github.io/rainyc-servizi-app/", "GitHub Pages: il sito di prova principale"],
@@ -416,10 +429,11 @@ var LINKS = [
 // Page code re-renders its dynamic parts on the "rainyc:lang" event.
 var LANG_KEY = "rainyc.lingua";
 var I18N = { en: {
+  "Oggi": "Today", "Settimana corrente": "Current week", "Mese corrente": "Current month", "Comprimi sezione": "Collapse section", "Espandi sezione": "Expand section",
   // header, login, shared
   "Mensile": "Monthly", "Mensile →": "Monthly →", "Mese": "Month", "Mese precedente": "Previous month", "Mese successivo": "Next month", "Accesso · mensile": "Login · monthly",
   "Report mensile": "Monthly report", "Sede di corrispondenza di New York": "New York bureau", "il prospetto per Roma": "the sheet for Rome", "Settimane del mese": "Weeks of the month", "Settimana": "Week", "Giornalisti": "Journalists",
-  "Servizi video": "Video stories", "Servizi radio": "Radio stories", "Totale video": "Total video", "Totale radio": "Total radio", "Radio GR 1": "Radio GR 1", "storico, inviato": "historical, sent", "dal database": "from the database",
+  "Servizi video": "Video stories", "Servizi radio": "Radio stories", "Totale video": "Total video", "Totale radio": "Total radio", "Radio GR 1": "Radio GR 1", "inviato": "sent", "dal database": "from the database",
   "{0} registrazioni nel mese": "{0} entries in the month", "Caricamento del mese {0}…": "Loading {0}…", "Mensile {0} · RAI NYC Servizi": "Monthly {0} · RAI NYC Servizi", "Mese non valido: usare la forma 2026-10.": "Invalid month: use the form 2026-10.",
   "Top Sheet {0}: cifre di Gennaio–Luglio come inviate a Roma; da Agosto dal database (registrazioni annullate escluse). GR 1, 2, 3 ripetono il conteggio radio, come nel foglio.": "Top Sheet {0}: January–July as sent to Rome; from August from the database (voided entries excluded). GR 1, 2, 3 repeat the radio count, as in the sheet.",
   "Generato il {0} dal sistema RAI NYC Servizi · fonte: database": "Generated on {0} by RAI NYC Servizi · source: database",
@@ -561,7 +575,7 @@ function applyLang() {
     });
   });
   var br = document.getElementById("brand");
-  if (br) br.title = t("Pagina costruita") + " " + BUILD;
+  if (br) br.title = "Built by Caruso" + (BUILD ? " \u00b7 " + t("Pagina costruita") + " " + BUILD : "");
   var out = document.getElementById("lnk-esci");
   if (out && out.getAttribute("data-user")) out.title = tf("Esci ({0})", out.getAttribute("data-user"));
   var stamp = document.querySelector("#lnk-menu .stamp");
@@ -828,14 +842,10 @@ function mountPassword(slot) {
   if (old) old.parentNode.removeChild(old);
   var oldLink = document.getElementById("lnk-pwd");
   if (oldLink) oldLink.parentNode.removeChild(oldLink);
-  var oldG = document.getElementById("lnk-gestione");
-  if (oldG) oldG.parentNode.removeChild(oldG);
+  // The Gestione link sits in the page's nav (hidden unless the admin is signed in; always shown on Gestione itself).
+  var g = document.getElementById("lnk-gestione");
+  if (g && !document.body.hasAttribute("data-gestione")) g.hidden = !(slot && canChangePassword());
   if (!slot || !canChangePassword()) return;
-  if (!document.body.hasAttribute("data-gestione")) {
-    var g = document.createElement("a");
-    g.href = PAGE_GESTIONE; g.id = "lnk-gestione"; g.className = "hlink"; L(g, "Gestione");
-    slot.insertBefore(g, slot.firstChild);
-  }
   mountLinks(slot);
   var a = document.createElement("a");
   a.href = "#"; a.id = "lnk-pwd"; a.className = "hlink"; L(a, "Cambia password");
@@ -1003,7 +1013,7 @@ function fmtRange(a, b) {
   var lists = null;
   var params = new URLSearchParams(location.search);
   // The page lives at …/servizi (no trailing slash): relative links would resolve one level up.
-  $("lnk-collaudo").href = PAGE_COLLAUDO; $("lnk-mensile").href = PAGE_MENSILE;
+  $("lnk-form").href = PAGE_FORM; $("lnk-collaudo").href = PAGE_COLLAUDO; $("lnk-mensile").href = PAGE_MENSILE; $("lnk-gestione").href = PAGE_GESTIONE;
   initTheme("theme");
   initLang("lang");
   var isMac = /Mac|iPhone|iPad/.test(navigator.platform || "");
