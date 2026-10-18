@@ -148,7 +148,7 @@ td.dim { color:var(--dim); } tr.off td { color:var(--dim); } tr.off td:first-chi
 </head>
 <body data-gestione>
 <header class="appbar">
-  <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-10-18 00:16 UTC · 4d2f946"><span class="mk">Rai · NY</span><span class="nm">RAI NYC Servizi</span><span class="pg" data-i18n>Gestione</span></div>
+  <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-10-18 00:21 UTC · 34a7a59"><span class="mk">Rai · NY</span><span class="nm">RAI NYC Servizi</span><span class="pg" data-i18n>Gestione</span></div>
   <nav class="hright" id="hright" aria-label="Pagine">
     <button type="button" class="icbtn" id="theme" aria-label="Cambia tema" title="Cambia tema">
       <svg class="ic-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
@@ -289,7 +289,7 @@ var PAGE_FORM = "./" || APP_BASE;
 var PAGE_COLLAUDO = "./collaudo.html" || APP_BASE + "/collaudo";
 var PAGE_GESTIONE = "./gestione.html" || APP_BASE + "/gestione";
 var PAGE_MENSILE = "./mensile.html" || APP_BASE + "/mensile";
-var BUILD = "2026-10-18 00:16 UTC · 4d2f946"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
+var BUILD = "2026-10-18 00:21 UTC · 34a7a59"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
 // Every place the project lives (shown in the admin's header menu and on the Gestione page).
 var LINKS = [
   ["Pagine pubbliche", "https://rainycservizi.github.io/rainyc-servizi-app/", "GitHub Pages: il sito di prova principale"],
@@ -415,7 +415,7 @@ var I18N = { en: {
   "Giornalisti attivi": "Active journalists", "Operatori attivi": "Active operators",
   "Ultima registrazione": "Last entry", "Ultima voce del registro": "Last audit entry", "servita dalla funzione": "served by the function",
   "aggiornato {0}": "updated {0}", "il modulo dei montatori": "the editors' form", "la settimana da stampare o inviare": "the week to print or send",
-  "E-mail del collaudo": "Weekly report e-mail", "possono inviare: erika, caruso, pippo": "allowed to send: erika, caruso, pippo",
+  "E-mail dei report (collaudo, Top Sheet)": "Report e-mails (weekly, Top Sheet)", "possono inviare: erika, caruso, pippo": "allowed to send: erika, caruso, pippo",
   "Destinatari proposti": "Suggested recipients", "(nessuno: secret COLLAUDO_TO vuoto)": "(none: secret COLLAUDO_TO is empty)",
   "nuova password": "new password", "Nuova password per {0}": "New password for {0}", "Imposta": "Set",
   "Cambiare la password di {0}?": "Change the password of {0}?", "Password di {0} aggiornata.": "Password of {0} updated.",
@@ -1083,7 +1083,7 @@ function fmtRange(a, b) {
   var mailInfo = null;
   function renderMail() {
     if (!mailInfo) return;
-    kv($("mail-kv"), [[t("E-mail del collaudo"), t("possono inviare: erika, caruso, pippo")], [t("Destinatari proposti"), mailInfo.join(", ") || t("(nessuno: secret COLLAUDO_TO vuoto)")]]);
+    kv($("mail-kv"), [[t("E-mail dei report (collaudo, Top Sheet)"), t("possono inviare: erika, caruso, pippo")], [t("Destinatari proposti"), mailInfo.join(", ") || t("(nessuno: secret COLLAUDO_TO vuoto)")]]);
   }
 
   // ---- 03 accessi ----
