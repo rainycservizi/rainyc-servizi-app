@@ -154,7 +154,7 @@ footer.doc { margin-top:22px; font-size:11px; color:var(--dim); }
 <body>
 <div class="top" id="top">
   <header class="appbar">
-    <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-10-18 00:25 UTC · 0166195"><span class="mk">Rai · NY</span><span class="nm">RAI NYC Servizi</span><span class="pg" data-i18n>Mensile</span></div>
+    <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-10-18 01:15 UTC · 63a0bf8"><span class="mk">Rai · NY</span><span class="nm">RAI NYC Servizi</span><span class="pg" data-i18n>Mensile</span></div>
     <nav class="hright" id="hright" aria-label="Pagine">
       <button type="button" class="icbtn" id="theme" aria-label="Cambia tema" title="Cambia tema">
         <svg class="ic-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
@@ -214,7 +214,7 @@ var PAGE_FORM = "./" || APP_BASE;
 var PAGE_COLLAUDO = "./collaudo.html" || APP_BASE + "/collaudo";
 var PAGE_GESTIONE = "./gestione.html" || APP_BASE + "/gestione";
 var PAGE_MENSILE = "./mensile.html" || APP_BASE + "/mensile";
-var BUILD = "2026-10-18 00:25 UTC · 0166195"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
+var BUILD = "2026-10-18 01:15 UTC · 63a0bf8"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
 // Every place the project lives (shown in the admin's header menu and on the Gestione page).
 var LINKS = [
   ["Pagine pubbliche", "https://rainycservizi.github.io/rainyc-servizi-app/", "GitHub Pages: il sito di prova principale"],
@@ -271,12 +271,12 @@ var I18N = { en: {
   "(edizione; anche testo libero)": "(edition; free text also allowed)", "(programma; testo libero)": "(programme; free text)",
   "(scegliere prima la rete)": "(pick the network first)", "Durata": "Duration", "(facoltativa)": "(optional)", "(facoltative)": "(optional)",
   "Mezzo": "Delivery means", "Trasferta": "Travel",
-  "Nessuna trasferta aperta. Impostarla una volta: vale su ogni macchina, per le registrazioni di quel giornalista nelle date indicate.": "No open travel. Set it once: it applies on every machine to that journalist's entries on those dates.",
+  "Nessuna trasferta aperta. Impostarla una volta: vale su ogni macchina, per le registrazioni di quell'operatore nelle date indicate.": "No open travel. Set it once: it applies on every machine to that operator's entries on those dates.",
   "Termina trasferta": "End travel", "Termina": "End", "Trasferta aperta.": "Travel opened.", "Trasferta terminata.": "Travel ended.", "Trasferta non salvata.": "Travel not saved.", "Trasferta non terminata.": "Travel not ended.",
-  "Questa registrazione: NO (altro giornalista o altre date)": "This entry: NO (other journalist or other dates)",
+  "Questa registrazione: NO (altro operatore o altre date)": "This entry: NO (other operator or other dates)", "con": "with",
   "Nessuna trasferta impostata. Impostarla una volta: vale per ogni registrazione di quel giornalista finché non viene rimossa.": "No travel set. Set it once: it applies to every entry of that journalist until it is removed.",
   "Imposta trasferta…": "Set travel…", "Modifica…": "Edit…", "Rimuovi trasferta": "Remove travel",
-  "Giornalista in trasferta": "Journalist on travel", "Destinazione": "Destination", "Dal": "From", "Al": "To", "Applica": "Apply", "Annulla": "Cancel",
+  "Giornalista in trasferta": "Journalist on travel", "Operatore in trasferta": "Operator on travel", "Con il giornalista": "With the journalist", "(facoltativo)": "(optional)", "Destinazione": "Destination", "Dal": "From", "Al": "To", "Applica": "Apply", "Annulla": "Cancel",
   "Operatore": "Operator", "Note": "Notes", "Invia registrazione": "Submit entry", "Ctrl+Invio": "Ctrl+Enter", "⌘+Invio": "⌘+Enter", "Svuota": "Clear",
   "Categoria": "Category", "Registrazioni di oggi": "Today's entries", "Nessuna registrazione oggi.": "No entries today.",
   "Mostra tutte le scelte": "Show all choices",
@@ -310,7 +310,8 @@ var I18N = { en: {
   "Modifica salvata.": "Change saved.", "Trasferta salvata.": "Travel saved.", "Registrazione ripristinata.": "Entry restored.",
   "Modifica annullata.": "Change undone.", "Annullare questa registrazione?": "Cancel this entry?",
   "Settimana non valida: usare la forma 2026-W41.": "Invalid week: use the form 2026-W41.",
-  "Modifica": "Edit", "Annulla registrazione": "Cancel entry", "Collaudo {0} · RAI NYC Servizi": "Weekly report {0} · RAI NYC Servizi",
+  "Modifica": "Edit", "Annulla registrazione": "Cancel entry", "Chiudi": "Close",
+  "Trasferta di {0}: {1}, {2}. Vale per tutte le registrazioni di questo operatore in quelle date; si imposta o si termina dal modulo di registrazione, sezione 05.": "Travel of {0}: {1}, {2}. It applies to every entry of this operator on those dates; set or end it from the entry form, section 05.", "Collaudo {0} · RAI NYC Servizi": "Weekly report {0} · RAI NYC Servizi",
   "Invia per e-mail · {0}": "Send by e-mail · {0}",
   "Il collaudo della settimana {0} (colonne di Roma, senza operatori) parte dalla casella della redazione. Scegliere i destinatari.": "The weekly report for week {0} (Rome's columns, no operators) is sent from the newsroom mailbox. Choose the recipients.",
   "Togli dall'elenco": "Remove from the list", "Togli {0}": "Remove {0}", "Nessun destinatario: aggiungerne uno qui sotto.": "No recipients: add one below.",
@@ -898,13 +899,22 @@ function todayNewYork(now) {
 
 const MESI = ["gennaio", "febbraio", "marzo", "aprile", "maggio", "giugno", "luglio",
   "agosto", "settembre", "ottobre", "novembre", "dicembre"];
+const MESI_EN = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+const GIORNI_EN = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+// Screen language for the dates rendered by this file and lib/collaudo.js (Marco, 2026-10-17: the notes must be in
+// English when the page is). Italian by default; the pages call setLang(langNow()) before rendering; the function
+// (e-mails to Rome) never calls it.
+let LANG = "it";
+function setLang(l) { LANG = l === "en" ? "en" : "it"; }
+function monthName(i) { return (LANG === "en" ? MESI_EN : MESI)[i]; }
+function dayName(i) { return (LANG === "en" ? GIORNI_EN : GIORNI)[i]; }
 const GIORNI = ["Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato", "Domenica"];
 
 /** "Lunedì 5 ottobre 2026" @param {string} date */
 function fmtDay(date) {
   const ms = utcOf(date);
   const d = new Date(ms);
-  return GIORNI[dow(ms)] + " " + d.getUTCDate() + " " + MESI[d.getUTCMonth()] + " " + d.getUTCFullYear();
+  return dayName(dow(ms)) + " " + d.getUTCDate() + " " + monthName(d.getUTCMonth()) + " " + d.getUTCFullYear();
 }
 
 /** "5–11 ottobre 2026" / "28 settembre – 4 ottobre 2026" / across years. */
@@ -912,9 +922,9 @@ function fmtRange(a, b) {
   const da = new Date(utcOf(a)), db = new Date(utcOf(b));
   const ya = da.getUTCFullYear(), yb = db.getUTCFullYear();
   const ma = da.getUTCMonth(), mb = db.getUTCMonth();
-  if (ya !== yb) return da.getUTCDate() + " " + MESI[ma] + " " + ya + " – " + db.getUTCDate() + " " + MESI[mb] + " " + yb;
-  if (ma !== mb) return da.getUTCDate() + " " + MESI[ma] + " – " + db.getUTCDate() + " " + MESI[mb] + " " + yb;
-  return da.getUTCDate() + "–" + db.getUTCDate() + " " + MESI[ma] + " " + ya;
+  if (ya !== yb) return da.getUTCDate() + " " + monthName(ma) + " " + ya + " – " + db.getUTCDate() + " " + monthName(mb) + " " + yb;
+  if (ma !== mb) return da.getUTCDate() + " " + monthName(ma) + " – " + db.getUTCDate() + " " + monthName(mb) + " " + yb;
+  return da.getUTCDate() + "–" + db.getUTCDate() + " " + monthName(ma) + " " + ya;
 }
 
 // ---- end lib/week.js ----
@@ -1055,6 +1065,7 @@ function journalistsOf(rows) {
   function hd(it) { var en = t(it); return en === it ? esc(it) : '<span class="scr">' + esc(en) + '</span><span class="prn">' + esc(it) + "</span>"; }
   function n(v) { return v == null ? "–" : String(v); }
   function render() {
+    setLang(langNow()); // week ranges in the screen language (Italian in print and in the e-mail)
     var m = current, y = data.year, ym = formatMonth(m);
     var groupA = ["video", "radio", "live", "tappeti"], groupB = ["tg1", "tg2", "tg3", "rnews", "altre", "tot_video"], groupC = ["gr1", "gr2", "gr3", "tot_radio"];
     var label = {}; TOPSHEET_COLS.forEach(function (c) { label[c[0]] = c[1]; });

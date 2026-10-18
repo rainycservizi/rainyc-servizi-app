@@ -262,7 +262,7 @@ kbd { font:600 11px/1 var(--mono); padding:2px 5px; border:1px solid var(--line2
 </head>
 <body>
 <header class="appbar">
-  <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-10-18 00:25 UTC · 0166195"><span class="mk">Rai · NY</span><span id="t">RAI NYC Servizi</span><span class="pg" data-i18n>Registrazione</span></div>
+  <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-10-18 01:15 UTC · 63a0bf8"><span class="mk">Rai · NY</span><span id="t">RAI NYC Servizi</span><span class="pg" data-i18n>Registrazione</span></div>
   <nav class="hright" id="hright" aria-label="Pagine">
     <span class="pend" id="pend" hidden></span>
     <button type="button" class="icbtn" id="theme" aria-label="Cambia tema" title="Cambia tema">
@@ -336,7 +336,7 @@ kbd { font:600 11px/1 var(--mono); padding:2px 5px; border:1px solid var(--line2
       <section class="panel p-trip" aria-labelledby="h-trip">
         <h2 class="ph" id="h-trip" data-i18n><span class="n">05</span> Trasferta <span class="aside" id="trip-apply"></span></h2>
         <div class="tstate">
-          <div class="tnone" id="trip-none" data-i18n>Nessuna trasferta aperta. Impostarla una volta: vale su ogni macchina, per le registrazioni di quel giornalista nelle date indicate.</div>
+          <div class="tnone" id="trip-none" data-i18n>Nessuna trasferta aperta. Impostarla una volta: vale su ogni macchina, per le registrazioni di quell'operatore nelle date indicate.</div>
           <ul class="tset tlist" id="trip-set" hidden></ul>
           <div class="tbtns"><button type="button" class="btn" id="trip-edit" aria-haspopup="dialog" aria-expanded="false">Imposta trasferta&hellip;</button><button type="button" class="btn mini" id="trip-remove" hidden data-i18n>Termina trasferta</button></div>
         </div>
@@ -344,7 +344,11 @@ kbd { font:600 11px/1 var(--mono); padding:2px 5px; border:1px solid var(--line2
           <h3 class="ph" id="trip-h" data-i18n>Trasferta</h3>
           <div class="grid">
             <div class="fld">
-              <label for="trip-giornalista" data-i18n>Giornalista in trasferta</label>
+              <label for="trip-operatore" data-i18n>Operatore in trasferta</label>
+              <select id="trip-operatore"></select>
+            </div>
+            <div class="fld">
+              <label for="trip-giornalista" data-i18n>Con il giornalista <span class="hint" data-i18n>(facoltativo)</span></label>
               <select id="trip-giornalista"></select>
             </div>
             <div class="fld">
@@ -415,7 +419,7 @@ var PAGE_FORM = "./" || APP_BASE;
 var PAGE_COLLAUDO = "./collaudo.html" || APP_BASE + "/collaudo";
 var PAGE_GESTIONE = "./gestione.html" || APP_BASE + "/gestione";
 var PAGE_MENSILE = "./mensile.html" || APP_BASE + "/mensile";
-var BUILD = "2026-10-18 00:25 UTC · 0166195"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
+var BUILD = "2026-10-18 01:15 UTC · 63a0bf8"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
 // Every place the project lives (shown in the admin's header menu and on the Gestione page).
 var LINKS = [
   ["Pagine pubbliche", "https://rainycservizi.github.io/rainyc-servizi-app/", "GitHub Pages: il sito di prova principale"],
@@ -472,12 +476,12 @@ var I18N = { en: {
   "(edizione; anche testo libero)": "(edition; free text also allowed)", "(programma; testo libero)": "(programme; free text)",
   "(scegliere prima la rete)": "(pick the network first)", "Durata": "Duration", "(facoltativa)": "(optional)", "(facoltative)": "(optional)",
   "Mezzo": "Delivery means", "Trasferta": "Travel",
-  "Nessuna trasferta aperta. Impostarla una volta: vale su ogni macchina, per le registrazioni di quel giornalista nelle date indicate.": "No open travel. Set it once: it applies on every machine to that journalist's entries on those dates.",
+  "Nessuna trasferta aperta. Impostarla una volta: vale su ogni macchina, per le registrazioni di quell'operatore nelle date indicate.": "No open travel. Set it once: it applies on every machine to that operator's entries on those dates.",
   "Termina trasferta": "End travel", "Termina": "End", "Trasferta aperta.": "Travel opened.", "Trasferta terminata.": "Travel ended.", "Trasferta non salvata.": "Travel not saved.", "Trasferta non terminata.": "Travel not ended.",
-  "Questa registrazione: NO (altro giornalista o altre date)": "This entry: NO (other journalist or other dates)",
+  "Questa registrazione: NO (altro operatore o altre date)": "This entry: NO (other operator or other dates)", "con": "with",
   "Nessuna trasferta impostata. Impostarla una volta: vale per ogni registrazione di quel giornalista finché non viene rimossa.": "No travel set. Set it once: it applies to every entry of that journalist until it is removed.",
   "Imposta trasferta…": "Set travel…", "Modifica…": "Edit…", "Rimuovi trasferta": "Remove travel",
-  "Giornalista in trasferta": "Journalist on travel", "Destinazione": "Destination", "Dal": "From", "Al": "To", "Applica": "Apply", "Annulla": "Cancel",
+  "Giornalista in trasferta": "Journalist on travel", "Operatore in trasferta": "Operator on travel", "Con il giornalista": "With the journalist", "(facoltativo)": "(optional)", "Destinazione": "Destination", "Dal": "From", "Al": "To", "Applica": "Apply", "Annulla": "Cancel",
   "Operatore": "Operator", "Note": "Notes", "Invia registrazione": "Submit entry", "Ctrl+Invio": "Ctrl+Enter", "⌘+Invio": "⌘+Enter", "Svuota": "Clear",
   "Categoria": "Category", "Registrazioni di oggi": "Today's entries", "Nessuna registrazione oggi.": "No entries today.",
   "Mostra tutte le scelte": "Show all choices",
@@ -511,7 +515,8 @@ var I18N = { en: {
   "Modifica salvata.": "Change saved.", "Trasferta salvata.": "Travel saved.", "Registrazione ripristinata.": "Entry restored.",
   "Modifica annullata.": "Change undone.", "Annullare questa registrazione?": "Cancel this entry?",
   "Settimana non valida: usare la forma 2026-W41.": "Invalid week: use the form 2026-W41.",
-  "Modifica": "Edit", "Annulla registrazione": "Cancel entry", "Collaudo {0} · RAI NYC Servizi": "Weekly report {0} · RAI NYC Servizi",
+  "Modifica": "Edit", "Annulla registrazione": "Cancel entry", "Chiudi": "Close",
+  "Trasferta di {0}: {1}, {2}. Vale per tutte le registrazioni di questo operatore in quelle date; si imposta o si termina dal modulo di registrazione, sezione 05.": "Travel of {0}: {1}, {2}. It applies to every entry of this operator on those dates; set or end it from the entry form, section 05.", "Collaudo {0} · RAI NYC Servizi": "Weekly report {0} · RAI NYC Servizi",
   "Invia per e-mail · {0}": "Send by e-mail · {0}",
   "Il collaudo della settimana {0} (colonne di Roma, senza operatori) parte dalla casella della redazione. Scegliere i destinatari.": "The weekly report for week {0} (Rome's columns, no operators) is sent from the newsroom mailbox. Choose the recipients.",
   "Togli dall'elenco": "Remove from the list", "Togli {0}": "Remove {0}", "Nessun destinatario: aggiungerne uno qui sotto.": "No recipients: add one below.",
@@ -1099,13 +1104,22 @@ function todayNewYork(now) {
 
 const MESI = ["gennaio", "febbraio", "marzo", "aprile", "maggio", "giugno", "luglio",
   "agosto", "settembre", "ottobre", "novembre", "dicembre"];
+const MESI_EN = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+const GIORNI_EN = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+// Screen language for the dates rendered by this file and lib/collaudo.js (Marco, 2026-10-17: the notes must be in
+// English when the page is). Italian by default; the pages call setLang(langNow()) before rendering; the function
+// (e-mails to Rome) never calls it.
+let LANG = "it";
+function setLang(l) { LANG = l === "en" ? "en" : "it"; }
+function monthName(i) { return (LANG === "en" ? MESI_EN : MESI)[i]; }
+function dayName(i) { return (LANG === "en" ? GIORNI_EN : GIORNI)[i]; }
 const GIORNI = ["Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato", "Domenica"];
 
 /** "Lunedì 5 ottobre 2026" @param {string} date */
 function fmtDay(date) {
   const ms = utcOf(date);
   const d = new Date(ms);
-  return GIORNI[dow(ms)] + " " + d.getUTCDate() + " " + MESI[d.getUTCMonth()] + " " + d.getUTCFullYear();
+  return dayName(dow(ms)) + " " + d.getUTCDate() + " " + monthName(d.getUTCMonth()) + " " + d.getUTCFullYear();
 }
 
 /** "5–11 ottobre 2026" / "28 settembre – 4 ottobre 2026" / across years. */
@@ -1113,9 +1127,9 @@ function fmtRange(a, b) {
   const da = new Date(utcOf(a)), db = new Date(utcOf(b));
   const ya = da.getUTCFullYear(), yb = db.getUTCFullYear();
   const ma = da.getUTCMonth(), mb = db.getUTCMonth();
-  if (ya !== yb) return da.getUTCDate() + " " + MESI[ma] + " " + ya + " – " + db.getUTCDate() + " " + MESI[mb] + " " + yb;
-  if (ma !== mb) return da.getUTCDate() + " " + MESI[ma] + " – " + db.getUTCDate() + " " + MESI[mb] + " " + yb;
-  return da.getUTCDate() + "–" + db.getUTCDate() + " " + MESI[ma] + " " + ya;
+  if (ya !== yb) return da.getUTCDate() + " " + monthName(ma) + " " + ya + " – " + db.getUTCDate() + " " + monthName(mb) + " " + yb;
+  if (ma !== mb) return da.getUTCDate() + " " + monthName(ma) + " – " + db.getUTCDate() + " " + monthName(mb) + " " + yb;
+  return da.getUTCDate() + "–" + db.getUTCDate() + " " + monthName(ma) + " " + ya;
 }
 
 // ---- end lib/week.js ----
@@ -1202,13 +1216,14 @@ function fmtRange(a, b) {
   var myOperator = null; // the operator of the logged-in account, when the login is personal
   function buildForm() {
     fillDatalist("l-giornalisti", lists.giornalisti);
-    fillSelect("trip-giornalista", lists.giornalisti);
+    fillSelect("trip-giornalista", [""].concat(lists.giornalisti));
     chips("c-rete", "rete", lists.reti);
     chips("c-mezzo", "mezzo", lists.mezzi);
     fillSelect("operatore", lists.operatori.map(function (o) { return o.display_name; }));
     var fromUrl = params.get("operatore") || params.get("op");
     var last = null; try { last = localStorage.getItem("rainyc.operatore"); } catch (e) { /* ignore */ }
     var names = lists.operatori.map(function (o) { return o.display_name; });
+    fillSelect("trip-operatore", names);
     // The logged-in operator: "de.marco@rainyc.nyc" -> "De Marco" (the bureau account matches nobody).
     var s = Session.get(), local = s && s.email ? s.email.split("@")[0] : "";
     var mine = names.filter(function (n) { return n.toLowerCase().replace(/\s+/g, ".") === local; })[0] || null;
@@ -1310,10 +1325,12 @@ function fmtRange(a, b) {
 
   // ---- trasferta: a state of the session, not of the entry ----
   // Trips live in the database (table trasferte, Marco 2026-10-16: "straight to the database, like everything
-  // else"): set once from any machine, every entry of THAT journalist dated inside [dal, al] goes out with
-  // trasferta = sì and the details, on every machine, until the trip is ended. A copy is cached for offline use.
+  // else") and belong to the OPERATOR who travels (Marco 2026-10-17: "red only on the operatore that is in
+  // trasferta"), optionally "con" a journalist. Set once from any machine; the collaudo marks every entry of that
+  // operator dated inside [dal, al] (derived by the database view, nothing is stamped on the entry); an overlapping
+  // new trip of the same operator replaces the old one. A copy is cached for offline use.
   var TCACHE = "rainyc.trasferte";
-  var trips = [];         // open trips: [{id, giornalista, luogo, dal, al}]
+  var trips = [];         // open trips: [{id, operatore, giornalista, luogo, dal, al}]
   var tripReturn = null;  // element to focus when the editor closes
   function tripsLoad() {
     return api("/api/trasferte").then(function (r) {
@@ -1327,9 +1344,9 @@ function fmtRange(a, b) {
   }
   function tripFor(name, date) {
     var n = (name || "").trim().toLowerCase();
-    return trips.filter(function (x) { return x.giornalista.toLowerCase() === n && (!date || (x.dal <= date && date <= x.al)); })[0] || null;
+    return trips.filter(function (x) { return String(x.operatore || "").toLowerCase() === n && (!date || (x.dal <= date && date <= x.al)); })[0] || null;
   }
-  function tripApplies() { return tripFor($("giornalista").value, $("data").value); }
+  function tripApplies() { return tripFor($("operatore").value, $("data").value); }
   function dmy(d) { return d ? d.slice(8, 10) + "/" + d.slice(5, 7) : ""; }
   function renderTrip() {
     var on = trips.length > 0, applies = tripApplies(), todayStr = today();
@@ -1339,28 +1356,29 @@ function fmtRange(a, b) {
     trips.forEach(function (x) {
       var li = document.createElement("li"); li.setAttribute("data-id", x.id); if (x.al < todayStr) li.className = "off";
       var tx = document.createElement("span"); tx.className = "tx";
-      var b = document.createElement("b"); b.textContent = x.giornalista; tx.appendChild(b);
-      tx.appendChild(document.createTextNode(" · " + x.luogo + " · "));
+      var b = document.createElement("b"); b.textContent = x.operatore; tx.appendChild(b);
+      tx.appendChild(document.createTextNode((x.giornalista ? " " + t("con") + " " + x.giornalista : "") + " · " + x.luogo + " · "));
       var dt = document.createElement("span"); dt.className = "tdates"; dt.textContent = x.dal === x.al ? dmy(x.dal) : dmy(x.dal) + " – " + dmy(x.al); tx.appendChild(dt);
-      tx.title = x.giornalista + " · " + x.luogo + " · " + x.dal + " – " + x.al;
+      tx.title = x.operatore + (x.giornalista ? " con " + x.giornalista : "") + " · " + x.luogo + " · " + x.dal + " – " + x.al;
       var e = document.createElement("button"); e.type = "button"; e.className = "btn mini trip-end"; e.setAttribute("data-id", x.id); e.textContent = t("Termina");
       li.appendChild(tx); li.appendChild(e); ul.appendChild(li);
     });
     var a = $("trip-apply");
-    a.textContent = on ? t(applies ? "Questa registrazione: SI" : "Questa registrazione: NO (altro giornalista o altre date)") : "";
+    a.textContent = on ? t(applies ? "Questa registrazione: SI" : "Questa registrazione: NO (altro operatore o altre date)") : "";
     a.className = "aside" + (applies ? " on" : "");
   }
   function tripOpen() {
     if (!$("trip").hidden) return;
     tripReturn = document.activeElement;
     var g = $("giornalista").value.trim();
+    $("trip-operatore").value = $("operatore").value || "";
     $("trip-giornalista").value = lists.giornalisti.indexOf(g) >= 0 ? g : "";
     $("trip-luogo").value = "";
     $("trip-dal").value = $("data").value;
     $("trip-al").value = $("data").value;
     $("trip-err").textContent = "";
     $("trip").hidden = false; $("trip-edit").setAttribute("aria-expanded", "true");
-    ($("trip-giornalista").value ? $("trip-luogo") : $("trip-giornalista")).focus();
+    ($("trip-operatore").value ? $("trip-luogo") : $("trip-operatore")).focus();
   }
   function tripClose() {
     if ($("trip").hidden) return;
@@ -1371,9 +1389,9 @@ function fmtRange(a, b) {
     back.focus();
   }
   function tripApply() {
-    var nt = { journalist: $("trip-giornalista").value, luogo: $("trip-luogo").value.trim(), dal: $("trip-dal").value, al: $("trip-al").value };
+    var nt = { operator: $("trip-operatore").value, journalist: $("trip-giornalista").value || null, luogo: $("trip-luogo").value.trim(), dal: $("trip-dal").value, al: $("trip-al").value };
     var missing = [];
-    if (!nt.journalist) missing.push("Giornalista in trasferta");
+    if (!nt.operator) missing.push("Operatore in trasferta");
     if (!nt.luogo) missing.push("Destinazione");
     if (!nt.dal) missing.push("Dal");
     if (!nt.al) missing.push("Al");
@@ -1410,6 +1428,7 @@ function fmtRange(a, b) {
     else if (ev.key === "Enter" && ev.target.tagName !== "BUTTON") { ev.preventDefault(); ev.stopPropagation(); tripApply(); }
   });
   $("giornalista").addEventListener("input", renderTrip);
+  $("operatore").addEventListener("change", renderTrip);
 
   function resetAll() {
     form.reset();
@@ -1644,9 +1663,7 @@ function fmtRange(a, b) {
     if (!v.rete) miss("Rete", null);
     if (!v.mezzo) miss("Mezzo", null);
     if (!v.operator) miss("Operatore", "operatore");
-    // An open trip of this journalist covering the entry date marks the entry (validated by the database when set).
-    var tr = gMatch ? tripFor(gMatch, v.delivery_date) : null;
-    if (tr) { v.trasferta = true; v.trasferta_journalist = tr.giornalista; v.trasferta_luogo = tr.luogo; v.trasferta_dal = tr.dal; v.trasferta_al = tr.al; }
+    // Trasferta is not stamped on the entry: the collaudo derives it from the operator's open trip (trasferte table).
     if (missing.length) {
       errSrc = function () { return tf("Manca: {0}.", missing.map(function (m) { return t(m); }).join(", ")); }; paintErr();
       if (focusId) $(focusId).focus();

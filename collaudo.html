@@ -146,6 +146,7 @@ td.ed.saving { opacity:.5; }
 td.ed .edin { width:100%; min-width:6em; height:30px; font:inherit; padding:2px 6px; border:1px solid var(--focus); border-radius:4px; background:var(--input); color:var(--fg); }
 td.act { white-space:nowrap; text-align:right; width:1%; padding-top:4px; padding-bottom:4px; }
 td.notec { max-width:16em; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:var(--dim); font-size:12.5px; } /* editable note (screen only) */
+@media screen and (max-width:1500px) { td.notec { max-width:7em; } td.tcell .tn { display:block; max-width:7.5em; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; } } /* laptops: the note and the trip note give way, the table stays inside 1366 px */
 button.ic { border:0; background:transparent; color:var(--dim); width:28px; height:28px; line-height:1; padding:0; cursor:pointer; border-radius:4px; font-size:14px; }
 button.ic:hover, button.ic:focus-visible { background:var(--raise); color:var(--fg); }
 button.ic[data-act=void]:hover { color:var(--bad); }
@@ -244,7 +245,7 @@ footer.doc .firma { font-size:13px; white-space:nowrap; }
 <body>
 <div class="top" id="top">
   <header class="appbar">
-    <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-10-18 00:25 UTC · 0166195"><span class="mk">Rai · NY</span><span class="nm">RAI NYC Servizi</span><span class="pg" data-i18n>Collaudo</span></div>
+    <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-10-18 01:15 UTC · 63a0bf8"><span class="mk">Rai · NY</span><span class="nm">RAI NYC Servizi</span><span class="pg" data-i18n>Collaudo</span></div>
     <nav class="hright" id="hright" aria-label="Pagine">
       <button type="button" class="icbtn" id="theme" aria-label="Cambia tema" title="Cambia tema">
         <svg class="ic-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
@@ -292,7 +293,8 @@ footer.doc .firma { font-size:13px; white-space:nowrap; }
 <div class="pop" id="tpop" role="dialog" aria-labelledby="tpop-h" hidden>
   <form id="tpop-f" novalidate>
     <h2 class="ph" id="tpop-h" data-i18n>Trasferta</h2>
-    <div class="seg" role="radiogroup" data-i18n-attr="aria-label" aria-label="Trasferta">
+    <p class="lead" id="tp-info" hidden style="margin:0 0 10px;color:var(--dim);font-size:13px;"></p>
+    <div class="seg" id="tp-seg" role="radiogroup" data-i18n-attr="aria-label" aria-label="Trasferta">
       <label><input type="radio" name="tp-si" id="tp-si" value="true"><span data-i18n>Sì</span></label>
       <label><input type="radio" name="tp-si" id="tp-no" value="false"><span data-i18n>No</span></label>
     </div>
@@ -331,7 +333,7 @@ var PAGE_FORM = "./" || APP_BASE;
 var PAGE_COLLAUDO = "./collaudo.html" || APP_BASE + "/collaudo";
 var PAGE_GESTIONE = "./gestione.html" || APP_BASE + "/gestione";
 var PAGE_MENSILE = "./mensile.html" || APP_BASE + "/mensile";
-var BUILD = "2026-10-18 00:25 UTC · 0166195"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
+var BUILD = "2026-10-18 01:15 UTC · 63a0bf8"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
 // Every place the project lives (shown in the admin's header menu and on the Gestione page).
 var LINKS = [
   ["Pagine pubbliche", "https://rainycservizi.github.io/rainyc-servizi-app/", "GitHub Pages: il sito di prova principale"],
@@ -388,12 +390,12 @@ var I18N = { en: {
   "(edizione; anche testo libero)": "(edition; free text also allowed)", "(programma; testo libero)": "(programme; free text)",
   "(scegliere prima la rete)": "(pick the network first)", "Durata": "Duration", "(facoltativa)": "(optional)", "(facoltative)": "(optional)",
   "Mezzo": "Delivery means", "Trasferta": "Travel",
-  "Nessuna trasferta aperta. Impostarla una volta: vale su ogni macchina, per le registrazioni di quel giornalista nelle date indicate.": "No open travel. Set it once: it applies on every machine to that journalist's entries on those dates.",
+  "Nessuna trasferta aperta. Impostarla una volta: vale su ogni macchina, per le registrazioni di quell'operatore nelle date indicate.": "No open travel. Set it once: it applies on every machine to that operator's entries on those dates.",
   "Termina trasferta": "End travel", "Termina": "End", "Trasferta aperta.": "Travel opened.", "Trasferta terminata.": "Travel ended.", "Trasferta non salvata.": "Travel not saved.", "Trasferta non terminata.": "Travel not ended.",
-  "Questa registrazione: NO (altro giornalista o altre date)": "This entry: NO (other journalist or other dates)",
+  "Questa registrazione: NO (altro operatore o altre date)": "This entry: NO (other operator or other dates)", "con": "with",
   "Nessuna trasferta impostata. Impostarla una volta: vale per ogni registrazione di quel giornalista finché non viene rimossa.": "No travel set. Set it once: it applies to every entry of that journalist until it is removed.",
   "Imposta trasferta…": "Set travel…", "Modifica…": "Edit…", "Rimuovi trasferta": "Remove travel",
-  "Giornalista in trasferta": "Journalist on travel", "Destinazione": "Destination", "Dal": "From", "Al": "To", "Applica": "Apply", "Annulla": "Cancel",
+  "Giornalista in trasferta": "Journalist on travel", "Operatore in trasferta": "Operator on travel", "Con il giornalista": "With the journalist", "(facoltativo)": "(optional)", "Destinazione": "Destination", "Dal": "From", "Al": "To", "Applica": "Apply", "Annulla": "Cancel",
   "Operatore": "Operator", "Note": "Notes", "Invia registrazione": "Submit entry", "Ctrl+Invio": "Ctrl+Enter", "⌘+Invio": "⌘+Enter", "Svuota": "Clear",
   "Categoria": "Category", "Registrazioni di oggi": "Today's entries", "Nessuna registrazione oggi.": "No entries today.",
   "Mostra tutte le scelte": "Show all choices",
@@ -427,7 +429,8 @@ var I18N = { en: {
   "Modifica salvata.": "Change saved.", "Trasferta salvata.": "Travel saved.", "Registrazione ripristinata.": "Entry restored.",
   "Modifica annullata.": "Change undone.", "Annullare questa registrazione?": "Cancel this entry?",
   "Settimana non valida: usare la forma 2026-W41.": "Invalid week: use the form 2026-W41.",
-  "Modifica": "Edit", "Annulla registrazione": "Cancel entry", "Collaudo {0} · RAI NYC Servizi": "Weekly report {0} · RAI NYC Servizi",
+  "Modifica": "Edit", "Annulla registrazione": "Cancel entry", "Chiudi": "Close",
+  "Trasferta di {0}: {1}, {2}. Vale per tutte le registrazioni di questo operatore in quelle date; si imposta o si termina dal modulo di registrazione, sezione 05.": "Travel of {0}: {1}, {2}. It applies to every entry of this operator on those dates; set or end it from the entry form, section 05.", "Collaudo {0} · RAI NYC Servizi": "Weekly report {0} · RAI NYC Servizi",
   "Invia per e-mail · {0}": "Send by e-mail · {0}",
   "Il collaudo della settimana {0} (colonne di Roma, senza operatori) parte dalla casella della redazione. Scegliere i destinatari.": "The weekly report for week {0} (Rome's columns, no operators) is sent from the newsroom mailbox. Choose the recipients.",
   "Togli dall'elenco": "Remove from the list", "Togli {0}": "Remove {0}", "Nessun destinatario: aggiungerne uno qui sotto.": "No recipients: add one below.",
@@ -1015,13 +1018,22 @@ function todayNewYork(now) {
 
 const MESI = ["gennaio", "febbraio", "marzo", "aprile", "maggio", "giugno", "luglio",
   "agosto", "settembre", "ottobre", "novembre", "dicembre"];
+const MESI_EN = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+const GIORNI_EN = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+// Screen language for the dates rendered by this file and lib/collaudo.js (Marco, 2026-10-17: the notes must be in
+// English when the page is). Italian by default; the pages call setLang(langNow()) before rendering; the function
+// (e-mails to Rome) never calls it.
+let LANG = "it";
+function setLang(l) { LANG = l === "en" ? "en" : "it"; }
+function monthName(i) { return (LANG === "en" ? MESI_EN : MESI)[i]; }
+function dayName(i) { return (LANG === "en" ? GIORNI_EN : GIORNI)[i]; }
 const GIORNI = ["Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato", "Domenica"];
 
 /** "Lunedì 5 ottobre 2026" @param {string} date */
 function fmtDay(date) {
   const ms = utcOf(date);
   const d = new Date(ms);
-  return GIORNI[dow(ms)] + " " + d.getUTCDate() + " " + MESI[d.getUTCMonth()] + " " + d.getUTCFullYear();
+  return dayName(dow(ms)) + " " + d.getUTCDate() + " " + monthName(d.getUTCMonth()) + " " + d.getUTCFullYear();
 }
 
 /** "5–11 ottobre 2026" / "28 settembre – 4 ottobre 2026" / across years. */
@@ -1029,9 +1041,9 @@ function fmtRange(a, b) {
   const da = new Date(utcOf(a)), db = new Date(utcOf(b));
   const ya = da.getUTCFullYear(), yb = db.getUTCFullYear();
   const ma = da.getUTCMonth(), mb = db.getUTCMonth();
-  if (ya !== yb) return da.getUTCDate() + " " + MESI[ma] + " " + ya + " – " + db.getUTCDate() + " " + MESI[mb] + " " + yb;
-  if (ma !== mb) return da.getUTCDate() + " " + MESI[ma] + " – " + db.getUTCDate() + " " + MESI[mb] + " " + yb;
-  return da.getUTCDate() + "–" + db.getUTCDate() + " " + MESI[ma] + " " + ya;
+  if (ya !== yb) return da.getUTCDate() + " " + monthName(ma) + " " + ya + " – " + db.getUTCDate() + " " + monthName(mb) + " " + yb;
+  if (ma !== mb) return da.getUTCDate() + " " + monthName(ma) + " – " + db.getUTCDate() + " " + monthName(mb) + " " + yb;
+  return da.getUTCDate() + "–" + db.getUTCDate() + " " + monthName(ma) + " " + ya;
 }
 
 // ---- end lib/week.js ----
@@ -1180,11 +1192,11 @@ function totals(rows) {
 /** "5 ott" @param {string} date */
 function shortDate(date) {
   const d = new Date(date + "T00:00:00Z");
-  return d.getUTCDate() + " " + MESI[d.getUTCMonth()].slice(0, 3);
+  return d.getUTCDate() + " " + monthName(d.getUTCMonth()).slice(0, 3);
 }
 
 /**
- * Who is in trasferta on `day`, from the week's rows: "Lo Prete, Washington D.C. (24–26 ago)".
+ * Who is in trasferta on `day`, from the week's rows: "Sanfilippo con Lo Prete, Washington D.C. (15–18 ott)".
  * Legacy rows (trasferta true, no details) give "sì (dettagli non registrati)".
  * @param {string} day @param {Array<Record<string, unknown>>} rows
  */
@@ -1199,13 +1211,14 @@ function trasferteOn(day, rows) {
       continue;
     }
     if (day < String(r.trasferta_dal) || day > String(r.trasferta_al)) continue;
-    const key = [r.trasferta_giornalista, r.trasferta_luogo, r.trasferta_dal, r.trasferta_al].join("|");
+    const key = [r.trasferta_persona, r.trasferta_con, r.trasferta_luogo, r.trasferta_dal, r.trasferta_al].join("|");
     if (seen.has(key)) continue;
     seen.add(key);
     const range = r.trasferta_dal === r.trasferta_al
       ? shortDate(String(r.trasferta_dal))
       : shortDate(String(r.trasferta_dal)) + "–" + shortDate(String(r.trasferta_al));
-    out.push(`${r.trasferta_giornalista || "?"}, ${r.trasferta_luogo || "?"} (${range})`);
+    const who = String(r.trasferta_persona || "?") + (r.trasferta_con ? " con " + r.trasferta_con : "");
+    out.push(`${who}, ${r.trasferta_luogo || "?"} (${range})`);
   }
   if (legacy) out.push("sì (dettagli non registrati)");
   return out;
@@ -1274,8 +1287,9 @@ function renderCollaudo(w, rows, generated) {
         `<td class="ed${cls ? " " + cls : ""}" data-f="${EDIT_FIELDS[col].api}" data-v="${esc(value)}"${extra || ""}>${shown}</td>`;
       const note = tripNote(r);
       // The trasferta editor (a popover on the page) starts from these.
-      const tripData = si ? ` data-tj="${esc(r.trasferta_giornalista)}" data-tl="${esc(r.trasferta_luogo)}"` +
-        ` data-td="${esc(r.trasferta_dal)}" data-ta="${esc(r.trasferta_al)}"` : "";
+      // data-trip="1": the mark comes from the operator's trip (trasferte table): the cell is read-only on the page.
+      const tripData = si ? ` data-tp="${esc(r.trasferta_persona)}" data-tc="${esc(r.trasferta_con)}" data-tl="${esc(r.trasferta_luogo)}"` +
+        ` data-td="${esc(r.trasferta_dal)}" data-ta="${esc(r.trasferta_al)}"${r.trasferta_da_trip === true ? ' data-trip="1"' : ""}` : "";
       body.push(`<tr class="r" data-id="${esc(r.record_id)}">` +
         ed("titolo", "", esc(r.titolo), r.titolo) +
         ed("giornalista", "nowrap", esc(r.giornalista), r.giornalista) +
@@ -1297,7 +1311,7 @@ function renderCollaudo(w, rows, generated) {
         "</tr>");
     }
     const dd = new Date(d + "T00:00:00Z");
-    body.push(`<tr class="tot"><td colspan="5">Totale ${esc(GIORNI[(dd.getUTCDay() + 6) % 7].toLowerCase())} ${dd.getUTCDate()} ` +
+    body.push(`<tr class="tot"><td colspan="5">Totale ${esc(dayName((dd.getUTCDay() + 6) % 7).toLowerCase())} ${dd.getUTCDate()} ` +
       `(${dayRows.length} registrazioni)</td>` +
       `<td class="k">${dayTot.pezzo}</td><td class="k">${dayTot.radio}</td><td class="k">${dayTot.live}</td>` +
       `<td></td><td></td><td class="k">${dayTot.tappeto}</td>${NP_TAIL}</tr>`);
@@ -1396,6 +1410,13 @@ ${groups.join("\n")}
   var sheet = null; // {w, rows, gen} of the week on screen
   function bi(it, en) { return '<span class="scr">' + esc(en) + '</span><span class="prn">' + esc(it) + "</span>"; }
   function both(el, en) { var it = el.textContent; if (en !== it) el.innerHTML = bi(it, en); }
+  // Italian month and day names -> English, for the screen copy only (Marco, 2026-10-17: the notes must be in English when the page is).
+  function enDates(text) {
+    var out = String(text), sw = function (it, en) { out = out.replace(new RegExp("(^|[^A-Za-zÀ-ÿ])" + it + "(?![A-Za-zÀ-ÿ])", "gi"), function (m, pre) { return pre + en; }); };
+    MESI.forEach(function (m, i) { sw(m, MESI_EN[i]); sw(m.slice(0, 3), MESI_EN[i].slice(0, 3)); });
+    GIORNI.forEach(function (g, i) { sw(g, GIORNI_EN[i]); });
+    return out;
+  }
   function localizeSheet() {
     if (langNow() !== "en") return;
     var doc = $("doc"), all = function (sel, fn) { Array.prototype.forEach.call(doc.querySelectorAll(sel), fn); };
@@ -1407,24 +1428,25 @@ ${groups.join("\n")}
     all("tr.empty td:first-child", function (td) { both(td, t(td.textContent)); });
     all("tr.tot td:first-child", function (td) {
       var m = /^Totale (.+) \((\d+) registrazioni\)$/.exec(td.textContent);
-      if (m) both(td, tf("Totale {0} ({1} registrazioni)", m[1], m[2]));
+      if (m) both(td, tf("Totale {0} ({1} registrazioni)", enDates(m[1]), m[2]));
     });
+    all("button.dt .dl", function (el) { both(el, enDates(el.textContent)); });
     all(".counters .l", function (el) { both(el, t(el.textContent)); });
-    all(".trip", function (el) { both(el, t("Trasferta:") + el.textContent.slice("Trasferta:".length).split("sì (dettagli non registrati)").join(t("sì (dettagli non registrati)"))); });
+    all(".trip", function (el) { both(el, t("Trasferta:") + enDates(el.textContent.slice("Trasferta:".length)).split("sì (dettagli non registrati)").join(t("sì (dettagli non registrati)")).split(" con ").join(" " + t("con") + " ")); });
     all("header.doc .ente, header.doc h1, footer.doc .firma", function (el) { both(el, t(el.textContent)); });
     all(".sett", function (el) {
       var m = /^Settimana (\d+) \((.*)\)$/.exec(el.textContent);
-      if (m) both(el, tf("Settimana {0} ({1})", m[1], m[2]));
+      if (m) both(el, tf("Settimana {0} ({1})", m[1], enDates(m[2])));
     });
     all("footer.doc .gen", function (el) {
       var m = /^Generato il (.+) dal sistema RAI NYC Servizi · fonte: database · (\d+) registrazioni · (.+)$/.exec(el.textContent);
-      if (m) both(el, tf("Generato il {0} dal sistema RAI NYC Servizi · fonte: database · {1} registrazioni · {2}", m[1], m[2], m[3]));
+      if (m) both(el, tf("Generato il {0} dal sistema RAI NYC Servizi · fonte: database · {1} registrazioni · {2}", enDates(m[1]), m[2], m[3]));
     });
     all("button.ic", function (b) { b.title = t(b.title); b.setAttribute("aria-label", t(b.getAttribute("aria-label"))); });
     all("section.counters", function (el) { el.setAttribute("aria-label", t(el.getAttribute("aria-label"))); });
   }
   function paintSheet() {
-    $("doc").innerHTML = renderCollaudo(sheet.w, sheet.rows, sheet.gen);
+    $("doc").innerHTML = renderCollaudo(sheet.w, sheet.rows, sheet.gen); // always Italian: the print is Rome's; localizeSheet adds the English screen copy
     localizeSheet();
   }
 
@@ -1600,8 +1622,9 @@ ${groups.join("\n")}
     if (busy) return;
     if (trip && trip.td === td) return; // already open on this cell
     var tr = td.parentNode;
-    var old = { on: td.getAttribute("data-v") === "true", tj: td.getAttribute("data-tj") || "", tl: td.getAttribute("data-tl") || "",
+    var old = { on: td.getAttribute("data-v") === "true", tj: td.getAttribute("data-tp") || "", tc: td.getAttribute("data-tc") || "", tl: td.getAttribute("data-tl") || "",
       td: td.getAttribute("data-td") || "", ta: td.getAttribute("data-ta") || "" };
+    var fromTrip = td.getAttribute("data-trip") === "1"; // the mark comes from the operator's trip: read-only here
     ensureLists().then(function (l) {
       trip = { td: td, id: tr.getAttribute("data-id"), old: old };
       var sel = $("tp-g"); sel.textContent = "";
@@ -1615,6 +1638,15 @@ ${groups.join("\n")}
       $("tp-save").disabled = false;
       $("tpop").hidden = false;
       syncTripDet();
+      $("tp-seg").hidden = fromTrip; $("tp-save").hidden = fromTrip; $("tp-info").hidden = !fromTrip;
+      if (fromTrip) {
+        $("tp-det").hidden = true;
+        var who = old.tj + (old.tc ? " " + t("con") + " " + old.tc : "");
+        $("tp-info").textContent = tf("Trasferta di {0}: {1}, {2}. Vale per tutte le registrazioni di questo operatore in quelle date; si imposta o si termina dal modulo di registrazione, sezione 05.", who, old.tl, fmtRange(old.td, old.ta));
+        $("tp-cancel").focus();
+        placePop($("tpop"), td);
+        return;
+      }
       placePop($("tpop"), td);
       (old.on ? $("tp-si") : $("tp-no")).focus();
     });
