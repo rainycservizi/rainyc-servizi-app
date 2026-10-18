@@ -262,7 +262,7 @@ kbd { font:600 11px/1 var(--mono); padding:2px 5px; border:1px solid var(--line2
 </head>
 <body>
 <header class="appbar">
-  <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-10-17 03:08 UTC · abd3746"><span class="mk">Rai · NY</span><span id="t">RAI NYC Servizi</span><span class="pg" data-i18n>Registrazione</span></div>
+  <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-10-18 00:16 UTC · 4d2f946"><span class="mk">Rai · NY</span><span id="t">RAI NYC Servizi</span><span class="pg" data-i18n>Registrazione</span></div>
   <nav class="hright" id="hright" aria-label="Pagine">
     <span class="pend" id="pend" hidden></span>
     <button type="button" class="icbtn" id="theme" aria-label="Cambia tema" title="Cambia tema">
@@ -396,7 +396,7 @@ kbd { font:600 11px/1 var(--mono); padding:2px 5px; border:1px solid var(--line2
 </main>
 <script>
 // ---- pages/shared.js ----
-// Shared browser code for form.html and collaudo.html. Inlined by scripts/build_pages.mjs.
+// Shared browser code for the four pages (form, collaudo, mensile, gestione). Inlined by scripts/build_pages.mjs.
 // Session: Supabase Auth password grant, kept in localStorage, refreshed before it expires.
 // All data goes through the function's /api routes with the bearer; auth goes to /auth/v1 on
 // the same origin (locally the CLI gateway, in production <ref>.supabase.co).
@@ -415,7 +415,7 @@ var PAGE_FORM = "./" || APP_BASE;
 var PAGE_COLLAUDO = "./collaudo.html" || APP_BASE + "/collaudo";
 var PAGE_GESTIONE = "./gestione.html" || APP_BASE + "/gestione";
 var PAGE_MENSILE = "./mensile.html" || APP_BASE + "/mensile";
-var BUILD = "2026-10-17 03:08 UTC · abd3746"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
+var BUILD = "2026-10-18 00:16 UTC · 4d2f946"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
 // Every place the project lives (shown in the admin's header menu and on the Gestione page).
 var LINKS = [
   ["Pagine pubbliche", "https://rainycservizi.github.io/rainyc-servizi-app/", "GitHub Pages: il sito di prova principale"],
@@ -517,6 +517,9 @@ var I18N = { en: {
   "Togli dall'elenco": "Remove from the list", "Togli {0}": "Remove {0}", "Nessun destinatario: aggiungerne uno qui sotto.": "No recipients: add one below.",
   "Indirizzo e-mail non valido.": "Invalid e-mail address.", "Invio…": "Sending…", "Inviato a {0}.": "Sent to {0}.",
   "Collaudo {0} inviato a {1} destinatari.": "Weekly report {0} sent to {1} recipients.", "Ultimo invio ({0}): {1}": "Last sent ({0}): {1}",
+  // mensile e-mail (the dialog itself is shared: mountMail)
+  "Il Top Sheet {0} (il prospetto dell'anno con il mese evidenziato, colonne di Roma) parte dalla casella della redazione. Scegliere i destinatari.": "The {0} Top Sheet (the year's table with the month marked, Rome's columns) is sent from the newsroom mailbox. Choose the recipients.",
+  "Top Sheet {0} inviato a {1} destinatari.": "Top Sheet {0} sent to {1} recipients.",
   // collaudo sheet (screen text; the print copy stays Italian)
   "Nessuna registrazione": "No entries", "Titolo": "Title", "Pezzi": "Packages", "Tappeti": "B-Roll", "Ass. tecnica": "Tech support", "Totale": "Total",
   "Trasferte": "Travel", "Altre": "Other", "Riepilogo": "Summary", "Collaudo settimanale": "Weekly report",
@@ -889,6 +892,116 @@ function mountPassword(slot) {
     });
   });
   document.addEventListener("rainyc:auth-lost", function () { mountPassword(null); });
+}
+
+// ---- reports by e-mail: the collaudo week and the Top Sheet month ----
+// One dialog for both pages, built here like the password panel. The server decides who may send
+// (GET /api/email-recipients → {allowed, suggested}); for everyone else the button stays hidden. The dialog
+// ticks the suggested addresses (COLLAUDO_TO) and takes new ones, remembered in this browser (RCP_KEY).
+// o = { button, route, body(), label(), lead(label), done(label, sent) }:
+//   body()  the POST body without `to` ({week} or {month}); null while nothing is loaded
+//   label() the week or month shown in the heading ("2026-W42", "Ottobre 2026")
+//   lead()  the sentence under the heading (already translated); done() status for the page after a send
+// Returns { open, close, load, refresh }: load() after login (asks the server), refresh() on a language change.
+var RCP_KEY = "rainyc.collaudo.destinatari"; // hand-added addresses, shared by the two reports
+function mountMail(o) {
+  var btn = o.button, mail = { suggested: [], extra: [] };
+  var old = document.getElementById("mpop");
+  if (old) old.parentNode.removeChild(old);
+  var root = document.createElement("div");
+  root.id = "mpop"; root.className = "pop mail"; root.setAttribute("role", "dialog"); root.setAttribute("aria-labelledby", "mpop-h"); root.hidden = true;
+  root.innerHTML =
+    '<form id="mpop-f" novalidate>' +
+    '<h2 class="ph" id="mpop-h">Invia per e-mail</h2>' +
+    '<p class="lead" id="mpop-lead" style="margin:0 0 10px;color:var(--dim);font-size:13px;"></p>' +
+    '<ul class="rcp" id="rcp" data-i18n-attr="aria-label" aria-label="Destinatari"></ul>' +
+    '<div class="addr"><input type="email" id="rcp-new" data-i18n-attr="placeholder|aria-label" placeholder="aggiungi un indirizzo e-mail" autocomplete="off" aria-label="Nuovo destinatario"><button type="button" class="btn" id="rcp-add" data-i18n>Aggiungi</button></div>' +
+    '<div class="row"><button type="submit" class="btn pri" id="mp-send">Invia</button><button type="button" class="btn" id="mp-cancel" data-i18n>Annulla</button></div>' +
+    '<div class="err" id="mpop-err" role="alert"></div>' +
+    '<div class="msg" id="mpop-msg" role="status"></div></form>';
+  document.body.appendChild(root);
+  applyLang();
+  var $m = function (id) { return document.getElementById(id); };
+  function isEmail(x) { return typeof x === "string" && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(x); }
+  function extraLoad() { try { return JSON.parse(localStorage.getItem(RCP_KEY) || "[]").filter(isEmail); } catch (e) { return []; } }
+  function extraSave() { try { localStorage.setItem(RCP_KEY, JSON.stringify(mail.extra)); } catch (e) { /* this view only */ } }
+  function rcpChosen() { return Array.prototype.map.call($m("rcp").querySelectorAll("input:checked"), function (c) { return c.value; }); }
+  function syncSend() { var n = rcpChosen().length; $m("mp-send").textContent = n ? tf("Invia a {0}", n) : t("Invia"); $m("mp-send").disabled = !n; }
+  function renderRcp(ticked) {
+    var ul = $m("rcp"); ul.textContent = "";
+    var all = mail.suggested.map(function (a) { return { a: a, own: false }; }).concat(mail.extra.map(function (a) { return { a: a, own: true }; }));
+    all.forEach(function (x, k) {
+      var li = document.createElement("li"), l = document.createElement("label"), c = document.createElement("input");
+      c.type = "checkbox"; c.value = x.a; c.checked = ticked ? ticked.indexOf(x.a) >= 0 : !x.own; c.id = "rcp" + k;
+      l.appendChild(c); l.appendChild(document.createTextNode(x.a)); li.appendChild(l);
+      if (x.own) { var rm = document.createElement("button"); rm.type = "button"; rm.className = "rm"; rm.title = t("Togli dall'elenco"); rm.setAttribute("aria-label", tf("Togli {0}", x.a)); rm.textContent = "✕"; rm.setAttribute("data-rm", x.a); li.appendChild(rm); }
+      ul.appendChild(li);
+    });
+    if (!all.length) { var li0 = document.createElement("li"); li0.textContent = t("Nessun destinatario: aggiungerne uno qui sotto."); li0.style.color = "var(--dim)"; ul.appendChild(li0); }
+    syncSend();
+  }
+  function addRcp() {
+    var v = $m("rcp-new").value.trim().toLowerCase();
+    if (!isEmail(v)) { $m("mpop-err").textContent = t("Indirizzo e-mail non valido."); $m("rcp-new").focus(); return; }
+    $m("mpop-err").textContent = "";
+    var ticked = rcpChosen(); ticked.push(v);
+    if (mail.suggested.indexOf(v) < 0 && mail.extra.indexOf(v) < 0) { mail.extra.push(v); extraSave(); }
+    $m("rcp-new").value = ""; renderRcp(ticked); $m("rcp-new").focus();
+  }
+  function texts() { var l = o.label(); $m("mpop-h").textContent = tf("Invia per e-mail · {0}", l); $m("mpop-lead").textContent = o.lead(l); }
+  function open() {
+    if (!o.body()) return;
+    texts();
+    $m("mpop-err").textContent = ""; $m("mpop-msg").textContent = ""; $m("rcp-new").value = "";
+    mail.extra = extraLoad();
+    renderRcp(null);
+    root.hidden = false;
+    var first = $m("rcp").querySelector("input"); (first || $m("rcp-new")).focus();
+  }
+  function close() { root.hidden = true; btn.focus(); }
+  function load() {
+    btn.hidden = true;
+    api("/api/email-recipients").then(function (r) {
+      if (r.status !== 200 || !r.body || !r.body.allowed) return;
+      mail.suggested = (r.body.suggested || []).filter(isEmail);
+      btn.hidden = false;
+    }, function () { /* no e-mail button when the check fails */ });
+  }
+  function refresh() { if (!root.hidden) { texts(); renderRcp(rcpChosen()); } else syncSend(); }
+  btn.addEventListener("click", open);
+  $m("mp-cancel").addEventListener("click", close);
+  $m("rcp-add").addEventListener("click", addRcp);
+  $m("rcp-new").addEventListener("keydown", function (ev) { if (ev.key === "Enter") { ev.preventDefault(); addRcp(); } });
+  $m("rcp").addEventListener("change", syncSend);
+  $m("rcp").addEventListener("click", function (ev) {
+    var rm = ev.target.closest && ev.target.closest("button[data-rm]"); if (!rm) return;
+    var a = rm.getAttribute("data-rm"); mail.extra = mail.extra.filter(function (x) { return x !== a; }); extraSave();
+    renderRcp(rcpChosen().filter(function (x) { return x !== a; }));
+  });
+  root.addEventListener("keydown", function (ev) { if (ev.key === "Escape") { ev.preventDefault(); ev.stopPropagation(); close(); } });
+  $m("mpop-f").addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    var body = o.body(), to = rcpChosen(), l = o.label(), b = $m("mp-send");
+    if (!body || !to.length) return;
+    b.disabled = true; $m("mp-cancel").disabled = true; $m("mpop-err").textContent = ""; $m("mpop-msg").textContent = t("Invio…");
+    function done() { b.disabled = false; $m("mp-cancel").disabled = false; syncSend(); }
+    api(o.route, { method: "POST", body: JSON.stringify(Object.assign({}, body, { to: to })) }).then(function (r) {
+      done();
+      if (r.status === 200 && r.body) {
+        var sent = Array.isArray(r.body.sent_to) ? r.body.sent_to : to;
+        $m("mpop-msg").textContent = tf("Inviato a {0}.", sent.join(", "));
+        if (o.done) o.done(l, sent);
+        btn.title = tf("Ultimo invio ({0}): {1}", l, sent.join(", "));
+        setTimeout(close, 1800);
+      } else { $m("mpop-msg").textContent = ""; $m("mpop-err").textContent = (r.body && r.body.error) || tf("Operazione non riuscita ({0}).", r.status); }
+    }, function (e) {
+      done(); $m("mpop-msg").textContent = "";
+      if (e.kind === "auth") { root.hidden = true; authLost(); return; }
+      $m("mpop-err").textContent = e.message;
+    });
+  });
+  document.addEventListener("rainyc:auth-lost", function () { root.hidden = true; btn.hidden = true; });
+  return { open: open, close: close, load: load, refresh: refresh };
 }
 
 // ---- end pages/shared.js ----
