@@ -148,7 +148,7 @@ td.dim { color:var(--dim); } tr.off td { color:var(--dim); } tr.off td:first-chi
 </head>
 <body data-gestione>
 <header class="appbar">
-  <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-10-18 00:23 UTC · 49143e4"><span class="mk">Rai · NY</span><span class="nm">RAI NYC Servizi</span><span class="pg" data-i18n>Gestione</span></div>
+  <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-10-18 00:25 UTC · 0166195"><span class="mk">Rai · NY</span><span class="nm">RAI NYC Servizi</span><span class="pg" data-i18n>Gestione</span></div>
   <nav class="hright" id="hright" aria-label="Pagine">
     <button type="button" class="icbtn" id="theme" aria-label="Cambia tema" title="Cambia tema">
       <svg class="ic-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
@@ -292,7 +292,7 @@ var PAGE_FORM = "./" || APP_BASE;
 var PAGE_COLLAUDO = "./collaudo.html" || APP_BASE + "/collaudo";
 var PAGE_GESTIONE = "./gestione.html" || APP_BASE + "/gestione";
 var PAGE_MENSILE = "./mensile.html" || APP_BASE + "/mensile";
-var BUILD = "2026-10-18 00:23 UTC · 49143e4"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
+var BUILD = "2026-10-18 00:25 UTC · 0166195"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
 // Every place the project lives (shown in the admin's header menu and on the Gestione page).
 var LINKS = [
   ["Pagine pubbliche", "https://rainycservizi.github.io/rainyc-servizi-app/", "GitHub Pages: il sito di prova principale"],
@@ -425,7 +425,7 @@ var I18N = { en: {
   "Accesso {0} creato.": "Login {0} created.", "attivo": "active", "ritirato": "retired", "Ritira": "Retire", "Riattiva": "Reactivate",
   "Ritirare \"{0}\"? Non comparirà più nel modulo; le registrazioni passate restano.": "Retire \"{0}\"? It will no longer appear in the form; past entries stay.",
   "Ritirato: {0}": "Retired: {0}", "Riattivato: {0}": "Reactivated: {0}", "Aggiunto: {0}": "Added: {0}",
-  "registrazione": "entry", "giornalista": "journalist", "operatore": "operator", "valore": "value", "accesso": "login",
+  "registrazione": "entry", "report e-mail": "e-mailed report", "giornalista": "journalist", "operatore": "operator", "valore": "value", "accesso": "login",
   "{0} voci più recenti": "{0} most recent entries", "Pagina riservata.": "Restricted page."
 } };
 var langHooks = [];
@@ -1191,7 +1191,7 @@ function fmtRange(a, b) {
   });
 
   // ---- 05 registro ----
-  var ENTITY = { delivery_record: "registrazione", delivery_records: "registrazione", journalists: "giornalista", operators: "operatore", lookup_values: "valore", auth_user: "accesso" };
+  var ENTITY = { delivery_record: "registrazione", delivery_records: "registrazione", journalists: "giornalista", operators: "operatore", lookup_values: "valore", auth_user: "accesso", report: "report e-mail" }; // report = a collaudo or Top Sheet sent by e-mail
   function loadAudit() {
     return api("/api/admin/audit?limit=100").then(function (r) {
       if (r.status !== 200) return r;
