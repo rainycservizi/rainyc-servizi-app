@@ -245,7 +245,7 @@ footer.doc .firma { font-size:13px; white-space:nowrap; }
 <body>
 <div class="top" id="top">
   <header class="appbar">
-    <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-10-19 15:37 UTC · 00ef2ef"><span class="mk">Rai · NY</span><span class="nm">RAI NYC Servizi</span><span class="pg" data-i18n>Collaudo</span></div>
+    <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-10-19 16:29 UTC · a999066"><span class="mk">Rai · NY</span><span class="nm">RAI NYC Servizi</span><span class="pg" data-i18n>Collaudo</span></div>
     <nav class="hright" id="hright" aria-label="Pagine">
       <button type="button" class="icbtn" id="theme" aria-label="Cambia tema" title="Cambia tema">
         <svg class="ic-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
@@ -333,7 +333,7 @@ var PAGE_FORM = "./" || APP_BASE;
 var PAGE_COLLAUDO = "./collaudo.html" || APP_BASE + "/collaudo";
 var PAGE_GESTIONE = "./gestione.html" || APP_BASE + "/gestione";
 var PAGE_MENSILE = "./mensile.html" || APP_BASE + "/mensile";
-var BUILD = "2026-10-19 15:37 UTC · 00ef2ef"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
+var BUILD = "2026-10-19 16:29 UTC · a999066"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
 // Every place the project lives (shown in the admin's header menu and on the Gestione page).
 var LINKS = [
   ["Pagine pubbliche", "https://rainycservizi.github.io/rainyc-servizi-app/", "GitHub Pages: il sito di prova principale"],
@@ -419,6 +419,22 @@ var I18N = { en: {
   "Salvato: {0}": "Saved: {0}", "Caricamento degli elenchi…": "Loading the lists…",
   "Registrazione non inviata": "Entry not sent", "Ho capito": "Got it",
   "{0} Ricaricare la pagina quando la rete torna.": "{0} Reload the page when the network is back.",
+  // form tutorial (first login, replay from the ? button or Link ▾)
+  "Tutorial": "Tutorial", "Tutorial: come si compila una registrazione": "Tutorial: how to fill in an entry",
+  "Tutorial · {0}/{1}": "Tutorial · {0}/{1}", "Salta": "Skip", "Avanti": "Next", "Fine": "Done",
+  "Benvenuto. In un minuto: che cosa si compila e in che ordine. È una prova: niente viene inviato.": "Welcome. In one minute: what to fill in and in which order. It is a demo: nothing is sent.",
+  "Data: resta quella di oggi. Cambiarla solo per un servizio di un altro giorno.": "Date: it stays today. Change it only for a story from another day.",
+  "Giornalista: scrivere le prime lettere e scegliere il nome dall'elenco (Tab completa).": "Journalist: type the first letters and pick the name from the list (Tab completes it).",
+  "Argomento / Titolo: di che cosa parla il servizio.": "Subject / Title: what the story is about.",
+  "Rete: toccare la rete che ha chiesto il servizio.": "Network: click the network that asked for the story.",
+  "Richiedente: l'edizione o il programma (qui Tg1 Ore 20). ▾ mostra tutte le scelte.": "Requester: the edition or the programme (here Tg1 Ore 20). ▾ shows all the choices.",
+  "Durata: facoltativa, per esempio 1:22.": "Duration: optional, for example 1:22.",
+  "Mezzo: come è stato inviato il servizio. V-Mover è già scelto.": "Delivery means: how the story was sent. V-Mover is already selected.",
+  "Trasferta: solo se l'operatore è in trasferta. Si imposta una volta e vale su ogni macchina.": "Travel: only if the operator is travelling. Set it once and it applies on every machine.",
+  "Operatore: chi ha montato. Di solito è già quello del tuo accesso.": "Operator: who edited it. It is usually already the one of your sign-in.",
+  "Ora tocca a te: Invia registrazione ({0})": "Your turn: Submit entry ({0})",
+  "Questa era una prova: non è stato inviato niente. «Fine» svuota il modulo.": "This was a demo: nothing was sent. «Done» clears the form.",
+  "Il tutorial svuota il modulo. Continuare?": "The tutorial clears the form. Continue?",
   // collaudo
   "Settimana precedente": "Previous week", "Settimana successiva": "Next week", "Settimana": "Week", "Vai": "Go",
   "Comprimi tutto": "Collapse all", "Espandi tutto": "Expand all", "Annulla ultima modifica": "Undo last change",
@@ -657,7 +673,9 @@ function requireLogin(onReady) {
 
 function authLost() { Session.clear(); document.dispatchEvent(new Event("rainyc:auth-lost")); }
 
-/** "Link ▾" menu in the header for the admin: every place the project lives (LINKS). */
+// Page actions shown at the top of the "Link ▾" menu: [{label (Italian), run}]. The form page adds "Tutorial".
+var MENU_ACTIONS = [];
+/** "Link ▾" menu in the header for the admin: the page's actions (MENU_ACTIONS), then every place the project lives (LINKS). */
 function mountLinks(slot) {
   var old = document.getElementById("lnk-menu");
   if (old) old.parentNode.removeChild(old);
@@ -665,6 +683,12 @@ function mountLinks(slot) {
   var wrap = document.createElement("div"); wrap.id = "lnk-menu"; wrap.className = "lmenu";
   var b = document.createElement("button"); b.type = "button"; b.className = "hlink"; b.textContent = "Link \u25BE"; b.setAttribute("aria-haspopup", "menu"); b.setAttribute("aria-expanded", "false");
   var ul = document.createElement("ul"); ul.setAttribute("role", "menu"); ul.hidden = true;
+  MENU_ACTIONS.forEach(function (x, k) {
+    var li = document.createElement("li"); li.setAttribute("role", "none");
+    var a = document.createElement("a"); a.href = "#"; a.id = "lnk-act-" + k; L(a, x.label); a.setAttribute("role", "menuitem");
+    a.addEventListener("click", function (ev) { ev.preventDefault(); close(); x.run(); });
+    li.appendChild(a); ul.appendChild(li);
+  });
   LINKS.forEach(function (x) {
     var li = document.createElement("li"); li.setAttribute("role", "none");
     var a = document.createElement("a"); a.href = x[1]; L(a, x[0]); a.title = t(x[2]); a.setAttribute("data-i18n-attr", "title"); a.setAttribute("data-i18n-it-title", x[2]); a.target = "_blank"; a.rel = "noopener"; a.setAttribute("role", "menuitem");

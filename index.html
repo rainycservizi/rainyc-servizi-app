@@ -268,14 +268,33 @@ kbd { font:600 11px/1 var(--mono); padding:2px 5px; border:1px solid var(--line2
 .lmenu li a { display:block; padding:9px 10px; border-radius:5px; font-size:14px; color:var(--fg); text-decoration:none; white-space:nowrap; }
 .lmenu li a:hover { background:var(--hover); color:var(--accent-text); }
 .lmenu li.stamp { padding:8px 10px 4px; border-top:1px solid var(--line); margin-top:4px; font:600 11px/1.3 var(--mono); color:var(--dim); white-space:nowrap; }
-@media (prefers-reduced-motion:reduce) { * { transition:none !important; } }
+/* ── first-login tutorial (on <html>, not <body>: body carries the wide-monitor zoom) ── */
+.tour { position:fixed; inset:0; z-index:60; font:15px/1.45 var(--sans); color:var(--fg); -webkit-font-smoothing:antialiased; }
+.tour-spot { position:fixed; left:50%; top:45%; width:0; height:0; border-radius:10px; pointer-events:none;
+  box-shadow:0 0 0 3px var(--accent), 0 0 0 200vmax rgba(15,20,28,.55); transition:left .6s ease, top .6s ease, width .6s ease, height .6s ease; }
+.tour-spot.none { box-shadow:0 0 0 200vmax rgba(15,20,28,.55); }
+:root[data-theme=dark] .tour-spot { box-shadow:0 0 0 3px var(--accent), 0 0 0 200vmax rgba(0,0,0,.66); }
+:root[data-theme=dark] .tour-spot.none { box-shadow:0 0 0 200vmax rgba(0,0,0,.66); }
+.tour-cur { position:fixed; left:0; top:0; width:26px; height:30px; pointer-events:none; z-index:2; transition:transform .6s cubic-bezier(.45,.05,.25,1); filter:drop-shadow(0 2px 3px rgba(0,0,0,.35)); }
+.tour-cur svg { display:block; width:100%; height:100%; }
+.tour-ring { position:fixed; left:0; top:0; width:34px; height:34px; margin:-17px 0 0 -17px; border-radius:50%; border:3px solid var(--accent); pointer-events:none; opacity:0; z-index:1; }
+.tour-ring.go { animation:tour-ring .45s ease-out; }
+@keyframes tour-ring { from { opacity:.9; transform:scale(.35); } to { opacity:0; transform:scale(1.4); } }
+.tour-tip { position:fixed; left:16px; top:16px; width:min(380px, calc(100vw - 32px)); padding:14px 16px 14px; background:var(--panel); border:1px solid var(--line2); border-top:4px solid var(--accent); border-radius:10px; box-shadow:var(--pop); z-index:3; }
+.tour-tip .ph { margin-bottom:10px; color:var(--accent-text); }
+.tour-tip p { margin:0 0 12px; font-size:16px; line-height:1.45; font-weight:600; }
+.tour-tip p.sub { margin-top:-6px; font-size:14px; font-weight:400; color:var(--dim); }
+.tour-tip .row { display:flex; gap:8px; justify-content:flex-end; }
+@media print { .tour { display:none !important; } }
+@media (prefers-reduced-motion:reduce) { * { transition:none !important; } .tour-ring { display:none; } }
 </style>
 </head>
 <body>
 <header class="appbar">
-  <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-10-19 15:37 UTC · 00ef2ef"><span class="mk">Rai · NY</span><span id="t">RAI NYC Servizi</span><span class="pg" data-i18n>Registrazione</span></div>
+  <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-10-19 16:29 UTC · a999066"><span class="mk">Rai · NY</span><span id="t">RAI NYC Servizi</span><span class="pg" data-i18n>Registrazione</span></div>
   <nav class="hright" id="hright" aria-label="Pagine">
     <span class="pend" id="pend" hidden></span>
+    <button type="button" class="icbtn lang" id="tour-btn" hidden data-i18n-attr="aria-label|title" aria-label="Tutorial: come si compila una registrazione" title="Tutorial: come si compila una registrazione">?</button>
     <button type="button" class="icbtn" id="theme" aria-label="Cambia tema" title="Cambia tema">
       <svg class="ic-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
       <svg class="ic-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.2M12 19.8V22M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M2 12h2.2M19.8 12H22M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6"/></svg>
@@ -437,7 +456,7 @@ var PAGE_FORM = "./" || APP_BASE;
 var PAGE_COLLAUDO = "./collaudo.html" || APP_BASE + "/collaudo";
 var PAGE_GESTIONE = "./gestione.html" || APP_BASE + "/gestione";
 var PAGE_MENSILE = "./mensile.html" || APP_BASE + "/mensile";
-var BUILD = "2026-10-19 15:37 UTC · 00ef2ef"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
+var BUILD = "2026-10-19 16:29 UTC · a999066"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
 // Every place the project lives (shown in the admin's header menu and on the Gestione page).
 var LINKS = [
   ["Pagine pubbliche", "https://rainycservizi.github.io/rainyc-servizi-app/", "GitHub Pages: il sito di prova principale"],
@@ -523,6 +542,22 @@ var I18N = { en: {
   "Salvato: {0}": "Saved: {0}", "Caricamento degli elenchi…": "Loading the lists…",
   "Registrazione non inviata": "Entry not sent", "Ho capito": "Got it",
   "{0} Ricaricare la pagina quando la rete torna.": "{0} Reload the page when the network is back.",
+  // form tutorial (first login, replay from the ? button or Link ▾)
+  "Tutorial": "Tutorial", "Tutorial: come si compila una registrazione": "Tutorial: how to fill in an entry",
+  "Tutorial · {0}/{1}": "Tutorial · {0}/{1}", "Salta": "Skip", "Avanti": "Next", "Fine": "Done",
+  "Benvenuto. In un minuto: che cosa si compila e in che ordine. È una prova: niente viene inviato.": "Welcome. In one minute: what to fill in and in which order. It is a demo: nothing is sent.",
+  "Data: resta quella di oggi. Cambiarla solo per un servizio di un altro giorno.": "Date: it stays today. Change it only for a story from another day.",
+  "Giornalista: scrivere le prime lettere e scegliere il nome dall'elenco (Tab completa).": "Journalist: type the first letters and pick the name from the list (Tab completes it).",
+  "Argomento / Titolo: di che cosa parla il servizio.": "Subject / Title: what the story is about.",
+  "Rete: toccare la rete che ha chiesto il servizio.": "Network: click the network that asked for the story.",
+  "Richiedente: l'edizione o il programma (qui Tg1 Ore 20). ▾ mostra tutte le scelte.": "Requester: the edition or the programme (here Tg1 Ore 20). ▾ shows all the choices.",
+  "Durata: facoltativa, per esempio 1:22.": "Duration: optional, for example 1:22.",
+  "Mezzo: come è stato inviato il servizio. V-Mover è già scelto.": "Delivery means: how the story was sent. V-Mover is already selected.",
+  "Trasferta: solo se l'operatore è in trasferta. Si imposta una volta e vale su ogni macchina.": "Travel: only if the operator is travelling. Set it once and it applies on every machine.",
+  "Operatore: chi ha montato. Di solito è già quello del tuo accesso.": "Operator: who edited it. It is usually already the one of your sign-in.",
+  "Ora tocca a te: Invia registrazione ({0})": "Your turn: Submit entry ({0})",
+  "Questa era una prova: non è stato inviato niente. «Fine» svuota il modulo.": "This was a demo: nothing was sent. «Done» clears the form.",
+  "Il tutorial svuota il modulo. Continuare?": "The tutorial clears the form. Continue?",
   // collaudo
   "Settimana precedente": "Previous week", "Settimana successiva": "Next week", "Settimana": "Week", "Vai": "Go",
   "Comprimi tutto": "Collapse all", "Espandi tutto": "Expand all", "Annulla ultima modifica": "Undo last change",
@@ -761,7 +796,9 @@ function requireLogin(onReady) {
 
 function authLost() { Session.clear(); document.dispatchEvent(new Event("rainyc:auth-lost")); }
 
-/** "Link ▾" menu in the header for the admin: every place the project lives (LINKS). */
+// Page actions shown at the top of the "Link ▾" menu: [{label (Italian), run}]. The form page adds "Tutorial".
+var MENU_ACTIONS = [];
+/** "Link ▾" menu in the header for the admin: the page's actions (MENU_ACTIONS), then every place the project lives (LINKS). */
 function mountLinks(slot) {
   var old = document.getElementById("lnk-menu");
   if (old) old.parentNode.removeChild(old);
@@ -769,6 +806,12 @@ function mountLinks(slot) {
   var wrap = document.createElement("div"); wrap.id = "lnk-menu"; wrap.className = "lmenu";
   var b = document.createElement("button"); b.type = "button"; b.className = "hlink"; b.textContent = "Link \u25BE"; b.setAttribute("aria-haspopup", "menu"); b.setAttribute("aria-expanded", "false");
   var ul = document.createElement("ul"); ul.setAttribute("role", "menu"); ul.hidden = true;
+  MENU_ACTIONS.forEach(function (x, k) {
+    var li = document.createElement("li"); li.setAttribute("role", "none");
+    var a = document.createElement("a"); a.href = "#"; a.id = "lnk-act-" + k; L(a, x.label); a.setAttribute("role", "menuitem");
+    a.addEventListener("click", function (ev) { ev.preventDefault(); close(); x.run(); });
+    li.appendChild(a); ul.appendChild(li);
+  });
   LINKS.forEach(function (x) {
     var li = document.createElement("li"); li.setAttribute("role", "none");
     var a = document.createElement("a"); a.href = x[1]; L(a, x[0]); a.title = t(x[2]); a.setAttribute("data-i18n-attr", "title"); a.setAttribute("data-i18n-it-title", x[2]); a.target = "_blank"; a.rel = "noopener"; a.setAttribute("role", "menuitem");
@@ -1183,10 +1226,14 @@ function fmtRange(a, b) {
     return api("/api/lists").then(function (r) {
       if (r.status !== 200) throw new ApiError("network", (r.body && r.body.error) || t("Liste non disponibili."));
       lists = r.body;
+      // The tutorial flag belongs to this login, not to the shared copy of the lists.
+      tutorialSeen = typeof lists.tutorial_seen === "boolean" ? lists.tutorial_seen : null;
+      delete lists.tutorial_seen;
       try { localStorage.setItem("rainyc.liste", JSON.stringify(lists)); } catch (e) { /* ignore */ }
       return lists;
     }, function (e) {
       if (e.kind === "auth") throw e;
+      tutorialSeen = null;
       try { lists = JSON.parse(localStorage.getItem("rainyc.liste") || "null"); } catch (x) { lists = null; }
       if (!lists) throw e;
       setStatus("attesa", function () { return tf("Liste dalla copia locale: {0}", e.message); });
@@ -1708,6 +1755,7 @@ function fmtRange(a, b) {
   $("clear").addEventListener("click", function () { resetAll(); });
   form.addEventListener("submit", function (ev) {
     ev.preventDefault();
+    if (tour) return; // the tutorial never submits
     var g = $("giornalista").value.trim();
     var gMatch = lists.giornalisti.filter(function (n) { return n.toLowerCase() === g.toLowerCase(); })[0];
     if (!gMatch && g) {
@@ -1816,6 +1864,207 @@ function fmtRange(a, b) {
   });
   sendKbd();
 
+  // ---- first-login tutorial (Marco, 2026-10-19) ----
+  // After login the form plays a short demo: a drawn cursor glides to each field in form order, fills in an example
+  // and ends on «Invia registrazione». It NEVER submits: the page is inert while it runs, the submit handler refuses,
+  // and Fine / Salta / Esc clear the form with resetAll(). Shown while the login has no row in tutorial_views (the
+  // server flag, same on every terminal); the browser flag rainyc.tutorial = "visto" decides only when the server
+  // cannot be asked (lists from the local copy). Edit machines are shared by several logins, so the browser flag
+  // never hides the tour from a login the server has not seen. Replay: the ? button, or Link ▾ → Tutorial (admin).
+  var TOUR_KEY = "rainyc.tutorial";
+  var tutorialSeen = null;  // true / false from /api/lists; null = unknown (offline, or the table is missing)
+  var tour = null;          // the running tour: {gen, step, fast, wakers, root, spot, cur, ring, tip, steps}
+  var tourGen = 0;
+  var TOUR_HOP = 650, TOUR_READ = 1900, TOUR_KEY_MS = 70;
+  function tourBrowserSeen() { try { return localStorage.getItem(TOUR_KEY) === "visto"; } catch (e) { return false; } }
+  function tourShouldStart() { return tutorialSeen === null ? !tourBrowserSeen() : !tutorialSeen; }
+  function tourReduced() { try { return window.matchMedia("(prefers-reduced-motion: reduce)").matches; } catch (e) { return false; } }
+  // Resolves true after ms (at once after «Avanti»), false when the tour was closed meanwhile.
+  function tsleep(ms) {
+    var g = tour ? tour.gen : -1;
+    return new Promise(function (res) {
+      if (!tour || tour.gen !== g) { res(false); return; }
+      var done = false, h = null;
+      function fin() { if (done) return; done = true; clearTimeout(h); res(!!tour && tour.gen === g); }
+      h = setTimeout(fin, tour.fast ? 0 : ms);
+      tour.wakers.push(fin);
+    });
+  }
+  function tourWake() { if (!tour) return; var w = tour.wakers; tour.wakers = []; w.forEach(function (f) { f(); }); }
+  function tourType(el, text) {
+    el.value = ""; el.dispatchEvent(new Event("input", { bubbles: true }));
+    var i = 0;
+    function next() {
+      if (!tour) return Promise.resolve(false);
+      if (tour.fast) { el.value = text; i = text.length; }
+      if (i >= text.length) { el.dispatchEvent(new Event("input", { bubbles: true })); el.dispatchEvent(new Event("change", { bubbles: true })); return Promise.resolve(true); }
+      return tsleep(TOUR_KEY_MS).then(function (ok) {
+        if (!ok || !tour) return false;
+        if (!tour.fast) { el.value += text.charAt(i++); el.dispatchEvent(new Event("input", { bubbles: true })); }
+        return next();
+      });
+    }
+    return next();
+  }
+  function tourPick(name, value) {
+    var i = form.querySelector('input[name="' + name + '"][value="' + value + '"]') || form.querySelector('input[name="' + name + '"]');
+    if (!i) return;
+    i.checked = true; i.dispatchEvent(new Event("change", { bubbles: true }));
+  }
+  function tourClick() {
+    if (!tour) return;
+    var r = tour.ring; r.classList.remove("go"); void r.offsetWidth; r.classList.add("go");
+  }
+  function chipLabel(id, value) {
+    var i = $(id).querySelector('input[value="' + value + '"]') || $(id).querySelector("input");
+    return i ? i.parentNode : $(id);
+  }
+  function tourSteps() {
+    var rete = lists.reti.indexOf("Tg1") >= 0 ? "Tg1" : lists.reti[0];
+    var mezzo = lists.mezzi.indexOf("V-Mover") >= 0 ? "V-Mover" : lists.mezzi[0];
+    var giorn = "Mario Rossi"; // visibly fake (Marco, 2026-10-19): the datalist shows no match; the tour never submits
+    var op = lists.operatori[0] ? lists.operatori[0].display_name : "";
+    var fld = function (id) { return function () { return $(id).closest(".fld") || $(id); }; };
+    return [
+      { cap: "Benvenuto. In un minuto: che cosa si compila e in che ordine. È una prova: niente viene inviato.", el: null },
+      { cap: "Data: resta quella di oggi. Cambiarla solo per un servizio di un altro giorno.", el: fld("data"), act: function () { $("data").value = today(); $("data").dispatchEvent(new Event("change", { bubbles: true })); } },
+      { cap: "Giornalista: scrivere le prime lettere e scegliere il nome dall'elenco (Tab completa).", el: fld("giornalista"), act: function () { return tourType($("giornalista"), giorn); } },
+      { cap: "Argomento / Titolo: di che cosa parla il servizio.", el: fld("titolo"), act: function () { return tourType($("titolo"), t("Prova: titolo di esempio")); } },
+      { cap: "Rete: toccare la rete che ha chiesto il servizio.", el: function () { return chipLabel("c-rete", rete); }, click: true, act: function () { tourPick("rete", rete); } },
+      { cap: "Richiedente: l'edizione o il programma (qui Tg1 Ore 20). ▾ mostra tutte le scelte.", el: fld("richiedente"), act: function () { return tourType($("richiedente"), richSlots.indexOf("Ore 20") >= 0 ? "Ore 20" : (richSlots[0] || "")); } },
+      { cap: "Durata: facoltativa, per esempio 1:22.", el: fld("durata"), act: function () { return tourType($("durata"), "1:22"); } },
+      { cap: "Mezzo: come è stato inviato il servizio. V-Mover è già scelto.", el: function () { return chipLabel("c-mezzo", mezzo); }, click: true, act: function () { tourPick("mezzo", mezzo); } },
+      { cap: "Trasferta: solo se l'operatore è in trasferta. Si imposta una volta e vale su ogni macchina.", el: function () { return form.querySelector(".p-trip"); } },
+      { cap: "Operatore: chi ha montato. Di solito è già quello del tuo accesso.", el: fld("operatore"), act: function () { if (op) { $("operatore").value = op; $("operatore").dispatchEvent(new Event("change", { bubbles: true })); } } },
+      { cap: function () { return tf("Ora tocca a te: Invia registrazione ({0})", t(isMac ? "⌘+Invio" : "Ctrl+Invio")); }, sub: "Questa era una prova: non è stato inviato niente. «Fine» svuota il modulo.", el: function () { return $("send"); }, last: true }
+    ];
+  }
+  function tourBuild() {
+    var root = document.createElement("div"); root.className = "tour"; root.id = "tour";
+    root.setAttribute("role", "dialog"); root.setAttribute("aria-modal", "true"); root.setAttribute("aria-labelledby", "tour-h"); root.setAttribute("aria-describedby", "tour-cap");
+    root.innerHTML =
+      '<div class="tour-spot none" id="tour-spot"></div>' +
+      '<div class="tour-ring" id="tour-ring" aria-hidden="true"></div>' +
+      '<div class="tour-cur" id="tour-cur" aria-hidden="true"><svg viewBox="0 0 26 30" focusable="false"><path d="M2 2 L2 24 L8 18.6 L12.2 27.6 L16 25.9 L11.9 17.1 L19.8 17.1 Z" fill="#fff" stroke="#0f141c" stroke-width="2" stroke-linejoin="round"/></svg></div>' +
+      '<div class="tour-tip" id="tour-tip"><h2 class="ph" id="tour-h"></h2><p id="tour-cap" aria-live="polite"></p><p class="sub" id="tour-sub" hidden></p>' +
+      '<div class="row"><button type="button" class="btn" id="tour-skip"></button><button type="button" class="btn pri" id="tour-next"></button><button type="button" class="btn pri" id="tour-end" hidden></button></div></div>';
+    document.documentElement.appendChild(root); // not body: body carries the wide-monitor zoom and is inert meanwhile
+    // The dimmed background swallows clicks: nothing behind it reacts, nothing closes.
+    root.addEventListener("mousedown", function (ev) { if (!ev.target.closest(".tour-tip")) ev.preventDefault(); });
+    root.querySelector("#tour-skip").addEventListener("click", function () { tourEnd("saltato"); });
+    root.querySelector("#tour-end").addEventListener("click", function () { tourEnd("completato"); });
+    root.querySelector("#tour-next").addEventListener("click", function () { if (!tour) return; tour.fast = true; tourWake(); });
+    return root;
+  }
+  function tourPaint() {
+    if (!tour) return;
+    var s = tour.steps[tour.step], n = tour.steps.length;
+    $("tour-h").textContent = tf("Tutorial · {0}/{1}", tour.step + 1, n);
+    $("tour-cap").textContent = typeof s.cap === "function" ? s.cap() : t(s.cap);
+    $("tour-sub").hidden = !s.sub; $("tour-sub").textContent = s.sub ? t(s.sub) : "";
+    $("tour-skip").textContent = t("Salta"); $("tour-next").textContent = t("Avanti"); $("tour-end").textContent = t("Fine");
+    $("tour-skip").hidden = !!s.last; $("tour-next").hidden = !!s.last; $("tour-end").hidden = !s.last;
+  }
+  // Spotlight, cursor and caption on the step's element (viewport coordinates: the overlay is not zoomed).
+  function tourPlace() {
+    if (!tour) return;
+    var s = tour.steps[tour.step], el = s.el ? s.el() : null;
+    var vw = window.innerWidth, vh = window.innerHeight, tip = tour.tip, sp = tour.spot;
+    if (el) {
+      var r0 = el.getBoundingClientRect();
+      if (r0.top < 0 || r0.bottom > vh) { el.scrollIntoView({ block: "center" }); }
+    }
+    var r = el ? el.getBoundingClientRect() : null;
+    if (r && r.width) {
+      var pad = 6;
+      sp.className = "tour-spot";
+      sp.style.left = (r.left - pad) + "px"; sp.style.top = (r.top - pad) + "px";
+      sp.style.width = (r.width + 2 * pad) + "px"; sp.style.height = (r.height + 2 * pad) + "px";
+      var cx = r.left + Math.min(r.width * 0.5, 64), cy = r.top + r.height * (el.classList.contains("fld") ? 0.72 : 0.55);
+      tour.cur.style.transform = "translate(" + Math.round(cx - 2) + "px," + Math.round(cy - 2) + "px)";
+      tour.ring.style.left = cx + "px"; tour.ring.style.top = cy + "px";
+      // Caption below the element; else above; else beside it (right, then left); else over the bottom edge.
+      var tw = tip.offsetWidth, th = tip.offsetHeight, gap = pad + 14, top, left = Math.min(Math.max(16, r.left), vw - tw - 16);
+      var clampTop = Math.max(8, Math.min(vh - th - 8, r.top));
+      if (r.bottom + gap + th <= vh - 8) top = r.bottom + gap;
+      else if (r.top - gap - th >= 8) top = r.top - gap - th;
+      else if (r.right + gap + tw <= vw - 16) { top = clampTop; left = r.right + gap; }
+      else if (r.left - gap - tw >= 16) { top = clampTop; left = r.left - gap - tw; }
+      else top = vh - th - 8;
+      tip.style.left = Math.max(16, left) + "px"; tip.style.top = top + "px";
+    } else {
+      sp.className = "tour-spot none"; sp.style.left = (vw / 2) + "px"; sp.style.top = (vh * 0.45) + "px"; sp.style.width = "0px"; sp.style.height = "0px";
+      tour.cur.style.transform = "translate(" + Math.round(vw / 2 + 40) + "px," + Math.round(vh * 0.45 + 60) + "px)";
+      tip.style.left = Math.max(16, (vw - tip.offsetWidth) / 2) + "px"; tip.style.top = Math.max(16, vh * 0.45 - tip.offsetHeight / 2) + "px";
+    }
+  }
+  function tourRun(g) {
+    var i = 0;
+    function step() {
+      if (!tour || tour.gen !== g) return;
+      tour.step = i; tour.fast = false; tour.wakers = [];
+      tourPaint(); tourPlace();
+      var s = tour.steps[i];
+      tsleep(tourReduced() ? 150 : TOUR_HOP).then(function (ok) {
+        if (!ok) return false;
+        if (s.click) tourClick();
+        return Promise.resolve(s.act ? s.act() : true);
+      }).then(function (ok) {
+        if (ok === false || !tour || tour.gen !== g) return;
+        tourPlace(); // a filled field can change the layout (richiedente prefix badge)
+        if (s.last) { $("tour-end").focus(); return; }
+        tsleep(TOUR_READ).then(function (ok2) { if (ok2) { i += 1; step(); } });
+      });
+    }
+    step();
+  }
+  function tourStart() {
+    if (tour || form.hidden || !lists) return;
+    var dirty = $("giornalista").value.trim() || $("titolo").value.trim() || $("durata").value.trim() || $("note").value.trim();
+    if (dirty && !window.confirm(t("Il tutorial svuota il modulo. Continuare?"))) return;
+    closeList(); tripClose();
+    if ($("miss").open) $("miss").close();
+    resetAll();
+    tourGen += 1;
+    var root = tourBuild();
+    tour = { gen: tourGen, step: 0, fast: false, wakers: [], root: root, spot: $("tour-spot"), cur: $("tour-cur"), ring: $("tour-ring"), tip: $("tour-tip"), steps: tourSteps() };
+    document.body.inert = true;  // nothing behind the overlay takes clicks, focus, Tab or Ctrl+Enter
+    // Start the cursor in the middle of the screen, then glide.
+    tour.cur.style.transition = "none"; tour.cur.style.transform = "translate(" + Math.round(window.innerWidth / 2) + "px," + Math.round(window.innerHeight / 2) + "px)";
+    void tour.cur.offsetWidth; tour.cur.style.transition = "";
+    $("tour-next").focus();
+    tourRun(tour.gen);
+  }
+  // Closed without flags (the login was lost): the tour comes back after the next login.
+  function tourAbort() {
+    if (!tour) return false;
+    var root = tour.root, w = tour.wakers; tour = null; tourGen += 1;
+    w.forEach(function (f) { f(); }); // pending sleeps resolve false: tour is already null
+    if (root.parentNode) root.parentNode.removeChild(root);
+    document.body.inert = false;
+    return true;
+  }
+  // Fine or Salta (or Esc): clear the demo, set both flags. A failed POST keeps the browser flag; the server asks again next login.
+  function tourEnd(esito) {
+    if (!tourAbort()) return;
+    resetAll();
+    try { localStorage.setItem(TOUR_KEY, "visto"); } catch (e) { /* storage blocked */ }
+    if (tutorialSeen === true) return;
+    api("/api/tutorial-seen", { method: "POST", body: JSON.stringify({ esito: esito }) }).then(function (r) {
+      if (r.status === 200) tutorialSeen = true;
+    }, function (e) { if (e.kind === "auth") authLost(); });
+  }
+  // Esc skips at any step. Capture phase + preventDefault: the page's own Esc (= Svuota) then stays out of it.
+  document.addEventListener("keydown", function (ev) {
+    if (!tour || ev.key !== "Escape") return;
+    ev.preventDefault(); ev.stopPropagation(); tourEnd("saltato");
+  }, true);
+  window.addEventListener("resize", function () { tourPlace(); });
+  document.addEventListener("rainyc:auth-lost", function () { tourAbort(); $("tour-btn").hidden = true; });
+  document.addEventListener("rainyc:lang", function () { if (tour) { tourPaint(); tourPlace(); } });
+  $("tour-btn").addEventListener("click", function () { tourStart(); });
+  MENU_ACTIONS.push({ label: "Tutorial", run: function () { tourStart(); } });
+
   // ---- start ----
   requireLogin(function () {
     boot(t("Caricamento degli elenchi…"));
@@ -1828,6 +2077,8 @@ function fmtRange(a, b) {
       resetAll(); renderPending(); renderRecent();
       refreshServerRows();
       schedule(0);
+      $("tour-btn").hidden = false;
+      if (tourShouldStart()) setTimeout(tourStart, 400); // after the first paint, so the cursor has places to go
     }, function (e) {
       if (e.kind === "auth") { boot(""); authLost(); return; }
       boot(tf("{0} Ricaricare la pagina quando la rete torna.", e.message), true);
