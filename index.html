@@ -311,7 +311,7 @@ kbd { font:600 11px/1 var(--mono); padding:2px 5px; border:1px solid var(--line2
 </head>
 <body>
 <header class="appbar">
-  <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-10-19 17:47 UTC · 534144c"><span class="mk">Rai · NY</span><span id="t">RAI NYC Servizi</span><span class="pg" data-i18n>Registrazione</span></div>
+  <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-10-19 18:11 UTC · ff198d5"><span class="mk">Rai · NY</span><span id="t">RAI NYC Servizi</span><span class="pg" data-i18n>Registrazione</span></div>
   <nav class="hright" id="hright" aria-label="Pagine">
     <span class="pend" id="pend" hidden></span>
     <button type="button" class="icbtn lang" id="tour-btn" hidden data-i18n-attr="aria-label|title" aria-label="Tutorial: come si compila una registrazione" title="Tutorial: come si compila una registrazione">?</button>
@@ -476,7 +476,7 @@ var PAGE_FORM = "./" || APP_BASE;
 var PAGE_COLLAUDO = "./collaudo.html" || APP_BASE + "/collaudo";
 var PAGE_GESTIONE = "./gestione.html" || APP_BASE + "/gestione";
 var PAGE_MENSILE = "./mensile.html" || APP_BASE + "/mensile";
-var BUILD = "2026-10-19 17:47 UTC · 534144c"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
+var BUILD = "2026-10-19 18:11 UTC · ff198d5"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
 // Every place the project lives (shown in the admin's header menu and on the Gestione page).
 var LINKS = [
   ["Pagine pubbliche", "https://rainycservizi.github.io/rainyc-servizi-app/", "GitHub Pages: il sito di prova principale"],
@@ -532,6 +532,7 @@ var I18N = { en: {
   "Richiesta": "Request", "Richiedente": "Requester", "(edizione o programma; anche testo libero)": "(edition or programme; free text also allowed)",
   "(edizione; anche testo libero)": "(edition; free text also allowed)", "(programma; testo libero)": "(programme; free text)",
   "(scegliere prima la rete)": "(pick the network first)", "Durata": "Duration", "(facoltativa)": "(optional)", "(facoltative)": "(optional)",
+  "Tappeto: se il servizio è un tappeto, toccare anche «Tappeto» (prima o dopo la rete): la categoria diventa tappeto. Questo è un pezzo: qui non si tocca.": "Tappeto: if the package is a tappeto, also tap «Tappeto» (before or after the network): the category becomes tappeto. This one is a package: leave it.",
   "Tappeto per {0}": "Tappeto for {0}", "Tappeto: toccare la rete a cui è destinato": "Tappeto: tap the network it is for", "Rete del tappeto": "Tappeto network",
   "Tappeto: il servizio è un tappeto; toccare anche la rete a cui è destinato": "Tappeto: this is a tappeto; also tap the network it is for",
   "Mezzo": "Delivery means", "Trasferta": "Travel",
@@ -1599,10 +1600,24 @@ function fmtRange(a, b) {
     });
   }
   function refreshServerRows() {
-    return api("/api/recent?date=" + today()).then(function (r) {
-      if (r.status === 200) { serverRows = r.body.rows || []; renderRecent(); }
+    var date = today();
+    return api("/api/recent?date=" + date).then(function (r) {
+      if (r.status !== 200) return;
+      serverRows = r.body.rows || [];
+      // An entry of this day that reached the server but is no longer in the server's list was voided elsewhere
+      // (the collaudo, another machine): drop it from the local list too (Marco, 2026-10-19: "even after i delete
+      // events from the collaudo, it still shows up in today's entries").
+      var seen = {}; serverRows.forEach(function (x) { seen[x.record_id] = true; });
+      var before = queue.length;
+      queue = queue.filter(function (e) { return !(e.stato === "sincronizzato" && e.server_id && e.payload.delivery_date === date && !seen[e.server_id]); });
+      if (queue.length !== before) qsave(queue);
+      renderRecent();
     }, function () { /* offline: local list only */ });
   }
+  // The list also follows what happens elsewhere: every minute while the page is visible, and when it comes back.
+  setInterval(function () { if (!document.hidden && lists) refreshServerRows(); }, 60000);
+  document.addEventListener("visibilitychange", function () { if (!document.hidden && lists) refreshServerRows(); });
+  window.addEventListener("focus", function () { if (lists) refreshServerRows(); });
 
   function schedule(delayMs) {
     if (timer) clearTimeout(timer);
@@ -1914,7 +1929,7 @@ function fmtRange(a, b) {
   var tutorialSeen = null;  // true / false from /api/lists; null = unknown (offline, or the table is missing)
   var tour = null;          // the running tour: {gen, step, fast, wakers, root, spot, cur, ring, tip, steps}
   var tourGen = 0;
-  var TOUR_HOP = 650, TOUR_READ = 1900, TOUR_KEY_MS = 70;
+  var TOUR_HOP = 800, TOUR_READ = 3400, TOUR_KEY_MS = 80; // Marco (2026-10-19): longer pauses, "it moves too quickly"
   function tourBrowserSeen() { try { return localStorage.getItem(TOUR_KEY) === "visto"; } catch (e) { return false; } }
   function tourShouldStart() { return tutorialSeen === null ? !tourBrowserSeen() : !tutorialSeen; }
   function tourReduced() { try { return window.matchMedia("(prefers-reduced-motion: reduce)").matches; } catch (e) { return false; } }
@@ -1970,6 +1985,7 @@ function fmtRange(a, b) {
       { cap: "Giornalista: scrivere le prime lettere e scegliere il nome dall'elenco (Tab completa).", el: fld("giornalista"), act: function () { return tourType($("giornalista"), giorn); } },
       { cap: "Argomento / Titolo: di che cosa parla il servizio.", el: fld("titolo"), act: function () { return tourType($("titolo"), t("Prova: titolo di esempio")); } },
       { cap: "Rete: toccare la rete che ha chiesto il servizio.", el: function () { return chipLabel("c-rete", rete); }, click: true, act: function () { tourPick("rete", rete); } },
+      { cap: "Tappeto: se il servizio è un tappeto, toccare anche «Tappeto» (prima o dopo la rete): la categoria diventa tappeto. Questo è un pezzo: qui non si tocca.", el: function () { return $("tappeto").parentNode; } },
       { cap: "Richiedente: l'edizione o il programma (qui Tg1 Ore 20). ▾ mostra tutte le scelte.", el: fld("richiedente"), act: function () { return tourType($("richiedente"), richSlots.indexOf("Ore 20") >= 0 ? "Ore 20" : (richSlots[0] || "")); } },
       { cap: "Durata: facoltativa, per esempio 1:22.", el: fld("durata"), act: function () { return tourType($("durata"), "1:22"); } },
       { cap: "Mezzo: come è stato inviato il servizio. V-Mover è già scelto.", el: function () { return chipLabel("c-mezzo", mezzo); }, click: true, act: function () { tourPick("mezzo", mezzo); } },
