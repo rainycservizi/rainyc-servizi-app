@@ -311,7 +311,7 @@ kbd { font:600 11px/1 var(--mono); padding:2px 5px; border:1px solid var(--line2
 </head>
 <body>
 <header class="appbar">
-  <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-10-19 18:11 UTC · ff198d5"><span class="mk">Rai · NY</span><span id="t">RAI NYC Servizi</span><span class="pg" data-i18n>Registrazione</span></div>
+  <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-10-19 18:44 UTC · 6d2ba19"><span class="mk">Rai · NY</span><span id="t">RAI NYC Servizi</span><span class="pg" data-i18n>Registrazione</span></div>
   <nav class="hright" id="hright" aria-label="Pagine">
     <span class="pend" id="pend" hidden></span>
     <button type="button" class="icbtn lang" id="tour-btn" hidden data-i18n-attr="aria-label|title" aria-label="Tutorial: come si compila una registrazione" title="Tutorial: come si compila una registrazione">?</button>
@@ -476,7 +476,7 @@ var PAGE_FORM = "./" || APP_BASE;
 var PAGE_COLLAUDO = "./collaudo.html" || APP_BASE + "/collaudo";
 var PAGE_GESTIONE = "./gestione.html" || APP_BASE + "/gestione";
 var PAGE_MENSILE = "./mensile.html" || APP_BASE + "/mensile";
-var BUILD = "2026-10-19 18:11 UTC · ff198d5"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
+var BUILD = "2026-10-19 18:44 UTC · 6d2ba19"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
 // Every place the project lives (shown in the admin's header menu and on the Gestione page).
 var LINKS = [
   ["Pagine pubbliche", "https://rainycservizi.github.io/rainyc-servizi-app/", "GitHub Pages: il sito di prova principale"],
@@ -533,6 +533,9 @@ var I18N = { en: {
   "(edizione; anche testo libero)": "(edition; free text also allowed)", "(programma; testo libero)": "(programme; free text)",
   "(scegliere prima la rete)": "(pick the network first)", "Durata": "Duration", "(facoltativa)": "(optional)", "(facoltative)": "(optional)",
   "Tappeto: se il servizio è un tappeto, toccare anche «Tappeto» (prima o dopo la rete): la categoria diventa tappeto. Questo è un pezzo: qui non si tocca.": "Tappeto: if the package is a tappeto, also tap «Tappeto» (before or after the network): the category becomes tappeto. This one is a package: leave it.",
+  "Registrazioni annullate questa settimana": "Entries cancelled this week", "Niente viene cancellato: ogni annullamento resta nel registro e da qui si può ripristinare.": "Nothing is deleted: every cancellation stays in the register and can be restored here.",
+  "Nessuna registrazione annullata in questa settimana.": "No entry cancelled this week.", "Rete · Richiedente": "Network · Requester", "Annullata": "Cancelled", "Ripristina": "Restore",
+  "Registrazione ripristinata.": "Entry restored.", "nuova registrazione": "new entry", "annullata": "cancelled", "ripristinata": "restored", "modifica": "change", "cambiato": "changed",
   "Tappeto per {0}": "Tappeto for {0}", "Tappeto: toccare la rete a cui è destinato": "Tappeto: tap the network it is for", "Rete del tappeto": "Tappeto network",
   "Tappeto: il servizio è un tappeto; toccare anche la rete a cui è destinato": "Tappeto: this is a tappeto; also tap the network it is for",
   "Mezzo": "Delivery means", "Trasferta": "Travel",
@@ -1656,10 +1659,11 @@ function fmtRange(a, b) {
       schedule(delay);
     });
   }
-  // The last record that reached the server can be voided from here (POST /api/void {id, reason}).
-  var lastSynced = null;
+  // The last record that reached the server can be voided from here (POST /api/void {id, reason}); the void itself is
+  // reversible: the button then reads «Ripristina» (POST /api/unvoid). Nothing is deleted, every step is audited.
+  var lastSynced = null, lastVoided = null;
   function showLast(e) {
-    lastSynced = { id: e.server_id, entry: e };
+    lastSynced = { id: e.server_id, entry: e }; lastVoided = null; $("undo").textContent = t("Annulla");
     var p = e.payload;
     var line = p.journalist + " · " + (p.tappeto ? t("Tappeto") + " " : "") + p.rete + (p.richiedente ? " " + stripPrefix(p.rete, p.richiedente) : "") + " · " + p.subject;
     lastSrc = function () { return tf("Registrata: {0}", line); }; paintLast();
@@ -1668,12 +1672,27 @@ function fmtRange(a, b) {
     setStatus("sincronizzato", "Sincronizzato");
   }
   $("undo").addEventListener("click", function () {
-    var l = lastSynced; if (!l || !l.id) return;
-    var b = $("undo"); b.disabled = true;
+    var b = $("undo");
     function fail(msg) { b.disabled = false; lastSrc = typeof msg === "function" ? msg : function () { return t(msg); }; paintLast(); $("last").className = "last errore"; }
+    if (lastVoided) {
+      var v = lastVoided; b.disabled = true;
+      api("/api/unvoid", { method: "POST", body: JSON.stringify({ id: v }) }).then(function (r) {
+        if (r.status === 200) {
+          lastVoided = null; b.hidden = true; b.disabled = false; b.textContent = t("Annulla");
+          lastSrc = function () { return t("Registrazione ripristinata."); }; paintLast(); $("last").className = "last";
+          refreshServerRows();
+        } else fail((r.body && r.body.error) || "Ripristino non riuscito.");
+      }, function (err) {
+        if (err.kind === "auth") { fail(err.message); authLost(); return; }
+        fail(function () { return tf("Ripristino non riuscito: {0}", err.message); });
+      });
+      return;
+    }
+    var l = lastSynced; if (!l || !l.id) return;
+    b.disabled = true;
     api("/api/void", { method: "POST", body: JSON.stringify({ id: l.id, reason: "annullata dall'operatore" }) }).then(function (r) {
       if (r.status === 200) {
-        lastSynced = null; b.hidden = true;
+        lastSynced = null; lastVoided = l.id; b.disabled = false; b.textContent = t("Ripristina");
         queue = queue.filter(function (x) { return x !== l.entry; }); qsave(queue);
         lastSrc = function () { return t("Registrazione annullata."); }; paintLast(); $("last").className = "last";
         renderRecent(); refreshServerRows();
