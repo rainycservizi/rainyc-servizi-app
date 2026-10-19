@@ -261,6 +261,20 @@ kbd { font:600 11px/1 var(--mono); padding:2px 5px; border:1px solid var(--line2
   .side { max-height:calc(100vh / var(--z, 1) - 52px - 24px); top:12px; }
   .keys { display:none; }
 }
+/* Shorter still (1536×~720 at 125 % scaling, 1366×700 laptops): smaller chips, three rete columns, no scroll. */
+@media (min-width:1100px) and (max-height:799.98px) {
+  .desk { padding:10px; gap:8px; } .entry { gap:8px; }
+  .panel { padding:8px 12px 10px; } .ph { margin-bottom:8px; } .fld { margin-bottom:6px; } .fld > label, .lbl { margin-bottom:4px; }
+  input[type=text], input[type=date], input[type=email], input[type=password], select, .chips span { height:36px; min-height:36px; }
+  .chips { gap:5px; } .chips span { padding:4px 6px; font-size:14px; }
+  #c-rete { grid-template-columns:repeat(auto-fill, minmax(118px, 1fr)); }
+  .btn { height:40px; } .status { padding:6px 10px; }
+}
+@media (min-width:1100px) and (max-width:1439.98px) {
+  #c-rete { grid-template-columns:repeat(3, minmax(0, 1fr)); }
+  #c-rete span { padding-left:4px; padding-right:4px; }
+  #c-rete .logo { display:none; } /* text only: the wordmarks clip in three narrow columns */
+}
 /* ── admin "Link ▾" menu (shared.js mountLinks) ── */
 .lmenu { position:relative; }
 .lmenu button.hlink { border:0; background:transparent; cursor:pointer; font:inherit; font-size:14px; }
@@ -291,7 +305,7 @@ kbd { font:600 11px/1 var(--mono); padding:2px 5px; border:1px solid var(--line2
 </head>
 <body>
 <header class="appbar">
-  <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-10-19 16:29 UTC · a999066"><span class="mk">Rai · NY</span><span id="t">RAI NYC Servizi</span><span class="pg" data-i18n>Registrazione</span></div>
+  <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-10-19 16:39 UTC · 1d69e93"><span class="mk">Rai · NY</span><span id="t">RAI NYC Servizi</span><span class="pg" data-i18n>Registrazione</span></div>
   <nav class="hright" id="hright" aria-label="Pagine">
     <span class="pend" id="pend" hidden></span>
     <button type="button" class="icbtn lang" id="tour-btn" hidden data-i18n-attr="aria-label|title" aria-label="Tutorial: come si compila una registrazione" title="Tutorial: come si compila una registrazione">?</button>
@@ -456,7 +470,7 @@ var PAGE_FORM = "./" || APP_BASE;
 var PAGE_COLLAUDO = "./collaudo.html" || APP_BASE + "/collaudo";
 var PAGE_GESTIONE = "./gestione.html" || APP_BASE + "/gestione";
 var PAGE_MENSILE = "./mensile.html" || APP_BASE + "/mensile";
-var BUILD = "2026-10-19 16:29 UTC · a999066"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
+var BUILD = "2026-10-19 16:39 UTC · 1d69e93"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
 // Every place the project lives (shown in the admin's header menu and on the Gestione page).
 var LINKS = [
   ["Pagine pubbliche", "https://rainycservizi.github.io/rainyc-servizi-app/", "GitHub Pages: il sito di prova principale"],
