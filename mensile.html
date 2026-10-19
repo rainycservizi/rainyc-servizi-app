@@ -154,7 +154,7 @@ footer.doc { margin-top:22px; font-size:11px; color:var(--dim); }
 <body>
 <div class="top" id="top">
   <header class="appbar">
-    <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-10-19 16:45 UTC · bdbddf4"><span class="mk">Rai · NY</span><span class="nm">RAI NYC Servizi</span><span class="pg" data-i18n>Mensile</span></div>
+    <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-10-19 17:47 UTC · 534144c"><span class="mk">Rai · NY</span><span class="nm">RAI NYC Servizi</span><span class="pg" data-i18n>Mensile</span></div>
     <nav class="hright" id="hright" aria-label="Pagine">
       <button type="button" class="icbtn" id="theme" aria-label="Cambia tema" title="Cambia tema">
         <svg class="ic-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
@@ -214,7 +214,7 @@ var PAGE_FORM = "./" || APP_BASE;
 var PAGE_COLLAUDO = "./collaudo.html" || APP_BASE + "/collaudo";
 var PAGE_GESTIONE = "./gestione.html" || APP_BASE + "/gestione";
 var PAGE_MENSILE = "./mensile.html" || APP_BASE + "/mensile";
-var BUILD = "2026-10-19 16:45 UTC · bdbddf4"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
+var BUILD = "2026-10-19 17:47 UTC · 534144c"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
 // Every place the project lives (shown in the admin's header menu and on the Gestione page).
 var LINKS = [
   ["Pagine pubbliche", "https://rainycservizi.github.io/rainyc-servizi-app/", "GitHub Pages: il sito di prova principale"],
@@ -270,6 +270,8 @@ var I18N = { en: {
   "Richiesta": "Request", "Richiedente": "Requester", "(edizione o programma; anche testo libero)": "(edition or programme; free text also allowed)",
   "(edizione; anche testo libero)": "(edition; free text also allowed)", "(programma; testo libero)": "(programme; free text)",
   "(scegliere prima la rete)": "(pick the network first)", "Durata": "Duration", "(facoltativa)": "(optional)", "(facoltative)": "(optional)",
+  "Tappeto per {0}": "Tappeto for {0}", "Tappeto: toccare la rete a cui è destinato": "Tappeto: tap the network it is for", "Rete del tappeto": "Tappeto network",
+  "Tappeto: il servizio è un tappeto; toccare anche la rete a cui è destinato": "Tappeto: this is a tappeto; also tap the network it is for",
   "Mezzo": "Delivery means", "Trasferta": "Travel",
   "Nessuna trasferta aperta. Impostarla una volta: vale su ogni macchina, per le registrazioni di quell'operatore nelle date indicate.": "No open travel. Set it once: it applies on every machine to that operator's entries on those dates.",
   "Termina trasferta": "End travel", "Termina": "End", "Trasferta aperta.": "Travel opened.", "Trasferta terminata.": "Travel ended.", "Trasferta non salvata.": "Travel not saved.", "Trasferta non terminata.": "Travel not ended.",
@@ -328,7 +330,7 @@ var I18N = { en: {
   "Modifica annullata.": "Change undone.", "Annullare questa registrazione?": "Cancel this entry?",
   "Settimana non valida: usare la forma 2026-W41.": "Invalid week: use the form 2026-W41.",
   "Modifica": "Edit", "Annulla registrazione": "Cancel entry", "Chiudi": "Close",
-  "Trasferta di {0}: {1}, {2}. Vale per tutte le registrazioni di questo operatore in quelle date; si imposta o si termina dal modulo di registrazione, sezione 05.": "Travel of {0}: {1}, {2}. It applies to every entry of this operator on those dates; set or end it from the entry form, section 05.", "Collaudo {0} · RAI NYC Servizi": "Weekly report {0} · RAI NYC Servizi",
+  "Collaudo {0} · RAI NYC Servizi": "Weekly report {0} · RAI NYC Servizi",
   "Invia per e-mail · {0}": "Send by e-mail · {0}",
   "Il collaudo della settimana {0} (colonne di Roma, senza operatori) parte dalla casella della redazione. Scegliere i destinatari.": "The weekly report for week {0} (Rome's columns, no operators) is sent from the newsroom mailbox. Choose the recipients.",
   "Togli dall'elenco": "Remove from the list", "Togli {0}": "Remove {0}", "Nessun destinatario: aggiungerne uno qui sotto.": "No recipients: add one below.",
@@ -358,7 +360,7 @@ var I18N = { en: {
   "Giornalisti attivi": "Active journalists", "Operatori attivi": "Active operators",
   "Ultima registrazione": "Last entry", "Ultima voce del registro": "Last audit entry", "servita dalla funzione": "served by the function",
   "aggiornato {0}": "updated {0}", "il modulo dei montatori": "the editors' form", "la settimana da stampare o inviare": "the week to print or send",
-  "E-mail dei report (collaudo, Top Sheet)": "Report e-mails (weekly, Top Sheet)", "possono inviare: erika, caruso, pippo": "allowed to send: erika, caruso, pippo",
+  "E-mail dei report (collaudo, Top Sheet)": "Report e-mails (weekly, Top Sheet)", "possono inviare: caruso, erika, pippo, corti, valeria, nora": "allowed to send: caruso, erika, pippo, corti, valeria, nora",
   "Destinatari proposti": "Suggested recipients", "(nessuno: secret COLLAUDO_TO vuoto)": "(none: secret COLLAUDO_TO is empty)",
   "nuova password": "new password", "Nuova password per {0}": "New password for {0}", "Imposta": "Set",
   "Cambiare la password di {0}?": "Change the password of {0}?", "Password di {0} aggiornata.": "Password of {0} updated.",

@@ -16,14 +16,14 @@
   --fg:#0f141c; --dim:#5c667a; --accent:#d94e00; --accent-ink:#140a03; --accent-text:#b54708; --accent-soft:#fef3eb; /* dark ink on the accent: white on #d94e00 is 4.2:1, under the 4.5 floor */
   --ok:#156936; --ok-bg:#eaf5ee; --warn:#8c5800; --warn-bg:#fdf3dc; --bad:#b5221a; --bad-bg:#fdeae8;
   --focus:#c24e00; --shadow:0 1px 3px rgba(15,20,28,.05), 0 4px 14px rgba(15,20,28,.04); --pop:0 12px 32px -4px rgba(15,20,28,.14), 0 4px 10px rgba(15,20,28,.06);
-  --zebra:#f9f8f5; --band:#eeece6; --rule:#0f141c; --red:#b5221a;
+  --zebra:#f9f8f5; --band:#eeece6; --rule:#0f141c;
 }
 :root[data-theme=dark] {
   --bg:#0b0f19; --panel:#111726; --raise:#182033; --input:#0d121f; --hover:#1c263d; --line:#202c44; --line2:#2f3f61; /* midnight navy, not an inverted grey (si.gov) */
   --fg:#f4f6fa; --dim:#8fa1bb; --accent:#ff6b1a; --accent-ink:#0b0f19; --accent-text:#ff8a3d; --accent-soft:#2d2126;
   --ok:#5bd48f; --ok-bg:#10291c; --warn:#f5b745; --warn-bg:#2d2411; --bad:#ff725c; --bad-bg:#301614;
   --focus:#ff8a3d; --shadow:0 2px 6px rgba(0,0,0,.45); --pop:0 16px 44px rgba(0,0,0,.75);
-  --zebra:#141c2e; --band:#19233b; --rule:#36486e; --red:#ff725c;
+  --zebra:#141c2e; --band:#19233b; --rule:#36486e;
 }
 :root { color-scheme:light; } :root[data-theme=dark] { color-scheme:dark; }
 * { box-sizing:border-box; }
@@ -124,7 +124,7 @@ tbody tr.r:nth-of-type(even) td { background:var(--zebra); }
 tbody tr.r:hover td { background:var(--hover); }
 th.k, td.k { text-align:center; width:3.6em; }
 td.k { font-weight:700; }
-td.k.tcell { width:auto; min-width:4.2em; }
+
 tr.day td { background:var(--band); border-top:1px solid var(--line2); border-bottom:1px solid var(--line2); padding:0 8px 0 0; }
 button.dt { all:unset; box-sizing:border-box; display:inline-flex; align-items:center; gap:8px; min-height:38px; padding:0 10px 0 8px; font-weight:700; font-size:14px; cursor:pointer; border-radius:4px; color:var(--fg); }
 button.dt:hover { color:var(--accent-text); }
@@ -132,13 +132,12 @@ button.dt:focus-visible { outline:2px solid var(--focus); outline-offset:-2px; }
 button.dt .chev { transition:transform .15s; color:var(--dim); flex:none; }
 button.dt[aria-expanded=false] .chev { transform:rotate(-90deg); }
 .dn { font:700 11px/1 var(--mono); color:var(--accent-text); background:var(--panel); border:1px solid var(--line2); border-radius:999px; padding:3px 8px; }
-tr.day .trip { font-weight:600; color:var(--red); margin-left:6px; font-size:13px; }
+tr.day .trip { font-weight:600; color:var(--fg); margin-left:6px; font-size:13px; } /* black, not red (Marco, 2026-10-19) */
 tr.tot td { text-align:right; font-size:12.5px; color:var(--dim); border-bottom:1px solid var(--line2); background:var(--panel); padding-top:5px; padding-bottom:5px; }
 tr.tot td.k { text-align:center; color:var(--fg); }
 tr.empty td { color:var(--dim); font-style:italic; font-size:12.5px; padding-top:5px; padding-bottom:5px; }
 tbody.dg.chiuso tr.r, tbody.dg.chiuso tr.empty { display:none; }
-.si { color:var(--red); font-weight:800; }
-.tn { display:block; font-size:11px; font-weight:500; color:var(--dim); white-space:nowrap; line-height:14px; }
+
 .prn { display:none; }
 td.ed { cursor:text; }
 td.ed:hover { box-shadow:inset 0 0 0 1px var(--line2); }
@@ -146,7 +145,7 @@ td.ed.saving { opacity:.5; }
 td.ed .edin { width:100%; min-width:6em; height:30px; font:inherit; padding:2px 6px; border:1px solid var(--focus); border-radius:4px; background:var(--input); color:var(--fg); }
 td.act { white-space:nowrap; text-align:right; width:1%; padding-top:4px; padding-bottom:4px; }
 td.notec { max-width:16em; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:var(--dim); font-size:12.5px; } /* editable note (screen only) */
-@media screen and (max-width:1500px) { td.notec { max-width:7em; } td.tcell .tn { display:block; max-width:7.5em; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; } } /* laptops: the note and the trip note give way, the table stays inside 1366 px */
+@media screen and (max-width:1500px) { td.notec { max-width:7em; } } /* laptops: the note and the trip note give way, the table stays inside 1366 px */
 button.ic { border:0; background:transparent; color:var(--dim); width:28px; height:28px; line-height:1; padding:0; cursor:pointer; border-radius:4px; font-size:14px; }
 button.ic:hover, button.ic:focus-visible { background:var(--raise); color:var(--fg); }
 button.ic[data-act=void]:hover { color:var(--bad); }
@@ -157,7 +156,7 @@ footer.doc { margin-top:22px; display:flex; justify-content:space-between; align
 footer.doc .gen { font-size:11px; color:var(--dim); }
 footer.doc .firma { font-size:13px; white-space:nowrap; }
 
-/* ── trasferta popover ── */
+/* ── popover base (the e-mail dialog) ── */
 .pop { position:fixed; z-index:40; width:360px; max-width:calc(100vw / var(--z, 1) - 24px); background:var(--panel); border:1px solid var(--line2); border-radius:8px; box-shadow:var(--pop); padding:14px 16px 16px; font-size:14px; }
 .pop .fld label { display:block; font-weight:600; font-size:13px; margin:0 0 6px; }
 .pop .row2 { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:10px; }
@@ -165,12 +164,6 @@ footer.doc .firma { font-size:13px; white-space:nowrap; }
 .pop input[type=date] { font-size:15px; padding:0 8px; }
 .pop .row { display:flex; gap:8px; margin-top:4px; }
 .pop .row .btn { flex:1; justify-content:center; height:40px; }
-.seg { display:grid; grid-template-columns:1fr 1fr; gap:6px; margin:0 0 14px; }
-.seg label { position:relative; }
-.seg input { position:absolute; opacity:0; inset:0; margin:0; }
-.seg span { display:flex; align-items:center; justify-content:center; height:40px; border:1px solid var(--line2); border-radius:6px; background:var(--raise); font-weight:600; cursor:pointer; }
-.seg input:checked + span { background:var(--accent); border-color:var(--accent); color:var(--accent-ink); }
-.seg input:focus-visible + span { outline:2px solid var(--focus); outline-offset:2px; }
 /* ── e-mail: recipients to tick, one to add ── */
 .pop.mail { width:440px; top:70px; left:50%; transform:translateX(-50%); }
 .rcp { list-style:none; margin:0 0 10px; padding:0; max-height:min(40vh, 320px); overflow:auto; border:1px solid var(--line); border-radius:6px; }
@@ -212,7 +205,7 @@ footer.doc .firma { font-size:13px; white-space:nowrap; }
 @media print {
   :root, :root[data-theme=dark] {
     --bg:#fff; --panel:#fff; --raise:#fff; --fg:#111; --dim:#555; --line:#e6e6e6; --line2:#bbb; --rule:#111;
-    --zebra:#f4f4f4; --band:#e2e2e2; --red:#c00000; --accent-text:#111;
+    --zebra:#f4f4f4; --band:#e2e2e2; --accent-text:#111;
   }
   :root, :root[data-theme=dark] { color-scheme:light; }
   html, body { background:#fff; color:#111; }
@@ -245,7 +238,7 @@ footer.doc .firma { font-size:13px; white-space:nowrap; }
 <body>
 <div class="top" id="top">
   <header class="appbar">
-    <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-10-19 16:45 UTC · bdbddf4"><span class="mk">Rai · NY</span><span class="nm">RAI NYC Servizi</span><span class="pg" data-i18n>Collaudo</span></div>
+    <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-10-19 17:47 UTC · 534144c"><span class="mk">Rai · NY</span><span class="nm">RAI NYC Servizi</span><span class="pg" data-i18n>Collaudo</span></div>
     <nav class="hright" id="hright" aria-label="Pagine">
       <button type="button" class="icbtn" id="theme" aria-label="Cambia tema" title="Cambia tema">
         <svg class="ic-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
@@ -290,26 +283,6 @@ footer.doc .firma { font-size:13px; white-space:nowrap; }
   <div id="doc" class="panel sheet"></div>
 </div>
 
-<div class="pop" id="tpop" role="dialog" aria-labelledby="tpop-h" hidden>
-  <form id="tpop-f" novalidate>
-    <h2 class="ph" id="tpop-h" data-i18n>Trasferta</h2>
-    <p class="lead" id="tp-info" hidden style="margin:0 0 10px;color:var(--dim);font-size:13px;"></p>
-    <div class="seg" id="tp-seg" role="radiogroup" data-i18n-attr="aria-label" aria-label="Trasferta">
-      <label><input type="radio" name="tp-si" id="tp-si" value="true"><span data-i18n>Sì</span></label>
-      <label><input type="radio" name="tp-si" id="tp-no" value="false"><span data-i18n>No</span></label>
-    </div>
-    <div id="tp-det">
-      <div class="fld"><label for="tp-g" data-i18n>Giornalista in trasferta</label><select id="tp-g"></select></div>
-      <div class="fld"><label for="tp-l" data-i18n>Destinazione</label><input type="text" id="tp-l" maxlength="200" placeholder="Washington D.C."></div>
-      <div class="row2">
-        <div class="fld"><label for="tp-d" data-i18n>Dal</label><input type="date" id="tp-d"></div>
-        <div class="fld"><label for="tp-a" data-i18n>Al</label><input type="date" id="tp-a"></div>
-      </div>
-    </div>
-    <div class="row"><button type="submit" class="btn pri" id="tp-save" data-i18n>Salva</button><button type="button" class="btn" id="tp-cancel" data-i18n>Annulla</button></div>
-    <div class="err" id="tpop-err" role="alert"></div>
-  </form>
-</div>
   </form>
 </div>
 <script>
@@ -333,7 +306,7 @@ var PAGE_FORM = "./" || APP_BASE;
 var PAGE_COLLAUDO = "./collaudo.html" || APP_BASE + "/collaudo";
 var PAGE_GESTIONE = "./gestione.html" || APP_BASE + "/gestione";
 var PAGE_MENSILE = "./mensile.html" || APP_BASE + "/mensile";
-var BUILD = "2026-10-19 16:45 UTC · bdbddf4"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
+var BUILD = "2026-10-19 17:47 UTC · 534144c"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
 // Every place the project lives (shown in the admin's header menu and on the Gestione page).
 var LINKS = [
   ["Pagine pubbliche", "https://rainycservizi.github.io/rainyc-servizi-app/", "GitHub Pages: il sito di prova principale"],
@@ -389,6 +362,8 @@ var I18N = { en: {
   "Richiesta": "Request", "Richiedente": "Requester", "(edizione o programma; anche testo libero)": "(edition or programme; free text also allowed)",
   "(edizione; anche testo libero)": "(edition; free text also allowed)", "(programma; testo libero)": "(programme; free text)",
   "(scegliere prima la rete)": "(pick the network first)", "Durata": "Duration", "(facoltativa)": "(optional)", "(facoltative)": "(optional)",
+  "Tappeto per {0}": "Tappeto for {0}", "Tappeto: toccare la rete a cui è destinato": "Tappeto: tap the network it is for", "Rete del tappeto": "Tappeto network",
+  "Tappeto: il servizio è un tappeto; toccare anche la rete a cui è destinato": "Tappeto: this is a tappeto; also tap the network it is for",
   "Mezzo": "Delivery means", "Trasferta": "Travel",
   "Nessuna trasferta aperta. Impostarla una volta: vale su ogni macchina, per le registrazioni di quell'operatore nelle date indicate.": "No open travel. Set it once: it applies on every machine to that operator's entries on those dates.",
   "Termina trasferta": "End travel", "Termina": "End", "Trasferta aperta.": "Travel opened.", "Trasferta terminata.": "Travel ended.", "Trasferta non salvata.": "Travel not saved.", "Trasferta non terminata.": "Travel not ended.",
@@ -447,7 +422,7 @@ var I18N = { en: {
   "Modifica annullata.": "Change undone.", "Annullare questa registrazione?": "Cancel this entry?",
   "Settimana non valida: usare la forma 2026-W41.": "Invalid week: use the form 2026-W41.",
   "Modifica": "Edit", "Annulla registrazione": "Cancel entry", "Chiudi": "Close",
-  "Trasferta di {0}: {1}, {2}. Vale per tutte le registrazioni di questo operatore in quelle date; si imposta o si termina dal modulo di registrazione, sezione 05.": "Travel of {0}: {1}, {2}. It applies to every entry of this operator on those dates; set or end it from the entry form, section 05.", "Collaudo {0} · RAI NYC Servizi": "Weekly report {0} · RAI NYC Servizi",
+  "Collaudo {0} · RAI NYC Servizi": "Weekly report {0} · RAI NYC Servizi",
   "Invia per e-mail · {0}": "Send by e-mail · {0}",
   "Il collaudo della settimana {0} (colonne di Roma, senza operatori) parte dalla casella della redazione. Scegliere i destinatari.": "The weekly report for week {0} (Rome's columns, no operators) is sent from the newsroom mailbox. Choose the recipients.",
   "Togli dall'elenco": "Remove from the list", "Togli {0}": "Remove {0}", "Nessun destinatario: aggiungerne uno qui sotto.": "No recipients: add one below.",
@@ -477,7 +452,7 @@ var I18N = { en: {
   "Giornalisti attivi": "Active journalists", "Operatori attivi": "Active operators",
   "Ultima registrazione": "Last entry", "Ultima voce del registro": "Last audit entry", "servita dalla funzione": "served by the function",
   "aggiornato {0}": "updated {0}", "il modulo dei montatori": "the editors' form", "la settimana da stampare o inviare": "the week to print or send",
-  "E-mail dei report (collaudo, Top Sheet)": "Report e-mails (weekly, Top Sheet)", "possono inviare: erika, caruso, pippo": "allowed to send: erika, caruso, pippo",
+  "E-mail dei report (collaudo, Top Sheet)": "Report e-mails (weekly, Top Sheet)", "possono inviare: caruso, erika, pippo, corti, valeria, nora": "allowed to send: caruso, erika, pippo, corti, valeria, nora",
   "Destinatari proposti": "Suggested recipients", "(nessuno: secret COLLAUDO_TO vuoto)": "(none: secret COLLAUDO_TO is empty)",
   "nuova password": "new password", "Nuova password per {0}": "New password for {0}", "Imposta": "Set",
   "Cambiare la password di {0}?": "Change the password of {0}?", "Password di {0} aggiornata.": "Password of {0} updated.",
@@ -1082,12 +1057,13 @@ function fmtRange(a, b) {
 
 const CATEGORIE = ["pezzo", "radio", "live", "tappeto"];
 const CAT_LABEL = { pezzo: "Pezzi", radio: "Radio", live: "Live", tappeto: "Tappeti" };
-// Per-rete counters in the sheet's order. Tappeto rows count only under Tappeti.
+// Per-rete counters in the sheet's order. Tappeto rows (categoria tappeto) count only under Tappeti.
 const RETI = ["Rainews.it", "Tg1", "Tg2", "Tg3", "RAN", "Rai Sport", "GR", "Altre"];
 // Screen columns. The last five (assistenza, note, operatore, data, azioni) never print: the printed
-// sheet has exactly Rome's columns (PRINT_COLS), in this order.
+// sheet has exactly Rome's columns (PRINT_COLS), in this order. No Trasferta column (Marco, 2026-10-19):
+// who is in trasferta is named once in the day header.
 const COLS = ["Titolo", "Giornalista", "Richiedente", "Rete", "Durata",
-  "Pezzi", "Radio", "Live", "Trasferta", "Mezzo", "Tappeti", "Ass. tecnica", "Note", "Operatore", "Data", ""];
+  "Pezzi", "Radio", "Live", "Mezzo", "Tappeti", "Ass. tecnica", "Note", "Operatore", "Data", ""];
 const CHECK_COLS = ["Pezzi", "Radio", "Live", "Tappeti", "Ass. tecnica"];
 const SCREEN_ONLY = ["Ass. tecnica", "Note", "Operatore", "Data", ""];
 const ROME_LABEL = { Titolo: "Titolo del servizio", Mezzo: "Mezzo di trasmissione" };
@@ -1101,8 +1077,8 @@ const EDIT_FIELDS = {
   richiedente: { api: "richiedente", kind: "datalist" },
   rete: { api: "rete", kind: "select" },
   durata: { api: "duration_text", kind: "text" },
-  trasferta: { api: "trasferta", kind: "bool" },
   mezzo: { api: "mezzo", kind: "select" },
+  tappeto: { api: "tappeto", kind: "bool" }, // the Tappeti tick: Sì files the row as a tappeto of its rete, No re-derives the categoria
   note: { api: "notes", kind: "text" }, // screen only (never printed, never e-mailed)
   operatore: { api: "operator", kind: "select" },
   data: { api: "delivery_date", kind: "date" },
@@ -1207,7 +1183,7 @@ function totals(rows) {
   let trasferte = 0;
   for (const r of rows) {
     if (r.categoria in cat) cat[r.categoria] += 1;
-    const b = reteBucket(r.rete);
+    const b = r.categoria === "tappeto" ? null : reteBucket(r.rete);
     if (b) rete[b] += 1;
     if (r.trasferta === true) trasferte += 1;
   }
@@ -1249,27 +1225,6 @@ function trasferteOn(day, rows) {
   return out;
 }
 
-/** "15/10" from "2026-10-15". */
-function dm(date) {
-  const d = new Date(date + "T00:00:00Z");
-  return d.getUTCDate() + "/" + (d.getUTCMonth() + 1);
-}
-
-/**
- * Short trasferta note for the cell (screen only): "Washington D.C. 15–16/10", "Roma 30/9–2/10",
- * "Boston 15/10". Empty when the row has no trip details (legacy rows).
- * @param {Record<string, unknown>} r
- */
-function tripNote(r) {
-  if (r.trasferta !== true || !r.trasferta_dal || !r.trasferta_al) return "";
-  const dal = String(r.trasferta_dal), al = String(r.trasferta_al);
-  let range;
-  if (dal === al) range = dm(dal);
-  else if (dal.slice(0, 7) === al.slice(0, 7)) range = Number(dal.slice(8, 10)) + "–" + dm(al);
-  else range = dm(dal) + "–" + dm(al);
-  return [r.trasferta_luogo ? String(r.trasferta_luogo) : "", range].filter(Boolean).join(" ");
-}
-
 // Day header chevron (screen only; aria-hidden, no text so the header text stays the day name).
 const CHEVRON = '<svg class="chev" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false">' +
   '<path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
@@ -1306,15 +1261,9 @@ function renderCollaudo(w, rows, generated) {
     for (const r of dayRows) {
       const cat = String(r.categoria || "").toLowerCase();
       if (cat in dayTot) dayTot[cat] += 1;
-      const si = r.trasferta === true;
       const k = (c) => `<td class="k">${cat === c ? "✓" : ""}</td>`;
-      const ed = (col, cls, shown, value, extra) =>
-        `<td class="ed${cls ? " " + cls : ""}" data-f="${EDIT_FIELDS[col].api}" data-v="${esc(value)}"${extra || ""}>${shown}</td>`;
-      const note = tripNote(r);
-      // The trasferta editor (a popover on the page) starts from these.
-      // data-trip="1": the mark comes from the operator's trip (trasferte table): the cell is read-only on the page.
-      const tripData = si ? ` data-tp="${esc(r.trasferta_persona)}" data-tc="${esc(r.trasferta_con)}" data-tl="${esc(r.trasferta_luogo)}"` +
-        ` data-td="${esc(r.trasferta_dal)}" data-ta="${esc(r.trasferta_al)}"${r.trasferta_da_trip === true ? ' data-trip="1"' : ""}` : "";
+      const ed = (col, cls, shown, value) =>
+        `<td class="ed${cls ? " " + cls : ""}" data-f="${EDIT_FIELDS[col].api}" data-v="${esc(value)}">${shown}</td>`;
       body.push(`<tr class="r" data-id="${esc(r.record_id)}">` +
         ed("titolo", "", esc(r.titolo), r.titolo) +
         ed("giornalista", "nowrap", esc(r.giornalista), r.giornalista) +
@@ -1322,16 +1271,13 @@ function renderCollaudo(w, rows, generated) {
         ed("rete", "nowrap", esc(r.rete), r.rete) +
         ed("durata", "nowrap", esc(r.durata), r.durata) +
         k("pezzo") + k("radio") + k("live") +
-        ed("trasferta", "k tcell", si ? '<span class="si"><span class="scr">✓</span><span class="prn">SI</span></span>' + (note ? `<span class="tn scr">${esc(note)}</span>` : "") : "",
-          si ? "true" : "false", tripData) +
         ed("mezzo", "nowrap", esc(r.mezzo), r.mezzo) +
-        k("tappeto") +
+        ed("tappeto", "k", cat === "tappeto" ? "✓" : "", cat === "tappeto" ? "true" : "false") +
         `<td class="k np">X</td>` +
         ed("note", "np notec", esc(r.note), r.note == null ? "" : r.note) +
         ed("operatore", "nowrap np", esc(r.operatore), r.operatore) +
         ed("data", "nowrap np", esc(shortDate(String(r.data))), r.data) +
-        '<td class="np act"><button type="button" class="ic" data-act="edit" title="Modifica" aria-label="Modifica">✎</button>' +
-        '<button type="button" class="ic" data-act="void" title="Annulla registrazione" aria-label="Annulla registrazione">✕</button>' +
+        '<td class="np act"><button type="button" class="ic" data-act="void" title="Annulla registrazione" aria-label="Annulla registrazione">✕</button>' +
         '<span class="rowerr" role="alert"></span></td>' +
         "</tr>");
     }
@@ -1339,7 +1285,7 @@ function renderCollaudo(w, rows, generated) {
     body.push(`<tr class="tot"><td colspan="5">Totale ${esc(dayName((dd.getUTCDay() + 6) % 7).toLowerCase())} ${dd.getUTCDate()} ` +
       `(${dayRows.length} registrazioni)</td>` +
       `<td class="k">${dayTot.pezzo}</td><td class="k">${dayTot.radio}</td><td class="k">${dayTot.live}</td>` +
-      `<td></td><td></td><td class="k">${dayTot.tappeto}</td>${NP_TAIL}</tr>`);
+      `<td></td><td class="k">${dayTot.tappeto}</td>${NP_TAIL}</tr>`);
     groups.push(`<tbody class="dg" data-day="${d}">\n${body.join("\n")}\n</tbody>`);
   }
 
@@ -1349,7 +1295,7 @@ function renderCollaudo(w, rows, generated) {
   const reti = RETI.map((k) => counter(t.rete[k], k === "GR" ? "GR 1,2,3" : k)).join("");
   const extra = counter(t.trasferte, "Trasferte");
   const head = COLS.map((c) => {
-    const cls = [CHECK_COLS.includes(c) || c === "Trasferta" ? "k" : "", SCREEN_ONLY.includes(c) ? "np" : ""].filter(Boolean).join(" ");
+    const cls = [CHECK_COLS.includes(c) ? "k" : "", SCREEN_ONLY.includes(c) ? "np" : ""].filter(Boolean).join(" ");
     const label = ROME_LABEL[c] ? `<span class="scr">${c}</span><span class="prn">${ROME_LABEL[c]}</span>` : c;
     return `<th${cls ? ` class="${cls}"` : ""}>${label}</th>`;
   }).join("");
@@ -1400,7 +1346,6 @@ ${groups.join("\n")}
   function load(w, note) {
     current = w;
     $("lnk-mensile").href = PAGE_MENSILE + (PAGE_MENSILE.indexOf("?") >= 0 ? "&" : "?") + "month=" + weekDays(w)[3].slice(0, 7);
-    closeTrip();
     $("week").value = formatWeek(w);
     try { history.replaceState(null, "", location.pathname + "?week=" + formatWeek(w)); } catch (e) { /* ignore */ }
     setMsg("Caricamento…");
@@ -1582,7 +1527,6 @@ ${groups.join("\n")}
 
   function startEdit(td) {
     if (busy || td.getAttribute("data-editing")) return;
-    if (td.getAttribute("data-f") === "trasferta") { openTrip(td); return; }
     td.setAttribute("data-editing", "1");
     var field = td.getAttribute("data-f"), old = td.getAttribute("data-v") || "";
     var id = td.parentNode.getAttribute("data-id"), html = td.innerHTML, done = false;
@@ -1621,103 +1565,6 @@ ${groups.join("\n")}
     });
   }
 
-  // ---- trasferta: one popover, one POST /api/update with every trasferta field ----
-  var trip = null; // {td, id, old:{on,tj,tl,td,ta}}
-  function cellVal(tr, f) { var c = tr.querySelector('td[data-f="' + f + '"]'); return c ? c.getAttribute("data-v") || "" : ""; }
-  function tripOn() { return $("tp-si").checked; }
-  function syncTripDet() {
-    var on = tripOn();
-    $("tp-det").hidden = !on;
-    if (on && trip) {
-      var tr = trip.td.parentNode;
-      if (!$("tp-g").value) $("tp-g").value = cellVal(tr, "journalist");
-      if (!$("tp-d").value) $("tp-d").value = cellVal(tr, "delivery_date");
-      if (!$("tp-a").value) $("tp-a").value = $("tp-d").value;
-    }
-  }
-  function placePop(pop, anchor) {
-    var r = anchor.getBoundingClientRect(), w = pop.offsetWidth, h = pop.offsetHeight;
-    var left = Math.max(12, Math.min(r.left, document.documentElement.clientWidth - w - 12));
-    var top = r.bottom + 6;
-    if (top + h > window.innerHeight - 8 && r.top - h - 6 > $("top").offsetHeight) top = r.top - h - 6;
-    pop.style.left = left + "px";
-    pop.style.top = Math.max(8, top) + "px";
-  }
-  function openTrip(td) {
-    if (busy) return;
-    if (trip && trip.td === td) return; // already open on this cell
-    var tr = td.parentNode;
-    var old = { on: td.getAttribute("data-v") === "true", tj: td.getAttribute("data-tp") || "", tc: td.getAttribute("data-tc") || "", tl: td.getAttribute("data-tl") || "",
-      td: td.getAttribute("data-td") || "", ta: td.getAttribute("data-ta") || "" };
-    var fromTrip = td.getAttribute("data-trip") === "1"; // the mark comes from the operator's trip: read-only here
-    ensureLists().then(function (l) {
-      trip = { td: td, id: tr.getAttribute("data-id"), old: old };
-      var sel = $("tp-g"); sel.textContent = "";
-      selectOptions(listNames(l && l.giornalisti), old.tj).forEach(function (n) {
-        var o = document.createElement("option"); o.value = n; o.textContent = n; sel.appendChild(o);
-      });
-      sel.value = old.tj;
-      $("tp-l").value = old.tl; $("tp-d").value = old.td; $("tp-a").value = old.ta;
-      $("tp-si").checked = old.on; $("tp-no").checked = !old.on;
-      $("tpop-err").textContent = "";
-      $("tp-save").disabled = false;
-      $("tpop").hidden = false;
-      syncTripDet();
-      $("tp-seg").hidden = fromTrip; $("tp-save").hidden = fromTrip; $("tp-info").hidden = !fromTrip;
-      if (fromTrip) {
-        $("tp-det").hidden = true;
-        var who = old.tj + (old.tc ? " " + t("con") + " " + old.tc : "");
-        $("tp-info").textContent = tf("Trasferta di {0}: {1}, {2}. Vale per tutte le registrazioni di questo operatore in quelle date; si imposta o si termina dal modulo di registrazione, sezione 05.", who, old.tl, fmtRange(old.td, old.ta));
-        $("tp-cancel").focus();
-        placePop($("tpop"), td);
-        return;
-      }
-      placePop($("tpop"), td);
-      (old.on ? $("tp-si") : $("tp-no")).focus();
-    });
-  }
-  function closeTrip(refocus) {
-    if (!trip) return;
-    var td = trip.td; trip = null;
-    $("tpop").hidden = true;
-    if (refocus && td && document.contains(td)) { var b = td.parentNode.querySelector('button[data-act="edit"]'); if (b) b.focus(); }
-  }
-  $("tp-si").addEventListener("change", syncTripDet);
-  $("tp-no").addEventListener("change", syncTripDet);
-  $("tp-cancel").addEventListener("click", function () { closeTrip(true); });
-  $("tpop").addEventListener("keydown", function (ev) {
-    if (ev.key === "Escape") { ev.preventDefault(); closeTrip(true); }
-    else if (ev.key === "Enter" && ev.target.tagName !== "BUTTON") { ev.preventDefault(); $("tpop-f").requestSubmit(); }
-  });
-  document.addEventListener("mousedown", function (ev) {
-    if (trip && !$("tpop").contains(ev.target) && !trip.td.contains(ev.target)) closeTrip(false);
-  });
-  $("tpop-f").addEventListener("submit", function (ev) {
-    ev.preventDefault();
-    if (!trip || busy) return;
-    var t = trip, o = t.old, patch;
-    if (tripOn()) patch = { trasferta: true, trasferta_journalist: $("tp-g").value, trasferta_luogo: $("tp-l").value.trim(), trasferta_dal: $("tp-d").value, trasferta_al: $("tp-a").value };
-    else patch = { trasferta: false };
-    var same = tripOn() ? (o.on && patch.trasferta_journalist === o.tj && patch.trasferta_luogo === o.tl && patch.trasferta_dal === o.td && patch.trasferta_al === o.ta) : !o.on;
-    if (same) { closeTrip(true); return; }
-    // Undo puts back exactly what was there. A legacy "Sì" without details cannot be rebuilt
-    // (the server requires the details): its undo sends {trasferta:true} and shows the server's answer.
-    var back = o.on ? (o.tj && o.td && o.ta ? { trasferta: true, trasferta_journalist: o.tj, trasferta_luogo: o.tl, trasferta_dal: o.td, trasferta_al: o.ta } : { trasferta: true }) : { trasferta: false };
-    $("tpop-err").textContent = ""; $("tp-save").disabled = true;
-    t.td.classList.add("saving");
-    setBusy(true);
-    post("/api/update", { id: t.id, patch: patch }).then(function (r) {
-      setBusy(false);
-      $("tp-save").disabled = false;
-      t.td.classList.remove("saving");
-      if (!r) { closeTrip(false); return; }
-      if (r.status !== 200) { $("tpop-err").textContent = errText(r); return; }
-      pushUndo({ kind: "patch", id: t.id, patch: back });
-      closeTrip(false);
-      load(current, "Trasferta salvata.");
-    });
-  });
-
   function voidRow(tr) {
     if (busy || !window.confirm(t("Annullare questa registrazione?"))) return;
     var id = tr.getAttribute("data-id");
@@ -1747,7 +1594,7 @@ ${groups.join("\n")}
     });
   }
 
-  // One click edits a cell (a double-click did not open the trasferta on Windows/Chrome); the ✎ pencil opens the trasferta editor.
+  // One click edits a cell (a double-click did not work on Windows/Chrome). The trasferta is set from the form (section 05).
   $("doc").addEventListener("click", function (ev) {
     if (!ev.target.closest) return;
     var dt = ev.target.closest("button.dt");
@@ -1755,9 +1602,7 @@ ${groups.join("\n")}
     if (ev.target.closest("#retry")) { if (current) load(current); return; }
     var b = ev.target.closest("button[data-act]");
     if (b) {
-      var tr = b.closest("tr.r");
-      if (b.getAttribute("data-act") === "void") voidRow(tr);
-      else openTrip(tr.querySelector('td[data-f="trasferta"]'));
+      if (b.getAttribute("data-act") === "void") voidRow(b.closest("tr.r"));
       return;
     }
     var td = ev.target.closest("td.ed");
@@ -1790,7 +1635,7 @@ ${groups.join("\n")}
       window.scrollTo({ top: Math.max(0, y), behavior: "smooth" });
     });
   });
-  $("print").addEventListener("click", function () { closeTrip(false); window.print(); });
+  $("print").addEventListener("click", function () { window.print(); });
   // E-mail the week: the dialog is shared (shared.js mountMail, POST /api/email-collaudo {week, to}); the server
   // decides who sees the button (GET /api/email-recipients).
   var mail = mountMail({
@@ -1804,7 +1649,7 @@ ${groups.join("\n")}
   document.addEventListener("rainyc:lang", function () {
     paintMsg();
     if (current) document.title = tf("Collaudo {0} · RAI NYC Servizi", formatWeek(current));
-    if (sheet && $("doc").querySelector("table")) { closeTrip(false); paintSheet(); applyFold(); } else syncFoldBtn();
+    if (sheet && $("doc").querySelector("table")) { paintSheet(); applyFold(); } else syncFoldBtn();
     mail.refresh();
   });
 
@@ -1816,7 +1661,7 @@ ${groups.join("\n")}
     var w = parseWeek(new URLSearchParams(location.search).get("week") || "") || isoWeekOf(todayNewYork());
     load(w);
   });
-  document.addEventListener("rainyc:auth-lost", function () { $("doc").innerHTML = ""; sheet = null; loadedOnce = false; $("tools").hidden = true; closeTrip(false); });
+  document.addEventListener("rainyc:auth-lost", function () { $("doc").innerHTML = ""; sheet = null; loadedOnce = false; $("tools").hidden = true; });
 })();
 </script>
 </body>

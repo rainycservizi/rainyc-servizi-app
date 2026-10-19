@@ -148,7 +148,7 @@ td.dim { color:var(--dim); } tr.off td { color:var(--dim); } tr.off td:first-chi
 </head>
 <body data-gestione>
 <header class="appbar">
-  <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-10-19 16:45 UTC · bdbddf4"><span class="mk">Rai · NY</span><span class="nm">RAI NYC Servizi</span><span class="pg" data-i18n>Gestione</span></div>
+  <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-10-19 17:47 UTC · 534144c"><span class="mk">Rai · NY</span><span class="nm">RAI NYC Servizi</span><span class="pg" data-i18n>Gestione</span></div>
   <nav class="hright" id="hright" aria-label="Pagine">
     <button type="button" class="icbtn" id="theme" aria-label="Cambia tema" title="Cambia tema">
       <svg class="ic-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
@@ -225,7 +225,7 @@ td.dim { color:var(--dim); } tr.off td { color:var(--dim); } tr.off td:first-chi
 # RAI NYC Servizi — STATE (repo copy)
 
 &gt; **Short read-only copy for agents with no vault access (cloud agents).**
-&gt; Source of truth: `~/vault/10 Work/12 KIMA Creative/12.01 Active Clients/gvg-global-vision-group/rai-nyc-servizi/STATE.md` (on the Mac). Vault STATE updated: 2026-10-19T14:45-04:00 by Claude Code (Fable 5.1) on MacBook.
+&gt; Source of truth: `~/vault/10 Work/12 KIMA Creative/12.01 Active Clients/gvg-global-vision-group/rai-nyc-servizi/STATE.md` (on the Mac). Vault STATE updated: 2026-10-19T15:20-04:00 by Claude Code (Fable 5.1) on MacBook.
 &gt; Cloud agents: read this; do not edit it. At END, put your end state (done / next / blockers) in the PR description.
 &gt; The next Mac session merges it into the vault STATE.md, then refreshes this copy.
 
@@ -233,7 +233,7 @@ td.dim { color:var(--dim); } tr.off td { color:var(--dim); } tr.off td:first-chi
 Marco's day job at RAI NY (GVG): a startup popup on the Avid edit machines NYC-EDIT-MC01/02/03 (C#, .NET 8, WPF) where editors log each tappeto or servizio. Supabase is the truth; the Google Sheet "2026 Report Rai NYC, Servizi Giornalistici" is a reporting mirror. The collaudo forms go to Rome for overtime and travel. Host `supervisor` (Linux Mint, user `rainyc`, Tailscale only). Owner account for everything: `rainyc.servizi@gmail.com`.
 
 ## Current goal
-**2026-10-19 (14:45, Marco: "the page is not in one window, there is still scrolling on my screen" from go-boxx over KVM):** Measured locally: at 1920 wide the form never scrolled (even 840 px tall); the overflow was on laptop-size viewports (1536×750 +6 px, 1366×700 +102 px) because the 13th rete chip (TGR) made the rete grid seven rows there — Windows at 125 % scaling on a 1080 screen gives exactly such a viewport (≈1536×720 after Brave's bars and the taskbar). Fix (1d69e93 + the logo rule fix): new tier ≤800 px tall (36 px chips, tighter paddings) and &lt;1440 px wide (three rete columns, text-only chips: the wordmarks clipped; `#c-rete i.logo` beats `#c-rete .logo`). Measured no page scroll at 1920×840, 1536×750/700, 1366×700, 1280×650; layout suite 120/120. Published: Pages repo (two commits, last «reti senza loghi sotto 1440 px»), supervisor serving the latest build. Not verified: Marco's actual viewport — if it still scrolls, the Claude-in-Brave sidebar prompt in the chat gives the numbers (innerWidth/innerHeight, devicePixelRatio, scrollHeight, zoom). Tutorial live on Pages confirmed (poll) 14:20.
+**2026-10-19 (14:45, Marco: "the page is not in one window, there is still scrolling on my screen" from go-boxx over KVM):** Measured locally: at 1920 wide the form never scrolled (even 840 px tall); the overflow was on laptop-size viewports (1536×750 +6 px, 1366×700 +102 px) because the 13th rete chip (TGR) made the rete grid seven rows there — Windows at 125 % scaling on a 1080 screen gives exactly such a viewport (≈1536×720 after Brave's bars and the taskbar). Fix (1d69e93 + the logo rule fix): new tier ≤800 px tall (36 px chips, tighter paddings) and &lt;1440 px wide (three rete columns, text-only chips: the wordmarks clipped; `#c-rete i.logo` beats `#c-rete .logo`). Measured no page scroll at 1920×840, 1536×750/700, 1366×700, 1280×650; layout suite 120/120. Published: Pages repo (two commits, last «reti senza loghi sotto 1440 px»), supervisor serving the latest build. Not verified: Marco's actual viewport — if it still scrolls, the Claude-in-Brave sidebar prompt in the chat gives the numbers (innerWidth/innerHeight, devicePixelRatio, scrollHeight, zoom). Tutorial live on Pages confirmed (poll) 14:20. 15:00 — Marco: "I believe you fixed it"; his Claude-in-Brave reading was taken at 754 px wide (sidebar open) = tablet tier, which scrolls by design, but it showed the header overflowing with a horizontal scrollbar there → the tablet tier (700–1099 px) now wraps the header like the phone tier (no h-scroll at 754/900/1100, checked); published to Pages and supervisor.
 
 **2026-10-19 (14:05, Marco: "let my user also see the tutorial" = go; "create a user for Stefano Corti if there is none"):** **Tutorial deployed** in the safe order: migration `20261019_0008_tutorial.sql` applied to production (`apply_migrations.py`, dry run then apply), function deployed (unauthenticated `POST /api/tutorial-seen` answers 401 = route live), static pages rebuilt (build stamp 6e6f212+), Pages repo commit abbe0c5 pushed, supervisor rsync'd and serving. Every login without a `tutorial_views` row sees the tour once on the next login — caruso included (no admin exclusion in `tourShouldStart`); replay with the «?» header button. **Corti**: `corti@rainyc.nyc` already exists (created 2026-10-16 with the other 20 logins, last sign-in 2026-10-19) — nothing created; login name «Corti», password in Marco's 1Password list «RAI NYC Servizi — accessi» (reset from Gestione → Accessi if needed). Not verified: the tour on real Windows/Edge; English captions on screen.
 
@@ -278,12 +278,12 @@ Marco's day job at RAI NY (GVG): a startup popup on the Avid edit machines NYC-E
 4. (older) 2026-10-16 17:35–17:55 — Marco: caruso's recipient address = caruso@gvgusa.com; pages in English AND Italian with a button next to the theme toggle; wants the git site password-protected ("nothing exposed"); asks whether no certificate on supervisor is a problem; when caruso is logged in, Gestione + every link up top; tappeti must never count under a Tg (they don't); collaudo rows sorted by Tg and by time so tappeto and piece of the same edition sit together. Agent: IT/EN via a dictionary keyed by the Italian strings (sonnet subagent); reading order server-side; password gate = Cloudflare Pages + Access proposed (needs a Cloudflare account under rainyc.servizi); LAN http judged acceptable (auth and data go to Supabase over https). (Claude Code)
 
 ## Next 3 actions
-1. Marco — (a) Try the new form on the Pages site: send with empty fields (modal), then a real entry (confetti); say if the trasferta popup should get the same modal. Sent the Pages link to Erika and Ippolito tonight (logins erika / pippo); collect what they find and bring it to the next "go". Monday: Letter print of the collaudo and the Mensile. (b) (HTTPS on supervisor done.) (c) Design keep/change still open; a second Gemini round starts from `docs/reviews/2026-10-16-ui-design.md` and the deviations above. (b) Monday: one US Letter print of the collaudo and one of the Mensile. (c) Cloudflare: Marco said no (2026-10-17) — stay on GitHub Pages. (d) (done: workbook is on Drive, see (b).) (e) Still open: "built by Caruso" also in print? trasferta "SI" vs ✓; Note field; legacy "sì (dettagli non registrati)"; whether `inputs/` may ride in the kimaserver mirror.
-2. Agent ("go") — Before the next `scripts/sync_from_sheet.py --apply`: the trasferta mark is now derived from the trips table, so the dry run may list CONFLICTs on Sanfilippo's 15–18/10 rows where the sheet has no tick — read the plan, never `--sheet-wins` on those. After the 2026-10-19 image import, the dry run should MATCH the 10 legacy_import weekend rows exactly; anything it wants to insert or void on 16–18/10 is a sign the sheet changed, read before applying. Then: Gestione v2 (login→operator mapping, list sort_order, backup status); cron on supervisor (sheet sync dry-run report + DB backup check); small fix left: password self-change (no server-side hook exists); the Mac's local stack still has its edge runtime served from this session (harmless; `supabase stop` if it gets in the way).
+1. Marco — (a) Try the form on the Pages site on his own login: the tutorial runs once (then «?» replays it), send with empty fields (modal), a real entry (confetti); say whether the «?» button should be admin-only and whether the trasferta popup should get the same modal. (b) Collect Erika's and Ippolito's feedback (logins erika / pippo) and bring it to the next "go". (c) Letter print of the collaudo and the Mensile (W42 now holds the weekend: check Contini's Sunday rows and the Fontana/Rocca TGR rows before the W42 e-mail). (d) Design keep/change still open (second Gemini round from `docs/reviews/2026-10-16-ui-design.md`). (e) Still open: "built by Caruso" in print?; trasferta "SI" vs ✓; legacy "sì (dettagli non registrati)"; whether `inputs/` may ride in the kimaserver mirror; Durata required/optional.
+2. Agent ("go") — Before the next `scripts/sync_from_sheet.py --apply`: the dry run should MATCH the 10 legacy_import weekend rows (16–18/10) exactly and leave the 19 paper_entry rows alone; the trasferta mark is derived from the trips table, so Sanfilippo's 15–18/10 rows may show as CONFLICT where the sheet has no tick — read the plan, never `--sheet-wins` on those. Then: Gestione v2 (login→operator mapping, list sort_order incl. the new TGR editions, backup status); cron on supervisor (sheet sync dry-run report + DB backup check); `lib/collaudo.js NET_ORDER` has no "TGR" (unknown nets sort last, bucket "Altre" — fine, add it when touching the file); password self-change not blockable server-side (recorded). The Mac's local stack is still up with the function served from this session (harmless; `supabase stop` if in the way).
 3. Agent — Claude Code Projects: candidate once the waitlist opens (intel 2026-10-09); ask Grok Bot to pull Marco's X bookmarks about dashboards into CLAUDE-INTEL before Gestione v2.
 
 ## Blockers
-- Marco — try the tutorial on the Pages site (his own login sees it once); still open: the «?» button for every user OK? Also: design keep/change; Letter print test (Monday); feedback from Erika and Ippolito. Login list: deleted from the Desktop on Marco's word (saved in 1Password), distribution is his. Still pending: key-only SSH on supervisor, CLT update, WhatsApp images route, Durata required/optional.
+- Marco — feedback on the tutorial («?» for everyone?), from Erika and Ippolito, design keep/change, Letter print test. Still pending: key-only SSH on supervisor, CLT update, WhatsApp images route, Durata required/optional. Login list is in his 1Password (distribution is his); `corti@rainyc.nyc` exists.
 
 ## Live warnings
 - **No credentials in this file, the repo or chat.** 1Password item names only. The plan text held the Linux password in clear; the repo copy is redacted, the Desktop original is not.
@@ -316,7 +316,7 @@ var PAGE_FORM = "./" || APP_BASE;
 var PAGE_COLLAUDO = "./collaudo.html" || APP_BASE + "/collaudo";
 var PAGE_GESTIONE = "./gestione.html" || APP_BASE + "/gestione";
 var PAGE_MENSILE = "./mensile.html" || APP_BASE + "/mensile";
-var BUILD = "2026-10-19 16:45 UTC · bdbddf4"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
+var BUILD = "2026-10-19 17:47 UTC · 534144c"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
 // Every place the project lives (shown in the admin's header menu and on the Gestione page).
 var LINKS = [
   ["Pagine pubbliche", "https://rainycservizi.github.io/rainyc-servizi-app/", "GitHub Pages: il sito di prova principale"],
@@ -372,6 +372,8 @@ var I18N = { en: {
   "Richiesta": "Request", "Richiedente": "Requester", "(edizione o programma; anche testo libero)": "(edition or programme; free text also allowed)",
   "(edizione; anche testo libero)": "(edition; free text also allowed)", "(programma; testo libero)": "(programme; free text)",
   "(scegliere prima la rete)": "(pick the network first)", "Durata": "Duration", "(facoltativa)": "(optional)", "(facoltative)": "(optional)",
+  "Tappeto per {0}": "Tappeto for {0}", "Tappeto: toccare la rete a cui è destinato": "Tappeto: tap the network it is for", "Rete del tappeto": "Tappeto network",
+  "Tappeto: il servizio è un tappeto; toccare anche la rete a cui è destinato": "Tappeto: this is a tappeto; also tap the network it is for",
   "Mezzo": "Delivery means", "Trasferta": "Travel",
   "Nessuna trasferta aperta. Impostarla una volta: vale su ogni macchina, per le registrazioni di quell'operatore nelle date indicate.": "No open travel. Set it once: it applies on every machine to that operator's entries on those dates.",
   "Termina trasferta": "End travel", "Termina": "End", "Trasferta aperta.": "Travel opened.", "Trasferta terminata.": "Travel ended.", "Trasferta non salvata.": "Travel not saved.", "Trasferta non terminata.": "Travel not ended.",
@@ -430,7 +432,7 @@ var I18N = { en: {
   "Modifica annullata.": "Change undone.", "Annullare questa registrazione?": "Cancel this entry?",
   "Settimana non valida: usare la forma 2026-W41.": "Invalid week: use the form 2026-W41.",
   "Modifica": "Edit", "Annulla registrazione": "Cancel entry", "Chiudi": "Close",
-  "Trasferta di {0}: {1}, {2}. Vale per tutte le registrazioni di questo operatore in quelle date; si imposta o si termina dal modulo di registrazione, sezione 05.": "Travel of {0}: {1}, {2}. It applies to every entry of this operator on those dates; set or end it from the entry form, section 05.", "Collaudo {0} · RAI NYC Servizi": "Weekly report {0} · RAI NYC Servizi",
+  "Collaudo {0} · RAI NYC Servizi": "Weekly report {0} · RAI NYC Servizi",
   "Invia per e-mail · {0}": "Send by e-mail · {0}",
   "Il collaudo della settimana {0} (colonne di Roma, senza operatori) parte dalla casella della redazione. Scegliere i destinatari.": "The weekly report for week {0} (Rome's columns, no operators) is sent from the newsroom mailbox. Choose the recipients.",
   "Togli dall'elenco": "Remove from the list", "Togli {0}": "Remove {0}", "Nessun destinatario: aggiungerne uno qui sotto.": "No recipients: add one below.",
@@ -460,7 +462,7 @@ var I18N = { en: {
   "Giornalisti attivi": "Active journalists", "Operatori attivi": "Active operators",
   "Ultima registrazione": "Last entry", "Ultima voce del registro": "Last audit entry", "servita dalla funzione": "served by the function",
   "aggiornato {0}": "updated {0}", "il modulo dei montatori": "the editors' form", "la settimana da stampare o inviare": "the week to print or send",
-  "E-mail dei report (collaudo, Top Sheet)": "Report e-mails (weekly, Top Sheet)", "possono inviare: erika, caruso, pippo": "allowed to send: erika, caruso, pippo",
+  "E-mail dei report (collaudo, Top Sheet)": "Report e-mails (weekly, Top Sheet)", "possono inviare: caruso, erika, pippo, corti, valeria, nora": "allowed to send: caruso, erika, pippo, corti, valeria, nora",
   "Destinatari proposti": "Suggested recipients", "(nessuno: secret COLLAUDO_TO vuoto)": "(none: secret COLLAUDO_TO is empty)",
   "nuova password": "new password", "Nuova password per {0}": "New password for {0}", "Imposta": "Set",
   "Cambiare la password di {0}?": "Change the password of {0}?", "Password di {0} aggiornata.": "Password of {0} updated.",
@@ -1145,7 +1147,7 @@ function fmtRange(a, b) {
   var mailInfo = null;
   function renderMail() {
     if (!mailInfo) return;
-    kv($("mail-kv"), [[t("E-mail dei report (collaudo, Top Sheet)"), t("possono inviare: erika, caruso, pippo")], [t("Destinatari proposti"), mailInfo.join(", ") || t("(nessuno: secret COLLAUDO_TO vuoto)")]]);
+    kv($("mail-kv"), [[t("E-mail dei report (collaudo, Top Sheet)"), t("possono inviare: caruso, erika, pippo, corti, valeria, nora")], [t("Destinatari proposti"), mailInfo.join(", ") || t("(nessuno: secret COLLAUDO_TO vuoto)")]]);
   }
 
   // ---- 03 accessi ----
