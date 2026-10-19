@@ -157,6 +157,17 @@ input:focus-visible, select:focus-visible { outline:none; border-color:var(--foc
 .tpop .row { display:flex; gap:8px; margin-top:12px; }
 .tpop .row .btn { flex:1; }
 .tpop .err { margin-top:8px; }
+/* Required fields missing: a modal with the same text as #err. Closing it focuses the first missing field. */
+.mdl { padding:0; border:0; background:transparent; max-width:min(460px, calc(100vw - 32px)); color:var(--fg); }
+.mdl::backdrop { background:rgba(15,20,28,.45); }
+:root[data-theme=dark] .mdl::backdrop { background:rgba(0,0,0,.6); }
+.mdl .box { padding:18px 20px 16px; border:1px solid var(--line2); border-top:4px solid var(--bad); background:var(--panel); border-radius:10px; box-shadow:var(--pop); }
+.mdl .ph { color:var(--bad); }
+.mdl p { margin:0 0 16px; font-size:16px; line-height:1.45; font-weight:600; }
+.mdl .row { display:flex; justify-content:flex-end; }
+/* Confetti canvas: a short burst when an entry of this session reaches the server; removed when done. */
+.cfx { position:fixed; inset:0; z-index:70; pointer-events:none; }
+@media print { .mdl, .cfx { display:none !important; } }
 
 /* ── actions ── */
 .actions { display:grid; grid-template-columns:auto minmax(0,1fr); gap:10px 18px; align-items:center; }
@@ -262,7 +273,7 @@ kbd { font:600 11px/1 var(--mono); padding:2px 5px; border:1px solid var(--line2
 </head>
 <body>
 <header class="appbar">
-  <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-10-18 01:33 UTC · 39040b7"><span class="mk">Rai · NY</span><span id="t">RAI NYC Servizi</span><span class="pg" data-i18n>Registrazione</span></div>
+  <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-10-19 15:37 UTC · 00ef2ef"><span class="mk">Rai · NY</span><span id="t">RAI NYC Servizi</span><span class="pg" data-i18n>Registrazione</span></div>
   <nav class="hright" id="hright" aria-label="Pagine">
     <span class="pend" id="pend" hidden></span>
     <button type="button" class="icbtn" id="theme" aria-label="Cambia tema" title="Cambia tema">
@@ -398,6 +409,13 @@ kbd { font:600 11px/1 var(--mono); padding:2px 5px; border:1px solid var(--line2
     </aside>
   </div>
 </main>
+<dialog class="mdl" id="miss" aria-labelledby="miss-h" aria-describedby="miss-p">
+  <div class="box">
+    <h3 class="ph" id="miss-h" data-i18n>Registrazione non inviata</h3>
+    <p id="miss-p"></p>
+    <div class="row"><button type="button" class="btn pri" id="miss-ok" data-i18n>Ho capito</button></div>
+  </div>
+</dialog>
 <script>
 // ---- pages/shared.js ----
 // Shared browser code for the four pages (form, collaudo, mensile, gestione). Inlined by scripts/build_pages.mjs.
@@ -419,7 +437,7 @@ var PAGE_FORM = "./" || APP_BASE;
 var PAGE_COLLAUDO = "./collaudo.html" || APP_BASE + "/collaudo";
 var PAGE_GESTIONE = "./gestione.html" || APP_BASE + "/gestione";
 var PAGE_MENSILE = "./mensile.html" || APP_BASE + "/mensile";
-var BUILD = "2026-10-18 01:33 UTC · 39040b7"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
+var BUILD = "2026-10-19 15:37 UTC · 00ef2ef"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
 // Every place the project lives (shown in the admin's header menu and on the Gestione page).
 var LINKS = [
   ["Pagine pubbliche", "https://rainycservizi.github.io/rainyc-servizi-app/", "GitHub Pages: il sito di prova principale"],
@@ -503,6 +521,7 @@ var I18N = { en: {
   "Registrata: {0}": "Recorded: {0}", "Registrazione annullata.": "Entry cancelled.", "Annullamento non riuscito.": "Could not cancel.",
   "Annullamento non riuscito: {0}": "Could not cancel: {0}", "Giornalista non in elenco: {0}.": "Journalist not in the list: {0}.",
   "Salvato: {0}": "Saved: {0}", "Caricamento degli elenchi…": "Loading the lists…",
+  "Registrazione non inviata": "Entry not sent", "Ho capito": "Got it",
   "{0} Ricaricare la pagina quando la rete torna.": "{0} Reload the page when the network is back.",
   // collaudo
   "Settimana precedente": "Previous week", "Settimana successiva": "Next week", "Settimana": "Week", "Vai": "Go",
@@ -1517,6 +1536,7 @@ function fmtRange(a, b) {
         e.stato = "sincronizzato"; e.server_id = r.body.id; delete e.errore; attempt = 0;
         qsave(queue); renderPending(); renderRecent();
         showLast(e);
+        if (freshIds[e.client_record_id]) { delete freshIds[e.client_record_id]; confetti(); }
         refreshServerRows();
         schedule(50);
       } else {
@@ -1576,6 +1596,59 @@ function fmtRange(a, b) {
     renderTrip();
     $("operatore").value = p.operator; updateCategoria();
     errSrc = function () { return e.errore; }; paintErr();
+  }
+
+  // ---- required fields missing: a modal (same text as #err); OK, Enter, Esc or a click outside close it ----
+  // and focus the first missing field. Browsers without <dialog> fall back to window.alert.
+  var missFocus = null;
+  function showMissing(text, target) {
+    missFocus = target || null;
+    var d = $("miss");
+    if (typeof d.showModal !== "function") { window.alert(text); if (missFocus) missFocus.focus(); missFocus = null; return; }
+    $("miss-p").textContent = text;
+    if (!d.open) d.showModal();
+    $("miss-ok").focus();
+  }
+  $("miss-ok").addEventListener("click", function () { $("miss").close(); });
+  $("miss").addEventListener("click", function (ev) { if (ev.target === this) this.close(); });
+  $("miss").addEventListener("keydown", function (ev) { if (ev.key === "Escape") { ev.preventDefault(); ev.stopPropagation(); this.close(); } }); // before the page's Esc = svuota
+  $("miss").addEventListener("close", function () { var f = missFocus; missFocus = null; if (f) f.focus(); });
+
+  // ---- confetti: a short burst from the Invia button when an entry typed in this session reaches the server ----
+  // Drawn on a canvas (no library: the CSP allows only this script). Skipped when the OS asks for reduced motion.
+  var freshIds = {};
+  function confetti() {
+    try { if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return; } catch (e) { /* ignore */ }
+    var c = document.createElement("canvas"); c.className = "cfx"; c.setAttribute("aria-hidden", "true");
+    var W = c.width = window.innerWidth, H = c.height = window.innerHeight;
+    var ctx = c.getContext("2d"); if (!ctx) return;
+    document.documentElement.appendChild(c); // not body: body carries the wide-monitor zoom
+    var cs = getComputedStyle(document.documentElement);
+    function tok(name, fb) { var v = cs.getPropertyValue(name).trim(); return v || fb; }
+    var colors = [tok("--accent", "#d94e00"), tok("--ok", "#156936"), tok("--accent-text", "#b54708"), "#ffd166", "#4cc9f0", tok("--fg", "#0f141c")];
+    var ox = W / 2, oy = H * 0.6;
+    try { var b = $("send").getBoundingClientRect(); if (b.width) { ox = b.left + b.width / 2; oy = b.top + b.height / 2; } } catch (e) { /* ignore */ }
+    var ps = [];
+    for (var i = 0; i < 150; i++) {
+      var a = -Math.PI / 2 + (Math.random() - 0.5) * 1.7, sp = 8 + Math.random() * 10;
+      ps.push({ x: ox + (Math.random() - 0.5) * 40, y: oy, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp,
+        w: 6 + Math.random() * 6, h: 3 + Math.random() * 4, r: Math.random() * Math.PI, vr: (Math.random() - 0.5) * 0.3, col: colors[i % colors.length] });
+    }
+    var t0 = null, last = null, DUR = 1900;
+    function frame(ts) {
+      if (t0 === null) { t0 = ts; last = ts; }
+      var k = (ts - t0) / DUR, dt = Math.min(2, (ts - last) / 16.7); last = ts;
+      if (k >= 1 || !c.parentNode) { if (c.parentNode) c.parentNode.removeChild(c); return; }
+      ctx.clearRect(0, 0, W, H);
+      ctx.globalAlpha = k > 0.7 ? (1 - k) / 0.3 : 1;
+      for (var j = 0; j < ps.length; j++) {
+        var p = ps[j];
+        p.vy += 0.38 * dt; p.vx *= Math.pow(0.99, dt); p.x += p.vx * dt; p.y += p.vy * dt; p.r += p.vr * dt;
+        ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.r); ctx.fillStyle = p.col; ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h); ctx.restore();
+      }
+      requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
   }
 
   // ---- submit ----
@@ -1658,7 +1731,7 @@ function fmtRange(a, b) {
     function miss(label, id) { missing.push(label); if (!focusId) focusId = id; }
     if (!v.delivery_date) miss("Data", "data");
     if (!g) miss("Giornalista", "giornalista");
-    else if (!gMatch) { errSrc = function () { return tf("Giornalista non in elenco: {0}.", g); }; paintErr(); $("giornalista").focus(); return; }
+    else if (!gMatch) { errSrc = function () { return tf("Giornalista non in elenco: {0}.", g); }; paintErr(); showMissing(errSrc(), $("giornalista")); return; }
     if (!v.subject) miss("Argomento / Titolo", "titolo");
     if (!v.rete) miss("Rete", null);
     if (!v.mezzo) miss("Mezzo", null);
@@ -1666,12 +1739,12 @@ function fmtRange(a, b) {
     // Trasferta is not stamped on the entry: the collaudo derives it from the operator's open trip (trasferte table).
     if (missing.length) {
       errSrc = function () { return tf("Manca: {0}.", missing.map(function (m) { return t(m); }).join(", ")); }; paintErr();
-      if (focusId) $(focusId).focus();
-      else form.querySelector('input[name="' + (!v.rete ? "rete" : "mezzo") + '"]').focus();
+      showMissing(errSrc(), focusId ? $(focusId) : form.querySelector('input[name="' + (!v.rete ? "rete" : "mezzo") + '"]'));
       return;
     }
     errSrc = null; $("err").textContent = "";
     var now = new Date();
+    freshIds[v.client_record_id] = true;
     queue.push({ client_record_id: v.client_record_id, payload: v, stato: "salvato", creato: now.toISOString(),
       ora: String(now.getHours()).padStart(2, "0") + ":" + String(now.getMinutes()).padStart(2, "0") });
     qsave(queue); renderPending(); renderRecent();
