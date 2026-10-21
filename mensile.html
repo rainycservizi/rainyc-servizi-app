@@ -154,7 +154,7 @@ footer.doc { margin-top:22px; font-size:11px; color:var(--dim); }
 <body>
 <div class="top" id="top">
   <header class="appbar">
-    <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-10-19 18:44 UTC · 6d2ba19"><span class="mk">Rai · NY</span><span class="nm">RAI NYC Servizi</span><span class="pg" data-i18n>Mensile</span></div>
+    <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-10-21 18:49 UTC · dfec693"><span class="mk">Rai · NY</span><span class="nm">RAI NYC Servizi</span><span class="pg" data-i18n>Mensile</span></div>
     <nav class="hright" id="hright" aria-label="Pagine">
       <button type="button" class="icbtn" id="theme" aria-label="Cambia tema" title="Cambia tema">
         <svg class="ic-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
@@ -214,7 +214,7 @@ var PAGE_FORM = "./" || APP_BASE;
 var PAGE_COLLAUDO = "./collaudo.html" || APP_BASE + "/collaudo";
 var PAGE_GESTIONE = "./gestione.html" || APP_BASE + "/gestione";
 var PAGE_MENSILE = "./mensile.html" || APP_BASE + "/mensile";
-var BUILD = "2026-10-19 18:44 UTC · 6d2ba19"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
+var BUILD = "2026-10-21 18:49 UTC · dfec693"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
 // Every place the project lives (shown in the admin's header menu and on the Gestione page).
 var LINKS = [
   ["Pagine pubbliche", "https://rainycservizi.github.io/rainyc-servizi-app/", "GitHub Pages: il sito di prova principale"],
@@ -276,6 +276,11 @@ var I18N = { en: {
   "Registrazione ripristinata.": "Entry restored.", "nuova registrazione": "new entry", "annullata": "cancelled", "ripristinata": "restored", "modifica": "change", "cambiato": "changed",
   "Tappeto per {0}": "Tappeto for {0}", "Tappeto: toccare la rete a cui è destinato": "Tappeto: tap the network it is for", "Rete del tappeto": "Tappeto network",
   "Tappeto: il servizio è un tappeto; toccare anche la rete a cui è destinato": "Tappeto: this is a tappeto; also tap the network it is for",
+  "Grezzo": "Raw footage", "grezzo": "raw footage", "Grezzi": "Raw footage", "Reti del grezzo": "Raw footage networks",
+  "Grezzo per {0}": "Raw footage for {0}", "Grezzo: toccare le reti a cui è destinato (anche più di una)": "Raw footage: tap the networks it goes to (one or more)",
+  "Grezzo: materiale grezzo inviato a una o più reti; toccare tutte le reti a cui è destinato": "Raw footage sent to one or more networks; tap every network it goes to",
+  "(non si applica al grezzo)": "(not used for raw footage)", "Registrazioni annullate.": "Entries cancelled.", "Registrazioni ripristinate.": "Entries restored.",
+  "Grezzo: materiale grezzo mandato a più reti. Toccare «Grezzo» e poi tutte le reti a cui va: una registrazione per rete. Anche qui non si tocca.": "Raw footage: raw material sent to several networks. Click «Grezzo», then every network it goes to: one entry per network. Not for this story either.",
   "Mezzo": "Delivery means", "Trasferta": "Travel",
   "Nessuna trasferta aperta. Impostarla una volta: vale su ogni macchina, per le registrazioni di quell'operatore nelle date indicate.": "No open travel. Set it once: it applies on every machine to that operator's entries on those dates.",
   "Termina trasferta": "End travel", "Termina": "End", "Trasferta aperta.": "Travel opened.", "Trasferta terminata.": "Travel ended.", "Trasferta non salvata.": "Travel not saved.", "Trasferta non terminata.": "Travel not ended.",
@@ -965,7 +970,7 @@ function fmtRange(a, b) {
 // voided rows excluded); the page never recomputes them. Gennaio–Luglio 2026 are the figures already sent to
 // Rome, frozen on Marco's word (2026-10-15: "we start in August, the rest is history").
 
-/** Keys: video radio live | tg1 tg2 tg3 rnews altre tot_video | gr1 gr2 gr3 tot_radio (tappeti were not reported). */
+/** Keys: video radio live | tg1 tg2 tg3 rnews altre tot_video | gr1 gr2 gr3 tot_radio (tappeti and grezzi were not reported). */
 const LEGACY_TOPSHEET = {
   "2026-01": { video: 253, radio: 123, live: 255, tg1: 167, tg2: 123, tg3: 83, rnews: 113, altre: 7, tot_video: 493, gr1: 123, gr2: 126, gr3: 126, tot_radio: 375 },
   "2026-02": { video: 150, radio: 52, live: 168, tg1: 98, tg2: 82, tg3: 72, rnews: 58, altre: 6, tot_video: 316, gr1: 52, gr2: 52, gr3: 52, tot_radio: 156 },
@@ -977,7 +982,7 @@ const LEGACY_TOPSHEET = {
 };
 /** Top Sheet columns in Rome's order: [key, heading]. */
 const TOPSHEET_COLS = [
-  ["video", "Servizi video"], ["radio", "Servizi radio"], ["live", "Live"], ["tappeti", "Tappeti"],
+  ["video", "Servizi video"], ["radio", "Servizi radio"], ["live", "Live"], ["tappeti", "Tappeti"], ["grezzi", "Grezzi"],
   ["tg1", "TG1"], ["tg2", "TG2"], ["tg3", "TG3"], ["rnews", "RNEWS 24"], ["altre", "ALTRE"], ["tot_video", "Totale video"],
   ["gr1", "Radio GR 1"], ["gr2", "Radio GR 2"], ["gr3", "Radio GR 3"], ["tot_radio", "Totale radio"],
 ];
@@ -1013,7 +1018,7 @@ function topsheetRow(v) {
   const radio = Number(v.radio || 0);
   return {
     ym: String(v.anno_mese), source: "db",
-    video: Number(v.pezzi || 0), radio, live: Number(v.live || 0), tappeti: Number(v.tappeti || 0),
+    video: Number(v.pezzi || 0), radio, live: Number(v.live || 0), tappeti: Number(v.tappeti || 0), grezzi: Number(v.grezzi || 0),
     tg1: Number(v.tg1 || 0), tg2: Number(v.tg2 || 0), tg3: Number(v.tg3 || 0), rnews: Number(v.ran || 0), altre: Number(v.altre || 0),
     tot_video: Number(v.totale_video || 0), gr1: radio, gr2: radio, gr3: radio, tot_radio: radio * 3,
   };
@@ -1035,7 +1040,7 @@ function yearTable(viewRows, year) {
     const ym = formatMonth({ year, month });
     const legacy = LEGACY_TOPSHEET[ym];
     let r;
-    if (legacy) { r = emptyRow(ym, "storico"); for (const k of KEYS) if (k in legacy) r[k] = legacy[k]; r.tappeti = null; }
+    if (legacy) { r = emptyRow(ym, "storico"); for (const k of KEYS) if (k in legacy) r[k] = legacy[k]; r.tappeti = null; r.grezzi = null; }
     else if (byYm.has(ym)) r = topsheetRow(byYm.get(ym));
     else r = emptyRow(ym, "vuoto");
     r.mese = monthLabel({ year, month });
@@ -1046,12 +1051,11 @@ function yearTable(viewRows, year) {
   return { rows, total: tot };
 }
 
-const CATS = ["pezzo", "radio", "live", "tappeto"];
-function bucket() { return { pezzi: 0, radio: 0, live: 0, tappeti: 0, trasferte: 0, righe: 0 }; }
+function bucket() { return { pezzi: 0, radio: 0, live: 0, tappeti: 0, grezzi: 0, trasferte: 0, righe: 0 }; }
 function add(b, r) {
   b.righe += 1;
   const c = String(r.categoria || "");
-  if (c === "pezzo") b.pezzi += 1; else if (c === "radio") b.radio += 1; else if (c === "live") b.live += 1; else if (c === "tappeto") b.tappeti += 1;
+  if (c === "pezzo") b.pezzi += 1; else if (c === "radio") b.radio += 1; else if (c === "live") b.live += 1; else if (c === "tappeto") b.tappeti += 1; else if (c === "grezzo") b.grezzi += 1;
   if (r.trasferta === true) b.trasferte += 1;
 }
 /**
@@ -1098,7 +1102,7 @@ function journalistsOf(rows) {
   function render() {
     setLang(langNow()); // week ranges in the screen language (Italian in print and in the e-mail)
     var m = current, y = data.year, ym = formatMonth(m);
-    var groupA = ["video", "radio", "live", "tappeti"], groupB = ["tg1", "tg2", "tg3", "rnews", "altre", "tot_video"], groupC = ["gr1", "gr2", "gr3", "tot_radio"];
+    var groupA = ["video", "radio", "live", "tappeti", "grezzi"], groupB = ["tg1", "tg2", "tg3", "rnews", "altre", "tot_video"], groupC = ["gr1", "gr2", "gr3", "tot_radio"];
     var label = {}; TOPSHEET_COLS.forEach(function (c) { label[c[0]] = c[1]; });
     var th = function (keys, cls) { return keys.map(function (k, i) { return "<th" + (cls && i === 0 ? ' class="grpa"' : "") + ">" + hd(label[k]) + "</th>"; }).join(""); };
     var td = function (r, keys, cls) { return keys.map(function (k, i) { return "<td" + (cls && i === 0 ? ' class="grpa"' : "") + ">" + n(r[k]) + "</td>"; }).join(""); };
@@ -1111,12 +1115,12 @@ function journalistsOf(rows) {
       '<tr class="tot"><td>' + esc(tot.mese) + "</td>" + td(tot, groupA) + td(tot, groupB, true) + td(tot, groupC, true) + "<td></td></tr></tbody>";
     var weeks = data.weeks.map(function (w) {
       var href = PAGE_COLLAUDO + (PAGE_COLLAUDO.indexOf("?") >= 0 ? "&" : "?") + "week=" + w.week;
-      return "<tr><td><a href=\"" + esc(href) + "\">" + esc(w.week) + "</a> <span class=\"scr\" style=\"color:var(--dim)\">" + esc(fmtRange(w.from, w.to)) + "</span></td><td>" + w.pezzi + "</td><td>" + w.radio + "</td><td>" + w.live + "</td><td>" + w.tappeti + "</td><td>" + w.trasferte + "</td><td>" + w.righe + "</td></tr>";
+      return "<tr><td><a href=\"" + esc(href) + "\">" + esc(w.week) + "</a> <span class=\"scr\" style=\"color:var(--dim)\">" + esc(fmtRange(w.from, w.to)) + "</span></td><td>" + w.pezzi + "</td><td>" + w.radio + "</td><td>" + w.live + "</td><td>" + w.tappeti + "</td><td>" + w.grezzi + "</td><td>" + w.trasferte + "</td><td>" + w.righe + "</td></tr>";
     }).join("");
     var jour = data.journalists.map(function (j) {
-      return "<tr><td>" + esc(j.giornalista) + "</td><td>" + j.pezzi + "</td><td>" + j.radio + "</td><td>" + j.live + "</td><td>" + j.tappeti + "</td><td>" + j.trasferte + "</td><td>" + j.righe + "</td></tr>";
+      return "<tr><td>" + esc(j.giornalista) + "</td><td>" + j.pezzi + "</td><td>" + j.radio + "</td><td>" + j.live + "</td><td>" + j.tappeti + "</td><td>" + j.grezzi + "</td><td>" + j.trasferte + "</td><td>" + j.righe + "</td></tr>";
     }).join("");
-    var small = "<thead><tr><th>{0}</th><th>" + hd("Pezzi") + "</th><th>" + hd("Radio") + "</th><th>" + hd("Live") + "</th><th>" + hd("Tappeti") + "</th><th>" + hd("Trasferte") + "</th><th>" + hd("Totale") + "</th></tr></thead>";
+    var small = "<thead><tr><th>{0}</th><th>" + hd("Pezzi") + "</th><th>" + hd("Radio") + "</th><th>" + hd("Live") + "</th><th>" + hd("Tappeti") + "</th><th>" + hd("Grezzi") + "</th><th>" + hd("Trasferte") + "</th><th>" + hd("Totale") + "</th></tr></thead>";
     $("doc").innerHTML =
       '<header class="doc"><div class="ente">RAI – ' + esc(t("Sede di corrispondenza di New York")) + '</div><h1>' + esc(t("Report mensile")) + " · " + esc(monthLabel(m)) + '</h1><div class="sett">' +
       esc(tf("Top Sheet {0}: cifre di Gennaio–Luglio come inviate a Roma; da Agosto dal database (registrazioni annullate escluse). GR 1, 2, 3 ripetono il conteggio radio, come nel foglio.", m.year)) + "</div></header>" +

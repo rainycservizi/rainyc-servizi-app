@@ -248,7 +248,7 @@ footer.doc .firma { font-size:13px; white-space:nowrap; }
 <body>
 <div class="top" id="top">
   <header class="appbar">
-    <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-10-19 18:44 UTC · 6d2ba19"><span class="mk">Rai · NY</span><span class="nm">RAI NYC Servizi</span><span class="pg" data-i18n>Collaudo</span></div>
+    <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-10-21 18:49 UTC · dfec693"><span class="mk">Rai · NY</span><span class="nm">RAI NYC Servizi</span><span class="pg" data-i18n>Collaudo</span></div>
     <nav class="hright" id="hright" aria-label="Pagine">
       <button type="button" class="icbtn" id="theme" aria-label="Cambia tema" title="Cambia tema">
         <svg class="ic-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
@@ -316,7 +316,7 @@ var PAGE_FORM = "./" || APP_BASE;
 var PAGE_COLLAUDO = "./collaudo.html" || APP_BASE + "/collaudo";
 var PAGE_GESTIONE = "./gestione.html" || APP_BASE + "/gestione";
 var PAGE_MENSILE = "./mensile.html" || APP_BASE + "/mensile";
-var BUILD = "2026-10-19 18:44 UTC · 6d2ba19"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
+var BUILD = "2026-10-21 18:49 UTC · dfec693"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
 // Every place the project lives (shown in the admin's header menu and on the Gestione page).
 var LINKS = [
   ["Pagine pubbliche", "https://rainycservizi.github.io/rainyc-servizi-app/", "GitHub Pages: il sito di prova principale"],
@@ -378,6 +378,11 @@ var I18N = { en: {
   "Registrazione ripristinata.": "Entry restored.", "nuova registrazione": "new entry", "annullata": "cancelled", "ripristinata": "restored", "modifica": "change", "cambiato": "changed",
   "Tappeto per {0}": "Tappeto for {0}", "Tappeto: toccare la rete a cui è destinato": "Tappeto: tap the network it is for", "Rete del tappeto": "Tappeto network",
   "Tappeto: il servizio è un tappeto; toccare anche la rete a cui è destinato": "Tappeto: this is a tappeto; also tap the network it is for",
+  "Grezzo": "Raw footage", "grezzo": "raw footage", "Grezzi": "Raw footage", "Reti del grezzo": "Raw footage networks",
+  "Grezzo per {0}": "Raw footage for {0}", "Grezzo: toccare le reti a cui è destinato (anche più di una)": "Raw footage: tap the networks it goes to (one or more)",
+  "Grezzo: materiale grezzo inviato a una o più reti; toccare tutte le reti a cui è destinato": "Raw footage sent to one or more networks; tap every network it goes to",
+  "(non si applica al grezzo)": "(not used for raw footage)", "Registrazioni annullate.": "Entries cancelled.", "Registrazioni ripristinate.": "Entries restored.",
+  "Grezzo: materiale grezzo mandato a più reti. Toccare «Grezzo» e poi tutte le reti a cui va: una registrazione per rete. Anche qui non si tocca.": "Raw footage: raw material sent to several networks. Click «Grezzo», then every network it goes to: one entry per network. Not for this story either.",
   "Mezzo": "Delivery means", "Trasferta": "Travel",
   "Nessuna trasferta aperta. Impostarla una volta: vale su ogni macchina, per le registrazioni di quell'operatore nelle date indicate.": "No open travel. Set it once: it applies on every machine to that operator's entries on those dates.",
   "Termina trasferta": "End travel", "Termina": "End", "Trasferta aperta.": "Travel opened.", "Trasferta terminata.": "Travel ended.", "Trasferta non salvata.": "Travel not saved.", "Trasferta non terminata.": "Travel not ended.",
@@ -1069,16 +1074,18 @@ function fmtRange(a, b) {
 // a totals row per day. scripts/render_collaudo.py stays the offline CSV tool.
 
 
-const CATEGORIE = ["pezzo", "radio", "live", "tappeto"];
-const CAT_LABEL = { pezzo: "Pezzi", radio: "Radio", live: "Live", tappeto: "Tappeti" };
-// Per-rete counters in the sheet's order. Tappeto rows (categoria tappeto) count only under Tappeti.
+const CATEGORIE = ["pezzo", "radio", "live", "tappeto", "grezzo"];
+const CAT_LABEL = { pezzo: "Pezzi", radio: "Radio", live: "Live", tappeto: "Tappeti", grezzo: "Grezzi" };
+// Per-rete counters in the sheet's order. Tappeto and grezzo rows count only under Tappeti / Grezzi (a grezzo sent
+// to five networks is five rows: counting them per rete would make one interview look like five services).
+const OWN_COUNTER = ["tappeto", "grezzo"];
 const RETI = ["Rainews.it", "Tg1", "Tg2", "Tg3", "RAN", "Rai Sport", "GR", "Altre"];
 // Screen columns. The last five (assistenza, note, operatore, data, azioni) never print: the printed
 // sheet has exactly Rome's columns (PRINT_COLS), in this order. No Trasferta column (Marco, 2026-10-19):
 // who is in trasferta is named once in the day header.
 const COLS = ["Titolo", "Giornalista", "Richiedente", "Rete", "Durata",
-  "Pezzi", "Radio", "Live", "Mezzo", "Tappeti", "Ass. tecnica", "Note", "Operatore", "Data", ""];
-const CHECK_COLS = ["Pezzi", "Radio", "Live", "Tappeti", "Ass. tecnica"];
+  "Pezzi", "Radio", "Live", "Mezzo", "Tappeti", "Grezzi", "Ass. tecnica", "Note", "Operatore", "Data", ""];
+const CHECK_COLS = ["Pezzi", "Radio", "Live", "Tappeti", "Grezzi", "Ass. tecnica"];
 const SCREEN_ONLY = ["Ass. tecnica", "Note", "Operatore", "Data", ""];
 const ROME_LABEL = { Titolo: "Titolo del servizio", Mezzo: "Mezzo di trasmissione" };
 /** Column headings as printed, in Rome's order. */
@@ -1093,6 +1100,7 @@ const EDIT_FIELDS = {
   durata: { api: "duration_text", kind: "text" },
   mezzo: { api: "mezzo", kind: "select" },
   tappeto: { api: "tappeto", kind: "bool" }, // the Tappeti tick: Sì files the row as a tappeto of its rete, No re-derives the categoria
+  grezzo: { api: "grezzo", kind: "bool" }, // the Grezzi tick: same, categoria grezzo
   note: { api: "notes", kind: "text" }, // screen only (never printed, never e-mailed)
   operatore: { api: "operator", kind: "select" },
   data: { api: "delivery_date", kind: "date" },
@@ -1197,7 +1205,7 @@ function totals(rows) {
   let trasferte = 0;
   for (const r of rows) {
     if (r.categoria in cat) cat[r.categoria] += 1;
-    const b = r.categoria === "tappeto" ? null : reteBucket(r.rete);
+    const b = OWN_COUNTER.includes(r.categoria) ? null : reteBucket(r.rete);
     if (b) rete[b] += 1;
     if (r.trasferta === true) trasferte += 1;
   }
@@ -1287,6 +1295,7 @@ function renderCollaudo(w, rows, generated) {
         k("pezzo") + k("radio") + k("live") +
         ed("mezzo", "nowrap", esc(r.mezzo), r.mezzo) +
         ed("tappeto", "k", cat === "tappeto" ? "✓" : "", cat === "tappeto" ? "true" : "false") +
+        ed("grezzo", "k", cat === "grezzo" ? "✓" : "", cat === "grezzo" ? "true" : "false") +
         `<td class="k np">X</td>` +
         ed("note", "np notec", esc(r.note), r.note == null ? "" : r.note) +
         ed("operatore", "nowrap np", esc(r.operatore), r.operatore) +
@@ -1299,7 +1308,7 @@ function renderCollaudo(w, rows, generated) {
     body.push(`<tr class="tot"><td colspan="5">Totale ${esc(dayName((dd.getUTCDay() + 6) % 7).toLowerCase())} ${dd.getUTCDate()} ` +
       `(${dayRows.length} registrazioni)</td>` +
       `<td class="k">${dayTot.pezzo}</td><td class="k">${dayTot.radio}</td><td class="k">${dayTot.live}</td>` +
-      `<td></td><td class="k">${dayTot.tappeto}</td>${NP_TAIL}</tr>`);
+      `<td></td><td class="k">${dayTot.tappeto}</td><td class="k">${dayTot.grezzo}</td>${NP_TAIL}</tr>`);
     groups.push(`<tbody class="dg" data-day="${d}">\n${body.join("\n")}\n</tbody>`);
   }
 

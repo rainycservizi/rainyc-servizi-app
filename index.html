@@ -120,6 +120,7 @@ input:focus-visible, select:focus-visible { outline:none; border-color:var(--foc
 #c-rete input:checked + span, :root[data-theme=dark] #c-rete input:checked + span { background:var(--c); border-color:var(--c); color:#fff; box-shadow:0 0 0 2px var(--panel), 0 0 0 4px var(--c); }
 /* Logo tile: always white, so the logo stays legible on the coloured checked chip and on the dark panel. */
 #c-rete label.tap span { border-style:dashed; }
+#c-rete label.grz span { border-style:dashed; letter-spacing:.01em; }
 #c-rete label.tap input:checked + span { border-style:solid; }
 .ph .aside.need { color:var(--accent-text); font-weight:600; }
 #c-rete i.logo { display:inline-flex; flex:none; background:#fff; border-radius:4px; padding:2px 3px; line-height:0; box-shadow:0 0 0 1px rgba(0,0,0,.08); }
@@ -311,7 +312,7 @@ kbd { font:600 11px/1 var(--mono); padding:2px 5px; border:1px solid var(--line2
 </head>
 <body>
 <header class="appbar">
-  <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-10-19 18:44 UTC · 6d2ba19"><span class="mk">Rai · NY</span><span id="t">RAI NYC Servizi</span><span class="pg" data-i18n>Registrazione</span></div>
+  <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-10-21 18:49 UTC · dfec693"><span class="mk">Rai · NY</span><span id="t">RAI NYC Servizi</span><span class="pg" data-i18n>Registrazione</span></div>
   <nav class="hright" id="hright" aria-label="Pagine">
     <span class="pend" id="pend" hidden></span>
     <button type="button" class="icbtn lang" id="tour-btn" hidden data-i18n-attr="aria-label|title" aria-label="Tutorial: come si compila una registrazione" title="Tutorial: come si compila una registrazione">?</button>
@@ -476,7 +477,7 @@ var PAGE_FORM = "./" || APP_BASE;
 var PAGE_COLLAUDO = "./collaudo.html" || APP_BASE + "/collaudo";
 var PAGE_GESTIONE = "./gestione.html" || APP_BASE + "/gestione";
 var PAGE_MENSILE = "./mensile.html" || APP_BASE + "/mensile";
-var BUILD = "2026-10-19 18:44 UTC · 6d2ba19"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
+var BUILD = "2026-10-21 18:49 UTC · dfec693"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
 // Every place the project lives (shown in the admin's header menu and on the Gestione page).
 var LINKS = [
   ["Pagine pubbliche", "https://rainycservizi.github.io/rainyc-servizi-app/", "GitHub Pages: il sito di prova principale"],
@@ -538,6 +539,11 @@ var I18N = { en: {
   "Registrazione ripristinata.": "Entry restored.", "nuova registrazione": "new entry", "annullata": "cancelled", "ripristinata": "restored", "modifica": "change", "cambiato": "changed",
   "Tappeto per {0}": "Tappeto for {0}", "Tappeto: toccare la rete a cui è destinato": "Tappeto: tap the network it is for", "Rete del tappeto": "Tappeto network",
   "Tappeto: il servizio è un tappeto; toccare anche la rete a cui è destinato": "Tappeto: this is a tappeto; also tap the network it is for",
+  "Grezzo": "Raw footage", "grezzo": "raw footage", "Grezzi": "Raw footage", "Reti del grezzo": "Raw footage networks",
+  "Grezzo per {0}": "Raw footage for {0}", "Grezzo: toccare le reti a cui è destinato (anche più di una)": "Raw footage: tap the networks it goes to (one or more)",
+  "Grezzo: materiale grezzo inviato a una o più reti; toccare tutte le reti a cui è destinato": "Raw footage sent to one or more networks; tap every network it goes to",
+  "(non si applica al grezzo)": "(not used for raw footage)", "Registrazioni annullate.": "Entries cancelled.", "Registrazioni ripristinate.": "Entries restored.",
+  "Grezzo: materiale grezzo mandato a più reti. Toccare «Grezzo» e poi tutte le reti a cui va: una registrazione per rete. Anche qui non si tocca.": "Raw footage: raw material sent to several networks. Click «Grezzo», then every network it goes to: one entry per network. Not for this story either.",
   "Mezzo": "Delivery means", "Trasferta": "Travel",
   "Nessuna trasferta aperta. Impostarla una volta: vale su ogni macchina, per le registrazioni di quell'operatore nelle date indicate.": "No open travel. Set it once: it applies on every machine to that operator's entries on those dates.",
   "Termina trasferta": "End travel", "Termina": "End", "Trasferta aperta.": "Travel opened.", "Trasferta terminata.": "Travel ended.", "Trasferta non salvata.": "Travel not saved.", "Trasferta non terminata.": "Travel not ended.",
@@ -1292,21 +1298,36 @@ function fmtRange(a, b) {
       var ti = document.createElement("input"); ti.type = "checkbox"; ti.name = "tappeto"; ti.id = "tappeto"; ti.value = "true";
       var ts = document.createElement("span"); ts.textContent = "Tappeto"; ts.title = t("Tappeto: il servizio è un tappeto; toccare anche la rete a cui è destinato");
       tl.appendChild(ti); tl.appendChild(ts); box.appendChild(tl);
+      // The Grezzo switch (Marco, 2026-10-21): raw footage often goes to several networks at once. With it on, the
+      // rete chips accept more than one pick and «Invia» files ONE record per network (same group_id), categoria grezzo.
+      var gl = document.createElement("label"); gl.setAttribute("data-rete", "Grezzo"); gl.className = "tap grz";
+      var gi = document.createElement("input"); gi.type = "checkbox"; gi.name = "grezzo"; gi.id = "grezzo"; gi.value = "true";
+      var gs = document.createElement("span"); gs.textContent = "Grezzo"; gs.title = t("Grezzo: materiale grezzo inviato a una o più reti; toccare tutte le reti a cui è destinato");
+      gl.appendChild(gi); gl.appendChild(gs); box.appendChild(gl);
     }
+  }
+  // Grezzo on: the rete chips become checkboxes (as many networks as apply); off: radios again, first pick kept.
+  function setReteMode() {
+    var multi = grezzoOn(), keep = reti()[0] || "";
+    // Type first, then the pick: turning several checked boxes into one radio group lets the browser drop them all.
+    form.querySelectorAll('input[name="rete"]').forEach(function (i) { i.type = multi ? "checkbox" : "radio"; });
+    if (!multi) setRadio("rete", keep);
+    $("c-rete").classList.toggle("multi", multi);
   }
   // Tab / Shift+Tab walk through a chip group (and select the chip, like the arrow keys); the ends let focus leave.
   function chipTab(id) {
     $(id).addEventListener("keydown", function (ev) {
       if (ev.key !== "Tab" || ev.altKey || ev.ctrlKey || ev.metaKey) return;
-      var radios = Array.prototype.slice.call($(id).querySelectorAll("input[type=radio]"));
+      var group = $(id).querySelector("input").name;
+      var radios = Array.prototype.slice.call($(id).querySelectorAll('input[name="' + group + '"]'));
       var at = radios.indexOf(ev.target), to = at + (ev.shiftKey ? -1 : 1);
       if (at < 0) return;
       // Focus arrived on an unselected chip (nothing chosen yet): the first Tab selects it and stays.
-      if (!ev.target.checked && !ev.shiftKey) to = at;
+      if (!ev.target.checked && !ev.shiftKey && radios[at].type === "radio") to = at;
       if (to < 0 || to >= radios.length) return;
       ev.preventDefault();
-      radios[to].checked = true; radios[to].focus();
-      radios[to].dispatchEvent(new Event("change", { bubbles: true }));
+      radios[to].focus();
+      if (radios[to].type === "radio") { radios[to].checked = true; radios[to].dispatchEvent(new Event("change", { bubbles: true })); }
     });
   }
   function fillSelect(id, items) {
@@ -1341,6 +1362,8 @@ function fmtRange(a, b) {
 
   // ---- richiedente depends on rete ----
   function checked(name) { var el = form.querySelector('input[name="' + name + '"]:checked'); return el ? el.value : ""; }
+  // Every rete picked (one, or several with the Grezzo switch on), in grid order.
+  function reti() { return Array.prototype.map.call(form.querySelectorAll('input[name="rete"]:checked'), function (i) { return i.value; }); }
   function setRadio(name, value) { form.querySelectorAll('input[name="' + name + '"]').forEach(function (i) { i.checked = i.value === value; }); }
   function slotsFor(rete) {
     if (!lists) return [];
@@ -1382,7 +1405,9 @@ function fmtRange(a, b) {
     inp.focus();
   }
   function updateRichiedente() {
-    var rete = checked("rete");
+    var rete = checked("rete"), grz = grezzoOn();
+    $("richiedente").disabled = grz; $("rich-btn").disabled = grz;
+    if (grz) $("richiedente").value = "";
     var pre = PREFIXED.indexOf(rete) >= 0;
     $("rich-wrap").classList.toggle("has-pre", pre);
     $("rich-pre").textContent = pre ? rete : "";
@@ -1394,7 +1419,7 @@ function fmtRange(a, b) {
   }
   function updateRichiedenteHint() {
     var rete = checked("rete"), n = $("l-richiedenti").options.length;
-    $("rich-hint").textContent = t(rete ? (n ? "(edizione; anche testo libero)" : "(programma; testo libero)") : "(scegliere prima la rete)");
+    $("rich-hint").textContent = t(grezzoOn() ? "(non si applica al grezzo)" : rete ? (n ? "(edizione; anche testo libero)" : "(programma; testo libero)") : "(scegliere prima la rete)");
   }
   // The stored value: "Tg1 Ore 20" for the prefixed reti, as typed for the rest.
   function richiedenteValue() {
@@ -1412,19 +1437,26 @@ function fmtRange(a, b) {
     return exact || v;
   }
 
-  // Same rule as the server: the Tappeto switch wins (submit_delivery), then public.derive_categoria.
-  function categoria(rete, mezzo, tappeto) {
+  // Same rule as the server: the Tappeto / Grezzo switch wins (submit_delivery), then public.derive_categoria.
+  function categoria(rete, mezzo, tappeto, grezzo) {
     if (tappeto) return "tappeto";
+    if (grezzo) return "grezzo";
     if (!rete) return "–";
     if (rete.indexOf("GR") === 0) return "radio";
     if (LIVE_MEZZI.indexOf(mezzo) >= 0) return "live";
     return "pezzo";
   }
   function tappetoOn() { return $("tappeto").checked; }
-  function updateCategoria() { $("categoria").textContent = categoria(checked("rete"), checked("mezzo"), tappetoOn()); }
-  // Legend note of the Rete panel: with the switch on, which network the tappeto is for, or the ask for it.
+  function grezzoOn() { var g = $("grezzo"); return !!(g && g.checked); }
+  function updateCategoria() { $("categoria").textContent = categoria(checked("rete"), checked("mezzo"), tappetoOn(), grezzoOn()); }
+  // Legend note of the Rete panel: with a switch on, which network(s) the tappeto / grezzo is for, or the ask for it.
   function updateReteNote() {
-    var tap = tappetoOn(), rete = checked("rete"), n = $("rete-note");
+    var tap = tappetoOn(), grz = grezzoOn(), rs = reti(), rete = rs[0] || "", n = $("rete-note");
+    if (grz) {
+      n.textContent = rs.length ? tf("Grezzo per {0}", rs.join(", ")) : t("Grezzo: toccare le reti a cui è destinato (anche più di una)");
+      n.className = "aside" + (rs.length ? "" : " need");
+      return;
+    }
     n.textContent = tap ? (rete ? tf("Tappeto per {0}", rete) : t("Tappeto: toccare la rete a cui è destinato")) : "";
     n.className = "aside" + (tap && !rete ? " need" : "");
   }
@@ -1540,6 +1572,7 @@ function fmtRange(a, b) {
   function resetAll() {
     form.reset();
     $("data").value = today();
+    $("grezzo").checked = false; setReteMode();
     setRadio("rete", "");
     setRadio("mezzo", "V-Mover");
     $("richiedente").value = "";
@@ -1580,7 +1613,7 @@ function fmtRange(a, b) {
     var dm = function (d) { return d && d.length >= 10 ? d.slice(8, 10) + "/" + d.slice(5, 7) : ""; };
     var joinNE = function (parts) { return parts.filter(function (x) { return x; }).join(" \u00b7 "); };
     var items = local.map(function (e) {
-      var p = e.payload, cat = categoria(p.rete, p.mezzo, p.tappeto);
+      var p = e.payload, cat = categoria(p.rete, p.mezzo, p.tappeto, p.grezzo);
       return { ora: e.ora, giorno: dm(p.delivery_date), ed: p.richiedente || p.rete, op: p.operator, text: joinNE([p.journalist, p.subject, cat + (p.duration_text ? " " + p.duration_text : ""), p.mezzo]), stato: e.stato, err: e.errore, sort: e.creato };
     }).concat(serverRows.filter(function (r) { return !ids[r.record_id]; }).map(function (r) {
       var t = r.submitted_at ? new Date(r.submitted_at) : null;
@@ -1636,9 +1669,18 @@ function fmtRange(a, b) {
       sending = false;
       if (r.status === 200) {
         e.stato = "sincronizzato"; e.server_id = r.body.id; delete e.errore; attempt = 0;
+        if (e.group && voidedGroups[e.group]) {
+          // The editor pressed Annulla on this grezzo while this network's row was still on its way: void it too.
+          queue = queue.filter(function (x) { return x !== e; }); qsave(queue); renderPending(); renderRecent();
+          api("/api/void", { method: "POST", body: JSON.stringify({ id: e.server_id, reason: "annullata dall'operatore" }) })
+            .then(function () { if (lastVoided && lastVoided.group === e.group) lastVoided.ids.push(e.server_id); refreshServerRows(); }, function () { refreshServerRows(); });
+          schedule(50);
+          return;
+        }
         qsave(queue); renderPending(); renderRecent();
         showLast(e);
-        if (freshIds[e.client_record_id]) { delete freshIds[e.client_record_id]; confetti(); }
+        var fk = e.group || e.client_record_id;
+        if (freshIds[fk]) { delete freshIds[fk]; confetti(); }
         refreshServerRows();
         schedule(50);
       } else {
@@ -1661,43 +1703,63 @@ function fmtRange(a, b) {
   }
   // The last record that reached the server can be voided from here (POST /api/void {id, reason}); the void itself is
   // reversible: the button then reads «Ripristina» (POST /api/unvoid). Nothing is deleted, every step is audited.
-  var lastSynced = null, lastVoided = null;
+  // A grezzo sent to several networks is one batch here: «Annulla» voids every row of the group, «Ripristina» restores them all.
+  var lastSynced = null, lastVoided = null, voidedGroups = {};
+  function groupOf(e) { return e.group ? queue.filter(function (x) { return x.group === e.group; }) : [e]; }
   function showLast(e) {
-    lastSynced = { id: e.server_id, entry: e }; lastVoided = null; $("undo").textContent = t("Annulla");
-    var p = e.payload;
-    var line = p.journalist + " · " + (p.tappeto ? t("Tappeto") + " " : "") + p.rete + (p.richiedente ? " " + stripPrefix(p.rete, p.richiedente) : "") + " · " + p.subject;
+    var entries = groupOf(e);
+    var ids = entries.filter(function (x) { return x.stato === "sincronizzato" && x.server_id; }).map(function (x) { return x.server_id; });
+    lastSynced = { ids: ids, entries: entries, group: e.group || null }; lastVoided = null; $("undo").textContent = t("Annulla");
+    var p = e.payload, line;
+    if (e.group) line = p.journalist + " · " + t("Grezzo") + " " + entries.map(function (x) { return x.payload.rete; }).join(", ") + " · " + p.subject;
+    else line = p.journalist + " · " + (p.tappeto ? t("Tappeto") + " " : "") + p.rete + (p.richiedente ? " " + stripPrefix(p.rete, p.richiedente) : "") + " · " + p.subject;
     lastSrc = function () { return tf("Registrata: {0}", line); }; paintLast();
     $("last-text").title = $("last-text").textContent;
     $("last").className = "last"; $("last").hidden = false; $("undo").hidden = false; $("undo").disabled = false;
     setStatus("sincronizzato", "Sincronizzato");
+  }
+  // POST the same body for each id; resolves {ok: [ids that got 200], ko: [the rest], err: first message}.
+  function postEach(path, ids, body) {
+    return Promise.all(ids.map(function (id) {
+      return api(path, { method: "POST", body: JSON.stringify(Object.assign({ id: id }, body)) })
+        .then(function (r) { return { id: id, ok: r.status === 200, msg: r.status === 200 ? "" : ((r.body && r.body.error) || "") }; });
+    })).then(function (rs) {
+      var ok = rs.filter(function (x) { return x.ok; }).map(function (x) { return x.id; });
+      var ko = rs.filter(function (x) { return !x.ok; });
+      return { ok: ok, ko: ko.map(function (x) { return x.id; }), err: ko.length ? ko[0].msg : "" };
+    });
   }
   $("undo").addEventListener("click", function () {
     var b = $("undo");
     function fail(msg) { b.disabled = false; lastSrc = typeof msg === "function" ? msg : function () { return t(msg); }; paintLast(); $("last").className = "last errore"; }
     if (lastVoided) {
       var v = lastVoided; b.disabled = true;
-      api("/api/unvoid", { method: "POST", body: JSON.stringify({ id: v }) }).then(function (r) {
-        if (r.status === 200) {
-          lastVoided = null; b.hidden = true; b.disabled = false; b.textContent = t("Annulla");
-          lastSrc = function () { return t("Registrazione ripristinata."); }; paintLast(); $("last").className = "last";
+      postEach("/api/unvoid", v.ids, {}).then(function (res) {
+        if (!res.ko.length) {
+          lastVoided = null; if (v.group) delete voidedGroups[v.group];
+          b.hidden = true; b.disabled = false; b.textContent = t("Annulla");
+          lastSrc = function () { return t(v.ids.length > 1 ? "Registrazioni ripristinate." : "Registrazione ripristinata."); }; paintLast(); $("last").className = "last";
           refreshServerRows();
-        } else fail((r.body && r.body.error) || "Ripristino non riuscito.");
+        } else { v.ids = res.ko; fail(res.err || "Ripristino non riuscito."); refreshServerRows(); }
       }, function (err) {
         if (err.kind === "auth") { fail(err.message); authLost(); return; }
         fail(function () { return tf("Ripristino non riuscito: {0}", err.message); });
       });
       return;
     }
-    var l = lastSynced; if (!l || !l.id) return;
+    var l = lastSynced; if (!l || !l.ids.length) return;
     b.disabled = true;
-    api("/api/void", { method: "POST", body: JSON.stringify({ id: l.id, reason: "annullata dall'operatore" }) }).then(function (r) {
-      if (r.status === 200) {
-        lastSynced = null; lastVoided = l.id; b.disabled = false; b.textContent = t("Ripristina");
-        queue = queue.filter(function (x) { return x !== l.entry; }); qsave(queue);
-        lastSrc = function () { return t("Registrazione annullata."); }; paintLast(); $("last").className = "last";
-        renderRecent(); refreshServerRows();
-      } else fail((r.body && r.body.error) || "Annullamento non riuscito.");
+    if (l.group) voidedGroups[l.group] = true; // rows of the group still on their way are voided on arrival (flush)
+    postEach("/api/void", l.ids, { reason: "annullata dall'operatore" }).then(function (res) {
+      // Rows of the batch not yet sent never go: drop them from the queue.
+      queue = queue.filter(function (x) { return l.entries.indexOf(x) < 0 || (x.server_id && res.ko.indexOf(x.server_id) >= 0); }); qsave(queue);
+      if (!res.ko.length) {
+        lastSynced = null; lastVoided = { ids: res.ok, group: l.group }; b.disabled = false; b.textContent = t("Ripristina");
+        lastSrc = function () { return t(res.ok.length > 1 ? "Registrazioni annullate." : "Registrazione annullata."); }; paintLast(); $("last").className = "last";
+      } else { l.ids = res.ko; fail(res.err || "Annullamento non riuscito."); }
+      renderPending(); renderRecent(); refreshServerRows();
     }, function (err) {
+      if (l.group) delete voidedGroups[l.group];
       if (err.kind === "auth") { fail(err.message); authLost(); return; }
       fail(function () { return tf("Annullamento non riuscito: {0}", err.message); });
     });
@@ -1707,7 +1769,8 @@ function fmtRange(a, b) {
     var p = e.payload;
     queue = queue.filter(function (x) { return x !== e; }); qsave(queue);
     $("data").value = p.delivery_date; $("giornalista").value = p.journalist; $("titolo").value = p.subject;
-    setRadio("rete", p.rete); $("tappeto").checked = !!p.tappeto; updateRichiedente();
+    $("tappeto").checked = !!p.tappeto; $("grezzo").checked = !!p.grezzo; setReteMode();
+    setRadio("rete", p.rete); updateRichiedente();
     $("richiedente").value = PREFIXED.indexOf(p.rete) >= 0 ? stripPrefix(p.rete, p.richiedente || "") : (p.richiedente || "");
     $("durata").value = p.duration_text || ""; setRadio("mezzo", p.mezzo);
     $("note").value = p.notes || "";
@@ -1840,6 +1903,8 @@ function fmtRange(a, b) {
       subject: $("titolo").value.trim(),
       rete: checked("rete"),
       tappeto: tappetoOn(),
+      grezzo: grezzoOn(),
+      group_id: null,
       richiedente: richiedenteValue() || null,
       duration_text: $("durata").value.trim() || null,
       mezzo: checked("mezzo"),
@@ -1853,7 +1918,7 @@ function fmtRange(a, b) {
     if (!g) miss("Giornalista", "giornalista");
     else if (!gMatch) { errSrc = function () { return tf("Giornalista non in elenco: {0}.", g); }; paintErr(); showMissing(errSrc(), $("giornalista")); return; }
     if (!v.subject) miss("Argomento / Titolo", "titolo");
-    if (!v.rete) miss(v.tappeto ? "Rete del tappeto" : "Rete", null);
+    if (!v.rete) miss(v.grezzo ? "Reti del grezzo" : v.tappeto ? "Rete del tappeto" : "Rete", null);
     if (!v.mezzo) miss("Mezzo", null);
     if (!v.operator) miss("Operatore", "operatore");
     // Trasferta is not stamped on the entry: the collaudo derives it from the operator's open trip (trasferte table).
@@ -1863,14 +1928,20 @@ function fmtRange(a, b) {
       return;
     }
     errSrc = null; $("err").textContent = "";
-    var now = new Date();
-    freshIds[v.client_record_id] = true;
-    queue.push({ client_record_id: v.client_record_id, payload: v, stato: "salvato", creato: now.toISOString(),
-      ora: String(now.getHours()).padStart(2, "0") + ":" + String(now.getMinutes()).padStart(2, "0") });
+    var now = new Date(), ora = String(now.getHours()).padStart(2, "0") + ":" + String(now.getMinutes()).padStart(2, "0");
+    var rs = v.grezzo ? reti() : [v.rete];
+    // A grezzo for several networks: one record per network (own client_record_id, shared group_id), no richiedente.
+    var gid = v.grezzo ? newUuid() : null;
+    rs.forEach(function (r, k) {
+      var one = v.grezzo ? Object.assign({}, v, { client_record_id: k === 0 ? v.client_record_id : newUuid(), rete: r, richiedente: null, group_id: gid }) : v;
+      queue.push({ client_record_id: one.client_record_id, payload: one, stato: "salvato", creato: new Date(now.getTime() + k).toISOString(), ora: ora, group: gid });
+    });
+    freshIds[gid || v.client_record_id] = true;
     qsave(queue); renderPending(); renderRecent();
-    setStatus("salvato", function () { return tf("Salvato: {0}", v.subject); });
+    setStatus("salvato", function () { return tf("Salvato: {0}", v.subject + (v.grezzo ? " (" + t("grezzo") + " " + rs.join(", ") + ")" : "")); });
     try { localStorage.setItem("rainyc.operatore", v.operator); } catch (e) { /* ignore */ }
     // Keep date, journalist, title and operator for the next entry of the same story.
+    $("grezzo").checked = false; setReteMode();
     setRadio("rete", ""); $("tappeto").checked = false; $("durata").value = ""; $("richiedente").value = ""; $("note").value = "";
     setRadio("mezzo", "V-Mover");
     updateRichiedente(); updateCategoria(); updateReteNote(); renderTrip();
@@ -1879,9 +1950,12 @@ function fmtRange(a, b) {
   });
 
   form.addEventListener("change", function (ev) {
-    if (ev.target.name === "rete") { $("richiedente").value = ""; updateRichiedente(); }
-    if (ev.target.name === "rete" || ev.target.name === "mezzo" || ev.target.name === "tappeto") updateCategoria();
-    if (ev.target.name === "rete" || ev.target.name === "tappeto") updateReteNote();
+    var nm = ev.target.name;
+    if (nm === "grezzo") { if (ev.target.checked) $("tappeto").checked = false; setReteMode(); $("richiedente").value = ""; updateRichiedente(); }
+    if (nm === "tappeto" && ev.target.checked && grezzoOn()) { $("grezzo").checked = false; setReteMode(); updateRichiedente(); }
+    if (nm === "rete") { $("richiedente").value = ""; updateRichiedente(); }
+    if (nm === "rete" || nm === "mezzo" || nm === "tappeto" || nm === "grezzo") updateCategoria();
+    if (nm === "rete" || nm === "tappeto" || nm === "grezzo") updateReteNote();
     if (ev.target.id === "giornalista" || ev.target.id === "data") renderTrip();
   });
 
@@ -1892,7 +1966,7 @@ function fmtRange(a, b) {
     var out = [], seen = {};
     Array.prototype.forEach.call(form.querySelectorAll("input, select, textarea, button"), function (el) {
       if (el.disabled || el.tabIndex < 0 || el.type === "hidden" || !el.getClientRects().length) return;
-      if (el.type === "radio") {
+      if (el.type === "radio" || el.name === "rete") {
         if (seen[el.name]) return;
         seen[el.name] = true;
         out.push(form.querySelector('input[name="' + el.name + '"]:checked') || el);
@@ -1904,7 +1978,7 @@ function fmtRange(a, b) {
   }
   function nextField(from) {
     var list = stops(), key = from;
-    if (from.type === "radio") key = form.querySelector('input[name="' + from.name + '"]:checked') || form.querySelector('input[name="' + from.name + '"]');
+    if (from.type === "radio" || from.name === "rete") key = form.querySelector('input[name="' + from.name + '"]:checked') || form.querySelector('input[name="' + from.name + '"]');
     var i = list.indexOf(key);
     var to = (i >= 0 && list[i + 1]) || $("send");
     to.focus();
@@ -1918,7 +1992,7 @@ function fmtRange(a, b) {
     ev.preventDefault();
     if (t.id === "giornalista") completeFrom(t, lists.giornalisti);
     else if (t.id === "richiedente") { closeList(); completeFrom(t, richOptions()); }
-    else if (t.type === "radio" && !t.checked) { t.checked = true; t.dispatchEvent(new Event("change", { bubbles: true })); }
+    else if ((t.type === "radio" || t.name === "rete") && !t.checked) { t.checked = true; t.dispatchEvent(new Event("change", { bubbles: true })); }
     nextField(t);
   });
   document.addEventListener("rainyc:auth-lost", function () { form.hidden = true; $("recent-box").hidden = true; });
@@ -2005,6 +2079,7 @@ function fmtRange(a, b) {
       { cap: "Argomento / Titolo: di che cosa parla il servizio.", el: fld("titolo"), act: function () { return tourType($("titolo"), t("Prova: titolo di esempio")); } },
       { cap: "Rete: toccare la rete che ha chiesto il servizio.", el: function () { return chipLabel("c-rete", rete); }, click: true, act: function () { tourPick("rete", rete); } },
       { cap: "Tappeto: se il servizio è un tappeto, toccare anche «Tappeto» (prima o dopo la rete): la categoria diventa tappeto. Questo è un pezzo: qui non si tocca.", el: function () { return $("tappeto").parentNode; } },
+      { cap: "Grezzo: materiale grezzo mandato a più reti. Toccare «Grezzo» e poi tutte le reti a cui va: una registrazione per rete. Anche qui non si tocca.", el: function () { return $("grezzo").parentNode; } },
       { cap: "Richiedente: l'edizione o il programma (qui Tg1 Ore 20). ▾ mostra tutte le scelte.", el: fld("richiedente"), act: function () { return tourType($("richiedente"), richSlots.indexOf("Ore 20") >= 0 ? "Ore 20" : (richSlots[0] || "")); } },
       { cap: "Durata: facoltativa, per esempio 1:22.", el: fld("durata"), act: function () { return tourType($("durata"), "1:22"); } },
       { cap: "Mezzo: come è stato inviato il servizio. V-Mover è già scelto.", el: function () { return chipLabel("c-mezzo", mezzo); }, click: true, act: function () { tourPick("mezzo", mezzo); } },
