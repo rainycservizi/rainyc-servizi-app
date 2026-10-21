@@ -33,8 +33,7 @@
    the dark-mode rules of each page (chips, shadows, backdrops, icons) in step. Team skins put
    the club colours in the accent, the lines and a page-background motif; the panels stay a
    tinted neutral so a thousand collaudo rows, the rete chips and the ok/warn/bad marks stay readable.
-   Colour sources: teamcolorcodes.com (Red Sox #BD3039/#0C2340, Yankees #003087/#0C2340/#C4CED3,
-   Knicks #006BB6/#F58426/#BEC0C2, Bologna #A21C26/#1A2F48, Steelers #101820/#FFB612/#A5ACAF). No logos. */
+   Colour sources: teamcolorcodes.com (Red Sox #BD3039/#0C2340, Knicks #006BB6/#F58426/#BEC0C2, Steelers #101820/#FFB612/#A5ACAF). No logos. */
 .hright { position:relative; }
 .tpop { position:absolute; top:calc(100% + 6px); right:0; z-index:45; min-width:230px; margin:0; padding:6px; list-style:none; background:var(--panel); border:1px solid var(--line2); border-radius:8px; box-shadow:var(--pop); }
 .tpop[hidden] { display:none; }
@@ -45,26 +44,15 @@
 .tpop .sw { flex:none; width:18px; height:18px; border-radius:4px; border:1px solid rgba(0,0,0,.25); background:#fff; }
 .tpop .sw[data-sw=light] { background:linear-gradient(135deg, #f5f4f0 50%, #d94e00 50%); }
 .tpop .sw[data-sw=dark] { background:linear-gradient(135deg, #0b0f19 50%, #ff6b1a 50%); }
-.tpop .sw[data-sw=paisley] { background:linear-gradient(135deg, #f3ecdf 50%, #7a1f3d 50%); }
 .tpop .sw[data-sw=winter] { background:linear-gradient(135deg, #e9f0f7 50%, #1f6fb2 50%); }
 .tpop .sw[data-sw=redsox] { background:linear-gradient(135deg, #0c2340 50%, #bd3039 50%); }
-.tpop .sw[data-sw=yankees] { background:repeating-linear-gradient(90deg, #fff 0 4px, #0c2340 4px 5px); }
 .tpop .sw[data-sw=knicks] { background:linear-gradient(135deg, #006bb6 50%, #f58426 50%); }
 .tpop .sw[data-sw=steelers] { background:linear-gradient(135deg, #101820 50%, #ffb612 50%); }
 .tpop .sw[data-sw=juventus] { background:repeating-linear-gradient(90deg, #000 0 4px, #fff 4px 8px); }
-.tpop .sw[data-sw=bologna] { background:linear-gradient(90deg, #a21c26 50%, #1a2f48 50%); }
 .tpop .sep { height:1px; margin:6px 4px; background:var(--line); }
 
-/* Paisley: cream paper, burgundy and teal, a faint paisley motif on the page (not on the panels). */
-:root[data-theme=paisley] {
-  --bg:#f3ecdf; --panel:#fffaf2; --raise:#f8f1e4; --input:#fffdf8; --hover:#efe5d2; --line:#e0d3bb; --line2:#c2ad88;
-  --fg:#2b1a22; --dim:#6b5560; --accent:#7a1f3d; --accent-ink:#ffffff; --accent-text:#7a1f3d; --accent-soft:#f6e4ea;
-  --focus:#0e6b6b; --sw-off:#c2ad88;
-}
-:root[data-theme=paisley] body { background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140' viewBox='0 0 140 140'%3E%3Cg fill='none' stroke-linecap='round'%3E%3Cpath stroke='%237a1f3d' stroke-opacity='.14' stroke-width='1.3' d='M70 118C44 118 30 98 32 76c2-20 18-32 30-46 6-7 8-14 4-20 14 4 24 16 28 32 6 24 4 46-6 60-5 7-11 12-18 16z'/%3E%3Cpath stroke='%237a1f3d' stroke-opacity='.11' stroke-width='1' d='M68 104c-14 0-22-12-20-26 2-12 12-20 20-30 4-5 6-9 4-13 9 3 15 11 17 21 4 16 2 30-5 39-4 5-9 8-16 9z'/%3E%3Cpath stroke='%230e6b6b' stroke-opacity='.16' stroke-width='1.2' d='M66 88c-6 0-10-6-9-13 1-6 6-10 10-15 2-2 3-4 2-7 5 2 8 6 9 11 2 8 1 15-3 20-2 2-5 4-9 4z'/%3E%3Ccircle cx='65' cy='74' r='2.4' stroke='%23b8860b' stroke-opacity='.3' stroke-width='1'/%3E%3Ccircle cx='18' cy='20' r='1.8' stroke='%23b8860b' stroke-opacity='.25' stroke-width='1'/%3E%3Ccircle cx='122' cy='124' r='1.8' stroke='%23b8860b' stroke-opacity='.25' stroke-width='1'/%3E%3Ccircle cx='118' cy='28' r='1.2' stroke='%230e6b6b' stroke-opacity='.25' stroke-width='1'/%3E%3C/g%3E%3C/svg%3E"); }
-
 /* Skins whose buttons carry white ink: the keyboard hint on «Invia» goes light, not darker. */
-:root[data-theme=paisley] #send kbd, :root[data-theme=winter] #send kbd, :root[data-theme=redsox] #send kbd, :root[data-theme=yankees] #send kbd, :root[data-theme=bologna] #send kbd { background:rgba(255,255,255,.2); }
+:root[data-theme=winter] #send kbd, :root[data-theme=redsox] #send kbd { background:rgba(255,255,255,.2); }
 
 /* Winter: ice. Cool greys and a frost-blue accent. */
 :root[data-theme=winter] {
@@ -80,14 +68,6 @@
   --fg:#f4f6fa; --dim:#aebdd2; --accent:#bd3039; --accent-ink:#ffffff; --accent-text:#ff8a91; --accent-soft:#3a1f2c;
   --focus:#ff8a91; --sw-off:#3a5f90;
 }
-
-/* New York Yankees: home whites with pinstripes, navy accent. */
-:root[data-theme=yankees] {
-  --bg:#f7f8fa; --panel:#ffffff; --raise:#f3f5f8; --input:#ffffff; --hover:#e9edf3; --line:#d5dbe3; --line2:#a7b3c2;
-  --fg:#0c2340; --dim:#4c5b70; --accent:#003087; --accent-ink:#ffffff; --accent-text:#003087; --accent-soft:#e6ecf7;
-  --focus:#003087; --sw-off:#a7b3c2;
-}
-:root[data-theme=yankees] body { background-image:repeating-linear-gradient(90deg, transparent 0 26px, rgba(12,35,64,.12) 26px 27px); }
 
 /* New York Knicks: deep blue, orange accent. */
 :root[data-theme=knicks] {
@@ -113,13 +93,6 @@
 }
 :root[data-theme=juventus] body { background-image:repeating-linear-gradient(90deg, #0b0b0b 0 56px, #141414 56px 112px); }
 
-/* Bologna FC: rossoblù. Light paper, red accent, navy ink, a red-and-blue band on top. */
-:root[data-theme=bologna] {
-  --bg:#eef1f5; --panel:#ffffff; --raise:#f4f6f9; --input:#ffffff; --hover:#e3e8ef; --line:#d3d9e2; --line2:#a3b0c2;
-  --fg:#1a2f48; --dim:#50627a; --accent:#a21c26; --accent-ink:#ffffff; --accent-text:#a21c26; --accent-soft:#f7e6e7;
-  --focus:#a21c26; --sw-off:#a3b0c2;
-}
-:root[data-theme=bologna] body { background-image:linear-gradient(90deg, #a21c26 50%, #1a2f48 50%); background-size:100% 6px; background-repeat:no-repeat; }
 
 /* ---- end pages/skins.css ---- */
 * { box-sizing:border-box; }
@@ -343,7 +316,7 @@ footer.doc .firma { font-size:13px; white-space:nowrap; }
 <body>
 <div class="top" id="top">
   <header class="appbar">
-    <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-10-21 22:35 UTC · 12a5e62"><span class="mk">Rai · NY</span><span class="nm">RAI NYC Servizi</span><span class="pg" data-i18n>Collaudo</span></div>
+    <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-10-21 22:43 UTC · 8ae051c"><span class="mk">Rai · NY</span><span class="nm">RAI NYC Servizi</span><span class="pg" data-i18n>Collaudo</span></div>
     <nav class="hright" id="hright" aria-label="Pagine">
       <button type="button" class="icbtn" id="theme" aria-label="Tema" title="Tema" aria-haspopup="menu" aria-expanded="false">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3a9 9 0 1 0 0 18c1.2 0 2-.9 2-2 0-.6-.2-1-.5-1.4-.3-.4-.5-.8-.5-1.3 0-1.1.9-2 2-2h2.2A4.8 4.8 0 0 0 22 9.6C22 5.8 17.5 3 12 3z"/><circle cx="7.5" cy="11.5" r="1.1"/><circle cx="10.5" cy="7.5" r="1.1"/><circle cx="15" cy="7.5" r="1.1"/><circle cx="17.5" cy="11.5" r="1.1"/></svg>
@@ -410,7 +383,7 @@ var PAGE_FORM = "./" || APP_BASE;
 var PAGE_COLLAUDO = "./collaudo.html" || APP_BASE + "/collaudo";
 var PAGE_GESTIONE = "./gestione.html" || APP_BASE + "/gestione";
 var PAGE_MENSILE = "./mensile.html" || APP_BASE + "/mensile";
-var BUILD = "2026-10-21 22:35 UTC · 12a5e62"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
+var BUILD = "2026-10-21 22:43 UTC · 8ae051c"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
 // Every place the project lives (shown in the admin's header menu and on the Gestione page).
 var LINKS = [
   ["Pagine pubbliche", "https://rainycservizi.github.io/rainyc-servizi-app/", "GitHub Pages: il sito di prova principale"],
@@ -843,9 +816,8 @@ var THEME_KEY = "rainyc.tema";
 var MODE_KEY = "rainyc.modo";
 var THEMES = [ // key, Italian label (translated through t()), mode
   ["light", "Chiaro", "light"], ["dark", "Scuro", "dark"],
-  ["paisley", "Paisley", "light"], ["winter", "Inverno", "light"],
-  ["redsox", "Boston Red Sox", "dark"], ["yankees", "New York Yankees", "light"], ["knicks", "New York Knicks", "dark"],
-  ["steelers", "Pittsburgh Steelers", "dark"], ["juventus", "Juventus", "dark"], ["bologna", "Bologna FC", "light"]
+  ["winter", "Inverno", "light"], ["redsox", "Boston Red Sox", "dark"], ["knicks", "New York Knicks", "dark"],
+  ["steelers", "Pittsburgh Steelers", "dark"], ["juventus", "Juventus", "dark"]
 ];
 var themeBtn = null;
 var themeMenu = null;
