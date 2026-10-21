@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="light dark">
 <title>RAI NYC Servizi · Gestione</title>
-<script>(function () { var t = null; try { t = localStorage.getItem("rainyc.tema"); } catch (e) { /* blocked */ } if (t !== "light" && t !== "dark") { try { t = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"; } catch (e) { t = "light"; } } document.documentElement.setAttribute("data-theme", t); })();</script>
+<script>(function () { var t = null, m = null; try { t = localStorage.getItem("rainyc.tema"); m = localStorage.getItem("rainyc.modo"); } catch (e) { /* blocked */ } if (!t || !/^[a-z]{1,20}$/.test(t)) t = null; if (t === "light" || t === "dark") m = t; if (m !== "light" && m !== "dark") { if (t) { m = "light"; } else { try { m = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"; } catch (e) { m = "light"; } } } if (!t) t = m; document.documentElement.setAttribute("data-theme", t); document.documentElement.setAttribute("data-mode", m); })();</script>
 <style>
 /* Same tokens as form.html / collaudo.html (Crop Studio language). The page scrolls: it is a dashboard, not a form. */
 :root {
@@ -18,14 +18,110 @@
   --focus:#c24e00; --shadow:0 1px 3px rgba(15,20,28,.05), 0 4px 14px rgba(15,20,28,.04); --pop:0 12px 32px -4px rgba(15,20,28,.14), 0 4px 10px rgba(15,20,28,.06);
   --zebra:#f9f8f5;
 }
-:root[data-theme=dark] {
+:root[data-mode=dark] {
   --bg:#0b0f19; --panel:#111726; --raise:#182033; --input:#0d121f; --hover:#1c263d; --line:#202c44; --line2:#2f3f61; /* midnight navy, not an inverted grey (si.gov) */
   --fg:#f4f6fa; --dim:#8fa1bb; --accent:#ff6b1a; --accent-ink:#0b0f19; --accent-text:#ff8a3d; --accent-soft:#2d2126;
   --ok:#5bd48f; --ok-bg:#10291c; --warn:#f5b745; --warn-bg:#2d2411; --bad:#ff725c; --bad-bg:#301614;
   --focus:#ff8a3d; --shadow:0 2px 6px rgba(0,0,0,.45); --pop:0 16px 44px rgba(0,0,0,.75);
   --zebra:#141c2e;
 }
-:root { color-scheme:light; } :root[data-theme=dark] { color-scheme:dark; }
+:root { color-scheme:light; } :root[data-mode=dark] { color-scheme:dark; }
+/* ---- pages/skins.css ---- */
+/* ── skins: the themes beyond light and dark (Marco, 2026-10-21) ──
+   One file, inlined into every page by build_pages.mjs right after the base token blocks.
+   A skin sets tokens only; <html data-mode="light|dark"> (set together with data-theme) keeps
+   the dark-mode rules of each page (chips, shadows, backdrops, icons) in step. Team skins put
+   the club colours in the accent, the lines and a page-background motif; the panels stay a
+   tinted neutral so a thousand collaudo rows, the rete chips and the ok/warn/bad marks stay readable.
+   Colour sources: teamcolorcodes.com (Red Sox #BD3039/#0C2340, Yankees #003087/#0C2340/#C4CED3,
+   Knicks #006BB6/#F58426/#BEC0C2, Bologna #A21C26/#1A2F48, Steelers #101820/#FFB612/#A5ACAF). No logos. */
+.hright { position:relative; }
+.tpop { position:absolute; top:calc(100% + 6px); right:0; z-index:45; min-width:230px; margin:0; padding:6px; list-style:none; background:var(--panel); border:1px solid var(--line2); border-radius:8px; box-shadow:var(--pop); }
+.tpop[hidden] { display:none; }
+.tpop button { display:flex; align-items:center; gap:10px; width:100%; height:34px; padding:0 10px; border:0; border-radius:6px; background:transparent; color:var(--fg); font:500 14px/1 var(--sans); text-align:left; cursor:pointer; }
+.tpop button:hover, .tpop button:focus-visible { background:var(--hover); outline:none; }
+.tpop button[aria-checked=true] { font-weight:700; }
+.tpop button[aria-checked=true]::after { content:"✓"; margin-left:auto; color:var(--accent-text); font-weight:700; }
+.tpop .sw { flex:none; width:18px; height:18px; border-radius:4px; border:1px solid rgba(0,0,0,.25); background:#fff; }
+.tpop .sw[data-sw=light] { background:linear-gradient(135deg, #f5f4f0 50%, #d94e00 50%); }
+.tpop .sw[data-sw=dark] { background:linear-gradient(135deg, #0b0f19 50%, #ff6b1a 50%); }
+.tpop .sw[data-sw=paisley] { background:linear-gradient(135deg, #f3ecdf 50%, #7a1f3d 50%); }
+.tpop .sw[data-sw=winter] { background:linear-gradient(135deg, #e9f0f7 50%, #1f6fb2 50%); }
+.tpop .sw[data-sw=redsox] { background:linear-gradient(135deg, #0c2340 50%, #bd3039 50%); }
+.tpop .sw[data-sw=yankees] { background:repeating-linear-gradient(90deg, #fff 0 4px, #0c2340 4px 5px); }
+.tpop .sw[data-sw=knicks] { background:linear-gradient(135deg, #006bb6 50%, #f58426 50%); }
+.tpop .sw[data-sw=steelers] { background:linear-gradient(135deg, #101820 50%, #ffb612 50%); }
+.tpop .sw[data-sw=juventus] { background:repeating-linear-gradient(90deg, #000 0 4px, #fff 4px 8px); }
+.tpop .sw[data-sw=bologna] { background:linear-gradient(90deg, #a21c26 50%, #1a2f48 50%); }
+.tpop .sep { height:1px; margin:6px 4px; background:var(--line); }
+
+/* Paisley: cream paper, burgundy and teal, a faint paisley motif on the page (not on the panels). */
+:root[data-theme=paisley] {
+  --bg:#f3ecdf; --panel:#fffaf2; --raise:#f8f1e4; --input:#fffdf8; --hover:#efe5d2; --line:#e0d3bb; --line2:#c2ad88;
+  --fg:#2b1a22; --dim:#6b5560; --accent:#7a1f3d; --accent-ink:#ffffff; --accent-text:#7a1f3d; --accent-soft:#f6e4ea;
+  --focus:#0e6b6b; --sw-off:#c2ad88;
+}
+:root[data-theme=paisley] body { background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140' viewBox='0 0 140 140'%3E%3Cg fill='none' stroke-linecap='round'%3E%3Cpath stroke='%237a1f3d' stroke-opacity='.14' stroke-width='1.3' d='M70 118C44 118 30 98 32 76c2-20 18-32 30-46 6-7 8-14 4-20 14 4 24 16 28 32 6 24 4 46-6 60-5 7-11 12-18 16z'/%3E%3Cpath stroke='%237a1f3d' stroke-opacity='.11' stroke-width='1' d='M68 104c-14 0-22-12-20-26 2-12 12-20 20-30 4-5 6-9 4-13 9 3 15 11 17 21 4 16 2 30-5 39-4 5-9 8-16 9z'/%3E%3Cpath stroke='%230e6b6b' stroke-opacity='.16' stroke-width='1.2' d='M66 88c-6 0-10-6-9-13 1-6 6-10 10-15 2-2 3-4 2-7 5 2 8 6 9 11 2 8 1 15-3 20-2 2-5 4-9 4z'/%3E%3Ccircle cx='65' cy='74' r='2.4' stroke='%23b8860b' stroke-opacity='.3' stroke-width='1'/%3E%3Ccircle cx='18' cy='20' r='1.8' stroke='%23b8860b' stroke-opacity='.25' stroke-width='1'/%3E%3Ccircle cx='122' cy='124' r='1.8' stroke='%23b8860b' stroke-opacity='.25' stroke-width='1'/%3E%3Ccircle cx='118' cy='28' r='1.2' stroke='%230e6b6b' stroke-opacity='.25' stroke-width='1'/%3E%3C/g%3E%3C/svg%3E"); }
+
+/* Skins whose buttons carry white ink: the keyboard hint on «Invia» goes light, not darker. */
+:root[data-theme=paisley] #send kbd, :root[data-theme=winter] #send kbd, :root[data-theme=redsox] #send kbd, :root[data-theme=yankees] #send kbd, :root[data-theme=bologna] #send kbd { background:rgba(255,255,255,.2); }
+
+/* Winter: ice. Cool greys and a frost-blue accent. */
+:root[data-theme=winter] {
+  --bg:#e9f0f7; --panel:#ffffff; --raise:#f3f7fb; --input:#ffffff; --hover:#dfe9f3; --line:#cfdce9; --line2:#9fb6cc;
+  --fg:#12263a; --dim:#4f6a84; --accent:#1f6fb2; --accent-ink:#ffffff; --accent-text:#175c96; --accent-soft:#e3eef9;
+  --focus:#1f6fb2; --sw-off:#9fb6cc;
+}
+:root[data-theme=winter] body { background-image:linear-gradient(180deg, #f2f7fb 0, #e9f0f7 220px, #dde7f1 100%); background-attachment:fixed; }
+
+/* Boston Red Sox: midnight navy, red accent. */
+:root[data-theme=redsox] {
+  --bg:#0c2340; --panel:#132d4f; --raise:#1a3760; --input:#0e2544; --hover:#1f3f6c; --line:#24456f; --line2:#3a5f90;
+  --fg:#f4f6fa; --dim:#aebdd2; --accent:#bd3039; --accent-ink:#ffffff; --accent-text:#ff8a91; --accent-soft:#3a1f2c;
+  --focus:#ff8a91; --sw-off:#3a5f90;
+}
+
+/* New York Yankees: home whites with pinstripes, navy accent. */
+:root[data-theme=yankees] {
+  --bg:#f7f8fa; --panel:#ffffff; --raise:#f3f5f8; --input:#ffffff; --hover:#e9edf3; --line:#d5dbe3; --line2:#a7b3c2;
+  --fg:#0c2340; --dim:#4c5b70; --accent:#003087; --accent-ink:#ffffff; --accent-text:#003087; --accent-soft:#e6ecf7;
+  --focus:#003087; --sw-off:#a7b3c2;
+}
+:root[data-theme=yankees] body { background-image:repeating-linear-gradient(90deg, transparent 0 26px, rgba(12,35,64,.12) 26px 27px); }
+
+/* New York Knicks: deep blue, orange accent. */
+:root[data-theme=knicks] {
+  --bg:#04203d; --panel:#073059; --raise:#0b3b6b; --input:#052a4d; --hover:#0e4478; --line:#174f86; --line2:#2a6aa8;
+  --fg:#f4f8fc; --dim:#aac5e0; --accent:#f58426; --accent-ink:#1a0d00; --accent-text:#ffa052; --accent-soft:#4a2a10;
+  --focus:#ffa052; --sw-off:#2a6aa8;
+}
+:root[data-theme=knicks] body { background-image:linear-gradient(180deg, #006bb6 0, #006bb6 5px, transparent 5px); background-repeat:no-repeat; }
+
+/* Pittsburgh Steelers: black and gold. */
+:root[data-theme=steelers] {
+  --bg:#101820; --panel:#182230; --raise:#1f2b3b; --input:#121b26; --hover:#253345; --line:#2a3848; --line2:#4a5c70;
+  --fg:#f6f7f8; --dim:#a5acaf; --accent:#ffb612; --accent-ink:#1a1200; --accent-text:#ffc43d; --accent-soft:#3a2f10;
+  --focus:#ffc43d; --sw-off:#4a5c70;
+}
+:root[data-theme=steelers] body { background-image:linear-gradient(180deg, #ffb612 0, #ffb612 5px, transparent 5px); background-repeat:no-repeat; }
+
+/* Juventus: black and white stripes, white buttons on black. */
+:root[data-theme=juventus] {
+  --bg:#0b0b0b; --panel:#171717; --raise:#202020; --input:#101010; --hover:#262626; --line:#2c2c2c; --line2:#505050;
+  --fg:#fafafa; --dim:#a8a8a8; --accent:#f2f2f2; --accent-ink:#000000; --accent-text:#f2f2f2; --accent-soft:#2a2a2a;
+  --focus:#ffffff; --sw-off:#505050;
+}
+:root[data-theme=juventus] body { background-image:repeating-linear-gradient(90deg, #0b0b0b 0 56px, #141414 56px 112px); }
+
+/* Bologna FC: rossoblù. Light paper, red accent, navy ink, a red-and-blue band on top. */
+:root[data-theme=bologna] {
+  --bg:#eef1f5; --panel:#ffffff; --raise:#f4f6f9; --input:#ffffff; --hover:#e3e8ef; --line:#d3d9e2; --line2:#a3b0c2;
+  --fg:#1a2f48; --dim:#50627a; --accent:#a21c26; --accent-ink:#ffffff; --accent-text:#a21c26; --accent-soft:#f7e6e7;
+  --focus:#a21c26; --sw-off:#a3b0c2;
+}
+:root[data-theme=bologna] body { background-image:linear-gradient(90deg, #a21c26 50%, #1a2f48 50%); background-size:100% 6px; background-repeat:no-repeat; }
+
+/* ---- end pages/skins.css ---- */
 * { box-sizing:border-box; }
 html, body { margin:0; background:var(--bg); color:var(--fg); }
 body { font:14px/1.45 var(--sans); -webkit-font-smoothing:antialiased; }
@@ -46,7 +142,7 @@ a { color:inherit; }
 .nav { display:flex; align-items:center; gap:2px; padding:2px; border:1px solid var(--line2); border-radius:8px; background:var(--raise); }
 .nav .hlink { height:30px; padding:0 12px; border-radius:6px; font-size:13.5px; font-weight:500; transition:color .12s, background .12s; }
 .nav .hlink.cur { color:var(--accent-text); background:var(--panel); font-weight:600; box-shadow:0 1px 3px rgba(0,0,0,.08); }
-:root[data-theme=dark] .nav .hlink.cur { box-shadow:0 1px 3px rgba(0,0,0,.4); }
+:root[data-mode=dark] .nav .hlink.cur { box-shadow:0 1px 3px rgba(0,0,0,.4); }
 /* Wide monitors (2K, ultrawide, 4K at 100 %): scale the page instead of stretching 14 px text across 3400 px. 1920 untouched. */
 :root { --z:1; } /* the zoom factor, for rules that use vh/vw inside the zoomed body */
 @media screen and (min-width:2000px) { :root { --z:1.15; } body { zoom:1.15; } }
@@ -65,7 +161,6 @@ a { color:inherit; }
 .icbtn:hover { border-color:var(--accent); color:var(--accent-text); }
 .icbtn svg { width:18px; height:18px; }
 .icbtn.lang { width:auto; min-width:36px; padding:0 9px; font:700 12px/1 var(--mono); letter-spacing:.06em; }
-:root[data-theme=dark] .ic-moon, :root:not([data-theme=dark]) .ic-sun { display:none; }
 
 .page { padding:16px; display:grid; gap:14px; grid-template-columns:repeat(auto-fit, minmax(min(100%, 420px), 1fr)); align-items:start; max-width:1920px; margin:0 auto; }
 .panel { background:var(--panel); border:1px solid var(--line); border-radius:8px; box-shadow:var(--shadow); padding:14px 16px 16px; min-width:0; }
@@ -148,11 +243,10 @@ td.dim { color:var(--dim); } tr.off td { color:var(--dim); } tr.off td:first-chi
 </head>
 <body data-gestione>
 <header class="appbar">
-  <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-10-21 18:57 UTC · cf962ee"><span class="mk">Rai · NY</span><span class="nm">RAI NYC Servizi</span><span class="pg" data-i18n>Gestione</span></div>
+  <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-10-21 22:35 UTC · 12a5e62"><span class="mk">Rai · NY</span><span class="nm">RAI NYC Servizi</span><span class="pg" data-i18n>Gestione</span></div>
   <nav class="hright" id="hright" aria-label="Pagine">
-    <button type="button" class="icbtn" id="theme" aria-label="Cambia tema" title="Cambia tema">
-      <svg class="ic-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
-      <svg class="ic-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.2M12 19.8V22M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M2 12h2.2M19.8 12H22M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6"/></svg>
+    <button type="button" class="icbtn" id="theme" aria-label="Tema" title="Tema" aria-haspopup="menu" aria-expanded="false">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3a9 9 0 1 0 0 18c1.2 0 2-.9 2-2 0-.6-.2-1-.5-1.4-.3-.4-.5-.8-.5-1.3 0-1.1.9-2 2-2h2.2A4.8 4.8 0 0 0 22 9.6C22 5.8 17.5 3 12 3z"/><circle cx="7.5" cy="11.5" r="1.1"/><circle cx="10.5" cy="7.5" r="1.1"/><circle cx="15" cy="7.5" r="1.1"/><circle cx="17.5" cy="11.5" r="1.1"/></svg>
     </button>
     <button type="button" class="icbtn lang" id="lang" aria-label="Switch to English" title="Switch to English">EN</button>
     <span class="nav" id="nav">
@@ -225,7 +319,7 @@ td.dim { color:var(--dim); } tr.off td { color:var(--dim); } tr.off td:first-chi
 # RAI NYC Servizi — STATE (repo copy)
 
 &gt; **Short read-only copy for agents with no vault access (cloud agents).**
-&gt; Source of truth: `~/vault/10 Work/12 KIMA Creative/12.01 Active Clients/gvg-global-vision-group/rai-nyc-servizi/STATE.md` (on the Mac). Vault STATE updated: 2026-10-21T14:51-04:00 by Claude Code (Fable 5.1) on MacBook.
+&gt; Source of truth: `~/vault/10 Work/12 KIMA Creative/12.01 Active Clients/gvg-global-vision-group/rai-nyc-servizi/STATE.md` (on the Mac). Vault STATE updated: 2026-10-21T16:25-04:00 by Claude Code (Fable 5.1) on MacBook.
 &gt; Cloud agents: read this; do not edit it. At END, put your end state (done / next / blockers) in the PR description.
 &gt; The next Mac session merges it into the vault STATE.md, then refreshes this copy.
 
@@ -233,7 +327,9 @@ td.dim { color:var(--dim); } tr.off td { color:var(--dim); } tr.off td:first-chi
 Marco's day job at RAI NY (GVG): a startup popup on the Avid edit machines NYC-EDIT-MC01/02/03 (C#, .NET 8, WPF) where editors log each tappeto or servizio. Supabase is the truth; the Google Sheet "2026 Report Rai NYC, Servizi Giornalistici" is a reporting mirror. The collaudo forms go to Rome for overtime and travel. Host `supervisor` (Linux Mint, user `rainyc`, Tailscale only). Owner account for everything: `rainyc.servizi@gmail.com`.
 
 ## Current goal
-**2026-10-21 14:51 (Marco: "grezzo is its own type, in network make a grezzo tab and allow user to click as many or few networks that apply"; "five lines"):** **Built and live (dfec693, migration 0011 applied to production, function 18:49Z, Pages f4ed87a, supervisor rsync).** Form: a «Grezzo» switch beside «Tappeto» in the rete grid; with it on, the rete chips become checkboxes (as many networks as apply), richiedente is off, the legend reads «Grezzo per RAN, Tg1, Tg2», and «Invia» files ONE row per network (own client_record_id, shared `group_id`, categoria `grezzo`, richiedente null); «Annulla» voids every row of the batch (rows still on their way are voided on arrival), «Ripristina» restores them all; confetti once per batch; Tappeto and Grezzo exclude each other (the one just tapped wins, first rete kept). Database: categoria check + 'grezzo', `delivery_records.group_id` (nullable, indexed), `submit_delivery` (grezzo flag, group_id, refuses tappeto+grezzo), `update_delivery` ('grezzo' key = the Grezzi tick; one tick turns the other off; both in one patch refused), `v_monthly_topsheet` with `grezzi`. Collaudo (screen, print, e-mail) and Top Sheet (page, e-mail): «Grezzi» column/counter right after «Tappeti»; **like tappeti, grezzi do NOT count in the per-rete counters nor in Totale video** (assumption to confirm with Marco: one interview sent to five desks must not read as five services). Tutorial: a «Grezzo» step (13 steps). Proof: 41 deno, `deno check` clean, 224/224 integration (adds: 3-network grezzo from the form → 3 rows same group_id / Annulla voids all 3 / Ripristina restores all 3 / switches exclude each other / API refuses tappeto+grezzo and a bad group_id / Grezzi tick round trip on update), 120/120 layout. Not updated: `scripts/render_collaudo.py`, `scripts/sync_from_sheet.py` (offline tools). Previous goal below.
+**2026-10-21 16:25 (Marco: "2. no, it should count as a service for all networks sent to. the rest ok." → then "merge it"):** **(1) Grezzi count per network — live (cf962ee, migration `0012_grezzo_counts` applied locally and to production, function 18:57Z, Pages 1975750, supervisor rsync).** `v_monthly_topsheet` per-rete columns and `totale_video` now exclude only tappeti (`categoria &lt;&gt; 'tappeto'`); `lib/collaudo.js totals()` buckets a grezzo under its rete; the «Grezzi» column stays as an extra counter. The other two assumptions (Grezzi column on Rome's sheet/e-mail; richiedente off and empty in grezzo mode) accepted. Proof: 41 deno (grezzo totals test expects Tg1 = 2, Tg2 = 1), `deno check` clean, 224/224 integration, 120/120 layout. **(2) "merge it" NOT done.** 72 commits on `phase3-web-form` since `main` 59f066f. `check-merge-precheck.py` returned exit 2 (STOP): secret scan flagged ~30 added lines (`apikey: ANON_KEY`, the form's password field, random test passwords, SECURITY.md prose on resetting the DB password, the local `postgres:postgres@127.0.0.1` URL in `scripts/test-local.sh`) — each read, none is a real secret; Jev flagged off_task / secrets_or_keys / unrelated_files / prod_config / deletes_data / unfinished on a diff it could not read in full (8 chunks of a week's work). Per the lane rule nothing was merged; `main` untouched. Unblock: Marco says "merge anyway" → rerun with `--skip-jev`, then merge (see Next actions 1). Previous goal below.
+
+**2026-10-21 14:51 (Marco: "grezzo is its own type, in network make a grezzo tab and allow user to click as many or few networks that apply"; "five lines"):** **Built and live (dfec693, migration 0011 applied to production, function 18:49Z, Pages f4ed87a, supervisor rsync).** Form: a «Grezzo» switch beside «Tappeto» in the rete grid; with it on, the rete chips become checkboxes (as many networks as apply), richiedente is off, the legend reads «Grezzo per RAN, Tg1, Tg2», and «Invia» files ONE row per network (own client_record_id, shared `group_id`, categoria `grezzo`, richiedente null); «Annulla» voids every row of the batch (rows still on their way are voided on arrival), «Ripristina» restores them all; confetti once per batch; Tappeto and Grezzo exclude each other (the one just tapped wins, first rete kept). Database: categoria check + 'grezzo', `delivery_records.group_id` (nullable, indexed), `submit_delivery` (grezzo flag, group_id, refuses tappeto+grezzo), `update_delivery` ('grezzo' key = the Grezzi tick; one tick turns the other off; both in one patch refused), `v_monthly_topsheet` with `grezzi`. Collaudo (screen, print, e-mail) and Top Sheet (page, e-mail): «Grezzi» column/counter right after «Tappeti»; ~~like tappeti, grezzi do NOT count in the per-rete counters nor in Totale video~~ (assumption; Marco overruled it at 16:00 — superseded by migration 0012 above: a grezzo counts for every network it went to). Tutorial: a «Grezzo» step (13 steps). Proof: 41 deno, `deno check` clean, 224/224 integration (adds: 3-network grezzo from the form → 3 rows same group_id / Annulla voids all 3 / Ripristina restores all 3 / switches exclude each other / API refuses tappeto+grezzo and a bad group_id / Grezzi tick round trip on update), 120/120 layout. Not updated: `scripts/render_collaudo.py`, `scripts/sync_from_sheet.py` (offline tools). Previous goal below.
 
 **2026-10-19 (18:50, Marco: "make sure that there is a log for every user's input. especially if they delete entries, that all of it can be undone"):** **Verified in production** (SQL): every insert, update and void on `delivery_records` writes an audit row with old/new and the actor (≈11,000 rows in 7 days); 14 voids so far, 0 without an audit row, each with who and when; the login role has no DELETE (nor UPDATE) privilege on any table, there is no delete path in the code or the RPCs, `audit_log` is closed to logins. Boundaries stated to Marco: refused inputs (400) are not logged; undo used to be the collaudo's session button only. **Built (6d2ba19, function 18:44Z, Pages 76829f4, supervisor):** (1) collaudo: `GET /api/collaudo` now also returns `annullate` (the week's voided rows + who/when/why from the audit row that set `voided_at`, service role, two REST calls, never blocks the sheet); under the sheet a screen-only panel «Registrazioni annullate questa settimana» with a «Ripristina» button per row (`POST /api/unvoid`), hidden in print and absent from the e-mail; (2) form: after «Annulla» the same button reads «Ripristina»; (3) Gestione register: entries in words (nuova registrazione / annullata (motivo) / ripristinata / modifica: campo prima → dopo; `_id` fields as "cambiato"), raw JSON as tooltip. Proof: 207/207 integration (adds: Annulla → Ripristina on the form with DB voided_at round trip and the entry back in today's list; the panel lists the API-voided tappeto with actor and reason, never prints, Ripristina puts the row back in the sheet, the restore audit row names the actor), 120/120 layout, 40 deno, `deno check` clean. Not built (follow-ups): per-row edit history with one-click revert (edits are recoverable via the register + cell editor + session undo); a `voided_by` column (the audit log already holds it).
 
@@ -272,7 +368,8 @@ Marco's day job at RAI NY (GVG): a startup popup on the Avid edit machines NYC-E
 **Earlier today (kept short):** e-mail works (Gmail API enabled by Marco; W42 delivered to caruso@gvgusa.com; COLLAUDO_TO = erika@gvgusa.com, leotta@gvgusa.com, caruso@gvgusa.com; senders erika/caruso/pippo only); IT/EN switch; collaudo reading order per edition; Gestione page (admin = caruso); durations fix (3033 rows); trasferta editor verified on the Pages site; Esci; Link ▾ menu.
 
 ## Last 3 decisions
-0. 2026-10-21 14:51 — Marco: grezzo is its own type (not a marked pezzo); a grezzo to five networks = five lines. Agent: Grezzo switch + multi-pick reti, one row per rete with a shared group_id, Grezzi column on Rome's sheet, grezzi out of the per-rete tallies (tappeto precedent; flagged for Marco), richiedente off in grezzo mode.
+0. 2026-10-21 16:00 — Marco: a grezzo counts as a service for every network it was sent to ("the rest ok": Grezzi column, richiedente off). Agent: migration 0012 + collaudo totals; then "merge it" → merge pre-check exit 2 → stopped and reported, no merge. (Claude Code)
+0. 2026-10-21 14:51 — Marco: grezzo is its own type (not a marked pezzo); a grezzo to five networks = five lines. Agent: Grezzo switch + multi-pick reti, one row per rete with a shared group_id, Grezzi column on Rome's sheet, grezzi out of the per-rete tallies (tappeto precedent; flagged for Marco — overruled 16:00, see above), richiedente off in grezzo mode.
 0. 2026-10-19 18:40 — Marco: a log for every user input, and every deletion undoable. Agent: audit already complete (verified in production, counts above); added persistent restore (collaudo «Annullate» panel with Ripristina, form Annulla → Ripristina) and a readable register; nothing is ever deleted (soft void only). (Claude Code)
 0. 2026-10-19 18:00 — Marco: tappeto switch OK; pippo = Ippolito; NO re-filing of the legacy «Tappeto» rows (Rome does not count tappeti as services; from now on the new rows carry the network); still testing; add a Tappeto tutorial step and slow the tutorial down; fix the today list after a void from the collaudo. (Claude Code)
 0. 2026-10-19 17:00–17:55 — Marco: a tappeto must say which rete it is for ("if you have a better way, tell me"); collaudo trasferta in black and no Trasferta column; e-mail and printing for six names, then "keep the printing page. limit the email to the admins". Agent: Tappeto = a switch chip in the rete grid (no extra panel, no layout change), rete = network + categoria = tappeto in the row, `Tappeto` rete retired, legacy rows untouched; Trasferta column removed everywhere, trip note black; SENDERS = the six; printing untouched. Migration 0010, function, Pages, supervisor all live. (Claude Code)
@@ -289,11 +386,12 @@ Marco's day job at RAI NY (GVG): a startup popup on the Avid edit machines NYC-E
 4. (older) 2026-10-16 17:35–17:55 — Marco: caruso's recipient address = caruso@gvgusa.com; pages in English AND Italian with a button next to the theme toggle; wants the git site password-protected ("nothing exposed"); asks whether no certificate on supervisor is a problem; when caruso is logged in, Gestione + every link up top; tappeti must never count under a Tg (they don't); collaudo rows sorted by Tg and by time so tappeto and piece of the same edition sit together. Agent: IT/EN via a dictionary keyed by the Italian strings (sonnet subagent); reading order server-side; password gate = Cloudflare Pages + Access proposed (needs a Cloudflare account under rainyc.servizi); LAN http judged acceptable (auth and data go to Supabase over https). (Claude Code)
 
 ## Next 3 actions
-1. Marco — (00) Test the grezzo on the Pages site: tap «Grezzo», pick three reti, Invia → three lines in today's list and on the collaudo with the Grezzi tick; press Annulla (all three go) then Ripristina. Say whether grezzi should stay OUT of the per-rete counters / Totale video (built like tappeti) and whether the new «Grezzi» column on Rome's printed sheet and e-mail is right. (0) Keep testing: void a row on the collaudo and restore it from the «Registrazioni annullate questa settimana» panel under the sheet; on the form press Annulla then Ripristina; read the Gestione register (now in words). Then: replay the tutorial («?») for the new pace and the Tappeto step; void a row from the collaudo and watch the form's today list (it follows within a minute, or at once on focus). (a) Try the form on the Pages site on his own login: the tutorial runs once (then «?» replays it), send with empty fields (modal), a real entry (confetti); say whether the «?» button should be admin-only and whether the trasferta popup should get the same modal. (b) Collect Erika's and Ippolito's feedback (logins erika / pippo) and bring it to the next "go". (c) Letter print of the collaudo and the Mensile (W42 now holds the weekend: check Contini's Sunday rows and the Fontana/Rocca TGR rows before the W42 e-mail). (d) Design keep/change still open (second Gemini round from `docs/reviews/2026-10-16-ui-design.md`). (e) Still open: "built by Caruso" in print?; trasferta "SI" vs ✓; legacy "sì (dettagli non registrati)"; whether `inputs/` may ride in the kimaserver mirror; Durata required/optional.
+1. Marco — (000) **Merge decision.** The pre-check on `phase3-web-form` (72 commits) stopped on false-positive secret patterns and a truncated Jev read (details in Current goal). Say "merge anyway" → agent reruns `python3 ~/work/bin/trust-checks/check-merge-precheck.py --skip-jev`, then `git merge --no-ff phase3-web-form` into `main`, pushes `main` to origin and supervisor (`GIT_SSH_COMMAND="ssh -i ~/.ssh/supervisor_ed25519 -o IdentitiesOnly=yes"`), deletes the branch local + origin, checks the live links, updates this STATE. Or say what to change first. Nothing on `main` runs in production (deploys are by hand), so the merge is bookkeeping, not a release. (00) Test the grezzo on the Pages site: tap «Grezzo», pick three reti, Invia → three lines in today's list and on the collaudo with the Grezzi tick and each line counted under its rete; press Annulla (all three go) then Ripristina. (0) Keep testing: void a row on the collaudo and restore it from the «Registrazioni annullate questa settimana» panel under the sheet; on the form press Annulla then Ripristina; read the Gestione register (now in words). Then: replay the tutorial («?») for the new pace and the Tappeto step; void a row from the collaudo and watch the form's today list (it follows within a minute, or at once on focus). (a) Try the form on the Pages site on his own login: the tutorial runs once (then «?» replays it), send with empty fields (modal), a real entry (confetti); say whether the «?» button should be admin-only and whether the trasferta popup should get the same modal. (b) Collect Erika's and Ippolito's feedback (logins erika / pippo) and bring it to the next "go". (c) Letter print of the collaudo and the Mensile (W42 now holds the weekend: check Contini's Sunday rows and the Fontana/Rocca TGR rows before the W42 e-mail). (d) Design keep/change still open (second Gemini round from `docs/reviews/2026-10-16-ui-design.md`). (e) Still open: "built by Caruso" in print?; trasferta "SI" vs ✓; legacy "sì (dettagli non registrati)"; whether `inputs/` may ride in the kimaserver mirror; Durata required/optional.
 2. Agent ("go") — Follow-ups from today, in Marco's order when he asks: per-row edit history with one-click revert on the collaudo; a `voided_by` column only if the audit lookup ever gets slow; the sync script's (rete, categoria) key vs form tappeti (only if the sheet is used again). Before the next `scripts/sync_from_sheet.py --apply`: the dry run should MATCH the 10 legacy_import weekend rows (16–18/10) exactly and leave the 19 paper_entry rows alone; the trasferta mark is derived from the trips table, so Sanfilippo's 15–18/10 rows may show as CONFLICT where the sheet has no tick — read the plan, never `--sheet-wins` on those. Then: Gestione v2 (login→operator mapping, list sort_order incl. the new TGR editions, backup status); cron on supervisor (sheet sync dry-run report + DB backup check); `lib/collaudo.js NET_ORDER` has no "TGR" (unknown nets sort last, bucket "Altre" — fine, add it when touching the file); password self-change not blockable server-side (recorded). The Mac's local stack is still up with the function served from this session (harmless; `supabase stop` if in the way).
 3. Agent — Claude Code Projects: candidate once the waitlist opens (intel 2026-10-09); ask Grok Bot to pull Marco's X bookmarks about dashboards into CLAUDE-INTEL before Gestione v2.
 
 ## Blockers
+- Marco — "merge it" is blocked by the merge pre-check (exit 2, false positives + truncated Jev read on 72 commits); needs his "merge anyway" or another instruction. Also not done from today: `scripts/render_collaudo.py` and `scripts/sync_from_sheet.py` know nothing of categoria `grezzo`; the Annulla path for a batch still in flight (rows arriving after the void) has no test.
 - Marco — feedback on the tutorial («?» for everyone?), from Erika and Ippolito, design keep/change, Letter print test. Still pending: key-only SSH on supervisor, CLT update, WhatsApp images route, Durata required/optional. Login list is in his 1Password (distribution is his); `corti@rainyc.nyc` exists.
 
 ## Live warnings
@@ -327,7 +425,7 @@ var PAGE_FORM = "./" || APP_BASE;
 var PAGE_COLLAUDO = "./collaudo.html" || APP_BASE + "/collaudo";
 var PAGE_GESTIONE = "./gestione.html" || APP_BASE + "/gestione";
 var PAGE_MENSILE = "./mensile.html" || APP_BASE + "/mensile";
-var BUILD = "2026-10-21 18:57 UTC · cf962ee"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
+var BUILD = "2026-10-21 22:35 UTC · 12a5e62"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
 // Every place the project lives (shown in the admin's header menu and on the Gestione page).
 var LINKS = [
   ["Pagine pubbliche", "https://rainycservizi.github.io/rainyc-servizi-app/", "GitHub Pages: il sito di prova principale"],
@@ -358,7 +456,7 @@ var I18N = { en: {
   "Registrazione": "Entry", "Collaudo": "Weekly report", "Collaudo →": "Weekly report →", "← Nuova registrazione": "← New entry",
   "Gestione": "Admin", "Esci": "Sign out", "Esci ({0})": "Sign out ({0})", "Cambia password": "Change password",
   "Pagina costruita": "Page built", "Pagina costruita {0}": "Page built {0}",
-  "Passa al tema chiaro": "Switch to light theme", "Passa al tema scuro": "Switch to dark theme",
+  "Tema: {0}": "Theme: {0}", "Chiaro": "Light", "Scuro": "Dark", "Inverno": "Winter",
   "Accesso": "Login", "Accedere con il proprio cognome e la password.": "Sign in with your surname and password.",
   "Nome": "Name", "(cognome come in elenco, es. Arzilla)": "(surname as in the list, e.g. Arzilla)", "Password": "Password", "Accedi": "Sign in",
   "Nome o password non corretti.": "Wrong name or password.", "Accesso non riuscito ({0}). Riprovare.": "Sign-in failed ({0}). Try again.",
@@ -751,32 +849,84 @@ function changePassword(newPassword, retried) {
   });
 }
 
-// ---- theme (light / dark), shared by both pages ----
-// The <head> of each page sets data-theme before first paint (same rule as themeNow below);
-// this wires the header button. Saved choice in localStorage "rainyc.tema"; none saved = follow the OS.
+// ---- theme: light, dark and the skins (pages/skins.css), shared by every page ----
+// The <head> of each page sets data-theme and data-mode before first paint from the two saved keys;
+// this wires the header button, which opens a menu of every theme. data-theme = the theme key
+// (tokens); data-mode = light|dark, the base the theme sits on (the pages' dark-mode rules key on it).
+// Nothing saved = light or dark after the OS, live.
 var THEME_KEY = "rainyc.tema";
+var MODE_KEY = "rainyc.modo";
+var THEMES = [ // key, Italian label (translated through t()), mode
+  ["light", "Chiaro", "light"], ["dark", "Scuro", "dark"],
+  ["paisley", "Paisley", "light"], ["winter", "Inverno", "light"],
+  ["redsox", "Boston Red Sox", "dark"], ["yankees", "New York Yankees", "light"], ["knicks", "New York Knicks", "dark"],
+  ["steelers", "Pittsburgh Steelers", "dark"], ["juventus", "Juventus", "dark"], ["bologna", "Bologna FC", "light"]
+];
 var themeBtn = null;
-function themeSaved() { try { var t = localStorage.getItem(THEME_KEY); return t === "light" || t === "dark" ? t : null; } catch (e) { return null; } }
+var themeMenu = null;
+function themeDef(k) { for (var i = 0; i < THEMES.length; i++) if (THEMES[i][0] === k) return THEMES[i]; return null; }
+function themeSaved() { try { var t = localStorage.getItem(THEME_KEY); return themeDef(t) ? t : null; } catch (e) { return null; } }
 function themeOs() { try { return window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"; } catch (e) { return "light"; } }
 function themeNow() { return themeSaved() || themeOs(); }
 function applyTheme(th, btn) {
-  document.documentElement.setAttribute("data-theme", th);
+  var d = themeDef(th) || themeDef("light");
+  document.documentElement.setAttribute("data-theme", d[0]);
+  document.documentElement.setAttribute("data-mode", d[2]);
   if (btn) {
-    var label = t(th === "dark" ? "Passa al tema chiaro" : "Passa al tema scuro");
+    var label = tf("Tema: {0}", t(d[1]));
     btn.setAttribute("aria-label", label); btn.title = label;
-    btn.setAttribute("aria-pressed", th === "dark" ? "true" : "false");
   }
 }
-/** Wire the theme toggle button (id). */
+function closeThemeMenu() {
+  if (!themeMenu) return;
+  themeMenu.hidden = true;
+  if (themeBtn) themeBtn.setAttribute("aria-expanded", "false");
+}
+function openThemeMenu() {
+  var cur = document.documentElement.getAttribute("data-theme");
+  if (!themeMenu) {
+    themeMenu = document.createElement("div");
+    themeMenu.className = "tpop"; themeMenu.id = "tmenu"; themeMenu.setAttribute("role", "menu");
+    themeBtn.parentNode.appendChild(themeMenu);
+    themeMenu.addEventListener("click", function (ev) {
+      var b = ev.target.closest("button[data-theme-key]");
+      if (!b) return;
+      var k = b.getAttribute("data-theme-key"), d = themeDef(k);
+      try { localStorage.setItem(THEME_KEY, k); localStorage.setItem(MODE_KEY, d[2]); } catch (e) { /* storage blocked: this page only */ }
+      applyTheme(k, themeBtn);
+      closeThemeMenu(); themeBtn.focus();
+    });
+    themeMenu.addEventListener("keydown", function (ev) {
+      var items = Array.prototype.slice.call(themeMenu.querySelectorAll("button")), i = items.indexOf(document.activeElement);
+      if (ev.key === "ArrowDown" || ev.key === "ArrowUp") { ev.preventDefault(); items[(i + (ev.key === "ArrowDown" ? 1 : items.length - 1)) % items.length].focus(); }
+    });
+  }
+  themeMenu.innerHTML = "";
+  THEMES.forEach(function (d, i) {
+    if (i === 2) { var sep = document.createElement("div"); sep.className = "sep"; themeMenu.appendChild(sep); }
+    var b = document.createElement("button");
+    b.type = "button"; b.setAttribute("role", "menuitemradio"); b.setAttribute("data-theme-key", d[0]);
+    b.setAttribute("aria-checked", d[0] === cur ? "true" : "false");
+    var sw = document.createElement("i"); sw.className = "sw"; sw.setAttribute("data-sw", d[0]); sw.setAttribute("aria-hidden", "true");
+    b.appendChild(sw); b.appendChild(document.createTextNode(t(d[1])));
+    themeMenu.appendChild(b);
+  });
+  themeMenu.hidden = false;
+  themeBtn.setAttribute("aria-expanded", "true");
+  var on = themeMenu.querySelector("button[aria-checked=true]") || themeMenu.querySelector("button");
+  if (on) on.focus();
+}
+/** Wire the theme button (id): a click opens the menu of themes; Escape or a click outside closes it. */
 function initTheme(id) {
   var btn = document.getElementById(id);
   themeBtn = btn;
   applyTheme(themeNow(), btn);
-  if (btn) btn.addEventListener("click", function () {
-    var t = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
-    try { localStorage.setItem(THEME_KEY, t); } catch (e) { /* storage blocked: this page only */ }
-    applyTheme(t, btn);
-  });
+  if (btn) {
+    btn.setAttribute("aria-haspopup", "menu"); btn.setAttribute("aria-expanded", "false");
+    btn.addEventListener("click", function () { if (themeMenu && !themeMenu.hidden) closeThemeMenu(); else openThemeMenu(); });
+    document.addEventListener("click", function (ev) { if (themeMenu && !themeMenu.hidden && !themeMenu.contains(ev.target) && ev.target !== btn && !btn.contains(ev.target)) closeThemeMenu(); });
+    document.addEventListener("keydown", function (ev) { if (ev.key === "Escape" && themeMenu && !themeMenu.hidden) { closeThemeMenu(); btn.focus(); } });
+  }
   try {
     var mq = window.matchMedia("(prefers-color-scheme: dark)");
     var follow = function () { if (!themeSaved()) applyTheme(themeOs(), btn); };
