@@ -248,7 +248,7 @@ footer.doc .firma { font-size:13px; white-space:nowrap; }
 <body>
 <div class="top" id="top">
   <header class="appbar">
-    <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-10-21 18:49 UTC · dfec693"><span class="mk">Rai · NY</span><span class="nm">RAI NYC Servizi</span><span class="pg" data-i18n>Collaudo</span></div>
+    <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-10-21 18:57 UTC · cf962ee"><span class="mk">Rai · NY</span><span class="nm">RAI NYC Servizi</span><span class="pg" data-i18n>Collaudo</span></div>
     <nav class="hright" id="hright" aria-label="Pagine">
       <button type="button" class="icbtn" id="theme" aria-label="Cambia tema" title="Cambia tema">
         <svg class="ic-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
@@ -316,7 +316,7 @@ var PAGE_FORM = "./" || APP_BASE;
 var PAGE_COLLAUDO = "./collaudo.html" || APP_BASE + "/collaudo";
 var PAGE_GESTIONE = "./gestione.html" || APP_BASE + "/gestione";
 var PAGE_MENSILE = "./mensile.html" || APP_BASE + "/mensile";
-var BUILD = "2026-10-21 18:49 UTC · dfec693"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
+var BUILD = "2026-10-21 18:57 UTC · cf962ee"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
 // Every place the project lives (shown in the admin's header menu and on the Gestione page).
 var LINKS = [
   ["Pagine pubbliche", "https://rainycservizi.github.io/rainyc-servizi-app/", "GitHub Pages: il sito di prova principale"],
@@ -1076,9 +1076,8 @@ function fmtRange(a, b) {
 
 const CATEGORIE = ["pezzo", "radio", "live", "tappeto", "grezzo"];
 const CAT_LABEL = { pezzo: "Pezzi", radio: "Radio", live: "Live", tappeto: "Tappeti", grezzo: "Grezzi" };
-// Per-rete counters in the sheet's order. Tappeto and grezzo rows count only under Tappeti / Grezzi (a grezzo sent
-// to five networks is five rows: counting them per rete would make one interview look like five services).
-const OWN_COUNTER = ["tappeto", "grezzo"];
+// Per-rete counters in the sheet's order. Tappeto rows count only under Tappeti; a grezzo counts as a service for
+// every network it went to (Marco, 2026-10-21), so its rows count per rete like pezzi.
 const RETI = ["Rainews.it", "Tg1", "Tg2", "Tg3", "RAN", "Rai Sport", "GR", "Altre"];
 // Screen columns. The last five (assistenza, note, operatore, data, azioni) never print: the printed
 // sheet has exactly Rome's columns (PRINT_COLS), in this order. No Trasferta column (Marco, 2026-10-19):
@@ -1205,7 +1204,7 @@ function totals(rows) {
   let trasferte = 0;
   for (const r of rows) {
     if (r.categoria in cat) cat[r.categoria] += 1;
-    const b = OWN_COUNTER.includes(r.categoria) ? null : reteBucket(r.rete);
+    const b = r.categoria === "tappeto" ? null : reteBucket(r.rete);
     if (b) rete[b] += 1;
     if (r.trasferta === true) trasferte += 1;
   }
