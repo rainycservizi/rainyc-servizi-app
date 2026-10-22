@@ -383,7 +383,7 @@ kbd { font:600 11px/1 var(--mono); padding:2px 5px; border:1px solid var(--line2
 </head>
 <body>
 <header class="appbar">
-  <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-10-22 14:39 UTC · 495f129+"><span class="mk">Rai · NY</span><span id="t">RAI NYC Servizi</span><span class="pg" data-i18n>Registrazione</span></div>
+  <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-10-22 15:27 UTC · 1af0afb"><span class="mk">Rai · NY</span><span id="t">RAI NYC Servizi</span><span class="pg" data-i18n>Registrazione</span></div>
   <nav class="hright" id="hright" aria-label="Pagine">
     <span class="pend" id="pend" hidden></span>
     <button type="button" class="icbtn lang" id="tour-btn" hidden data-i18n-attr="aria-label|title" aria-label="Tutorial: come si compila una registrazione" title="Tutorial: come si compila una registrazione">?</button>
@@ -547,7 +547,7 @@ var PAGE_FORM = "./" || APP_BASE;
 var PAGE_COLLAUDO = "./collaudo.html" || APP_BASE + "/collaudo";
 var PAGE_GESTIONE = "./gestione.html" || APP_BASE + "/gestione";
 var PAGE_MENSILE = "./mensile.html" || APP_BASE + "/mensile";
-var BUILD = "2026-10-22 14:39 UTC · 495f129+"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
+var BUILD = "2026-10-22 15:27 UTC · 1af0afb"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
 // Every place the project lives (shown in the admin's header menu and on the Gestione page).
 var LINKS = [
   ["Pagine pubbliche", "https://rainycservizi.github.io/rainyc-servizi-app/", "GitHub Pages: il sito di prova principale"],
@@ -1732,13 +1732,15 @@ function fmtRange(a, b) {
     var ids = {}; local.forEach(function (e) { if (e.server_id) ids[e.server_id] = true; });
     // Marco (2026-10-16): the list must show day, edition (Tg1 Ore 20), time and operator; everything else that fits.
     var dm = function (d) { return d && d.length >= 10 ? d.slice(8, 10) + "/" + d.slice(5, 7) : ""; };
+    // The edition as read: RAN's slots are stored bare and read "RAN Ore 19" (Marco, 2026-10-22); no edition -> the rete.
+    var edShown = function (rete, rich) { rich = (rich || "").trim(); if (!rich) return rete; return rete === "RAN" && !/^ran\s/i.test(rich) ? "RAN " + rich : rich; };
     var joinNE = function (parts) { return parts.filter(function (x) { return x; }).join(" \u00b7 "); };
     var items = local.map(function (e) {
       var p = e.payload, cat = categoria(p.rete, p.mezzo, p.tappeto, p.grezzo);
-      return { ora: e.ora, giorno: dm(p.delivery_date), ed: p.richiedente || p.rete, op: p.operator, text: joinNE([p.journalist, p.subject, cat + (p.duration_text ? " " + p.duration_text : ""), p.mezzo]), stato: e.stato, err: e.errore, sort: e.creato };
+      return { ora: e.ora, giorno: dm(p.delivery_date), ed: edShown(p.rete, p.richiedente), op: p.operator, text: joinNE([p.journalist, p.subject, cat + (p.duration_text ? " " + p.duration_text : ""), p.mezzo]), stato: e.stato, err: e.errore, sort: e.creato };
     }).concat(serverRows.filter(function (r) { return !ids[r.record_id]; }).map(function (r) {
       var t = r.submitted_at ? new Date(r.submitted_at) : null;
-      return { ora: t ? String(t.getHours()).padStart(2, "0") + ":" + String(t.getMinutes()).padStart(2, "0") : "", giorno: dm(todayStr), ed: r.richiedente || r.rete, op: r.operatore, text: joinNE([r.giornalista, r.titolo, r.categoria + (r.durata ? " " + r.durata : ""), r.mezzo]), stato: "sincronizzato", sort: r.submitted_at || "" };
+      return { ora: t ? String(t.getHours()).padStart(2, "0") + ":" + String(t.getMinutes()).padStart(2, "0") : "", giorno: dm(todayStr), ed: edShown(r.rete, r.richiedente), op: r.operatore, text: joinNE([r.giornalista, r.titolo, r.categoria + (r.durata ? " " + r.durata : ""), r.mezzo]), stato: "sincronizzato", sort: r.submitted_at || "" };
     }));
     items.sort(function (a, b) { return a.sort < b.sort ? 1 : -1; });
     $("recent-n").textContent = items.length ? String(items.length) : "";
