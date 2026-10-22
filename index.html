@@ -383,7 +383,7 @@ kbd { font:600 11px/1 var(--mono); padding:2px 5px; border:1px solid var(--line2
 </head>
 <body>
 <header class="appbar">
-  <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-10-22 15:27 UTC · 1af0afb"><span class="mk">Rai · NY</span><span id="t">RAI NYC Servizi</span><span class="pg" data-i18n>Registrazione</span></div>
+  <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-10-22 15:49 UTC · 580f54b"><span class="mk">Rai · NY</span><span id="t">RAI NYC Servizi</span><span class="pg" data-i18n>Registrazione</span></div>
   <nav class="hright" id="hright" aria-label="Pagine">
     <span class="pend" id="pend" hidden></span>
     <button type="button" class="icbtn lang" id="tour-btn" hidden data-i18n-attr="aria-label|title" aria-label="Tutorial: come si compila una registrazione" title="Tutorial: come si compila una registrazione">?</button>
@@ -547,7 +547,7 @@ var PAGE_FORM = "./" || APP_BASE;
 var PAGE_COLLAUDO = "./collaudo.html" || APP_BASE + "/collaudo";
 var PAGE_GESTIONE = "./gestione.html" || APP_BASE + "/gestione";
 var PAGE_MENSILE = "./mensile.html" || APP_BASE + "/mensile";
-var BUILD = "2026-10-22 15:27 UTC · 1af0afb"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
+var BUILD = "2026-10-22 15:49 UTC · 580f54b"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
 // Every place the project lives (shown in the admin's header menu and on the Gestione page).
 var LINKS = [
   ["Pagine pubbliche", "https://rainycservizi.github.io/rainyc-servizi-app/", "GitHub Pages: il sito di prova principale"],
@@ -2072,6 +2072,7 @@ function fmtRange(a, b) {
     else if (!gMatch) { errSrc = function () { return tf("Giornalista non in elenco: {0}.", g); }; paintErr(); showMissing(errSrc(), $("giornalista")); return; }
     if (!v.subject) miss("Argomento / Titolo", "titolo");
     if (!v.rete) miss(v.grezzo ? "Reti del grezzo" : v.tappeto ? "Rete del tappeto" : "Rete", null);
+    if (!v.grezzo && !v.richiedente) miss("Richiedente", "richiedente"); // Marco, 2026-10-22: 03 Richiesta must be filled (a grezzo has none)
     if (!v.duration_text) miss("Durata", "durata"); // Marco, 2026-10-22: no duration, no send
     if (!v.mezzo) miss("Mezzo", null);
     if (!v.operator) miss("Operatore", "operatore");
