@@ -383,7 +383,7 @@ kbd { font:600 11px/1 var(--mono); padding:2px 5px; border:1px solid var(--line2
 </head>
 <body>
 <header class="appbar">
-  <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-10-30 19:38 UTC · 1874ea6"><span class="mk">Rai · NY</span><span id="t">RAI NYC Servizi</span><span class="pg" data-i18n>Registrazione</span></div>
+  <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-10-30 20:52 UTC · 42953aa"><span class="mk">Rai · NY</span><span id="t">RAI NYC Servizi</span><span class="pg" data-i18n>Registrazione</span></div>
   <nav class="hright" id="hright" aria-label="Pagine">
     <span class="pend" id="pend" hidden></span>
     <button type="button" class="icbtn lang" id="tour-btn" hidden data-i18n-attr="aria-label|title" aria-label="Tutorial: come si compila una registrazione" title="Tutorial: come si compila una registrazione">?</button>
@@ -548,7 +548,7 @@ var PAGE_FORM = "./" || APP_BASE;
 var PAGE_COLLAUDO = "./collaudo.html" || APP_BASE + "/collaudo";
 var PAGE_GESTIONE = "./gestione.html" || APP_BASE + "/gestione";
 var PAGE_MENSILE = "./mensile.html" || APP_BASE + "/mensile";
-var BUILD = "2026-10-30 19:38 UTC · 1874ea6"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
+var BUILD = "2026-10-30 20:52 UTC · 42953aa"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
 // Every place the project lives (shown in the admin's header menu and on the Gestione page).
 var LINKS = [
   ["Pagine pubbliche", "https://rainycservizi.github.io/rainyc-servizi-app/", "GitHub Pages: il sito di prova principale"],
@@ -1468,9 +1468,12 @@ function fmtRange(a, b) {
     var last = null; try { last = localStorage.getItem("rainyc.operatore"); } catch (e) { /* ignore */ }
     var names = lists.operatori.map(function (o) { return o.display_name; });
     fillSelect("trip-operatore", names);
-    // The logged-in operator: "de.marco@rainyc.nyc" -> "De Marco" (the bureau account matches nobody).
+    // The logged-in operator: "de.marco@rainyc.nyc" -> "De Marco" (the bureau account matches nobody). A login that
+    // differs from the display name is matched through windows_username ("marta" -> Corradi; Marco, 2026-10-30: last names).
     var s = Session.get(), local = s && s.email ? s.email.split("@")[0] : "";
-    var mine = names.filter(function (n) { return n.toLowerCase().replace(/\s+/g, ".") === local; })[0] || null;
+    var mine = lists.operatori.filter(function (o) {
+      return o.display_name.toLowerCase().replace(/\s+/g, ".") === local || (o.windows_username || "").toLowerCase() === local;
+    }).map(function (o) { return o.display_name; })[0] || null;
     var pick = [mine, fromUrl, last].filter(function (v) { return v && names.indexOf(v) >= 0; })[0] || names[0];
     myOperator = mine;
     // defaultSelected: form.reset() (Esc, resetAll) returns to this operator instead of the first option.
