@@ -383,7 +383,7 @@ kbd { font:600 11px/1 var(--mono); padding:2px 5px; border:1px solid var(--line2
 </head>
 <body>
 <header class="appbar">
-  <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-10-30 19:28 UTC · ae9b680"><span class="mk">Rai · NY</span><span id="t">RAI NYC Servizi</span><span class="pg" data-i18n>Registrazione</span></div>
+  <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-10-30 19:38 UTC · 1874ea6"><span class="mk">Rai · NY</span><span id="t">RAI NYC Servizi</span><span class="pg" data-i18n>Registrazione</span></div>
   <nav class="hright" id="hright" aria-label="Pagine">
     <span class="pend" id="pend" hidden></span>
     <button type="button" class="icbtn lang" id="tour-btn" hidden data-i18n-attr="aria-label|title" aria-label="Tutorial: come si compila una registrazione" title="Tutorial: come si compila una registrazione">?</button>
@@ -419,6 +419,7 @@ kbd { font:600 11px/1 var(--mono); padding:2px 5px; border:1px solid var(--line2
         <div class="fld">
           <label for="data" data-i18n>Data</label>
           <input type="date" id="data" name="data" required>
+          <span class="hint" id="data-hint" hidden></span>
         </div>
         <div class="fld">
           <label for="giornalista" data-i18n>Giornalista</label>
@@ -547,7 +548,7 @@ var PAGE_FORM = "./" || APP_BASE;
 var PAGE_COLLAUDO = "./collaudo.html" || APP_BASE + "/collaudo";
 var PAGE_GESTIONE = "./gestione.html" || APP_BASE + "/gestione";
 var PAGE_MENSILE = "./mensile.html" || APP_BASE + "/mensile";
-var BUILD = "2026-10-30 19:28 UTC · ae9b680"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
+var BUILD = "2026-10-30 19:38 UTC · 1874ea6"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
 // Every place the project lives (shown in the admin's header menu and on the Gestione page).
 var LINKS = [
   ["Pagine pubbliche", "https://rainycservizi.github.io/rainyc-servizi-app/", "GitHub Pages: il sito di prova principale"],
@@ -599,7 +600,7 @@ var I18N = { en: {
   "database e funzione (accesso rainyc.servizi)": "database and function (rainyc.servizi login)",
   "Caricamento…": "Loading…",
   // form
-  "Servizio": "Package", "Data": "Date", "Giornalista": "Journalist", "Argomento / Titolo": "Topic / Title", "Rete": "Network",
+  "Servizio": "Package", "Data": "Date", "Per domani, {0}: edizione del mattino, va in onda domani.": "For tomorrow, {0}: morning edition, it airs tomorrow.", "Giornalista": "Journalist", "Argomento / Titolo": "Topic / Title", "Rete": "Network",
   "Richiesta": "Request", "Richiedente": "Requester", "(edizione o programma; anche testo libero)": "(edition or programme; free text also allowed)",
   "(edizione; anche testo libero)": "(edition; free text also allowed)", "(programma; testo libero)": "(programme; free text)",
   "(scegliere prima la rete)": "(pick the network first)", "Durata": "Duration", "(facoltative)": "(optional)",
@@ -1523,7 +1524,7 @@ function fmtRange(a, b) {
     closeList();
     if (k >= richSlots.length) { inp.value = ""; inp.placeholder = t("scrivi il programma o l'edizione"); }
     else { inp.value = richSlots[k]; inp.placeholder = ""; }
-    inp.focus();
+    inp.focus(); applyAirDate();
   }
   function updateRichiedente() {
     var rete = checked("rete"), grz = grezzoOn();
@@ -1582,6 +1583,35 @@ function fmtRange(a, b) {
     n.className = "aside" + (tap && !rete ? " need" : "");
   }
   function today() { return todayNewYork(); }
+  // Air date rule (Marco, 2026-10-30: night-shift pieces for the Italian morning editions air the next day; the date
+  // must be the air date). A morning edition = its slot is before 14:00 in Italy ("Ore 8", "Ore 13:30", "Ore 12 Milano",
+  // RAN "Ore 01".."Ore 13"). Chosen after 12:00 New York, today's edition has already aired, so the date becomes
+  // tomorrow and the form says so. A date the operator typed by hand is never touched.
+  function nyHour() {
+    try { return parseInt(new Intl.DateTimeFormat("en-US", { timeZone: "America/New_York", hour: "numeric", hour12: false }).format(new Date()), 10) % 24; } catch (e) { return new Date().getHours(); }
+  }
+  function addDays(ymd, n) { var d = new Date(ymd + "T12:00:00Z"); d.setUTCDate(d.getUTCDate() + n); return d.toISOString().slice(0, 10); }
+  function morningEdition(rich) {
+    var m = /\bore\s*(\d{1,2})(?::(\d{2}))?/i.exec(rich || "");
+    if (!m) return false;
+    var h = parseInt(m[1], 10);
+    return h >= 0 && h < 14;
+  }
+  var dateTouched = false, dateAuto = false;
+  $("data").addEventListener("input", function () { dateTouched = true; dateAuto = false; $("data-hint").hidden = true; });
+  function applyAirDate() {
+    var hint = $("data-hint"), todayStr = today();
+    if (dateTouched) { hint.hidden = true; return; }
+    var rich = grezzoOn() ? "" : richiedenteValue();
+    if (rich && morningEdition(rich) && nyHour() >= 12) {
+      var tom = addDays(todayStr, 1);
+      $("data").value = tom; dateAuto = true;
+      hint.textContent = tf("Per domani, {0}: edizione del mattino, va in onda domani.", tom.slice(8, 10) + "/" + tom.slice(5, 7)); hint.hidden = false;
+    } else {
+      if (dateAuto) { $("data").value = todayStr; dateAuto = false; }
+      hint.hidden = true;
+    }
+  }
 
   // ---- trasferta: a state of the session, not of the entry ----
   // Trips live in the database (table trasferte, Marco 2026-10-16: "straight to the database, like everything
@@ -1692,7 +1722,7 @@ function fmtRange(a, b) {
 
   function resetAll() {
     form.reset();
-    $("data").value = today();
+    $("data").value = today(); dateTouched = false; dateAuto = false; $("data-hint").hidden = true;
     $("grezzo").checked = false; setReteMode();
     setRadio("rete", "");
     setRadio("mezzo", "V-Mover");
@@ -2013,6 +2043,7 @@ function fmtRange(a, b) {
   $("giornalista").addEventListener("keydown", function (ev) {
     if (ev.key === "Tab" && !ev.shiftKey) completeFrom(ev.target, lists.giornalisti);
   });
+  $("richiedente").addEventListener("input", applyAirDate);
   $("richiedente").addEventListener("keydown", function (ev) {
     if (ev.key === "Tab" && !ev.shiftKey) completeFrom(ev.target, richOptions());
   });
@@ -2043,6 +2074,7 @@ function fmtRange(a, b) {
   form.addEventListener("submit", function (ev) {
     ev.preventDefault();
     if (tour) return; // the tutorial never submits
+    applyAirDate();
     var g = $("giornalista").value.trim();
     var gMatch = lists.giornalisti.filter(function (n) { return n.toLowerCase() === g.toLowerCase(); })[0];
     if (!gMatch && g) {
@@ -2099,7 +2131,7 @@ function fmtRange(a, b) {
     $("grezzo").checked = false; setReteMode();
     setRadio("rete", ""); $("tappeto").checked = false; $("durata").value = ""; $("richiedente").value = ""; $("note").value = "";
     setRadio("mezzo", "V-Mover");
-    updateRichiedente(); updateCategoria(); updateReteNote(); renderTrip();
+    updateRichiedente(); updateCategoria(); updateReteNote(); renderTrip(); applyAirDate();
     form.querySelector('input[name="rete"]').focus();
     schedule(0);
   });
@@ -2111,6 +2143,7 @@ function fmtRange(a, b) {
     if (nm === "rete") { $("richiedente").value = ""; updateRichiedente(); }
     if (nm === "rete" || nm === "mezzo" || nm === "tappeto" || nm === "grezzo") updateCategoria();
     if (nm === "rete" || nm === "tappeto" || nm === "grezzo") updateReteNote();
+    if (nm === "rete" || nm === "tappeto" || nm === "grezzo" || nm === "richiedente") applyAirDate();
     if (ev.target.id === "giornalista" || ev.target.id === "data") renderTrip();
   });
 
