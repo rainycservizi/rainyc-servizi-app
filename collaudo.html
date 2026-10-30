@@ -202,6 +202,8 @@ tbody tr.r:nth-of-type(even) td { background:var(--zebra); }
 tbody tr.r:hover td { background:var(--hover); }
 th.k, td.k { text-align:center; width:3.6em; }
 td.k { font-weight:700; }
+/* The mark in the tally columns: 1 (default), × or ✓, chosen in the tools bar (Marco, 2026-10-30: no check marks) */
+.mk::before { content:"1"; } :root[data-segno="x"] .mk::before { content:"×"; } :root[data-segno="v"] .mk::before { content:"✓"; }
 
 tr.day td { background:var(--band); border-top:1px solid var(--line2); border-bottom:1px solid var(--line2); padding:0 8px 0 0; }
 button.dt { all:unset; box-sizing:border-box; display:inline-flex; align-items:center; gap:8px; min-height:38px; padding:0 10px 0 8px; font-weight:700; font-size:14px; cursor:pointer; border-radius:4px; color:var(--fg); }
@@ -305,6 +307,7 @@ footer.doc .firma { font-size:13px; white-space:nowrap; }
   table { font-size:11px; }
   tr { break-inside:avoid; page-break-inside:avoid; }
   tr.day { break-after:avoid; page-break-after:avoid; }
+  tbody.dg { break-inside:avoid; page-break-inside:avoid; } /* a day never splits across pages (Marco, 2026-10-30) */
   td { padding:2.5px 5px; line-height:1.3; }
   tr.day td { padding:3px 5px; }
   tr.tot td { color:#111; font-weight:600; border-bottom:1.5px solid #111; }
@@ -316,7 +319,7 @@ footer.doc .firma { font-size:13px; white-space:nowrap; }
 <body>
 <div class="top" id="top">
   <header class="appbar">
-    <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-10-30 18:38 UTC · b46e293"><span class="mk">Rai · NY</span><span class="nm">RAI NYC Servizi</span><span class="pg" data-i18n>Collaudo</span></div>
+    <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-10-30 19:28 UTC · ae9b680"><span class="mk">Rai · NY</span><span class="nm">RAI NYC Servizi</span><span class="pg" data-i18n>Collaudo</span></div>
     <nav class="hright" id="hright" aria-label="Pagine">
       <button type="button" class="icbtn" id="theme" aria-label="Tema" title="Tema" aria-haspopup="menu" aria-expanded="false">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3a9 9 0 1 0 0 18c1.2 0 2-.9 2-2 0-.6-.2-1-.5-1.4-.3-.4-.5-.8-.5-1.3 0-1.1.9-2 2-2h2.2A4.8 4.8 0 0 0 22 9.6C22 5.8 17.5 3 12 3z"/><circle cx="7.5" cy="11.5" r="1.1"/><circle cx="10.5" cy="7.5" r="1.1"/><circle cx="15" cy="7.5" r="1.1"/><circle cx="17.5" cy="11.5" r="1.1"/></svg>
@@ -342,6 +345,7 @@ footer.doc .firma { font-size:13px; white-space:nowrap; }
     <div class="grp">
       <button type="button" class="btn" id="fold" aria-controls="doc"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="fold-t">Comprimi tutto</span></button>
       <button type="button" class="btn" id="undo" disabled title="Ctrl+Z"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M5 4L2 7l3 3M2.5 7H10a4 4 0 0 1 0 8H8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="tx" data-i18n>Annulla ultima modifica</span></button>
+      <label class="wk" data-i18n-attr="title" title="Segno nelle colonne Servizi, Radio, Live, Tappeti, Grezzi"><span data-i18n>Segno</span> <select id="segno"><option value="1">1</option><option value="x">×</option><option value="v">✓</option></select></label>
     </div>
     <span class="msg" id="msg" role="status" aria-live="polite"></span>
     <button type="button" class="btn" id="email"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M2 4h12v8H2zM2.5 4.5L8 9l5.5-4.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg><span id="email-t" data-i18n>Invia per e-mail</span></button>
@@ -383,7 +387,7 @@ var PAGE_FORM = "./" || APP_BASE;
 var PAGE_COLLAUDO = "./collaudo.html" || APP_BASE + "/collaudo";
 var PAGE_GESTIONE = "./gestione.html" || APP_BASE + "/gestione";
 var PAGE_MENSILE = "./mensile.html" || APP_BASE + "/mensile";
-var BUILD = "2026-10-30 18:38 UTC · b46e293"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
+var BUILD = "2026-10-30 19:28 UTC · ae9b680"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
 // Every place the project lives (shown in the admin's header menu and on the Gestione page).
 var LINKS = [
   ["Pagine pubbliche", "https://rainycservizi.github.io/rainyc-servizi-app/", "GitHub Pages: il sito di prova principale"],
@@ -519,7 +523,7 @@ var I18N = { en: {
   "Top Sheet {0} inviato a {1} destinatari.": "Top Sheet {0} sent to {1} recipients.",
   // collaudo sheet (screen text; the print copy stays Italian)
   "Nessuna registrazione": "No entries", "Titolo": "Title", "Pezzi": "Packages", "Servizi": "Packages", "Tappeti": "B-Roll", "Ass. tecnica": "Tech support", "Totale": "Total",
-  "Trasferte": "Travel", "Altre": "Other", "Riepilogo": "Summary", "Collaudo settimanale": "Weekly report",
+  "Trasferte": "Travel", "Altre": "Other", "Segno": "Mark", "Segno nelle colonne Servizi, Radio, Live, Tappeti, Grezzi": "Mark used in the Servizi, Radio, Live, Tappeti, Grezzi columns", "Riepilogo": "Summary", "Collaudo settimanale": "Weekly report",
   "RAI – Sede di corrispondenza di New York": "RAI – New York Bureau", "Trasferta:": "Travel:",
   "sì (dettagli non registrati)": "yes (details not recorded)", "Settimana {0} ({1})": "Week {0} ({1})",
   "Generato il {0} dal sistema RAI NYC Servizi · fonte: database · {1} registrazioni · {2}": "Generated on {0} by the RAI NYC Servizi system · source: database · {1} entries · {2}",
@@ -1200,7 +1204,9 @@ const CAT_LABEL = { pezzo: "Servizi", radio: "Radio", live: "Live", tappeto: "Ta
 const BAR_CATEGORIE = CATEGORIE.filter((c) => c !== "radio");
 // Per-rete counters in the sheet's order. Tappeto rows count only under Tappeti; a grezzo counts as a service for
 // every network it went to (Marco, 2026-10-21), so its rows count per rete like pezzi.
-const RETI = ["Rainews.it", "Tg1", "Tg2", "Tg3", "RAN", "Rai Sport", "GR", "Altre"];
+const RETI = ["Rainews.it", "Tg1", "Tg2", "Tg3", "RAN", "Rai Sport", "GR", "TGR", "Altre"]; // TGR up top (Marco, 2026-10-30)
+const MARK = '<i class="mk"></i>'; // the tick in Servizi/Radio/Live/Tappeti/Grezzi: the page chooses 1, × or ✓ (CSS), the e-mail prints 1
+
 // Screen columns. The last five (assistenza, note, operatore, data, azioni) never print: the printed
 // sheet has exactly Rome's columns (PRINT_COLS), in this order. No Trasferta column (Marco, 2026-10-19):
 // who is in trasferta is named once in the day header.
@@ -1269,7 +1275,7 @@ function reteBucket(rete) {
 
 // Reading order inside a day (Marco, 2026-10-16): by edition — network, then the edition's time slot — so the
 // tappeto and the piece for "Tg1 Ore 20" sit together, tappeto first; then by submission time.
-const NET_ORDER = ["Tg1", "Tg2", "Tg3", "RAN", "Rainews.it", "GR", "Rai Sport", "Rai 1", "Rai 2", "Rai 3", "Tv7"];
+const NET_ORDER = ["Tg1", "Tg2", "Tg3", "RAN", "Rainews.it", "GR", "Rai Sport", "TGR", "Rai 1", "Rai 2", "Rai 3", "Tv7"];
 const PREFIXES = ["Tg1", "Tg2", "Tg3", "GR"];
 function slotMinutes(label) {
   const m = /ore\s+(\d{1,2})(?:[:.](\d{2}))?/i.exec(label || "");
@@ -1352,11 +1358,13 @@ function shortDate(date) {
 }
 
 /**
- * Who is in trasferta on `day`, from the week's rows: "Sanfilippo con Lo Prete, Washington D.C. (15–18 ott)".
- * Legacy rows (trasferta true, no details) give "sì (dettagli non registrati)".
+ * Who is in trasferta on `day`: from the week's rows ("Sanfilippo con Lo Prete, Washington D.C. (15–18 ott)") and from
+ * the trips table itself, so a trip shows even on a day its operator has no row (Marco, 2026-10-30: "Collaudo does not
+ * show Lo Prete in Atlanta today"). Legacy rows (trasferta true, no details) give "sì (dettagli non registrati)".
  * @param {string} day @param {Array<Record<string, unknown>>} rows
+ * @param {Array<{operatore:string, con:string|null, luogo:string, dal:string, al:string}>} [trips]
  */
-function trasferteOn(day, rows) {
+function trasferteOn(day, rows, trips = []) {
   const seen = new Set();
   const out = [];
   let legacy = false;
@@ -1376,6 +1384,14 @@ function trasferteOn(day, rows) {
     const who = String(r.trasferta_persona || "?") + (r.trasferta_con ? " con " + r.trasferta_con : "");
     out.push(`${who}, ${r.trasferta_luogo || "?"} (${range})`);
   }
+  for (const t of trips || []) {
+    if (!t.dal || !t.al || day < String(t.dal) || day > String(t.al)) continue;
+    const key = [t.operatore, t.con, t.luogo, t.dal, t.al].join("|");
+    if (seen.has(key)) continue;
+    seen.add(key);
+    const range = t.dal === t.al ? shortDate(String(t.dal)) : shortDate(String(t.dal)) + "–" + shortDate(String(t.al));
+    out.push(`${t.operatore || "?"}${t.con ? " con " + t.con : ""}, ${t.luogo || "?"} (${range})`);
+  }
   if (legacy) out.push("sì (dettagli non registrati)");
   return out;
 }
@@ -1391,7 +1407,7 @@ const CHEVRON = '<svg class="chev" viewBox="0 0 16 16" width="14" height="14" ar
  * @param {string} generated  "YYYY-MM-DD"
  * @returns {string} HTML
  */
-function renderCollaudo(w, rows, generated) {
+function renderCollaudo(w, rows, generated, trips = []) {
   const days = weekDays(w);
   const byDay = Object.fromEntries(days.map((d) => [d, []]));
   for (const r of rows) if (r.data in byDay) byDay[r.data].push(r);
@@ -1401,8 +1417,8 @@ function renderCollaudo(w, rows, generated) {
   for (const d of days) {
     const body = [];
     const dayRows = byDay[d];
-    const trips = trasferteOn(d, rows);
-    const tripHead = trips.length ? ` <span class="trip">Trasferta: ${esc(trips.join(" · "))}</span>` : "";
+    const tripsOn = trasferteOn(d, rows, trips);
+    const tripHead = tripsOn.length ? ` <span class="trip">Trasferta: ${esc(tripsOn.join(" · "))}</span>` : "";
     // One <tbody> per day: the page collapses a day by its data-day; the header button toggles it.
     const count = dayRows.length ? `<span class="dn scr">${dayRows.length}</span>` : "";
     body.push(`<tr class="day"><td colspan="${PRINT_COLS.length}"><button type="button" class="dt" data-day="${d}" aria-expanded="true">` +
@@ -1416,7 +1432,7 @@ function renderCollaudo(w, rows, generated) {
     for (const r of dayRows) {
       const cat = String(r.categoria || "").toLowerCase();
       if (cat in dayTot) dayTot[cat] += 1;
-      const k = (c) => `<td class="k">${cat === c ? "✓" : ""}</td>`;
+      const k = (c) => `<td class="k">${cat === c ? MARK : ""}</td>`;
       const ed = (col, cls, shown, value) =>
         `<td class="ed${cls ? " " + cls : ""}" data-f="${EDIT_FIELDS[col].api}" data-v="${esc(value)}">${shown}</td>`;
       body.push(`<tr class="r" data-id="${esc(r.record_id)}">` +
@@ -1428,8 +1444,8 @@ function renderCollaudo(w, rows, generated) {
         ed("durata", "nowrap", esc(r.durata), r.durata) +
         k("pezzo") + k("radio") + k("live") +
         ed("mezzo", "nowrap", esc(r.mezzo), r.mezzo) +
-        ed("tappeto", "k", cat === "tappeto" ? "✓" : "", cat === "tappeto" ? "true" : "false") +
-        ed("grezzo", "k", cat === "grezzo" ? "✓" : "", cat === "grezzo" ? "true" : "false") +
+        ed("tappeto", "k", cat === "tappeto" ? MARK : "", cat === "tappeto" ? "true" : "false") +
+        ed("grezzo", "k", cat === "grezzo" ? MARK : "", cat === "grezzo" ? "true" : "false") +
         `<td class="k np">X</td>` +
         ed("note", "np notec", esc(r.note), r.note == null ? "" : r.note) +
         ed("operatore", "nowrap np", esc(r.operatore), r.operatore) +
@@ -1512,7 +1528,7 @@ ${groups.join("\n")}
     return api("/api/collaudo?week=" + formatWeek(w)).then(function (r) {
       $("doc").classList.remove("busy");
       if (r.status !== 200) { failState((r.body && r.body.error) || "Errore."); return; }
-      sheet = { w: w, rows: r.body.rows, annullate: r.body.annullate || [], gen: todayNewYork() };
+      sheet = { w: w, rows: r.body.rows, annullate: r.body.annullate || [], trips: r.body.trips || [], gen: todayNewYork() };
       paintSheet();
       loadedOnce = true;
       applyFold();
@@ -1573,7 +1589,7 @@ ${groups.join("\n")}
     all("section.counters", function (el) { el.setAttribute("aria-label", t(el.getAttribute("aria-label"))); });
   }
   function paintSheet() {
-    $("doc").innerHTML = renderCollaudo(sheet.w, sheet.rows, sheet.gen); // always Italian: the print is Rome's; localizeSheet adds the English screen copy
+    $("doc").innerHTML = renderCollaudo(sheet.w, sheet.rows, sheet.gen, sheet.trips); // always Italian: the print is Rome's; localizeSheet adds the English screen copy
     localizeSheet();
     $("doc").appendChild(paintAnnullate(sheet.annullate));
   }
@@ -1858,6 +1874,8 @@ ${groups.join("\n")}
     var w = parseWeek(new URLSearchParams(location.search).get("week") || "") || isoWeekOf(todayNewYork());
     load(w);
   });
+  // Mark in the tally columns: 1 / × / ✓, remembered per browser (rainyc.segno); 1 by default (Marco, 2026-10-30).
+  (function () { var sel = $("segno"); var v = null; try { v = localStorage.getItem("rainyc.segno"); } catch (e) { /* blocked */ } if (v !== "x" && v !== "v") v = "1"; document.documentElement.setAttribute("data-segno", v); sel.value = v; sel.addEventListener("change", function () { document.documentElement.setAttribute("data-segno", sel.value); try { localStorage.setItem("rainyc.segno", sel.value); } catch (e) { /* blocked */ } }); })();
   document.addEventListener("rainyc:auth-lost", function () { $("doc").innerHTML = ""; sheet = null; loadedOnce = false; $("tools").hidden = true; });
 })();
 </script>
