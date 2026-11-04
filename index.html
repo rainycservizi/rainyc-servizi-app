@@ -236,7 +236,7 @@ input:focus-visible, select:focus-visible { outline:none; border-color:var(--foc
 .mdl .box { padding:18px 20px 16px; border:1px solid var(--line2); border-top:4px solid var(--bad); background:var(--panel); border-radius:10px; box-shadow:var(--pop); }
 .mdl .ph { color:var(--bad); }
 .mdl p { margin:0 0 16px; font-size:16px; line-height:1.45; font-weight:600; }
-.mdl .row { display:flex; justify-content:flex-end; }
+.mdl .row { display:flex; justify-content:flex-end; gap:8px; }
 /* Confetti canvas: a short burst when an entry of this session reaches the server; removed when done. */
 .cfx { position:fixed; inset:0; z-index:70; pointer-events:none; }
 @media print { .mdl, .cfx { display:none !important; } }
@@ -527,6 +527,16 @@ kbd { font:600 11px/1 var(--mono); padding:2px 5px; border:1px solid var(--line2
     <div class="row"><button type="button" class="btn pri" id="miss-ok" data-i18n>Ho capito</button></div>
   </div>
 </dialog>
+<dialog class="mdl" id="pastdate" aria-labelledby="pastdate-h" aria-describedby="pastdate-p">
+  <div class="box">
+    <h3 class="ph" id="pastdate-h" data-i18n>Data non di oggi</h3>
+    <p id="pastdate-p"></p>
+    <div class="row">
+      <button type="button" class="btn" id="pastdate-no" data-i18n>Annulla</button>
+      <button type="button" class="btn pri" id="pastdate-yes" data-i18n>Sì, registra su questa data</button>
+    </div>
+  </div>
+</dialog>
 <script>
 // ---- pages/shared.js ----
 // Shared browser code for the four pages (form, collaudo, mensile, gestione). Inlined by scripts/build_pages.mjs.
@@ -548,7 +558,7 @@ var PAGE_FORM = "./" || APP_BASE;
 var PAGE_COLLAUDO = "./collaudo.html" || APP_BASE + "/collaudo";
 var PAGE_GESTIONE = "./gestione.html" || APP_BASE + "/gestione";
 var PAGE_MENSILE = "./mensile.html" || APP_BASE + "/mensile";
-var BUILD = "2026-10-30 20:52 UTC · 42953aa"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
+var BUILD = "2026-11-04 16:40 UTC · data non di oggi"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
 // Every place the project lives (shown in the admin's header menu and on the Gestione page).
 var LINKS = [
   ["Pagine pubbliche", "https://rainycservizi.github.io/rainyc-servizi-app/", "GitHub Pages: il sito di prova principale"],
@@ -600,7 +610,7 @@ var I18N = { en: {
   "database e funzione (accesso rainyc.servizi)": "database and function (rainyc.servizi login)",
   "Caricamento…": "Loading…",
   // form
-  "Servizio": "Package", "Data": "Date", "Per domani, {0}: edizione del mattino, va in onda domani.": "For tomorrow, {0}: morning edition, it airs tomorrow.", "Giornalista": "Journalist", "Argomento / Titolo": "Topic / Title", "Rete": "Network",
+  "Servizio": "Package", "Data": "Date", "Per domani, {0}: edizione del mattino, va in onda domani.": "For tomorrow, {0}: morning edition, it airs tomorrow.", "Questa data non è oggi. All'invio ti verrà chiesta conferma.": "This date is not today. You will be asked to confirm before it is sent.", "Data non di oggi": "Date is not today", "La data è {0}, non oggi ({1}). Vuoi registrare lo stesso?": "The date is {0}, not today ({1}). Record it anyway?", "Sì, registra su questa data": "Yes, record on this date", "Giornalista": "Journalist", "Argomento / Titolo": "Topic / Title", "Rete": "Network",
   "Richiesta": "Request", "Richiedente": "Requester", "(edizione o programma; anche testo libero)": "(edition or programme; free text also allowed)",
   "(edizione; anche testo libero)": "(edition; free text also allowed)", "(programma; testo libero)": "(programme; free text)",
   "(scegliere prima la rete)": "(pick the network first)", "Durata": "Duration", "(facoltative)": "(optional)",
@@ -1601,10 +1611,19 @@ function fmtRange(a, b) {
     return h >= 0 && h < 14;
   }
   var dateTouched = false, dateAuto = false;
-  $("data").addEventListener("input", function () { dateTouched = true; dateAuto = false; $("data-hint").hidden = true; });
+  function paintDateHint() {
+    var hint = $("data-hint"), d = $("data").value, todayStr = today();
+    if (d && d < todayStr) {
+      hint.textContent = t("Questa data non è oggi. All'invio ti verrà chiesta conferma.");
+      hint.hidden = false;
+      return;
+    }
+    if (!dateAuto) hint.hidden = true;
+  }
+  $("data").addEventListener("input", function () { dateTouched = true; dateAuto = false; paintDateHint(); });
   function applyAirDate() {
     var hint = $("data-hint"), todayStr = today();
-    if (dateTouched) { hint.hidden = true; return; }
+    if (dateTouched) { paintDateHint(); return; }
     var rich = grezzoOn() ? "" : richiedenteValue();
     if (rich && morningEdition(rich) && nyHour() >= 12) {
       var tom = addDays(todayStr, 1);
@@ -2117,6 +2136,11 @@ function fmtRange(a, b) {
       showMissing(errSrc(), focusId ? $(focusId) : form.querySelector('input[name="' + (!v.rete ? "rete" : "mezzo") + '"]'));
       return;
     }
+    if (v.delivery_date < today()) { askPast(v); return; }
+    commitEntry(v);
+  });
+
+  function commitEntry(v) {
     errSrc = null; $("err").textContent = "";
     var now = new Date(), ora = String(now.getHours()).padStart(2, "0") + ":" + String(now.getMinutes()).padStart(2, "0");
     var rs = v.grezzo ? reti() : [v.rete];
@@ -2137,6 +2161,33 @@ function fmtRange(a, b) {
     updateRichiedente(); updateCategoria(); updateReteNote(); renderTrip(); applyAirDate();
     form.querySelector('input[name="rete"]').focus();
     schedule(0);
+  }
+
+  // Past date: the entry stays on the form until the second click says to record it anyway.
+  var pastEntry = null, pastYes = false;
+  function askPast(v) {
+    pastEntry = v; pastYes = false;
+    $("pastdate-p").textContent = tf("La data è {0}, non oggi ({1}). Vuoi registrare lo stesso?", dmy(v.delivery_date), dmy(today()));
+    var dlg = $("pastdate");
+    if (typeof dlg.showModal !== "function") {
+      if (window.confirm($("pastdate-p").textContent)) commitEntry(v);
+      else $("data").focus();
+      pastEntry = null;
+      return;
+    }
+    if (!dlg.open) dlg.showModal();
+    $("pastdate-no").focus();
+  }
+  $("pastdate-yes").addEventListener("click", function () { pastYes = true; $("pastdate").close(); });
+  $("pastdate-no").addEventListener("click", function () { $("pastdate").close(); });
+  $("pastdate").addEventListener("click", function (ev) { if (ev.target === this) this.close(); });
+  $("pastdate").addEventListener("keydown", function (ev) {
+    if (ev.key === "Escape") { ev.preventDefault(); ev.stopPropagation(); this.close(); }
+  });
+  $("pastdate").addEventListener("close", function () {
+    var v = pastEntry; pastEntry = null;
+    if (pastYes && v) { pastYes = false; commitEntry(v); return; }
+    pastYes = false; $("data").focus();
   });
 
   form.addEventListener("change", function (ev) {
