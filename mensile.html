@@ -222,7 +222,7 @@ footer.doc { margin-top:22px; font-size:11px; color:var(--dim); }
 <body>
 <div class="top" id="top">
   <header class="appbar">
-    <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-10-30 20:52 UTC · 42953aa"><span class="mk">Rai · NY</span><span class="nm">RAI NYC Servizi</span><span class="pg" data-i18n>Mensile</span></div>
+    <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-11-07 16:35 UTC · 3a50d5b+"><span class="mk">Rai · NY</span><span class="nm">RAI NYC Servizi</span><span class="pg" data-i18n>Mensile</span></div>
     <nav class="hright" id="hright" aria-label="Pagine">
       <button type="button" class="icbtn" id="theme" aria-label="Tema" title="Tema" aria-haspopup="menu" aria-expanded="false">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3a9 9 0 1 0 0 18c1.2 0 2-.9 2-2 0-.6-.2-1-.5-1.4-.3-.4-.5-.8-.5-1.3 0-1.1.9-2 2-2h2.2A4.8 4.8 0 0 0 22 9.6C22 5.8 17.5 3 12 3z"/><circle cx="7.5" cy="11.5" r="1.1"/><circle cx="10.5" cy="7.5" r="1.1"/><circle cx="15" cy="7.5" r="1.1"/><circle cx="17.5" cy="11.5" r="1.1"/></svg>
@@ -281,7 +281,7 @@ var PAGE_FORM = "./" || APP_BASE;
 var PAGE_COLLAUDO = "./collaudo.html" || APP_BASE + "/collaudo";
 var PAGE_GESTIONE = "./gestione.html" || APP_BASE + "/gestione";
 var PAGE_MENSILE = "./mensile.html" || APP_BASE + "/mensile";
-var BUILD = "2026-10-30 20:52 UTC · 42953aa"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
+var BUILD = "2026-11-07 16:35 UTC · 3a50d5b+"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
 // Every place the project lives (shown in the admin's header menu and on the Gestione page).
 var LINKS = [
   ["Pagine pubbliche", "https://rainycservizi.github.io/rainyc-servizi-app/", "GitHub Pages: il sito di prova principale"],
@@ -333,7 +333,12 @@ var I18N = { en: {
   "database e funzione (accesso rainyc.servizi)": "database and function (rainyc.servizi login)",
   "Caricamento…": "Loading…",
   // form
-  "Servizio": "Package", "Data": "Date", "Per domani, {0}: edizione del mattino, va in onda domani.": "For tomorrow, {0}: morning edition, it airs tomorrow.", "Giornalista": "Journalist", "Argomento / Titolo": "Topic / Title", "Rete": "Network",
+  "Servizio": "Package", "Data": "Date", "Per domani, {0}: edizione del mattino, va in onda domani.": "For tomorrow, {0}: morning edition, it airs tomorrow.",
+  "Questa data non è oggi. All'invio ti verrà chiesta conferma.": "This date is not today. You will be asked to confirm before it is sent.",
+  "Data non di oggi": "Date is not today",
+  "La data è {0}, non oggi ({1}). Vuoi registrare lo stesso?": "The date is {0}, not today ({1}). Record it anyway?",
+  "Sì, registra su questa data": "Yes, record on this date",
+  "Giornalista": "Journalist", "Argomento / Titolo": "Topic / Title", "Rete": "Network",
   "Richiesta": "Request", "Richiedente": "Requester", "(edizione o programma; anche testo libero)": "(edition or programme; free text also allowed)",
   "(edizione; anche testo libero)": "(edition; free text also allowed)", "(programma; testo libero)": "(programme; free text)",
   "(scegliere prima la rete)": "(pick the network first)", "Durata": "Duration", "(facoltative)": "(optional)",
@@ -346,6 +351,11 @@ var I18N = { en: {
   "Grezzo": "Raw footage", "grezzo": "raw footage", "Grezzi": "Raw footage", "Reti del grezzo": "Raw footage networks",
   "Grezzo per {0}": "Raw footage for {0}", "Grezzo: toccare le reti a cui è destinato (anche più di una)": "Raw footage: tap the networks it goes to (one or more)",
   "Grezzo: materiale grezzo inviato a una o più reti; toccare tutte le reti a cui è destinato": "Raw footage sent to one or more networks; tap every network it goes to",
+  "Interviste": "Interviews", "Intervista": "Interview", "intervista": "interview",
+  "Intervista per {0}": "Interview for {0}", "Intervista: toccare la rete a cui è destinata": "Interview: tap the network it is for",
+  "Rete dell'intervista": "Interview network",
+  "Intervista: il servizio è un'intervista; toccare anche la rete a cui è destinata": "Interview: this is an interview; also tap the network it is for",
+  "Segno nelle colonne Servizi, Radio, Live, Tappeti, Grezzi, Interviste": "Mark in the Packages, Radio, Live, Tappeti, Raw footage, Interviews columns",
   "(non si applica al grezzo)": "(not used for raw footage)", "Registrazioni annullate.": "Entries cancelled.", "Registrazioni ripristinate.": "Entries restored.",
   "Grezzo: materiale grezzo mandato a più reti. Toccare «Grezzo» e poi tutte le reti a cui va: una registrazione per rete. Anche qui non si tocca.": "Raw footage: raw material sent to several networks. Click «Grezzo», then every network it goes to: one entry per network. Not for this story either.",
   "Mezzo": "Delivery means", "Trasferta": "Travel",
@@ -1100,7 +1110,7 @@ const LEGACY_TOPSHEET = {
 };
 /** Top Sheet columns in Rome's order: [key, heading]. */
 const TOPSHEET_COLS = [
-  ["video", "Servizi video"], ["radio", "Servizi radio"], ["live", "Live"], ["tappeti", "Tappeti"], ["grezzi", "Grezzi"],
+  ["video", "Servizi video"], ["radio", "Servizi radio"], ["live", "Live"], ["tappeti", "Tappeti"], ["grezzi", "Grezzi"], ["interviste", "Interviste"],
   ["tg1", "TG1"], ["tg2", "TG2"], ["tg3", "TG3"], ["rnews", "RNEWS 24"], ["altre", "ALTRE"], ["tot_video", "Totale video"],
   ["gr1", "Radio GR 1"], ["gr2", "Radio GR 2"], ["gr3", "Radio GR 3"], ["tot_radio", "Totale radio"],
 ];
@@ -1136,7 +1146,7 @@ function topsheetRow(v) {
   const radio = Number(v.radio || 0);
   return {
     ym: String(v.anno_mese), source: "db",
-    video: Number(v.pezzi || 0), radio, live: Number(v.live || 0), tappeti: Number(v.tappeti || 0), grezzi: Number(v.grezzi || 0),
+    video: Number(v.pezzi || 0), radio, live: Number(v.live || 0), tappeti: Number(v.tappeti || 0), grezzi: Number(v.grezzi || 0), interviste: Number(v.interviste || 0),
     tg1: Number(v.tg1 || 0), tg2: Number(v.tg2 || 0), tg3: Number(v.tg3 || 0), rnews: Number(v.ran || 0), altre: Number(v.altre || 0),
     tot_video: Number(v.totale_video || 0), gr1: radio, gr2: radio, gr3: radio, tot_radio: radio * 3,
   };
@@ -1158,7 +1168,7 @@ function yearTable(viewRows, year) {
     const ym = formatMonth({ year, month });
     const legacy = LEGACY_TOPSHEET[ym];
     let r;
-    if (legacy) { r = emptyRow(ym, "storico"); for (const k of KEYS) if (k in legacy) r[k] = legacy[k]; r.tappeti = null; r.grezzi = null; }
+    if (legacy) { r = emptyRow(ym, "storico"); for (const k of KEYS) if (k in legacy) r[k] = legacy[k]; r.tappeti = null; r.grezzi = null; r.interviste = null; }
     else if (byYm.has(ym)) r = topsheetRow(byYm.get(ym));
     else r = emptyRow(ym, "vuoto");
     r.mese = monthLabel({ year, month });
@@ -1169,11 +1179,11 @@ function yearTable(viewRows, year) {
   return { rows, total: tot };
 }
 
-function bucket() { return { pezzi: 0, radio: 0, live: 0, tappeti: 0, grezzi: 0, trasferte: 0, righe: 0 }; }
+function bucket() { return { pezzi: 0, radio: 0, live: 0, tappeti: 0, grezzi: 0, interviste: 0, trasferte: 0, righe: 0 }; }
 function add(b, r) {
   b.righe += 1;
   const c = String(r.categoria || "");
-  if (c === "pezzo") b.pezzi += 1; else if (c === "radio") b.radio += 1; else if (c === "live") b.live += 1; else if (c === "tappeto") b.tappeti += 1; else if (c === "grezzo") b.grezzi += 1;
+  if (c === "pezzo") b.pezzi += 1; else if (c === "radio") b.radio += 1; else if (c === "live") b.live += 1; else if (c === "tappeto") b.tappeti += 1; else if (c === "grezzo") b.grezzi += 1; else if (c === "intervista") b.interviste += 1;
   if (r.trasferta === true) b.trasferte += 1;
 }
 /**
@@ -1220,7 +1230,7 @@ function journalistsOf(rows) {
   function render() {
     setLang(langNow()); // week ranges in the screen language (Italian in print and in the e-mail)
     var m = current, y = data.year, ym = formatMonth(m);
-    var groupA = ["video", "radio", "live", "tappeti", "grezzi"], groupB = ["tg1", "tg2", "tg3", "rnews", "altre", "tot_video"], groupC = ["gr1", "gr2", "gr3", "tot_radio"];
+    var groupA = ["video", "radio", "live", "tappeti", "grezzi", "interviste"], groupB = ["tg1", "tg2", "tg3", "rnews", "altre", "tot_video"], groupC = ["gr1", "gr2", "gr3", "tot_radio"];
     var label = {}; TOPSHEET_COLS.forEach(function (c) { label[c[0]] = c[1]; });
     var th = function (keys, cls) { return keys.map(function (k, i) { return "<th" + (cls && i === 0 ? ' class="grpa"' : "") + ">" + hd(label[k]) + "</th>"; }).join(""); };
     var td = function (r, keys, cls) { return keys.map(function (k, i) { return "<td" + (cls && i === 0 ? ' class="grpa"' : "") + ">" + n(r[k]) + "</td>"; }).join(""); };
@@ -1233,18 +1243,18 @@ function journalistsOf(rows) {
       '<tr class="tot"><td>' + esc(tot.mese) + "</td>" + td(tot, groupA) + td(tot, groupB, true) + td(tot, groupC, true) + "<td></td></tr></tbody>";
     var weeks = data.weeks.map(function (w) {
       var href = PAGE_COLLAUDO + (PAGE_COLLAUDO.indexOf("?") >= 0 ? "&" : "?") + "week=" + w.week;
-      return "<tr><td><a href=\"" + esc(href) + "\">" + esc(w.week) + "</a> <span class=\"scr\" style=\"color:var(--dim)\">" + esc(fmtRange(w.from, w.to)) + "</span></td><td>" + w.pezzi + "</td><td>" + w.radio + "</td><td>" + w.live + "</td><td>" + w.tappeti + "</td><td>" + w.grezzi + "</td><td>" + w.trasferte + "</td><td>" + w.righe + "</td></tr>";
+      return "<tr><td><a href=\"" + esc(href) + "\">" + esc(w.week) + "</a> <span class=\"scr\" style=\"color:var(--dim)\">" + esc(fmtRange(w.from, w.to)) + "</span></td><td>" + w.pezzi + "</td><td>" + w.radio + "</td><td>" + w.live + "</td><td>" + w.tappeti + "</td><td>" + w.grezzi + "</td><td>" + w.interviste + "</td><td>" + w.trasferte + "</td><td>" + w.righe + "</td></tr>";
     }).join("");
     var jour = data.journalists.map(function (j) {
-      return "<tr><td>" + esc(j.giornalista) + "</td><td>" + j.pezzi + "</td><td>" + j.radio + "</td><td>" + j.live + "</td><td>" + j.tappeti + "</td><td>" + j.grezzi + "</td><td>" + j.trasferte + "</td><td>" + j.righe + "</td></tr>";
+      return "<tr><td>" + esc(j.giornalista) + "</td><td>" + j.pezzi + "</td><td>" + j.radio + "</td><td>" + j.live + "</td><td>" + j.tappeti + "</td><td>" + j.grezzi + "</td><td>" + j.interviste + "</td><td>" + j.trasferte + "</td><td>" + j.righe + "</td></tr>";
     }).join("");
-    var small = "<thead><tr><th>{0}</th><th>" + hd("Servizi") + "</th><th>" + hd("Radio") + "</th><th>" + hd("Live") + "</th><th>" + hd("Tappeti") + "</th><th>" + hd("Grezzi") + "</th><th>" + hd("Trasferte") + "</th><th>" + hd("Totale") + "</th></tr></thead>";
+    var small = "<thead><tr><th>{0}</th><th>" + hd("Servizi") + "</th><th>" + hd("Radio") + "</th><th>" + hd("Live") + "</th><th>" + hd("Tappeti") + "</th><th>" + hd("Grezzi") + "</th><th>" + hd("Interviste") + "</th><th>" + hd("Trasferte") + "</th><th>" + hd("Totale") + "</th></tr></thead>";
     $("doc").innerHTML =
       '<header class="doc"><div class="ente">RAI – ' + esc(t("Sede di corrispondenza di New York")) + '</div><h1>' + esc(t("Report mensile")) + " · " + esc(monthLabel(m)) + '</h1><div class="sett">' +
       esc(tf("Top Sheet {0}: cifre di Gennaio–Luglio come inviate a Roma; da Agosto dal database (registrazioni annullate escluse). GR 1, 2, 3 ripetono il conteggio radio, come nel foglio.", m.year)) + "</div></header>" +
       '<h2 class="sec">' + esc(t("Top Sheet")) + " " + m.year + '<span class="aside">' + esc(t("il prospetto per Roma")) + '</span></h2><div class="table-wrap"><table>' + top + "</table></div>" +
-      '<div class="two"><div><h2 class="sec">' + esc(t("Settimane del mese")) + '<span class="aside">' + esc(tf("{0} registrazioni nel mese", data.rows)) + '</span></h2><div class="table-wrap"><table>' + small.replace("{0}", hd("Settimana")) + "<tbody>" + (weeks || '<tr><td colspan="7">' + esc(t("Nessuna registrazione")) + "</td></tr>") + "</tbody></table></div></div>" +
-      '<div><h2 class="sec">' + esc(t("Giornalisti")) + '</h2><div class="table-wrap"><table>' + small.replace("{0}", hd("Giornalista")) + "<tbody>" + (jour || '<tr><td colspan="7">' + esc(t("Nessuna registrazione")) + "</td></tr>") + "</tbody></table></div></div></div>" +
+      '<div class="two"><div><h2 class="sec">' + esc(t("Settimane del mese")) + '<span class="aside">' + esc(tf("{0} registrazioni nel mese", data.rows)) + '</span></h2><div class="table-wrap"><table>' + small.replace("{0}", hd("Settimana")) + "<tbody>" + (weeks || '<tr><td colspan="9">' + esc(t("Nessuna registrazione")) + "</td></tr>") + "</tbody></table></div></div>" +
+      '<div><h2 class="sec">' + esc(t("Giornalisti")) + '</h2><div class="table-wrap"><table>' + small.replace("{0}", hd("Giornalista")) + "<tbody>" + (jour || '<tr><td colspan="9">' + esc(t("Nessuna registrazione")) + "</td></tr>") + "</tbody></table></div></div></div>" +
       '<footer class="doc">' + esc(tf("Generato il {0} dal sistema RAI NYC Servizi · fonte: database", todayNewYork())) + '<span class="scr"> · built by Caruso</span></footer>';
   }
   function load(m) {
