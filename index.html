@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="light dark">
 <title>RAI NYC Servizi</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230c2340'/%3E%3Ctext x='16' y='22' text-anchor='middle' font-family='Arial,sans-serif' font-size='14' font-weight='700' fill='%23ffffff'%3ERai%3C/text%3E%3Crect x='21' y='8' width='3' height='3' fill='%23e10600'/%3E%3C/svg%3E">
 <script>(function () { var t = null, m = null; try { t = localStorage.getItem("rainyc.tema"); m = localStorage.getItem("rainyc.modo"); } catch (e) { /* blocked */ } if (!t || !/^[a-z]{1,20}$/.test(t)) t = null; if (t === "light" || t === "dark") m = t; if (m !== "light" && m !== "dark") { if (t) { m = "light"; } else { try { m = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"; } catch (e) { m = "light"; } } } if (!t) t = m; document.documentElement.setAttribute("data-theme", t); document.documentElement.setAttribute("data-mode", m); })();</script>
 <style>
 /* Visual language borrowed from Crop Studio (apr70 tools): warm near-black panels, hairline borders,
@@ -239,7 +240,7 @@ input:focus-visible, select:focus-visible { outline:none; border-color:var(--foc
 .mdl .row { display:flex; justify-content:flex-end; gap:8px; }
 /* Confetti canvas: a short burst when an entry of this session reaches the server; removed when done. */
 .cfx { position:fixed; inset:0; z-index:70; pointer-events:none; }
-@media print { .mdl, .cfx { display:none !important; } }
+@media print { .mdl, .cfx, .drop { display:none !important; } }
 
 /* ── actions ── */
 .actions { display:grid; grid-template-columns:auto minmax(0,1fr); gap:10px 18px; align-items:center; }
@@ -283,6 +284,19 @@ kbd { font:600 11px/1 var(--mono); padding:2px 5px; border:1px solid var(--line2
 .s.salvato { color:var(--accent-text); background:var(--accent-soft); } .s.attesa { color:var(--warn); background:var(--warn-bg); }
 .s.sincronizzato { color:var(--ok); background:var(--ok-bg); } .s.errore { color:var(--bad); background:var(--bad-bg); }
 .side li.vuoto { display:block; color:var(--dim); font-size:14px; text-align:center; padding:28px 6px; border:1px dashed var(--line2); border-radius:6px; margin:0 6px; }
+.drop { margin-top:8px; border:1px dashed var(--line2); border-radius:6px; padding:10px 8px; text-align:center; color:var(--dim); font-size:13px; line-height:1.35; cursor:pointer; }
+.drop strong { color:var(--fg); font-weight:650; }
+.drop.over { border-color:var(--accent); background:var(--accent-soft); color:var(--fg); }
+.drop.busy { opacity:.6; pointer-events:none; }
+.mdl.read { max-width:min(980px, calc(100vw / var(--z, 1) - 24px)); }
+.mdl.read .box { border-top-color:var(--accent); max-height:calc(100vh / var(--z, 1) - 48px); overflow:auto; }
+.mdl.read .ph { color:var(--fg); }
+.rd { display:grid; grid-template-columns:auto 9.2em minmax(7em,9em) minmax(8em,1.4fr) 4.6em minmax(7em,1fr) 4.6em auto; gap:6px; align-items:center; padding:8px 0; border-bottom:1px solid var(--line); }
+.rd input[type="text"], .rd input[type="date"], .rd select { width:100%; height:34px; }
+.rd .src { grid-column:1 / -1; margin:0; font:12px/1.35 var(--mono); color:var(--dim); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.rd .dup { grid-column:1 / -1; margin:0; color:var(--warn); font-size:12px; font-weight:650; }
+.rd.need { background:var(--bad-bg); }
+@media (max-width:1099px) { .rd { grid-template-columns:1fr 1fr; } .rd .src, .rd .dup { grid-column:1 / -1; } }
 
 /* ── login, boot, password ── */
 .card { max-width:400px; margin:9vh auto 0; }
@@ -334,6 +348,7 @@ kbd { font:600 11px/1 var(--mono); padding:2px 5px; border:1px solid var(--line2
   .panel { padding:10px 14px 12px; } .ph { margin-bottom:10px; } .fld { margin-bottom:8px; }
   input[type=text], input[type=date], input[type=email], input[type=password], select, .chips span { height:40px; min-height:40px; }
   .side { max-height:calc(100vh / var(--z, 1) - 52px - 24px); top:12px; }
+  .drop { padding:6px; font-size:12px; }
   .keys { display:none; }
 }
 /* Shorter still (1536×~720 at 125 % scaling, 1366×700 laptops): smaller chips, three rete columns, no scroll. */
@@ -383,7 +398,7 @@ kbd { font:600 11px/1 var(--mono); padding:2px 5px; border:1px solid var(--line2
 </head>
 <body>
 <header class="appbar">
-  <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-11-07 16:35 UTC · 3a50d5b+"><span class="mk">Rai · NY</span><span id="t">RAI NYC Servizi</span><span class="pg" data-i18n>Registrazione</span></div>
+  <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-11-10 21:19 UTC · f4db173+"><span class="mk">Rai · NY</span><span id="t">RAI NYC Servizi</span><span class="pg" data-i18n>Registrazione</span></div>
   <nav class="hright" id="hright" aria-label="Pagine">
     <span class="pend" id="pend" hidden></span>
     <button type="button" class="icbtn lang" id="tour-btn" hidden data-i18n-attr="aria-label|title" aria-label="Tutorial: come si compila una registrazione" title="Tutorial: come si compila una registrazione">?</button>
@@ -517,6 +532,8 @@ kbd { font:600 11px/1 var(--mono); padding:2px 5px; border:1px solid var(--line2
     <aside class="panel side" id="recent-box" hidden aria-labelledby="h-oggi">
       <h2 class="ph" id="h-oggi" data-i18n>Registrazioni di oggi <span class="aside" id="recent-n"></span></h2>
       <ol id="recent"></ol>
+      <div class="drop" id="drop" tabindex="0" role="button"><span data-i18n>Trascina qui la cattura di V-Mover.</span> <strong data-i18n>Tutti i nomi dei file devono essere visibili.</strong> <span data-i18n>La durata si scrive a mano.</span></div>
+      <input type="file" id="drop-file" accept="image/png,image/jpeg,image/webp,image/gif" hidden>
     </aside>
   </div>
 </main>
@@ -525,6 +542,18 @@ kbd { font:600 11px/1 var(--mono); padding:2px 5px; border:1px solid var(--line2
     <h3 class="ph" id="miss-h" data-i18n>Registrazione non inviata</h3>
     <p id="miss-p"></p>
     <div class="row"><button type="button" class="btn pri" id="miss-ok" data-i18n>Ho capito</button></div>
+  </div>
+</dialog>
+<dialog class="mdl read" id="read" aria-labelledby="read-h" aria-describedby="read-note">
+  <div class="box">
+    <h3 class="ph" id="read-h" data-i18n>Servizi letti dall'immagine</h3>
+    <p id="read-note"></p>
+    <div id="read-rows"></div>
+    <div class="err" id="read-err" role="alert"></div>
+    <div class="row">
+      <button type="button" class="btn" id="read-cancel" data-i18n>Annulla</button>
+      <button type="button" class="btn pri" id="read-send" data-i18n>Registra le righe scelte</button>
+    </div>
   </div>
 </dialog>
 <dialog class="mdl" id="pastdate" aria-labelledby="pastdate-h" aria-describedby="pastdate-p">
@@ -558,7 +587,7 @@ var PAGE_FORM = "./" || APP_BASE;
 var PAGE_COLLAUDO = "./collaudo.html" || APP_BASE + "/collaudo";
 var PAGE_GESTIONE = "./gestione.html" || APP_BASE + "/gestione";
 var PAGE_MENSILE = "./mensile.html" || APP_BASE + "/mensile";
-var BUILD = "2026-11-07 16:35 UTC · 3a50d5b+"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
+var BUILD = "2026-11-10 21:19 UTC · f4db173+"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
 // Every place the project lives (shown in the admin's header menu and on the Gestione page).
 var LINKS = [
   ["Pagine pubbliche", "https://rainycservizi.github.io/rainyc-servizi-app/", "GitHub Pages: il sito di prova principale"],
@@ -644,6 +673,21 @@ var I18N = { en: {
   "Giornalista in trasferta": "Journalist on travel", "Operatore in trasferta": "Operator on travel", "Con il giornalista": "With the journalist", "(facoltativo)": "(optional)", "Destinazione": "Destination", "Dal": "From", "Al": "To", "Applica": "Apply", "Annulla": "Cancel",
   "Operatore": "Operator", "Note": "Notes", "Invia registrazione": "Submit entry", "Ctrl+Invio": "Ctrl+Enter", "⌘+Invio": "⌘+Enter", "Svuota": "Clear",
   "Categoria": "Category", "Registrazioni di oggi": "Today's entries", "Nessuna registrazione oggi.": "No entries today.",
+  "Trascina qui la cattura di V-Mover.": "Drop the V-Mover capture here.",
+  "Tutti i nomi dei file devono essere visibili.": "Every filename must be visible.",
+  "La durata si scrive a mano.": "Type the duration yourself.",
+  "Servizi letti dall'immagine": "Services read from the image",
+  "Registra le righe scelte": "Record the selected rows",
+  "Usa un'immagine PNG, JPEG o WebP.": "Use a PNG, JPEG or WebP image.",
+  "L'immagine è troppo grande (massimo 6 MB).": "The image is too large (6 MB maximum).",
+  "Nessun nome di file letto. La cattura deve mostrare tutti i nomi.": "No filename was read. The capture must show every name.",
+  "Questa immagine era già stata letta. Controlla i doppioni prima di registrare.": "This image was already read. Check for duplicates before recording.",
+  "Possibile doppione: la spunta è vuota. Segnala solo se non è già nel collaudo.": "Possible duplicate: the tick is off. Tick it only if it is not already on the sheet.",
+  "Scrivi la durata su ogni riga scelta. Un tappeto e un servizio non hanno la durata nell'immagine.": "Type the duration on every selected row. A B-roll and a package have no duration in the image.",
+  "Manca l'operatore nel modulo.": "The operator is missing on the form.",
+  "Nessuna riga scelta.": "No row selected.",
+  "{0} righe in invio. Controlla «Registrazioni di oggi».": "{0} rows sending. Check “Today's entries”.",
+  "Da confermare": "To confirm", "Tappeto": "B-Roll",
   "Mostra tutte le scelte": "Show all choices",
   "Invio": "Enter", "Maiusc": "Shift",
   "conferma la scelta e passa al campo successivo ·": "confirms the choice and moves to the next field ·",
@@ -1996,7 +2040,7 @@ function parseToSeconds(s) {
         e.stato = "errore"; e.errore = (r.body && r.body.error) || t("Dati non validi.");
         qsave(queue); renderPending(); renderRecent();
         setStatus("errore", function () { return tf("Non accettata: {0}", e.errore); });
-        restore(e);
+        if (!e.image) restore(e);
         schedule(50);
       }
     }, function (err) {
@@ -2591,6 +2635,181 @@ function parseToSeconds(s) {
   document.addEventListener("rainyc:lang", function () { if (tour) { tourPaint(); tourPlace(); } });
   $("tour-btn").addEventListener("click", function () { tourStart(); });
   MENU_ACTIONS.push({ label: "Tutorial", run: function () { tourStart(); } });
+
+  // ---- V-Mover screenshot: drafts only, then the normal queue ----
+  var dropEl = $("drop"), dropFile = $("drop-file");
+  function prepareImage(file) {
+    return new Promise(function (resolve, reject) {
+      var url = URL.createObjectURL(file);
+      var img = new Image();
+      img.onload = function () {
+        URL.revokeObjectURL(url);
+        var max = 2000, w = img.naturalWidth || 1, h = img.naturalHeight || 1;
+        var scale = Math.min(1, max / Math.max(w, h));
+        var c = document.createElement("canvas");
+        c.width = Math.max(1, Math.round(w * scale));
+        c.height = Math.max(1, Math.round(h * scale));
+        var ctx = c.getContext("2d");
+        if (!ctx) { reject(new Error("bad")); return; }
+        ctx.fillStyle = "#fff"; ctx.fillRect(0, 0, c.width, c.height); ctx.drawImage(img, 0, 0, c.width, c.height);
+        c.toBlob(function (blob) {
+          if (!blob) { reject(new Error("bad")); return; }
+          var fr = new FileReader();
+          fr.onload = function () {
+            var data = String(fr.result || "");
+            var comma = data.indexOf(",");
+            resolve(comma >= 0 ? data.slice(comma + 1) : "");
+          };
+          fr.onerror = function () { reject(new Error("bad")); };
+          fr.readAsDataURL(blob);
+        }, "image/jpeg", 0.85);
+      };
+      img.onerror = function () { URL.revokeObjectURL(url); reject(new Error("bad")); };
+      img.src = url;
+    });
+  }
+  function readImageFile(file) {
+    if (!file || tour) return;
+    if (!/^image\/(png|jpeg|webp|gif)$/.test(file.type)) { setStatus("errore", "Usa un'immagine PNG, JPEG o WebP."); return; }
+    if (file.size > 12 * 1024 * 1024) { setStatus("errore", "L'immagine è troppo grande (massimo 6 MB)."); return; }
+    dropEl.classList.add("busy");
+    prepareImage(file).then(function (b64) {
+      if (!b64) throw new Error("bad");
+      return api("/api/read-image", { method: "POST", body: JSON.stringify({ image: b64, media_type: "image/jpeg" }) });
+    }).then(function (r) {
+      dropEl.classList.remove("busy");
+      if (r.status !== 200) { setStatus("errore", (r.body && r.body.error) || "Google Vision non ha letto l'immagine. Controlla la fatturazione e riprova."); return; }
+      openRead(r.body || {});
+    }, function (err) {
+      dropEl.classList.remove("busy");
+      if (err && err.kind === "auth") { authLost(); return; }
+      setStatus("errore", (err && err.message) || "Usa un'immagine PNG, JPEG o WebP.");
+    });
+  }
+  dropEl.addEventListener("click", function () { if (!tour) dropFile.click(); });
+  dropEl.addEventListener("keydown", function (ev) {
+    if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); if (!tour) dropFile.click(); }
+  });
+  dropFile.addEventListener("change", function () {
+    var f = dropFile.files && dropFile.files[0];
+    dropFile.value = "";
+    readImageFile(f);
+  });
+  ["dragenter", "dragover"].forEach(function (name) {
+    $("recent-box").addEventListener(name, function (ev) { ev.preventDefault(); dropEl.classList.add("over"); });
+  });
+  $("recent-box").addEventListener("dragleave", function (ev) { if (ev.target === $("recent-box")) dropEl.classList.remove("over"); });
+  $("recent-box").addEventListener("drop", function (ev) {
+    ev.preventDefault(); dropEl.classList.remove("over");
+    var f = ev.dataTransfer && ev.dataTransfer.files && ev.dataTransfer.files[0];
+    readImageFile(f);
+  });
+
+  function readInput(cls, type, value) {
+    var el = document.createElement("input");
+    el.className = cls; el.type = type;
+    if (value) el.value = value;
+    return el;
+  }
+  function openRead(body) {
+    var rows = body.rows || [];
+    var box = $("read-rows"); box.textContent = "";
+    $("read-err").textContent = "";
+    var note = !rows.length
+      ? "Nessun nome di file letto. La cattura deve mostrare tutti i nomi."
+      : body.already
+        ? "Questa immagine era già stata letta. Controlla i doppioni prima di registrare."
+        : "Scrivi la durata su ogni riga scelta. Un tappeto e un servizio non hanno la durata nell'immagine.";
+    L($("read-note"), note);
+    rows.forEach(function (row) {
+      var wrap = document.createElement("div"); wrap.className = "rd";
+      var inc = readInput("inc", "checkbox", "");
+      inc.checked = !row.duplicate;
+      var date = readInput("d", "date", row.delivery_date || "");
+      var jour = readInput("j", "text", row.journalist || "");
+      jour.setAttribute("list", "l-giornalisti"); jour.maxLength = 100;
+      var subj = readInput("s", "text", row.subject || ""); subj.maxLength = 500;
+      var rete = document.createElement("select"); rete.className = "r";
+      var blank = document.createElement("option"); blank.value = ""; blank.textContent = "—"; rete.appendChild(blank);
+      (lists && lists.reti ? lists.reti : []).forEach(function (name) {
+        var o = document.createElement("option"); o.value = name; o.textContent = name; rete.appendChild(o);
+      });
+      if (row.rete && !Array.prototype.some.call(rete.options, function (o) { return o.value === row.rete; })) {
+        var extra = document.createElement("option"); extra.value = row.rete; extra.textContent = row.rete; rete.appendChild(extra);
+      }
+      rete.value = row.rete || "";
+      var rich = readInput("q", "text", row.richiedente || ""); rich.maxLength = 200;
+      var dur = readInput("u", "text", ""); dur.setAttribute("placeholder", "1:20"); dur.setAttribute("inputmode", "decimal");
+      var tapLab = document.createElement("label");
+      var tap = readInput("p", "checkbox", ""); tap.checked = !!row.tappeto;
+      tapLab.appendChild(tap); tapLab.appendChild(document.createTextNode(" "));
+      var tapWord = document.createElement("span"); L(tapWord, "Tappeto"); tapLab.appendChild(tapWord);
+      var src = document.createElement("p"); src.className = "src"; src.textContent = row.source_line || ""; src.title = row.source_line || "";
+      wrap.appendChild(inc); wrap.appendChild(date); wrap.appendChild(jour); wrap.appendChild(subj);
+      wrap.appendChild(rete); wrap.appendChild(rich); wrap.appendChild(dur); wrap.appendChild(tapLab); wrap.appendChild(src);
+      if (row.duplicate) {
+        var dup = document.createElement("p"); dup.className = "dup";
+        L(dup, "Possibile doppione: la spunta è vuota. Segnala solo se non è già nel collaudo.");
+        wrap.appendChild(dup);
+      }
+      box.appendChild(wrap);
+    });
+    var dlg = $("read");
+    if (typeof dlg.showModal === "function") { if (!dlg.open) dlg.showModal(); }
+    else $("read-err").textContent = note;
+  }
+  function closeRead() { var dlg = $("read"); if (dlg.open) dlg.close(); }
+  $("read-cancel").addEventListener("click", closeRead);
+  $("read").addEventListener("click", function (ev) { if (ev.target === this) closeRead(); });
+  $("read-send").addEventListener("click", function () {
+    var op = $("operatore").value;
+    if (!op) { $("read-err").textContent = t("Manca l'operatore nel modulo."); return; }
+    var chosen = [], bad = false;
+    Array.prototype.forEach.call($("read-rows").querySelectorAll(".rd"), function (wrap) {
+      if (!wrap.querySelector(".inc").checked) { wrap.classList.remove("need"); return; }
+      var date = wrap.querySelector(".d").value;
+      var g = wrap.querySelector(".j").value.trim();
+      var names = (lists && lists.giornalisti) || [];
+      var gMatch = names.filter(function (n) { return n.toLowerCase() === g.toLowerCase(); })[0];
+      var subj = wrap.querySelector(".s").value.trim();
+      var rete = wrap.querySelector(".r").value;
+      var rich = wrap.querySelector(".q").value.trim();
+      var dur = formatDurata(wrap.querySelector(".u").value.trim());
+      var tap = wrap.querySelector(".p").checked;
+      if (!date || !gMatch || !subj || !rete || !rich || !dur) { wrap.classList.add("need"); bad = true; return; }
+      wrap.classList.remove("need");
+      wrap.querySelector(".u").value = dur;
+      chosen.push({
+        client_record_id: newUuid(),
+        delivery_date: date,
+        journalist: gMatch,
+        subject: subj,
+        rete: rete,
+        tappeto: tap,
+        grezzo: false,
+        intervista: false,
+        group_id: null,
+        richiedente: rich,
+        duration_text: dur,
+        mezzo: "V-Mover",
+        trasferta: false, trasferta_journalist: null, trasferta_luogo: null, trasferta_dal: null, trasferta_al: null,
+        operator: op,
+        notes: null
+      });
+    });
+    if (bad) { $("read-err").textContent = t("Scrivi la durata su ogni riga scelta. Un tappeto e un servizio non hanno la durata nell'immagine."); return; }
+    if (!chosen.length) { $("read-err").textContent = t("Nessuna riga scelta."); return; }
+    var now = new Date(), ora = String(now.getHours()).padStart(2, "0") + ":" + String(now.getMinutes()).padStart(2, "0");
+    chosen.forEach(function (v, k) {
+      queue.push({ client_record_id: v.client_record_id, payload: v, stato: "salvato", creato: new Date(now.getTime() + k).toISOString(), ora: ora, image: true });
+      if (k === 0) freshIds[v.client_record_id] = true;
+    });
+    qsave(queue); renderPending(); renderRecent();
+    setStatus("salvato", function () { return tf("{0} righe in invio. Controlla «Registrazioni di oggi».", chosen.length); });
+    try { localStorage.setItem("rainyc.operatore", op); } catch (e) { /* ignore */ }
+    closeRead();
+    schedule(0);
+  });
 
   // ---- start ----
   requireLogin(function () {

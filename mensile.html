@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="light dark">
 <title>RAI NYC Servizi · Mensile</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230c2340'/%3E%3Ctext x='16' y='22' text-anchor='middle' font-family='Arial,sans-serif' font-size='14' font-weight='700' fill='%23ffffff'%3ERai%3C/text%3E%3Crect x='21' y='8' width='3' height='3' fill='%23e10600'/%3E%3C/svg%3E">
 <script>(function () { var t = null, m = null; try { t = localStorage.getItem("rainyc.tema"); m = localStorage.getItem("rainyc.modo"); } catch (e) { /* blocked */ } if (!t || !/^[a-z]{1,20}$/.test(t)) t = null; if (t === "light" || t === "dark") m = t; if (m !== "light" && m !== "dark") { if (t) { m = "light"; } else { try { m = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"; } catch (e) { m = "light"; } } } if (!t) t = m; document.documentElement.setAttribute("data-theme", t); document.documentElement.setAttribute("data-mode", m); })();</script>
 <style>
 /* Same tokens as collaudo.html. The month page: Top Sheet of the year (the report Rome receives), the month's weeks and journalists. */
@@ -222,7 +223,7 @@ footer.doc { margin-top:22px; font-size:11px; color:var(--dim); }
 <body>
 <div class="top" id="top">
   <header class="appbar">
-    <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-11-07 16:35 UTC · 3a50d5b+"><span class="mk">Rai · NY</span><span class="nm">RAI NYC Servizi</span><span class="pg" data-i18n>Mensile</span></div>
+    <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-11-10 21:19 UTC · f4db173+"><span class="mk">Rai · NY</span><span class="nm">RAI NYC Servizi</span><span class="pg" data-i18n>Mensile</span></div>
     <nav class="hright" id="hright" aria-label="Pagine">
       <button type="button" class="icbtn" id="theme" aria-label="Tema" title="Tema" aria-haspopup="menu" aria-expanded="false">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3a9 9 0 1 0 0 18c1.2 0 2-.9 2-2 0-.6-.2-1-.5-1.4-.3-.4-.5-.8-.5-1.3 0-1.1.9-2 2-2h2.2A4.8 4.8 0 0 0 22 9.6C22 5.8 17.5 3 12 3z"/><circle cx="7.5" cy="11.5" r="1.1"/><circle cx="10.5" cy="7.5" r="1.1"/><circle cx="15" cy="7.5" r="1.1"/><circle cx="17.5" cy="11.5" r="1.1"/></svg>
@@ -281,7 +282,7 @@ var PAGE_FORM = "./" || APP_BASE;
 var PAGE_COLLAUDO = "./collaudo.html" || APP_BASE + "/collaudo";
 var PAGE_GESTIONE = "./gestione.html" || APP_BASE + "/gestione";
 var PAGE_MENSILE = "./mensile.html" || APP_BASE + "/mensile";
-var BUILD = "2026-11-07 16:35 UTC · 3a50d5b+"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
+var BUILD = "2026-11-10 21:19 UTC · f4db173+"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
 // Every place the project lives (shown in the admin's header menu and on the Gestione page).
 var LINKS = [
   ["Pagine pubbliche", "https://rainycservizi.github.io/rainyc-servizi-app/", "GitHub Pages: il sito di prova principale"],
@@ -367,6 +368,21 @@ var I18N = { en: {
   "Giornalista in trasferta": "Journalist on travel", "Operatore in trasferta": "Operator on travel", "Con il giornalista": "With the journalist", "(facoltativo)": "(optional)", "Destinazione": "Destination", "Dal": "From", "Al": "To", "Applica": "Apply", "Annulla": "Cancel",
   "Operatore": "Operator", "Note": "Notes", "Invia registrazione": "Submit entry", "Ctrl+Invio": "Ctrl+Enter", "⌘+Invio": "⌘+Enter", "Svuota": "Clear",
   "Categoria": "Category", "Registrazioni di oggi": "Today's entries", "Nessuna registrazione oggi.": "No entries today.",
+  "Trascina qui la cattura di V-Mover.": "Drop the V-Mover capture here.",
+  "Tutti i nomi dei file devono essere visibili.": "Every filename must be visible.",
+  "La durata si scrive a mano.": "Type the duration yourself.",
+  "Servizi letti dall'immagine": "Services read from the image",
+  "Registra le righe scelte": "Record the selected rows",
+  "Usa un'immagine PNG, JPEG o WebP.": "Use a PNG, JPEG or WebP image.",
+  "L'immagine è troppo grande (massimo 6 MB).": "The image is too large (6 MB maximum).",
+  "Nessun nome di file letto. La cattura deve mostrare tutti i nomi.": "No filename was read. The capture must show every name.",
+  "Questa immagine era già stata letta. Controlla i doppioni prima di registrare.": "This image was already read. Check for duplicates before recording.",
+  "Possibile doppione: la spunta è vuota. Segnala solo se non è già nel collaudo.": "Possible duplicate: the tick is off. Tick it only if it is not already on the sheet.",
+  "Scrivi la durata su ogni riga scelta. Un tappeto e un servizio non hanno la durata nell'immagine.": "Type the duration on every selected row. A B-roll and a package have no duration in the image.",
+  "Manca l'operatore nel modulo.": "The operator is missing on the form.",
+  "Nessuna riga scelta.": "No row selected.",
+  "{0} righe in invio. Controlla «Registrazioni di oggi».": "{0} rows sending. Check “Today's entries”.",
+  "Da confermare": "To confirm", "Tappeto": "B-Roll",
   "Mostra tutte le scelte": "Show all choices",
   "Invio": "Enter", "Maiusc": "Shift",
   "conferma la scelta e passa al campo successivo ·": "confirms the choice and moves to the next field ·",
