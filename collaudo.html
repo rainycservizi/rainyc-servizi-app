@@ -320,7 +320,7 @@ footer.doc .firma { font-size:13px; white-space:nowrap; }
 <body>
 <div class="top" id="top">
   <header class="appbar">
-    <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-11-10 21:32 UTC · 165672f+"><span class="mk">Rai · NY</span><span class="nm">RAI NYC Servizi</span><span class="pg" data-i18n>Collaudo</span></div>
+    <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-11-10 23:35 UTC · b586c57+"><span class="mk">Rai · NY</span><span class="nm">RAI NYC Servizi</span><span class="pg" data-i18n>Collaudo</span></div>
     <nav class="hright" id="hright" aria-label="Pagine">
       <button type="button" class="icbtn" id="theme" aria-label="Tema" title="Tema" aria-haspopup="menu" aria-expanded="false">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3a9 9 0 1 0 0 18c1.2 0 2-.9 2-2 0-.6-.2-1-.5-1.4-.3-.4-.5-.8-.5-1.3 0-1.1.9-2 2-2h2.2A4.8 4.8 0 0 0 22 9.6C22 5.8 17.5 3 12 3z"/><circle cx="7.5" cy="11.5" r="1.1"/><circle cx="10.5" cy="7.5" r="1.1"/><circle cx="15" cy="7.5" r="1.1"/><circle cx="17.5" cy="11.5" r="1.1"/></svg>
@@ -388,7 +388,7 @@ var PAGE_FORM = "./" || APP_BASE;
 var PAGE_COLLAUDO = "./collaudo.html" || APP_BASE + "/collaudo";
 var PAGE_GESTIONE = "./gestione.html" || APP_BASE + "/gestione";
 var PAGE_MENSILE = "./mensile.html" || APP_BASE + "/mensile";
-var BUILD = "2026-11-10 21:32 UTC · 165672f+"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
+var BUILD = "2026-11-10 23:35 UTC · b586c57+"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
 // Every place the project lives (shown in the admin's header menu and on the Gestione page).
 var LINKS = [
   ["Pagine pubbliche", "https://rainycservizi.github.io/rainyc-servizi-app/", "GitHub Pages: il sito di prova principale"],
@@ -465,7 +465,7 @@ var I18N = { en: {
   "Segno nelle colonne Servizi, Radio, Live, Tappeti, Grezzi, Interviste": "Mark in the Packages, Radio, Live, Tappeti, Raw footage, Interviews columns",
   "(non si applica al grezzo)": "(not used for raw footage)", "Registrazioni annullate.": "Entries cancelled.", "Registrazioni ripristinate.": "Entries restored.",
   "Grezzo: materiale grezzo mandato a più reti. Toccare «Grezzo» e poi tutte le reti a cui va: una registrazione per rete. Anche qui non si tocca.": "Raw footage: raw material sent to several networks. Click «Grezzo», then every network it goes to: one entry per network. Not for this story either.",
-  "Mezzo": "Delivery means", "Trasferta": "Travel",
+  "Mezzo": "Delivery means", "Telefono": "Telephone", "Trasferta": "Travel",
   "Nessuna trasferta aperta. Impostarla una volta: vale su ogni macchina, per le registrazioni di quell'operatore nelle date indicate.": "No open travel. Set it once: it applies on every machine to that operator's entries on those dates.",
   "Termina trasferta": "End travel", "Termina": "End", "Trasferta aperta.": "Travel opened.", "Trasferta terminata.": "Travel ended.", "Trasferta non salvata.": "Travel not saved.", "Trasferta non terminata.": "Travel not ended.",
   "Questa registrazione: NO (altro operatore o altre date)": "This entry: NO (other operator or other dates)", "con": "with",
@@ -1721,6 +1721,11 @@ ${groups.join("\n")}
     });
     all("button.ic", function (b) { b.title = t(b.title); b.setAttribute("aria-label", t(b.getAttribute("aria-label"))); });
     all("section.counters", function (el) { el.setAttribute("aria-label", t(el.getAttribute("aria-label"))); });
+    // Stored in Italian. English on screen only; the print span keeps Telefono / Giornalista.
+    all('td.ed[data-f="mezzo"], td.ed[data-f="operatore"]', function (td) {
+      var en = t(td.getAttribute("data-v") || "");
+      if (en && en !== td.textContent) both(td, en);
+    });
   }
   function paintSheet() {
     $("doc").innerHTML = renderCollaudo(sheet.w, sheet.rows, sheet.gen, sheet.trips); // always Italian: the print is Rome's; localizeSheet adds the English screen copy
@@ -1858,7 +1863,7 @@ ${groups.join("\n")}
     } else if (kind === "select" && l) {
       el = document.createElement("select");
       selectOptions(listNames(l[LIST_OF[field]]), old).forEach(function (n) {
-        var o = document.createElement("option"); o.value = n; o.textContent = n; el.appendChild(o);
+        var o = document.createElement("option"); o.value = n; o.textContent = (field === "mezzo" || field === "operator") ? t(n) : n; el.appendChild(o);
       });
       el.value = old;
     } else {

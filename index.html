@@ -401,7 +401,7 @@ kbd { font:600 11px/1 var(--mono); padding:2px 5px; border:1px solid var(--line2
 </head>
 <body>
 <header class="appbar">
-  <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-11-10 21:32 UTC · 165672f+"><span class="mk">Rai · NY</span><span id="t">RAI NYC Servizi</span><span class="pg" data-i18n>Registrazione</span></div>
+  <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-11-10 23:35 UTC · b586c57+"><span class="mk">Rai · NY</span><span id="t">RAI NYC Servizi</span><span class="pg" data-i18n>Registrazione</span></div>
   <nav class="hright" id="hright" aria-label="Pagine">
     <span class="pend" id="pend" hidden></span>
     <button type="button" class="icbtn lang" id="tour-btn" hidden data-i18n-attr="aria-label|title" aria-label="Tutorial: come si compila una registrazione" title="Tutorial: come si compila una registrazione">?</button>
@@ -595,7 +595,7 @@ var PAGE_FORM = "./" || APP_BASE;
 var PAGE_COLLAUDO = "./collaudo.html" || APP_BASE + "/collaudo";
 var PAGE_GESTIONE = "./gestione.html" || APP_BASE + "/gestione";
 var PAGE_MENSILE = "./mensile.html" || APP_BASE + "/mensile";
-var BUILD = "2026-11-10 21:32 UTC · 165672f+"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
+var BUILD = "2026-11-10 23:35 UTC · b586c57+"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
 // Every place the project lives (shown in the admin's header menu and on the Gestione page).
 var LINKS = [
   ["Pagine pubbliche", "https://rainycservizi.github.io/rainyc-servizi-app/", "GitHub Pages: il sito di prova principale"],
@@ -672,7 +672,7 @@ var I18N = { en: {
   "Segno nelle colonne Servizi, Radio, Live, Tappeti, Grezzi, Interviste": "Mark in the Packages, Radio, Live, Tappeti, Raw footage, Interviews columns",
   "(non si applica al grezzo)": "(not used for raw footage)", "Registrazioni annullate.": "Entries cancelled.", "Registrazioni ripristinate.": "Entries restored.",
   "Grezzo: materiale grezzo mandato a più reti. Toccare «Grezzo» e poi tutte le reti a cui va: una registrazione per rete. Anche qui non si tocca.": "Raw footage: raw material sent to several networks. Click «Grezzo», then every network it goes to: one entry per network. Not for this story either.",
-  "Mezzo": "Delivery means", "Trasferta": "Travel",
+  "Mezzo": "Delivery means", "Telefono": "Telephone", "Trasferta": "Travel",
   "Nessuna trasferta aperta. Impostarla una volta: vale su ogni macchina, per le registrazioni di quell'operatore nelle date indicate.": "No open travel. Set it once: it applies on every machine to that operator's entries on those dates.",
   "Termina trasferta": "End travel", "Termina": "End", "Trasferta aperta.": "Travel opened.", "Trasferta terminata.": "Travel ended.", "Trasferta non salvata.": "Travel not saved.", "Trasferta non terminata.": "Travel not ended.",
   "Questa registrazione: NO (altro operatore o altre date)": "This entry: NO (other operator or other dates)", "con": "with",
@@ -1587,8 +1587,8 @@ function parseToSeconds(s) {
       if (name === "rete" && LOGOS[v]) {
         var lg = document.createElement("i"); lg.className = "logo"; lg.innerHTML = LOGOS[v]; // trusted constant above
         s.appendChild(lg); s.appendChild(document.createTextNode(v));
-      } else s.textContent = v;
-      s.title = v;
+      } else s.textContent = name === "mezzo" ? t(v) : v;
+      s.title = name === "mezzo" ? t(v) : v;
       l.appendChild(i); l.appendChild(s); box.appendChild(l);
     });
     if (name === "rete") {
@@ -1666,6 +1666,20 @@ function parseToSeconds(s) {
     $("op-note").textContent = t(opNote);
     var pc = params.get("pc");
     $("t").textContent = "RAI NYC Servizi" + (pc ? " · " + pc : "");
+    paintNames();
+  }
+  // List values are stored in Italian. The language button translates the ones that have an English word
+  // (Giornalista → Journalist, Telefono → Telephone). The saved value stays Italian.
+  function paintNames() {
+    document.querySelectorAll('#c-mezzo input[name="mezzo"]').forEach(function (i) {
+      var s = i.parentNode.querySelector("span");
+      if (!s) return;
+      s.textContent = t(i.value); s.title = t(i.value);
+    });
+    ["operatore", "trip-operatore"].forEach(function (id) {
+      var sel = $(id); if (!sel) return;
+      Array.prototype.forEach.call(sel.options, function (o) { if (o.value) o.textContent = t(o.value); });
+    });
   }
 
   // ---- richiedente depends on rete ----
@@ -1976,10 +1990,10 @@ function parseToSeconds(s) {
     var joinNE = function (parts) { return parts.filter(function (x) { return x; }).join(" \u00b7 "); };
     var items = local.map(function (e) {
       var p = e.payload, cat = categoria(p.rete, p.mezzo, p.tappeto, p.grezzo, p.intervista);
-      return { ora: e.ora, giorno: dm(p.delivery_date), ed: edShown(p.rete, p.richiedente), op: p.operator, text: joinNE([p.journalist, p.subject, cat + (p.duration_text ? " " + formatDurata(p.duration_text) : ""), p.mezzo]), stato: e.stato, err: e.errore, sort: e.creato };
+      return { ora: e.ora, giorno: dm(p.delivery_date), ed: edShown(p.rete, p.richiedente), op: p.operator, text: joinNE([p.journalist, p.subject, cat + (p.duration_text ? " " + formatDurata(p.duration_text) : ""), t(p.mezzo)]), stato: e.stato, err: e.errore, sort: e.creato };
     }).concat(serverRows.filter(function (r) { return !ids[r.record_id]; }).map(function (r) {
-      var t = r.submitted_at ? new Date(r.submitted_at) : null;
-      return { ora: t ? String(t.getHours()).padStart(2, "0") + ":" + String(t.getMinutes()).padStart(2, "0") : "", giorno: dm(todayStr), ed: edShown(r.rete, r.richiedente), op: r.operatore, text: joinNE([r.giornalista, r.titolo, r.categoria + (r.durata ? " " + formatDurata(r.durata) : ""), r.mezzo]), stato: "sincronizzato", sort: r.submitted_at || "" };
+      var when = r.submitted_at ? new Date(r.submitted_at) : null;
+      return { ora: when ? String(when.getHours()).padStart(2, "0") + ":" + String(when.getMinutes()).padStart(2, "0") : "", giorno: dm(todayStr), ed: edShown(r.rete, r.richiedente), op: r.operatore, text: joinNE([r.giornalista, r.titolo, r.categoria + (r.durata ? " " + formatDurata(r.durata) : ""), t(r.mezzo)]), stato: "sincronizzato", sort: r.submitted_at || "" };
     }));
     items.sort(function (a, b) { return a.sort < b.sort ? 1 : -1; });
     $("recent-n").textContent = items.length ? String(items.length) : "";
@@ -1989,7 +2003,7 @@ function parseToSeconds(s) {
       var o = document.createElement("span"); o.className = "o";
       o.appendChild(document.createTextNode((it.ora || "--:--") + " \u00b7 " + (it.giorno || "") + " \u00b7 "));
       var ed = document.createElement("b"); ed.textContent = it.ed || ""; o.appendChild(ed);
-      if (it.op) o.appendChild(document.createTextNode(" \u00b7 " + it.op));
+      if (it.op) o.appendChild(document.createTextNode(" \u00b7 " + t(it.op)));
       var tx = document.createElement("span"); tx.className = "t"; tx.textContent = " " + it.text + " "; tx.title = o.textContent + "\n" + it.text;
       var s = document.createElement("span"); s.className = "s " + it.stato; s.textContent = t(LABEL[it.stato]);
       li.appendChild(o); li.appendChild(tx); li.appendChild(s);
@@ -2438,6 +2452,7 @@ function parseToSeconds(s) {
     sendKbd(); paintStatus(); paintErr(); paintLast();
     if (!form.hidden) {
       $("op-note").textContent = t(opNote);
+      paintNames();
       renderTrip(); updateRichiedenteHint(); renderPending(); renderRecent();
     }
   });
