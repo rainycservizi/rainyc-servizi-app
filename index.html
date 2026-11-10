@@ -284,9 +284,12 @@ kbd { font:600 11px/1 var(--mono); padding:2px 5px; border:1px solid var(--line2
 .s.salvato { color:var(--accent-text); background:var(--accent-soft); } .s.attesa { color:var(--warn); background:var(--warn-bg); }
 .s.sincronizzato { color:var(--ok); background:var(--ok-bg); } .s.errore { color:var(--bad); background:var(--bad-bg); }
 .side li.vuoto { display:block; color:var(--dim); font-size:14px; text-align:center; padding:28px 6px; border:1px dashed var(--line2); border-radius:6px; margin:0 6px; }
-.drop { margin-top:8px; border:1px dashed var(--line2); border-radius:6px; padding:10px 8px; text-align:center; color:var(--dim); font-size:13px; line-height:1.35; cursor:pointer; }
-.drop strong { color:var(--fg); font-weight:650; }
+.drop { display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:4px; margin:0 0 10px; padding:16px 14px; border:1.5px dashed var(--line2); border-radius:12px; background:var(--raise); color:var(--dim); font-size:13px; line-height:1.35; cursor:pointer; }
+.drop-ico { width:40px; height:40px; color:var(--accent); }
+.drop strong { color:var(--fg); font-weight:700; font-size:15px; }
+.drop .drop-note { font-size:12px; }
 .drop.over { border-color:var(--accent); background:var(--accent-soft); color:var(--fg); }
+.drop.over .drop-ico { color:var(--accent); }
 .drop.busy { opacity:.6; pointer-events:none; }
 .mdl.read { max-width:min(980px, calc(100vw / var(--z, 1) - 24px)); }
 .mdl.read .box { border-top-color:var(--accent); max-height:calc(100vh / var(--z, 1) - 48px); overflow:auto; }
@@ -348,7 +351,7 @@ kbd { font:600 11px/1 var(--mono); padding:2px 5px; border:1px solid var(--line2
   .panel { padding:10px 14px 12px; } .ph { margin-bottom:10px; } .fld { margin-bottom:8px; }
   input[type=text], input[type=date], input[type=email], input[type=password], select, .chips span { height:40px; min-height:40px; }
   .side { max-height:calc(100vh / var(--z, 1) - 52px - 24px); top:12px; }
-  .drop { padding:6px; font-size:12px; }
+  .drop { padding:10px 12px; gap:2px; } .drop-ico { width:28px; height:28px; } .drop strong { font-size:14px; }
   .keys { display:none; }
 }
 /* Shorter still (1536×~720 at 125 % scaling, 1366×700 laptops): smaller chips, three rete columns, no scroll. */
@@ -398,7 +401,7 @@ kbd { font:600 11px/1 var(--mono); padding:2px 5px; border:1px solid var(--line2
 </head>
 <body>
 <header class="appbar">
-  <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-11-10 21:19 UTC · f4db173+"><span class="mk">Rai · NY</span><span id="t">RAI NYC Servizi</span><span class="pg" data-i18n>Registrazione</span></div>
+  <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-11-10 21:32 UTC · 165672f+"><span class="mk">Rai · NY</span><span id="t">RAI NYC Servizi</span><span class="pg" data-i18n>Registrazione</span></div>
   <nav class="hright" id="hright" aria-label="Pagine">
     <span class="pend" id="pend" hidden></span>
     <button type="button" class="icbtn lang" id="tour-btn" hidden data-i18n-attr="aria-label|title" aria-label="Tutorial: come si compila una registrazione" title="Tutorial: come si compila una registrazione">?</button>
@@ -531,8 +534,13 @@ kbd { font:600 11px/1 var(--mono); padding:2px 5px; border:1px solid var(--line2
 
     <aside class="panel side" id="recent-box" hidden aria-labelledby="h-oggi">
       <h2 class="ph" id="h-oggi" data-i18n>Registrazioni di oggi <span class="aside" id="recent-n"></span></h2>
+      <div class="drop" id="drop" tabindex="0" role="button">
+        <svg class="drop-ico" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 6v20M15 18l9 9 9-9" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 28v8a4 4 0 0 0 4 4h20a4 4 0 0 0 4-4v-8" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
+        <strong data-i18n>Trascina qui la cattura di V-Mover.</strong>
+        <span data-i18n>Usa una cattura dello schermo, non una foto del telefono. Il testo si legge meglio.</span>
+        <span class="drop-note" data-i18n>Tutti i nomi dei file devono essere visibili. La durata si scrive a mano.</span>
+      </div>
       <ol id="recent"></ol>
-      <div class="drop" id="drop" tabindex="0" role="button"><span data-i18n>Trascina qui la cattura di V-Mover.</span> <strong data-i18n>Tutti i nomi dei file devono essere visibili.</strong> <span data-i18n>La durata si scrive a mano.</span></div>
       <input type="file" id="drop-file" accept="image/png,image/jpeg,image/webp,image/gif" hidden>
     </aside>
   </div>
@@ -587,7 +595,7 @@ var PAGE_FORM = "./" || APP_BASE;
 var PAGE_COLLAUDO = "./collaudo.html" || APP_BASE + "/collaudo";
 var PAGE_GESTIONE = "./gestione.html" || APP_BASE + "/gestione";
 var PAGE_MENSILE = "./mensile.html" || APP_BASE + "/mensile";
-var BUILD = "2026-11-10 21:19 UTC · f4db173+"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
+var BUILD = "2026-11-10 21:32 UTC · 165672f+"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
 // Every place the project lives (shown in the admin's header menu and on the Gestione page).
 var LINKS = [
   ["Pagine pubbliche", "https://rainycservizi.github.io/rainyc-servizi-app/", "GitHub Pages: il sito di prova principale"],
@@ -674,7 +682,9 @@ var I18N = { en: {
   "Operatore": "Operator", "Note": "Notes", "Invia registrazione": "Submit entry", "Ctrl+Invio": "Ctrl+Enter", "⌘+Invio": "⌘+Enter", "Svuota": "Clear",
   "Categoria": "Category", "Registrazioni di oggi": "Today's entries", "Nessuna registrazione oggi.": "No entries today.",
   "Trascina qui la cattura di V-Mover.": "Drop the V-Mover capture here.",
+  "Usa una cattura dello schermo, non una foto del telefono. Il testo si legge meglio.": "Use a screenshot, not a photo from a phone. The text reads better.",
   "Tutti i nomi dei file devono essere visibili.": "Every filename must be visible.",
+  "Tutti i nomi dei file devono essere visibili. La durata si scrive a mano.": "Every filename must be visible. Type the duration yourself.",
   "La durata si scrive a mano.": "Type the duration yourself.",
   "Servizi letti dall'immagine": "Services read from the image",
   "Registra le righe scelte": "Record the selected rows",

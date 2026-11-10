@@ -217,7 +217,7 @@ td.dim { color:var(--dim); } tr.off td { color:var(--dim); } tr.off td:first-chi
 </head>
 <body data-gestione>
 <header class="appbar">
-  <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-11-10 21:19 UTC · f4db173+"><span class="mk">Rai · NY</span><span class="nm">RAI NYC Servizi</span><span class="pg" data-i18n>Gestione</span></div>
+  <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-11-10 21:32 UTC · 165672f+"><span class="mk">Rai · NY</span><span class="nm">RAI NYC Servizi</span><span class="pg" data-i18n>Gestione</span></div>
   <nav class="hright" id="hright" aria-label="Pagine">
     <button type="button" class="icbtn" id="theme" aria-label="Tema" title="Tema" aria-haspopup="menu" aria-expanded="false">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3a9 9 0 1 0 0 18c1.2 0 2-.9 2-2 0-.6-.2-1-.5-1.4-.3-.4-.5-.8-.5-1.3 0-1.1.9-2 2-2h2.2A4.8 4.8 0 0 0 22 9.6C22 5.8 17.5 3 12 3z"/><circle cx="7.5" cy="11.5" r="1.1"/><circle cx="10.5" cy="7.5" r="1.1"/><circle cx="15" cy="7.5" r="1.1"/><circle cx="17.5" cy="11.5" r="1.1"/></svg>
@@ -293,7 +293,7 @@ td.dim { color:var(--dim); } tr.off td { color:var(--dim); } tr.off td:first-chi
 # RAI NYC Servizi — STATE (repo copy)
 
 &gt; **Short read-only copy for agents with no vault access (cloud agents).**
-&gt; Source of truth: `~/vault/10 Work/12 KIMA Creative/12.01 Active Clients/gvg-global-vision-group/rai-nyc-servizi/STATE.md` (on the Mac). Vault STATE updated: 2026-11-10T16:02-05:00 by Cursor (Grok) on MacBook.
+&gt; Source of truth: `~/vault/10 Work/12 KIMA Creative/12.01 Active Clients/gvg-global-vision-group/rai-nyc-servizi/STATE.md` (on the Mac). Vault STATE updated: 2026-11-10T16:23-05:00 by Cursor (Grok) on MacBook.
 &gt; Cloud agents: read this; do not edit it. At END, put your end state (done / next / blockers) in the PR description.
 &gt; The next Mac session merges it into the vault STATE.md, then refreshes this copy.
 
@@ -301,6 +301,10 @@ td.dim { color:var(--dim); } tr.off td { color:var(--dim); } tr.off td:first-chi
 Marco's day job at RAI NY (GVG): a startup popup on the Avid edit machines NYC-EDIT-MC01/02/03 (C#, .NET 8, WPF) where editors log each tappeto or servizio. Supabase is the truth; the Google Sheet "2026 Report Rai NYC, Servizi Giornalistici" is a reporting mirror. The collaudo forms go to Rome for overtime and travel. Host `supervisor` (Linux Mint, user `rainyc`, Tailscale only). Owner account for everything: `rainyc.servizi@gmail.com`.
 
 ## Current goal
+**2026-11-10 16:20 (billing Active, drop published):** One $30 manual payment on My Billing Account `0110DD-EECCFA-BA6BF5` (payments id `5213-7152-6420-9226`, Visa ••1011) completed. The account is **Active**, linked to `rainyc-rclone`, Free trial with $300 credit, 90 days, ends 9 February 2027. Upgrade was not clicked. RaiServizi `012C9D-7223B5-9B6490` is still unpaid; its alert remains. A one-pixel Vision probe returned 200. Function `servizi` deployed (`/health` ok; `POST /api/read-image` answers 401 without a login). Supervisor rsync'd. Pages `a27b46c` is live (the drop string and the favicon answer on the Pages URL). Committed on `return-feeds` as `4eb07dc` (drop, favicon, migration 0016). Not pushed. The air-date question is still the silent noon-New-York flip.
+
+**2026-11-10 16:02:** Pay-once prompt is `~/Desktop/PROMPT-google-billing-pay-once.txt`. Claude may press Pay now once, only on `0110DD-EECCFA-BA6BF5`, Visa ••1011. RaiServizi stays unpaid.
+
 **2026-11-10 15:48 (Marco: U.S. Bank Visa ••1011 has no payment, pending or posted):** **The $30 never left the card.** Waiting until tomorrow credits nothing. One payment, on My Billing Account `0110DD-EECCFA-BA6BF5` only, with the Visa already on that account. A different card only if that charge is declined. RaiServizi stays unpaid. Function still not published.
 
 **2026-11-10 15:46 (Claude, payments center, past Verify it's you):** **No $30 on rainyc.servizi.** Activity says "No activity yet." Both critical alerts are "Payment pending" and still ask for $30.00 (0110DD and 012C9D), each with Pay now, neither pressed. Manage on `0110DD-EECCFA-BA6BF5`: balance $0, "You don't have any transactions yet", View transactions greyed out, Visa ••1011 exp 09/30, owner Marc A Caruso, no prepayment page. Last URL `https://payments.google.com/gp/w/u/5/home/accountdetail`. Payments account `5213-7152-6420-9226` has no transactions. Next check is the U.S. Bank Visa ••1011 statement for a Google $30 today, and whether the payment was made on another Google account in the avatar menu. Vision key stays. Function not published.
@@ -422,9 +426,9 @@ Marco's day job at RAI NY (GVG): a startup popup on the Avid edit machines NYC-E
 4. (older) 2026-10-16 17:35–17:55 — Marco: caruso's recipient address = caruso@gvgusa.com; pages in English AND Italian with a button next to the theme toggle; wants the git site password-protected ("nothing exposed"); asks whether no certificate on supervisor is a problem; when caruso is logged in, Gestione + every link up top; tappeti must never count under a Tg (they don't); collaudo rows sorted by Tg and by time so tappeto and piece of the same edition sit together. Agent: IT/EN via a dictionary keyed by the Italian strings (sonnet subagent); reading order server-side; password gate = Cloudflare Pages + Access proposed (needs a Cloudflare account under rainyc.servizi); LAN http judged acceptable (auth and data go to Supabase over https). (Claude Code)
 
 ## Next 3 actions
-1. Marco — press **Pay now** once, only on the alert for Google Cloud `0110DD-EECCFA-BA6BF5` (My Billing Account, payments id `5213-7152-6420-9226`, the one linked to `rainyc-rclone`). Use the U.S. Bank Visa ••1011 already on that account. Leave `012C9D-7223B5-9B6490` unpaid. When the bank shows a pending $30 from Google, say so. The two Monday-afternoon Tg3 rows stay on 8/11. "merge it" is still open for `return-feeds` (live Pages `dfd2bac`; this work is uncommitted on that branch).
-2. Agent — when billing is on: deploy `servizi`, publish Pages and supervisor. Until then the live form still has the silent noon-New-York date flip and no drop strip.
-3. Agent — next code, already approved: replace that flip with Oggi / Domani / Altra data, and make the editor choose every row or once per sitting. Hours 01–14 and Mattina. Grezzo asks and suggests the work day. Ore 24 stays the same night. Then the older follow-ups: short-screen grid, per-row revert, Gestione v2, supervisor cron.
+1. Marco — reload the form. The drop is on Pages `a27b46c` and on supervisor. Leave RaiServizi unpaid. The two Monday-afternoon Tg3 rows stay on 8/11. "merge it" is still open for `return-feeds`. This commit is not pushed.
+2. Agent — do not build the air-date question until Marco asks. Do not push until he says so.
+3. Agent — next code, already approved, after this publish: replace the silent noon-New-York flip with Oggi / Domani / Altra data, and make the editor choose every row or once per sitting. Hours 01–14 and Mattina. Grezzo asks and suggests the work day. Ore 24 stays the same night. Then the older follow-ups: short-screen grid, per-row revert, Gestione v2, supervisor cron.
 
 ## Blockers
 - Not done: the Annulla path for a batch still in flight has no test. Group C (107 legacy «dal NN» rows, Aug–Oct) left on the work day on Marco's choice (weeks already sent to Rome). Per-row edit history with revert on the collaudo, Gestione v2 and the supervisor cron still open from before.
@@ -462,7 +466,7 @@ var PAGE_FORM = "./" || APP_BASE;
 var PAGE_COLLAUDO = "./collaudo.html" || APP_BASE + "/collaudo";
 var PAGE_GESTIONE = "./gestione.html" || APP_BASE + "/gestione";
 var PAGE_MENSILE = "./mensile.html" || APP_BASE + "/mensile";
-var BUILD = "2026-11-10 21:19 UTC · f4db173+"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
+var BUILD = "2026-11-10 21:32 UTC · 165672f+"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
 // Every place the project lives (shown in the admin's header menu and on the Gestione page).
 var LINKS = [
   ["Pagine pubbliche", "https://rainycservizi.github.io/rainyc-servizi-app/", "GitHub Pages: il sito di prova principale"],
@@ -549,7 +553,9 @@ var I18N = { en: {
   "Operatore": "Operator", "Note": "Notes", "Invia registrazione": "Submit entry", "Ctrl+Invio": "Ctrl+Enter", "⌘+Invio": "⌘+Enter", "Svuota": "Clear",
   "Categoria": "Category", "Registrazioni di oggi": "Today's entries", "Nessuna registrazione oggi.": "No entries today.",
   "Trascina qui la cattura di V-Mover.": "Drop the V-Mover capture here.",
+  "Usa una cattura dello schermo, non una foto del telefono. Il testo si legge meglio.": "Use a screenshot, not a photo from a phone. The text reads better.",
   "Tutti i nomi dei file devono essere visibili.": "Every filename must be visible.",
+  "Tutti i nomi dei file devono essere visibili. La durata si scrive a mano.": "Every filename must be visible. Type the duration yourself.",
   "La durata si scrive a mano.": "Type the duration yourself.",
   "Servizi letti dall'immagine": "Services read from the image",
   "Registra le righe scelte": "Record the selected rows",
