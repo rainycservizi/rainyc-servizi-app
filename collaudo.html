@@ -320,7 +320,7 @@ footer.doc .firma { font-size:13px; white-space:nowrap; }
 <body>
 <div class="top" id="top">
   <header class="appbar">
-    <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-11-10 23:35 UTC · b586c57+"><span class="mk">Rai · NY</span><span class="nm">RAI NYC Servizi</span><span class="pg" data-i18n>Collaudo</span></div>
+    <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-11-13 18:38 UTC · af24318"><span class="mk">Rai · NY</span><span class="nm">RAI NYC Servizi</span><span class="pg" data-i18n>Collaudo</span></div>
     <nav class="hright" id="hright" aria-label="Pagine">
       <button type="button" class="icbtn" id="theme" aria-label="Tema" title="Tema" aria-haspopup="menu" aria-expanded="false">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3a9 9 0 1 0 0 18c1.2 0 2-.9 2-2 0-.6-.2-1-.5-1.4-.3-.4-.5-.8-.5-1.3 0-1.1.9-2 2-2h2.2A4.8 4.8 0 0 0 22 9.6C22 5.8 17.5 3 12 3z"/><circle cx="7.5" cy="11.5" r="1.1"/><circle cx="10.5" cy="7.5" r="1.1"/><circle cx="15" cy="7.5" r="1.1"/><circle cx="17.5" cy="11.5" r="1.1"/></svg>
@@ -388,7 +388,7 @@ var PAGE_FORM = "./" || APP_BASE;
 var PAGE_COLLAUDO = "./collaudo.html" || APP_BASE + "/collaudo";
 var PAGE_GESTIONE = "./gestione.html" || APP_BASE + "/gestione";
 var PAGE_MENSILE = "./mensile.html" || APP_BASE + "/mensile";
-var BUILD = "2026-11-10 23:35 UTC · b586c57+"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
+var BUILD = "2026-11-13 18:38 UTC · af24318"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
 // Every place the project lives (shown in the admin's header menu and on the Gestione page).
 var LINKS = [
   ["Pagine pubbliche", "https://rainycservizi.github.io/rainyc-servizi-app/", "GitHub Pages: il sito di prova principale"],
@@ -440,7 +440,7 @@ var I18N = { en: {
   "database e funzione (accesso rainyc.servizi)": "database and function (rainyc.servizi login)",
   "Caricamento…": "Loading…",
   // form
-  "Servizio": "Package", "Data": "Date", "Per domani, {0}: edizione del mattino, va in onda domani.": "For tomorrow, {0}: morning edition, it airs tomorrow.",
+  "Servizio": "Package", "Data": "Date", "Edizione di domani ({0})": "Tomorrow's edition ({0})",
   "Questa data non è oggi. All'invio ti verrà chiesta conferma.": "This date is not today. You will be asked to confirm before it is sent.",
   "Data non di oggi": "Date is not today",
   "La data è {0}, non oggi ({1}). Vuoi registrare lo stesso?": "The date is {0}, not today ({1}). Record it anyway?",
@@ -1215,6 +1215,31 @@ function fmtRange(a, b) {
   return da.getUTCDate() + "–" + db.getUTCDate() + " " + monthName(ma) + " " + ya;
 }
 
+/**
+ * The edition's day as read after the Richiedente: "del 14/11". `ymd` is "YYYY-MM-DD"; day and month are printed
+ * without a leading zero ("del 9/11"), like the day headers.
+ * @param {string} ymd @returns {string}
+ */
+function delLabel(ymd) {
+  const day = Number(ymd.slice(8, 10)), month = Number(ymd.slice(5, 7));
+  // Italian elision: l'uno, l'otto, l'undici. Every other day up to 31 begins with a consonant.
+  return ([1, 8, 11].includes(day) ? "dell'" : "del ") + `${day}/${month}`;
+}
+
+/**
+ * Is this Richiedente an edition up to Ore 14 in Italy? After 12:00 New York such an edition has already aired today,
+ * so a piece for it is for tomorrow. Reads the list's "Tg1 Ore 8", "Ore 13:30", "Tg3 Ore 12 Milano", "Ore 14:20" and
+ * what editors type by hand: "Tg1 8", "Tg2 8:30", "Tg1 1330", "GR 8". «Mattina», «Notte» and programmes have no hour.
+ * @param {string} rich @returns {boolean}
+ */
+function morningEdition(rich) {
+  const s = String(rich || "").trim().replace(/^(tg\s*[123]|gr|ran|rai\s*[123])\s+/i, "");
+  const m = /\bore\s*(\d{1,2})(?:[:.]?(\d{2}))?\b/i.exec(s) || /^(\d{1,2})(?:[:.]?(\d{2}))?\b/.exec(s);
+  if (!m) return false;
+  const h = Number(m[1]), min = Number(m[2] || 0);
+  return h <= 14 && min < 60;
+}
+
 // ---- end lib/week.js ----
 // ---- lib/durata.js ----
 // Durata, as Rome reads it (Marco, 2026-11-02).
@@ -1406,8 +1431,16 @@ function reteBucket(rete) {
   return "Altre";
 }
 
+// Rules in force from Monday 9 November 2026 (Marco, 2026-11-13). Older days read as they did.
+//   1. the tappeti of a day are one block at the bottom of the day, nothing below them;
+//   2. a tappeto's Titolo reads "Tappeto <Titolo>" (shown, never stored);
+//   3. a piece is filed on the day it was made; one made for a later edition reads "Tg1 Ore 8 del 14/11" (edizione_del).
+const CUTOVER = "2026-11-09";
+const fromCutover = (r) => String(r.data || "") >= CUTOVER;
+
 // Reading order inside a day (Marco, 2026-10-16): by edition — network, then the edition's time slot — so the
 // tappeto and the piece for "Tg1 Ore 20" sit together, tappeto first; then by submission time.
+// From the cutover the tappeti leave their editions and close the day, in the same edition order.
 const NET_ORDER = ["Tg1", "Tg2", "Tg3", "RAN", "Rainews.it", "GR", "Rai Sport", "TGR", "Rai 1", "Rai 2", "Rai 3", "Tv7"];
 const PREFIXES = ["Tg1", "Tg2", "Tg3", "GR"];
 function slotMinutes(label) {
@@ -1435,8 +1468,9 @@ function orderRows(rows, slots) {
       else net = PREFIXES.find((p) => rich.toLowerCase().startsWith(p.toLowerCase() + " ")) || "RAN";
     }
     const n = NET_ORDER.indexOf(net);
+    const block = String(r.categoria) === "tappeto" && fromCutover(r) ? NET_ORDER.length + 1 : (n < 0 ? NET_ORDER.length : n);
     return [
-      n < 0 ? NET_ORDER.length : n, net,
+      block, n < 0 ? NET_ORDER.length : n, net,
       slot && slot.parent === net ? 0 : 1, slot && slot.parent === net ? Number(slot.sort_order) : slotMinutes(rich), rich.toLowerCase(),
       String(r.categoria) === "tappeto" ? 0 : 1,
       String(r.submitted_at || ""), String(r.record_id || ""),
@@ -1454,10 +1488,41 @@ function orderRows(rows, slots) {
  * @param {Record<string, unknown>} r
  */
 function richiedenteShown(r) {
+  const del = r.edizione_del ? delLabel(String(r.edizione_del)) : "";
+  const join = (s) => [s, del].filter(Boolean).join(" ");
   const rich = String(r.richiedente == null ? "" : r.richiedente).trim();
-  if (!rich) return String(r.categoria || "").toLowerCase() === "grezzo" ? "Grezzo" : "";
-  if (String(r.rete || "") === "RAN" && !/^ran\s/i.test(rich)) return "RAN " + rich;
-  return rich;
+  if (!rich) return join(String(r.categoria || "").toLowerCase() === "grezzo" ? "Grezzo" : "");
+  if (String(r.rete || "") === "RAN" && !/^ran\s/i.test(rich)) return join("RAN " + rich);
+  return join(rich);
+}
+
+/**
+ * The Richiedente cell as typed on the collaudo -> the stored edition and the edition's day.
+ * "Tg1 Ore 8 del 14/11" filed on 2026-11-13 -> { richiedente: "Tg1 Ore 8", edizione_del: "2026-11-14" }; without the
+ * words there is no edition day. The day is the first such date after `data` (a row of 31/12 "del 1/1" is next year).
+ * @param {unknown} raw @param {string} data "YYYY-MM-DD"
+ * @returns {{richiedente: string, edizione_del: string|null}}
+ */
+function splitEdizione(raw, data) {
+  const text = String(raw == null ? "" : raw).trim();
+  const m = /(?:^|\s+)del(?:l['’]\s*|\s+)(\d{1,2})\/(\d{1,2})$/i.exec(text);
+  if (!m || !/^\d{4}-\d{2}-\d{2}$/.test(String(data || ""))) return { richiedente: text, edizione_del: null };
+  const pad = (n) => String(n).padStart(2, "0");
+  let year = Number(String(data).slice(0, 4));
+  let ymd = `${year}-${pad(m[2])}-${pad(m[1])}`;
+  if (ymd <= data) ymd = `${++year}-${pad(m[2])}-${pad(m[1])}`;
+  return { richiedente: text.slice(0, m.index).trim(), edizione_del: ymd };
+}
+
+/**
+ * The Titolo as read: from the cutover a tappeto reads "Tappeto <Titolo>". A title the editor already began with
+ * the word is left alone. The stored value is untouched (edits start from it).
+ * @param {Record<string, unknown>} r
+ */
+function titoloShown(r) {
+  const titolo = String(r.titolo == null ? "" : r.titolo).trim();
+  if (String(r.categoria || "").toLowerCase() !== "tappeto" || !fromCutover(r) || /^tappet[oi]\b/i.test(titolo)) return titolo;
+  return titolo ? "Tappeto " + titolo : "Tappeto";
 }
 
 /** @param {unknown} s */
@@ -1569,10 +1634,12 @@ function renderCollaudo(w, rows, generated, trips = []) {
       const ed = (col, cls, shown, value) =>
         `<td class="ed${cls ? " " + cls : ""}" data-f="${EDIT_FIELDS[col].api}" data-v="${esc(value)}">${shown}</td>`;
       body.push(`<tr class="r" data-id="${esc(r.record_id)}">` +
-        ed("titolo", "", esc(r.titolo), r.titolo) +
+        // Reads "Tappeto <Titolo>" from the cutover (titoloShown); edits start from the stored value.
+        ed("titolo", "", esc(titoloShown(r)), r.titolo) +
         ed("giornalista", "nowrap", esc(r.giornalista), r.giornalista) +
-        // Reads "RAN Ore 19" / «Grezzo» (richiedenteShown); edits start from the stored value.
-        ed("richiedente", "", esc(richiedenteShown(r)), r.richiedente) +
+        // Reads "RAN Ore 19" / «Grezzo» (richiedenteShown); edits start from the stored value, plus "del 14/11" when
+        // the row has an edition day: the editor changes or deletes those words and splitEdizione reads them back.
+        ed("richiedente", "", esc(richiedenteShown(r)), [r.richiedente, r.edizione_del ? delLabel(String(r.edizione_del)) : ""].filter(Boolean).join(" ")) +
         ed("rete", "nowrap", esc(r.rete), r.rete) +
         ed("durata", "nowrap", esc(formatDurata(r.durata)), formatDurata(r.durata)) +
         k("pezzo") + k("radio") + k("live") +
@@ -1904,6 +1971,14 @@ ${groups.join("\n")}
 
   function saveEdit(td, id, field, old, raw) {
     var patch = {}; patch[field] = toPatchValue(field, raw);
+    var back = { kind: "edit", id: id, field: field, old: toPatchValue(field, old) };
+    if (field === "richiedente") {
+      // The cell reads "Tg1 Ore 8 del 14/11": the words after the edition are the edition's day (edizione_del).
+      var dateTd = td.parentNode.querySelector('td[data-f="delivery_date"]'), date = dateTd ? dateTd.getAttribute("data-v") || "" : "";
+      var nw = splitEdizione(raw, date), od = splitEdizione(old, date);
+      patch = { richiedente: nw.richiedente, edizione_del: nw.edizione_del };
+      back = { kind: "patch", id: id, patch: { richiedente: od.richiedente, edizione_del: od.edizione_del } };
+    }
     td.classList.add("saving");
     setBusy(true);
     post("/api/update", { id: id, patch: patch }).then(function (r) {
@@ -1911,7 +1986,7 @@ ${groups.join("\n")}
       td.classList.remove("saving");
       if (!r) return;
       if (r.status !== 200) { rowError(id, errText(r)); return; }
-      pushUndo({ kind: "edit", id: id, field: field, old: toPatchValue(field, old) });
+      pushUndo(back);
       load(current, "Modifica salvata.");
     });
   }

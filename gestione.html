@@ -217,7 +217,7 @@ td.dim { color:var(--dim); } tr.off td { color:var(--dim); } tr.off td:first-chi
 </head>
 <body data-gestione>
 <header class="appbar">
-  <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-11-10 23:35 UTC · b586c57+"><span class="mk">Rai · NY</span><span class="nm">RAI NYC Servizi</span><span class="pg" data-i18n>Gestione</span></div>
+  <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-11-13 18:38 UTC · af24318"><span class="mk">Rai · NY</span><span class="nm">RAI NYC Servizi</span><span class="pg" data-i18n>Gestione</span></div>
   <nav class="hright" id="hright" aria-label="Pagine">
     <button type="button" class="icbtn" id="theme" aria-label="Tema" title="Tema" aria-haspopup="menu" aria-expanded="false">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3a9 9 0 1 0 0 18c1.2 0 2-.9 2-2 0-.6-.2-1-.5-1.4-.3-.4-.5-.8-.5-1.3 0-1.1.9-2 2-2h2.2A4.8 4.8 0 0 0 22 9.6C22 5.8 17.5 3 12 3z"/><circle cx="7.5" cy="11.5" r="1.1"/><circle cx="10.5" cy="7.5" r="1.1"/><circle cx="15" cy="7.5" r="1.1"/><circle cx="17.5" cy="11.5" r="1.1"/></svg>
@@ -293,7 +293,7 @@ td.dim { color:var(--dim); } tr.off td { color:var(--dim); } tr.off td:first-chi
 # RAI NYC Servizi — STATE (repo copy)
 
 &gt; **Short read-only copy for agents with no vault access (cloud agents).**
-&gt; Source of truth: `~/vault/10 Work/12 KIMA Creative/12.01 Active Clients/gvg-global-vision-group/rai-nyc-servizi/STATE.md` (on the Mac). Vault STATE updated: 2026-11-10T18:30-05:00 by Cursor (Grok) on MacBook.
+&gt; Source of truth: `~/vault/10 Work/12 KIMA Creative/12.01 Active Clients/gvg-global-vision-group/rai-nyc-servizi/STATE.md` (on the Mac). Vault STATE updated: 2026-11-13T13:23-05:00 by Claude Code (Fable 5.2) on MacBook.
 &gt; Cloud agents: read this; do not edit it. At END, put your end state (done / next / blockers) in the PR description.
 &gt; The next Mac session merges it into the vault STATE.md, then refreshes this copy.
 
@@ -301,7 +301,9 @@ td.dim { color:var(--dim); } tr.off td { color:var(--dim); } tr.off td:first-chi
 Marco's day job at RAI NY (GVG): a startup popup on the Avid edit machines NYC-EDIT-MC01/02/03 (C#, .NET 8, WPF) where editors log each tappeto or servizio. Supabase is the truth; the Google Sheet "2026 Report Rai NYC, Servizi Giornalistici" is a reporting mirror. The collaudo forms go to Rome for overtime and travel. Host `supervisor` (Linux Mint, user `rainyc`, Tailscale only). Owner account for everything: `rainyc.servizi@gmail.com`.
 
 ## Current goal
-**2026-11-10 18:30 (Marco: Journalis was a typo):** **Renamed, audited, live.** The operator is **Giornalista**, not Journalis. One row already filed under it follows the name: 10/11, Lo Prete, «Hegseth Impeachment». Mezzo **Telephone** stays, sort 95, before Altro. No login for Giornalista. Reload the form.
+**2026-11-13 13:23 (Marco: three rules, in force from Monday 9/11, older dates stay as they are):** **Built and tested on the local stack. NOT committed, NOT deployed, production data NOT changed.** (1) From 9/11 the tappeti of a day are one block directly below the GR rows (`orderRows`, constant `CUTOVER` in `lib/collaudo.js`). (2) From 9/11 a tappeto's Titolo reads «Tappeto &lt;Titolo&gt;» on the collaudo, the print, the e-mail and the nightly sheet mirror; the stored Titolo does not change (`titoloShown`). (3) Every piece is filed on the day it is entered. The form no longer moves the date after 12:00 New York. A piece for tomorrow's edition carries the new column `edizione_del` (migration `20261113_0017_edizione_del.sql`, applied on the local stack only) and reads «Tg1 Ore 8 del 14/11» after the Richiedente. The form box «Edizione di domani (14/11)» ticks itself for an edition up to Ore 14 chosen after 12:00 New York on today's date; the editor can change it. On the collaudo the editor changes the day by editing the words «del 14/11» in the Richiedente cell (`splitEdizione`). A V-Mover file named for a later day is filed today with that day as its edition. This replaces the approved Oggi / Domani / Altra data question; that question will not be built. Marco's answers (2026-11-13): the word Tappeto is shown, not stored; the label goes after the edition; the box is automatic and the editor can undo it. **Open, one function:** `delLabel` in `lib/week.js` has a `TODO(human)` for the Italian elision («dell'11/11»); its unit test fails until it is written. **Tests:** Deno 56 pass, 1 fails (that test); `deno check` clean; browser suite 257 pass with system Chrome (`PW_CHANNEL=chrome`, the Playwright Chromium was removed from this Mac on 4/11); layout suite passes for the form and the collaudo at 1366 px and wider, also on week 46 with long «Tappeto …» and «… del 13/11» rows (`COLLAUDO_WEEK=2026-W46`). At 390 px week 46 scrolls sideways; the Annullate table looks like the cause; not verified. The auto-tick also reads editions typed by hand («Tg1 8», «Tg1 1330»); «Mattina» needs a hand tick. A hand tick holds for one entry only. At publish time run the read-only query again: the live form still moves dates until then, and a form left open keeps the old page until it is reloaded. Failing and not from this work: «confirmed past date is saved on that day» (fails the same way on the unchanged code) and two mensile e-mail dialog checks. **Production rows to move after the publish (read-only query done, nothing changed):** 15 rows filed the evening before and now on the edition's day go back to the entry day with `edizione_del` set — Contini 8 rows (entered 9/11 22:47–22:49, now 10/11), Sanfilippo 3 and De Marco 2 (entered 11/11 22:47–22:59, now 12/11), Trebbi 2 (entered 12/11 20:25, now 13/11). Left as they are, because a person chose the day: GR Ore 24 «Hegset» (9/11, entered 10/11 11:20) and De Marco's grezzo and GR Ore 8 dated 10/11 (entered 11/11 13:00). 22 tappeti since 9/11; none has the word in its stored Titolo. **Publish order when Marco says go:** migration 0017 on production, deploy the function, build and publish the pages (Pages and supervisor), copy `mirror-sheet.sh` to supervisor, then the 15-row move with `update_delivery` and a named actor.
+
+**2026-11-10 18:35 (Marco: the form was not bilingual on those two):** **Live.** The stored words are Italian: operator **Giornalista**, mezzo **Telefono**. English mode shows **Journalist** and **Telephone**. The language button repaints both. The saved value stays Italian. One row already filed (10/11, Lo Prete, «Hegseth Impeachment») had mezzo Telephone; it is Telefono now. Pages `f16a065`. Supervisor rsync'd. Source committed on `return-feeds`. Reload the form.
 
 **2026-11-10 17:26:** Supervisor git push works again. The remote uses the Tailscale address, and that address was not on the SSH `Host supervisor` line, so the dedicated key was never offered. The address is on that line now. `return-feeds` on supervisor is `5803dea`, the same commit as GitHub. The checked-out branch there is still `main`.
 
@@ -476,7 +478,7 @@ var PAGE_FORM = "./" || APP_BASE;
 var PAGE_COLLAUDO = "./collaudo.html" || APP_BASE + "/collaudo";
 var PAGE_GESTIONE = "./gestione.html" || APP_BASE + "/gestione";
 var PAGE_MENSILE = "./mensile.html" || APP_BASE + "/mensile";
-var BUILD = "2026-11-10 23:35 UTC · b586c57+"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
+var BUILD = "2026-11-13 18:38 UTC · af24318"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
 // Every place the project lives (shown in the admin's header menu and on the Gestione page).
 var LINKS = [
   ["Pagine pubbliche", "https://rainycservizi.github.io/rainyc-servizi-app/", "GitHub Pages: il sito di prova principale"],
@@ -528,7 +530,7 @@ var I18N = { en: {
   "database e funzione (accesso rainyc.servizi)": "database and function (rainyc.servizi login)",
   "Caricamento…": "Loading…",
   // form
-  "Servizio": "Package", "Data": "Date", "Per domani, {0}: edizione del mattino, va in onda domani.": "For tomorrow, {0}: morning edition, it airs tomorrow.",
+  "Servizio": "Package", "Data": "Date", "Edizione di domani ({0})": "Tomorrow's edition ({0})",
   "Questa data non è oggi. All'invio ti verrà chiesta conferma.": "This date is not today. You will be asked to confirm before it is sent.",
   "Data non di oggi": "Date is not today",
   "La data è {0}, non oggi ({1}). Vuoi registrare lo stesso?": "The date is {0}, not today ({1}). Record it anyway?",
@@ -1301,6 +1303,31 @@ function fmtRange(a, b) {
   if (ya !== yb) return da.getUTCDate() + " " + monthName(ma) + " " + ya + " – " + db.getUTCDate() + " " + monthName(mb) + " " + yb;
   if (ma !== mb) return da.getUTCDate() + " " + monthName(ma) + " – " + db.getUTCDate() + " " + monthName(mb) + " " + yb;
   return da.getUTCDate() + "–" + db.getUTCDate() + " " + monthName(ma) + " " + ya;
+}
+
+/**
+ * The edition's day as read after the Richiedente: "del 14/11". `ymd` is "YYYY-MM-DD"; day and month are printed
+ * without a leading zero ("del 9/11"), like the day headers.
+ * @param {string} ymd @returns {string}
+ */
+function delLabel(ymd) {
+  const day = Number(ymd.slice(8, 10)), month = Number(ymd.slice(5, 7));
+  // Italian elision: l'uno, l'otto, l'undici. Every other day up to 31 begins with a consonant.
+  return ([1, 8, 11].includes(day) ? "dell'" : "del ") + `${day}/${month}`;
+}
+
+/**
+ * Is this Richiedente an edition up to Ore 14 in Italy? After 12:00 New York such an edition has already aired today,
+ * so a piece for it is for tomorrow. Reads the list's "Tg1 Ore 8", "Ore 13:30", "Tg3 Ore 12 Milano", "Ore 14:20" and
+ * what editors type by hand: "Tg1 8", "Tg2 8:30", "Tg1 1330", "GR 8". «Mattina», «Notte» and programmes have no hour.
+ * @param {string} rich @returns {boolean}
+ */
+function morningEdition(rich) {
+  const s = String(rich || "").trim().replace(/^(tg\s*[123]|gr|ran|rai\s*[123])\s+/i, "");
+  const m = /\bore\s*(\d{1,2})(?:[:.]?(\d{2}))?\b/i.exec(s) || /^(\d{1,2})(?:[:.]?(\d{2}))?\b/.exec(s);
+  if (!m) return false;
+  const h = Number(m[1]), min = Number(m[2] || 0);
+  return h <= 14 && min < 60;
 }
 
 // ---- end lib/week.js ----

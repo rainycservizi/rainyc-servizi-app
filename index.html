@@ -146,6 +146,10 @@ legend.ph + * { clear:both; }
 .fld:last-child { margin-bottom:0; }
 .fld > label, .lbl { display:block; font-weight:600; font-size:13px; margin:0 0 6px; }
 .hint { font-weight:400; color:var(--dim); font-size:12px; }
+.datarow { display:flex; align-items:center; gap:10px; min-width:0; }
+.datarow input[type="date"] { flex:0 0 9.6em; width:auto; }
+.datarow .dom { display:flex; align-items:center; gap:6px; margin:0; font-weight:400; font-size:12.5px; line-height:1.2; min-width:0; cursor:pointer; }
+.datarow .dom input { flex:none; margin:0; }
 .row2 { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
 input[type=text], input[type=date], input[type=email], input[type=password], select {
   width:100%; height:44px; font:inherit; font-size:16px; padding:0 12px; border:1px solid var(--line2); border-radius:6px;
@@ -401,7 +405,7 @@ kbd { font:600 11px/1 var(--mono); padding:2px 5px; border:1px solid var(--line2
 </head>
 <body>
 <header class="appbar">
-  <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-11-10 23:35 UTC · b586c57+"><span class="mk">Rai · NY</span><span id="t">RAI NYC Servizi</span><span class="pg" data-i18n>Registrazione</span></div>
+  <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-11-13 18:38 UTC · af24318"><span class="mk">Rai · NY</span><span id="t">RAI NYC Servizi</span><span class="pg" data-i18n>Registrazione</span></div>
   <nav class="hright" id="hright" aria-label="Pagine">
     <span class="pend" id="pend" hidden></span>
     <button type="button" class="icbtn lang" id="tour-btn" hidden data-i18n-attr="aria-label|title" aria-label="Tutorial: come si compila una registrazione" title="Tutorial: come si compila una registrazione">?</button>
@@ -436,7 +440,7 @@ kbd { font:600 11px/1 var(--mono); padding:2px 5px; border:1px solid var(--line2
         <h2 class="ph" id="h-dati" data-i18n><span class="n">01</span> Servizio</h2>
         <div class="fld">
           <label for="data" data-i18n>Data</label>
-          <input type="date" id="data" name="data" required>
+          <div class="datarow"><input type="date" id="data" name="data" required><label class="dom" id="dom-wrap"><input type="checkbox" id="domani" name="domani"> <span id="dom-text"></span></label></div>
           <span class="hint" id="data-hint" hidden></span>
         </div>
         <div class="fld">
@@ -595,7 +599,7 @@ var PAGE_FORM = "./" || APP_BASE;
 var PAGE_COLLAUDO = "./collaudo.html" || APP_BASE + "/collaudo";
 var PAGE_GESTIONE = "./gestione.html" || APP_BASE + "/gestione";
 var PAGE_MENSILE = "./mensile.html" || APP_BASE + "/mensile";
-var BUILD = "2026-11-10 23:35 UTC · b586c57+"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
+var BUILD = "2026-11-13 18:38 UTC · af24318"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
 // Every place the project lives (shown in the admin's header menu and on the Gestione page).
 var LINKS = [
   ["Pagine pubbliche", "https://rainycservizi.github.io/rainyc-servizi-app/", "GitHub Pages: il sito di prova principale"],
@@ -647,7 +651,7 @@ var I18N = { en: {
   "database e funzione (accesso rainyc.servizi)": "database and function (rainyc.servizi login)",
   "Caricamento…": "Loading…",
   // form
-  "Servizio": "Package", "Data": "Date", "Per domani, {0}: edizione del mattino, va in onda domani.": "For tomorrow, {0}: morning edition, it airs tomorrow.",
+  "Servizio": "Package", "Data": "Date", "Edizione di domani ({0})": "Tomorrow's edition ({0})",
   "Questa data non è oggi. All'invio ti verrà chiesta conferma.": "This date is not today. You will be asked to confirm before it is sent.",
   "Data non di oggi": "Date is not today",
   "La data è {0}, non oggi ({1}). Vuoi registrare lo stesso?": "The date is {0}, not today ({1}). Record it anyway?",
@@ -1422,6 +1426,31 @@ function fmtRange(a, b) {
   return da.getUTCDate() + "–" + db.getUTCDate() + " " + monthName(ma) + " " + ya;
 }
 
+/**
+ * The edition's day as read after the Richiedente: "del 14/11". `ymd` is "YYYY-MM-DD"; day and month are printed
+ * without a leading zero ("del 9/11"), like the day headers.
+ * @param {string} ymd @returns {string}
+ */
+function delLabel(ymd) {
+  const day = Number(ymd.slice(8, 10)), month = Number(ymd.slice(5, 7));
+  // Italian elision: l'uno, l'otto, l'undici. Every other day up to 31 begins with a consonant.
+  return ([1, 8, 11].includes(day) ? "dell'" : "del ") + `${day}/${month}`;
+}
+
+/**
+ * Is this Richiedente an edition up to Ore 14 in Italy? After 12:00 New York such an edition has already aired today,
+ * so a piece for it is for tomorrow. Reads the list's "Tg1 Ore 8", "Ore 13:30", "Tg3 Ore 12 Milano", "Ore 14:20" and
+ * what editors type by hand: "Tg1 8", "Tg2 8:30", "Tg1 1330", "GR 8". «Mattina», «Notte» and programmes have no hour.
+ * @param {string} rich @returns {boolean}
+ */
+function morningEdition(rich) {
+  const s = String(rich || "").trim().replace(/^(tg\s*[123]|gr|ran|rai\s*[123])\s+/i, "");
+  const m = /\bore\s*(\d{1,2})(?:[:.]?(\d{2}))?\b/i.exec(s) || /^(\d{1,2})(?:[:.]?(\d{2}))?\b/.exec(s);
+  if (!m) return false;
+  const h = Number(m[1]), min = Number(m[2] || 0);
+  return h <= 14 && min < 60;
+}
+
 // ---- end lib/week.js ----
 // ---- lib/durata.js ----
 // Durata, as Rome reads it (Marco, 2026-11-02).
@@ -1796,21 +1825,18 @@ function parseToSeconds(s) {
     if (f) $("durata").value = f;
   }
   $("durata").addEventListener("change", tidyDurata);
-  // Air date rule (Marco, 2026-10-30: night-shift pieces for the Italian morning editions air the next day; the date
-  // must be the air date). A morning edition = its slot is before 14:00 in Italy ("Ore 8", "Ore 13:30", "Ore 12 Milano",
-  // RAN "Ore 01".."Ore 13"). Chosen after 12:00 New York, today's edition has already aired, so the date becomes
-  // tomorrow and the form says so. A date the operator typed by hand is never touched.
+  // Entry-day rule (Marco, 2026-11-13, in force from 9/11): every piece is filed on the day it is made and entered.
+  // The form never moves the date. A piece made today for tomorrow's edition carries edizione_del = date + 1 and the
+  // collaudo reads "Tg1 Ore 8 del 14/11". The box «Edizione di domani» sets it. It ticks itself for a morning
+  // edition (slot up to Ore 14 in Italy: "Ore 8", "Ore 13:30", "Ore 12 Milano", "Ore 14:20", RAN "Ore 01".."Ore 14")
+  // chosen after 12:00 New York on today's date, because today's edition has already aired. The editor can change the
+  // tick; a tick changed by hand holds for that entry only. «Mattina» has no hour: the editor ticks it.
+  // morningEdition is in lib/week.js (it also reads "Tg1 8" and "Tg1 1330", as editors type them).
   function nyHour() {
     try { return parseInt(new Intl.DateTimeFormat("en-US", { timeZone: "America/New_York", hour: "numeric", hour12: false }).format(new Date()), 10) % 24; } catch (e) { return new Date().getHours(); }
   }
   function addDays(ymd, n) { var d = new Date(ymd + "T12:00:00Z"); d.setUTCDate(d.getUTCDate() + n); return d.toISOString().slice(0, 10); }
-  function morningEdition(rich) {
-    var m = /\bore\s*(\d{1,2})(?::(\d{2}))?/i.exec(rich || "");
-    if (!m) return false;
-    var h = parseInt(m[1], 10);
-    return h >= 0 && h < 14;
-  }
-  var dateTouched = false, dateAuto = false;
+  var domTouched = false;
   // A past date is allowed only after a second click (Marco, 2026-11-04: a form left on yesterday was saved without asking).
   function paintDateHint() {
     var hint = $("data-hint"), d = $("data").value, todayStr = today();
@@ -1819,21 +1845,23 @@ function parseToSeconds(s) {
       hint.hidden = false;
       return;
     }
-    if (!dateAuto) hint.hidden = true;
+    hint.hidden = true;
   }
-  $("data").addEventListener("input", function () { dateTouched = true; dateAuto = false; paintDateHint(); });
+  $("data").addEventListener("input", applyAirDate);
+  $("domani").addEventListener("change", function () { domTouched = true; });
+  // The edition's day for the payload: the day after the entry date when the box is ticked, else none.
+  function edizioneDel() {
+    var d = $("data").value;
+    return d && $("domani").checked && !grezzoOn() ? addDays(d, 1) : null;
+  }
   function applyAirDate() {
-    var hint = $("data-hint"), todayStr = today();
-    if (dateTouched) { paintDateHint(); return; }
+    var d = $("data").value || today(), tom = addDays(d, 1), box = $("domani");
     var rich = grezzoOn() ? "" : richiedenteValue();
-    if (rich && morningEdition(rich) && nyHour() >= 12) {
-      var tom = addDays(todayStr, 1);
-      $("data").value = tom; dateAuto = true;
-      hint.textContent = tf("Per domani, {0}: edizione del mattino, va in onda domani.", tom.slice(8, 10) + "/" + tom.slice(5, 7)); hint.hidden = false;
-    } else {
-      if (dateAuto) { $("data").value = todayStr; dateAuto = false; }
-      hint.hidden = true;
-    }
+    $("dom-wrap").hidden = grezzoOn(); // a grezzo has no edition
+    $("dom-text").textContent = tf("Edizione di domani ({0})", parseInt(tom.slice(8, 10), 10) + "/" + parseInt(tom.slice(5, 7), 10));
+    if (grezzoOn()) box.checked = false;
+    else if (!domTouched) box.checked = !!rich && d === today() && morningEdition(rich) && nyHour() >= 12;
+    paintDateHint();
   }
 
   // ---- trasferta: a state of the session, not of the entry ----
@@ -1945,9 +1973,9 @@ function parseToSeconds(s) {
 
   function resetAll() {
     form.reset();
-    $("data").value = today(); dateTouched = false; dateAuto = false; $("data-hint").hidden = true;
+    $("data").value = today(); domTouched = false; $("domani").checked = false; $("data-hint").hidden = true;
     $("grezzo").checked = false; $("intervista").checked = false; setReteMode();
-    setRadio("rete", "");
+    setRadio("rete", ""); applyAirDate();
     setRadio("mezzo", "V-Mover");
     $("richiedente").value = "";
     errSrc = null; $("err").textContent = "";
@@ -1986,14 +2014,14 @@ function parseToSeconds(s) {
     // Marco (2026-10-16): the list must show day, edition (Tg1 Ore 20), time and operator; everything else that fits.
     var dm = function (d) { return d && d.length >= 10 ? d.slice(8, 10) + "/" + d.slice(5, 7) : ""; };
     // The edition as read: RAN's slots are stored bare and read "RAN Ore 19" (Marco, 2026-10-22); no edition -> the rete.
-    var edShown = function (rete, rich) { rich = (rich || "").trim(); if (!rich) return rete; return rete === "RAN" && !/^ran\s/i.test(rich) ? "RAN " + rich : rich; };
+    var edShown = function (rete, rich, del) { rich = (rich || "").trim(); var ed = !rich ? rete : rete === "RAN" && !/^ran\s/i.test(rich) ? "RAN " + rich : rich; return del ? ed + " " + delLabel(del) : ed; };
     var joinNE = function (parts) { return parts.filter(function (x) { return x; }).join(" \u00b7 "); };
     var items = local.map(function (e) {
       var p = e.payload, cat = categoria(p.rete, p.mezzo, p.tappeto, p.grezzo, p.intervista);
-      return { ora: e.ora, giorno: dm(p.delivery_date), ed: edShown(p.rete, p.richiedente), op: p.operator, text: joinNE([p.journalist, p.subject, cat + (p.duration_text ? " " + formatDurata(p.duration_text) : ""), t(p.mezzo)]), stato: e.stato, err: e.errore, sort: e.creato };
+      return { ora: e.ora, giorno: dm(p.delivery_date), ed: edShown(p.rete, p.richiedente, p.edizione_del), op: p.operator, text: joinNE([p.journalist, p.subject, cat + (p.duration_text ? " " + formatDurata(p.duration_text) : ""), t(p.mezzo)]), stato: e.stato, err: e.errore, sort: e.creato };
     }).concat(serverRows.filter(function (r) { return !ids[r.record_id]; }).map(function (r) {
       var when = r.submitted_at ? new Date(r.submitted_at) : null;
-      return { ora: when ? String(when.getHours()).padStart(2, "0") + ":" + String(when.getMinutes()).padStart(2, "0") : "", giorno: dm(todayStr), ed: edShown(r.rete, r.richiedente), op: r.operatore, text: joinNE([r.giornalista, r.titolo, r.categoria + (r.durata ? " " + formatDurata(r.durata) : ""), t(r.mezzo)]), stato: "sincronizzato", sort: r.submitted_at || "" };
+      return { ora: when ? String(when.getHours()).padStart(2, "0") + ":" + String(when.getMinutes()).padStart(2, "0") : "", giorno: dm(todayStr), ed: edShown(r.rete, r.richiedente, r.edizione_del), op: r.operatore, text: joinNE([r.giornalista, r.titolo, r.categoria + (r.durata ? " " + formatDurata(r.durata) : ""), t(r.mezzo)]), stato: "sincronizzato", sort: r.submitted_at || "" };
     }));
     items.sort(function (a, b) { return a.sort < b.sort ? 1 : -1; });
     $("recent-n").textContent = items.length ? String(items.length) : "";
@@ -2145,6 +2173,7 @@ function parseToSeconds(s) {
     var p = e.payload;
     queue = queue.filter(function (x) { return x !== e; }); qsave(queue);
     $("data").value = p.delivery_date; $("giornalista").value = p.journalist; $("titolo").value = p.subject;
+    $("domani").checked = !!p.edizione_del; domTouched = true; // the entry's own choice, not the clock's
     $("tappeto").checked = !!p.tappeto; $("grezzo").checked = !!p.grezzo; $("intervista").checked = !!p.intervista; setReteMode();
     setRadio("rete", p.rete); updateRichiedente();
     $("richiedente").value = PREFIXED.indexOf(p.rete) >= 0 ? stripPrefix(p.rete, p.richiedente || "") : (p.richiedente || "");
@@ -2308,6 +2337,7 @@ function parseToSeconds(s) {
     var v = {
       client_record_id: newUuid(),
       delivery_date: $("data").value,
+      edizione_del: edizioneDel(),
       journalist: gMatch || g,
       subject: $("titolo").value.trim(),
       rete: checked("rete"),
@@ -2361,6 +2391,7 @@ function parseToSeconds(s) {
     $("grezzo").checked = false; $("intervista").checked = false; setReteMode();
     setRadio("rete", ""); $("tappeto").checked = false; $("durata").value = ""; $("richiedente").value = ""; $("note").value = "";
     setRadio("mezzo", "V-Mover");
+    domTouched = false; // the tick belongs to the entry just sent, not to the next one
     updateRichiedente(); updateCategoria(); updateReteNote(); renderTrip(); applyAirDate();
     form.querySelector('input[name="rete"]').focus();
     schedule(0);
@@ -2750,7 +2781,10 @@ function parseToSeconds(s) {
       var wrap = document.createElement("div"); wrap.className = "rd";
       var inc = readInput("inc", "checkbox", "");
       inc.checked = !row.duplicate;
-      var date = readInput("d", "date", row.delivery_date || "");
+      // Entry-day rule: a file named "DEL 14 11" read on the 13th is filed on the 13th and reads "del 14/11".
+      var later = row.delivery_date && row.delivery_date > today() ? row.delivery_date : "";
+      var date = readInput("d", "date", later ? today() : (row.delivery_date || ""));
+      if (later) wrap.setAttribute("data-del", later);
       var jour = readInput("j", "text", row.journalist || "");
       jour.setAttribute("list", "l-giornalisti"); jour.maxLength = 100;
       var subj = readInput("s", "text", row.subject || ""); subj.maxLength = 500;
@@ -2769,7 +2803,7 @@ function parseToSeconds(s) {
       var tap = readInput("p", "checkbox", ""); tap.checked = !!row.tappeto;
       tapLab.appendChild(tap); tapLab.appendChild(document.createTextNode(" "));
       var tapWord = document.createElement("span"); L(tapWord, "Tappeto"); tapLab.appendChild(tapWord);
-      var src = document.createElement("p"); src.className = "src"; src.textContent = row.source_line || ""; src.title = row.source_line || "";
+      var src = document.createElement("p"); src.className = "src"; src.textContent = (later ? delLabel(later) + " \u00b7 " : "") + (row.source_line || ""); src.title = row.source_line || "";
       wrap.appendChild(inc); wrap.appendChild(date); wrap.appendChild(jour); wrap.appendChild(subj);
       wrap.appendChild(rete); wrap.appendChild(rich); wrap.appendChild(dur); wrap.appendChild(tapLab); wrap.appendChild(src);
       if (row.duplicate) {
@@ -2807,6 +2841,7 @@ function parseToSeconds(s) {
       chosen.push({
         client_record_id: newUuid(),
         delivery_date: date,
+        edizione_del: (wrap.getAttribute("data-del") || "") > date ? wrap.getAttribute("data-del") : null,
         journalist: gMatch,
         subject: subj,
         rete: rete,

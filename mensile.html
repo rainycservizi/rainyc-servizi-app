@@ -223,7 +223,7 @@ footer.doc { margin-top:22px; font-size:11px; color:var(--dim); }
 <body>
 <div class="top" id="top">
   <header class="appbar">
-    <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-11-10 23:35 UTC · b586c57+"><span class="mk">Rai · NY</span><span class="nm">RAI NYC Servizi</span><span class="pg" data-i18n>Mensile</span></div>
+    <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-11-13 18:38 UTC · af24318"><span class="mk">Rai · NY</span><span class="nm">RAI NYC Servizi</span><span class="pg" data-i18n>Mensile</span></div>
     <nav class="hright" id="hright" aria-label="Pagine">
       <button type="button" class="icbtn" id="theme" aria-label="Tema" title="Tema" aria-haspopup="menu" aria-expanded="false">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3a9 9 0 1 0 0 18c1.2 0 2-.9 2-2 0-.6-.2-1-.5-1.4-.3-.4-.5-.8-.5-1.3 0-1.1.9-2 2-2h2.2A4.8 4.8 0 0 0 22 9.6C22 5.8 17.5 3 12 3z"/><circle cx="7.5" cy="11.5" r="1.1"/><circle cx="10.5" cy="7.5" r="1.1"/><circle cx="15" cy="7.5" r="1.1"/><circle cx="17.5" cy="11.5" r="1.1"/></svg>
@@ -282,7 +282,7 @@ var PAGE_FORM = "./" || APP_BASE;
 var PAGE_COLLAUDO = "./collaudo.html" || APP_BASE + "/collaudo";
 var PAGE_GESTIONE = "./gestione.html" || APP_BASE + "/gestione";
 var PAGE_MENSILE = "./mensile.html" || APP_BASE + "/mensile";
-var BUILD = "2026-11-10 23:35 UTC · b586c57+"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
+var BUILD = "2026-11-13 18:38 UTC · af24318"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
 // Every place the project lives (shown in the admin's header menu and on the Gestione page).
 var LINKS = [
   ["Pagine pubbliche", "https://rainycservizi.github.io/rainyc-servizi-app/", "GitHub Pages: il sito di prova principale"],
@@ -334,7 +334,7 @@ var I18N = { en: {
   "database e funzione (accesso rainyc.servizi)": "database and function (rainyc.servizi login)",
   "Caricamento…": "Loading…",
   // form
-  "Servizio": "Package", "Data": "Date", "Per domani, {0}: edizione del mattino, va in onda domani.": "For tomorrow, {0}: morning edition, it airs tomorrow.",
+  "Servizio": "Package", "Data": "Date", "Edizione di domani ({0})": "Tomorrow's edition ({0})",
   "Questa data non è oggi. All'invio ti verrà chiesta conferma.": "This date is not today. You will be asked to confirm before it is sent.",
   "Data non di oggi": "Date is not today",
   "La data è {0}, non oggi ({1}). Vuoi registrare lo stesso?": "The date is {0}, not today ({1}). Record it anyway?",
@@ -1107,6 +1107,31 @@ function fmtRange(a, b) {
   if (ya !== yb) return da.getUTCDate() + " " + monthName(ma) + " " + ya + " – " + db.getUTCDate() + " " + monthName(mb) + " " + yb;
   if (ma !== mb) return da.getUTCDate() + " " + monthName(ma) + " – " + db.getUTCDate() + " " + monthName(mb) + " " + yb;
   return da.getUTCDate() + "–" + db.getUTCDate() + " " + monthName(ma) + " " + ya;
+}
+
+/**
+ * The edition's day as read after the Richiedente: "del 14/11". `ymd` is "YYYY-MM-DD"; day and month are printed
+ * without a leading zero ("del 9/11"), like the day headers.
+ * @param {string} ymd @returns {string}
+ */
+function delLabel(ymd) {
+  const day = Number(ymd.slice(8, 10)), month = Number(ymd.slice(5, 7));
+  // Italian elision: l'uno, l'otto, l'undici. Every other day up to 31 begins with a consonant.
+  return ([1, 8, 11].includes(day) ? "dell'" : "del ") + `${day}/${month}`;
+}
+
+/**
+ * Is this Richiedente an edition up to Ore 14 in Italy? After 12:00 New York such an edition has already aired today,
+ * so a piece for it is for tomorrow. Reads the list's "Tg1 Ore 8", "Ore 13:30", "Tg3 Ore 12 Milano", "Ore 14:20" and
+ * what editors type by hand: "Tg1 8", "Tg2 8:30", "Tg1 1330", "GR 8". «Mattina», «Notte» and programmes have no hour.
+ * @param {string} rich @returns {boolean}
+ */
+function morningEdition(rich) {
+  const s = String(rich || "").trim().replace(/^(tg\s*[123]|gr|ran|rai\s*[123])\s+/i, "");
+  const m = /\bore\s*(\d{1,2})(?:[:.]?(\d{2}))?\b/i.exec(s) || /^(\d{1,2})(?:[:.]?(\d{2}))?\b/.exec(s);
+  if (!m) return false;
+  const h = Number(m[1]), min = Number(m[2] || 0);
+  return h <= 14 && min < 60;
 }
 
 // ---- end lib/week.js ----
