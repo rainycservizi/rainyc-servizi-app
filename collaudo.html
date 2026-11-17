@@ -160,7 +160,7 @@ input:focus-visible, select:focus-visible { outline:none; border-color:var(--foc
 .pop .msg:empty { display:none; }
 .err:empty { display:none; }
 /* ── annullate: the week's voided rows, screen only, each with «Ripristina» (nothing is ever deleted) ── */
-.ann { margin-top:26px; padding-top:14px; border-top:1px dashed var(--line2); }
+.ann { margin-top:26px; padding-top:14px; border-top:1px dashed var(--line2); overflow-x:auto; } /* on a phone the list scrolls inside its own box, not the page */
 .ann .ph { margin-bottom:6px; }
 .ann .hint { margin:0 0 10px; font-size:12.5px; color:var(--dim); }
 .ann table { width:100%; border-collapse:collapse; font-size:13px; }
@@ -175,7 +175,7 @@ input:focus-visible, select:focus-visible { outline:none; border-color:var(--foc
 #doc.busy { opacity:.55; transition:opacity .15s; pointer-events:none; }
 
 /* ── the collaudo sheet ── */
-.sheet { padding:18px 22px 22px; max-width:1500px; margin:0 auto; }
+.sheet { padding:18px 22px 22px; max-width:1720px; margin:0 auto; }
 .sheet:empty { display:none; }
 .sheet { display:grid; grid-template-columns:minmax(0,1fr) auto; column-gap:24px; }
 .sheet > * { grid-column:1 / -1; }
@@ -204,7 +204,7 @@ tbody tr.r:hover td { background:var(--hover); }
 th.k, td.k { text-align:center; width:3.6em; }
 td.k { font-weight:700; }
 /* The mark in the tally columns: 1 (default), × or ✓, chosen in the tools bar (Marco, 2026-10-30: no check marks) */
-.mk::before { content:"1"; } :root[data-segno="x"] .mk::before { content:"×"; } :root[data-segno="v"] .mk::before { content:"✓"; }
+i.mk::before { content:"1"; } :root[data-segno="x"] i.mk::before { content:"×"; } :root[data-segno="v"] i.mk::before { content:"✓"; } /* i.mk: the brand's «Rai · NY» is a .mk too and read «1Rai» */
 
 tr.day td { background:var(--band); border-top:1px solid var(--line2); border-bottom:1px solid var(--line2); padding:0 8px 0 0; }
 button.dt { all:unset; box-sizing:border-box; display:inline-flex; align-items:center; gap:8px; min-height:38px; padding:0 10px 0 8px; font-weight:700; font-size:14px; cursor:pointer; border-radius:4px; color:var(--fg); }
@@ -263,8 +263,52 @@ footer.doc .firma { font-size:13px; white-space:nowrap; }
 .pwd-msg:empty { display:none; }
 .pwd-msg.ok { color:var(--ok); } .pwd-msg.ko { color:var(--bad); }
 
-/* Below 1200px the 15 columns no longer fit: the table scrolls sideways inside the sheet, not the page. */
-@media screen and (max-width:1199.98px) { .table-wrap { overflow-x:auto; } thead th { position:static; } td[data-f="subject"] { min-width:15em; } td[data-f="richiedente"] { min-width:8em; } .sheet > header.doc, .sheet > .counters { grid-column:1 / -1; } .sheet > .counters { justify-self:start; } }
+/* ── screen: the whole sheet in the window, no sideways scroll (Marco, 2026-11-17) ──
+   Fixed layout: each column has a share of the width (<colgroup>, set by the page: defaults, or the widths and the
+   order this browser saved). A long Titolo or Richiedente wraps; every other cell stays on one line and is cut with
+   «…» (the full text is the tooltip). The print never uses any of this: it is Rome's sheet, in Rome's order. */
+@media screen {
+  .table-wrap > table { table-layout:fixed; }
+  .table-wrap > table th, .table-wrap > table td { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .table-wrap > table td[data-c="titolo"], .table-wrap > table td[data-c="richiedente"] { white-space:normal; overflow-wrap:anywhere; }
+  .table-wrap > table th.k, .table-wrap > table td.k { width:auto; padding-left:2px; padding-right:2px; }
+  .table-wrap > table tr.day td, .table-wrap > table tr.empty td { overflow:visible; white-space:normal; }
+  .table-wrap > table td[data-editing] { overflow:visible; position:relative; }
+  .table-wrap > table td[data-editing] .edin { position:relative; z-index:4; }
+  .table-wrap > table td.notec { max-width:none; }
+  .table-wrap > table td.act { width:auto; padding-left:2px; padding-right:2px; text-align:center; }
+  .table-wrap > table td.nc { padding:4px 2px; text-align:right; }
+  .table-wrap > table tr.tot td.tl { text-align:right; }
+  thead th[data-c] { cursor:grab; user-select:none; -webkit-user-select:none; touch-action:none; }
+  thead th.drag { opacity:.45; cursor:grabbing; }
+  thead th.dropl { box-shadow:inset 3px 0 0 var(--accent); } thead th.dropr { box-shadow:inset -3px 0 0 var(--accent); }
+  thead th .rz { position:absolute; top:0; right:0; bottom:0; width:9px; cursor:col-resize; z-index:6; }
+  thead th .rz::after { content:""; position:absolute; top:22%; bottom:22%; right:0; width:1px; background:var(--line2); }
+  thead th .rz:hover::after, thead th .rz.on::after { width:3px; background:var(--accent); top:0; bottom:0; }
+}
+/* The line number: the row's handle. Click (or right-click anywhere on the row) opens the row's menu. */
+button.nm { all:unset; box-sizing:border-box; display:block; width:100%; min-height:28px; line-height:28px; padding:0 4px; text-align:right; font:600 12px/28px var(--mono); color:var(--dim); cursor:pointer; border-radius:4px; }
+button.nm:hover, button.nm:focus-visible, tr.r.menu button.nm { background:var(--raise); color:var(--accent-text); }
+button.nm:focus-visible { outline:2px solid var(--focus); outline-offset:-2px; }
+tr.r.menu td { background:var(--hover) !important; }
+tr.r.hit td { animation:hit 2.6s ease-out; }
+@keyframes hit { 0%, 55% { background:color-mix(in srgb, var(--accent) 26%, var(--panel)); } 100% { background:transparent; } }
+.tools input#num { width:4.8em; padding:0 8px; }
+.rmenu { position:fixed; z-index:60; min-width:270px; max-width:min(360px, calc(100vw / var(--z, 1) - 16px)); margin:0; padding:6px; background:var(--panel); border:1px solid var(--line2); border-radius:8px; box-shadow:var(--pop); font-size:14px; }
+.rmenu .hd { padding:6px 10px 8px; border-bottom:1px solid var(--line); margin-bottom:4px; font-size:12.5px; color:var(--dim); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.rmenu .hd b { font-family:var(--mono); color:var(--fg); }
+.rmenu button.mi { all:unset; box-sizing:border-box; display:flex; width:100%; align-items:center; gap:8px; min-height:36px; padding:0 10px; border-radius:5px; cursor:pointer; color:var(--fg); white-space:nowrap; }
+.rmenu button.mi:hover, .rmenu button.mi:focus-visible { background:var(--hover); color:var(--accent-text); }
+.rmenu button.mi.bad:hover, .rmenu button.mi.bad:focus-visible { color:var(--bad); }
+.rmenu .sp { height:1px; background:var(--line); margin:4px 0; }
+.rmenu .dt { display:flex; gap:6px; align-items:center; padding:4px 10px 6px; }
+.rmenu .dt input { flex:1; min-width:0; height:34px; font:inherit; padding:0 8px; border:1px solid var(--line2); border-radius:6px; background:var(--input); color:var(--fg); }
+.rmenu .dt .btn { height:34px; }
+.ann td.n { font:600 12px/1.4 var(--mono); color:var(--dim); white-space:nowrap; }
+
+/* Narrow windows: tighter cells. Below 900px the sheet keeps a floor of 900px and scrolls inside its own box. */
+@media screen and (max-width:1199.98px) { .sheet > header.doc, .sheet > .counters { grid-column:1 / -1; } .sheet > .counters { justify-self:start; } .table-wrap > table { font-size:12.5px; } .table-wrap > table th, .table-wrap > table td { padding-left:4px; padding-right:4px; } }
+@media screen and (max-width:899.98px) { .table-wrap { overflow-x:auto; } .table-wrap > table { min-width:900px; } thead th { position:relative; top:auto; } }
 @media screen and (max-width:760px) {
   .page { padding:10px; } .sheet { padding:14px; }
   .appbar { height:auto; min-height:52px; flex-wrap:wrap; padding:6px 10px; gap:6px 8px; } .hright { flex-wrap:wrap; justify-content:flex-end; row-gap:6px; } .nav .hlink { padding:0 8px; font-size:13px; } .tools .grp { flex-wrap:wrap; }
@@ -304,6 +348,7 @@ footer.doc .firma { font-size:13px; white-space:nowrap; }
   header.doc h1 { font-size:17px; }
   .counters .n { font-size:14px; } .counters .c { padding:4px 9px; min-width:54px; }
   thead { display:table-header-group; }
+  col { width:auto !important; } .rz, .rmenu { display:none !important; }
   thead th { position:static; font-size:9px; color:#111; border-top:1.5px solid #111; padding:4px 5px; }
   table { font-size:11px; }
   tr { break-inside:avoid; page-break-inside:avoid; }
@@ -320,7 +365,7 @@ footer.doc .firma { font-size:13px; white-space:nowrap; }
 <body>
 <div class="top" id="top">
   <header class="appbar">
-    <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-11-13 18:38 UTC · af24318"><span class="mk">Rai · NY</span><span class="nm">RAI NYC Servizi</span><span class="pg" data-i18n>Collaudo</span></div>
+    <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-11-17 22:57 UTC · 0393c48"><span class="mk">Rai · NY</span><span class="nm">RAI NYC Servizi</span><span class="pg" data-i18n>Collaudo</span></div>
     <nav class="hright" id="hright" aria-label="Pagine">
       <button type="button" class="icbtn" id="theme" aria-label="Tema" title="Tema" aria-haspopup="menu" aria-expanded="false">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3a9 9 0 1 0 0 18c1.2 0 2-.9 2-2 0-.6-.2-1-.5-1.4-.3-.4-.5-.8-.5-1.3 0-1.1.9-2 2-2h2.2A4.8 4.8 0 0 0 22 9.6C22 5.8 17.5 3 12 3z"/><circle cx="7.5" cy="11.5" r="1.1"/><circle cx="10.5" cy="7.5" r="1.1"/><circle cx="15" cy="7.5" r="1.1"/><circle cx="17.5" cy="11.5" r="1.1"/></svg>
@@ -341,11 +386,13 @@ footer.doc .firma { font-size:13px; white-space:nowrap; }
       <button type="button" class="btn sq" id="next" data-i18n-attr="title|aria-label" title="Settimana successiva" aria-label="Settimana successiva"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M6 3l5 5-5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
       <button type="submit" class="btn" data-i18n>Vai</button>
       <button type="button" class="btn" id="today" title="Settimana corrente" aria-label="Settimana corrente" data-i18n-attr="title|aria-label" data-i18n>Oggi</button>
+      <label class="wk" data-i18n-attr="title" title="Vai alla riga con questo numero">N. <input type="text" id="num" inputmode="numeric" pattern="\d{1,9}" placeholder="6712" autocomplete="off" aria-label="Numero di riga" data-i18n-attr="aria-label"></label>
     </div>
     <span class="sep" aria-hidden="true"></span>
     <div class="grp">
       <button type="button" class="btn" id="fold" aria-controls="doc"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="fold-t">Comprimi tutto</span></button>
       <button type="button" class="btn" id="undo" disabled title="Ctrl+Z"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M5 4L2 7l3 3M2.5 7H10a4 4 0 0 1 0 8H8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="tx" data-i18n>Annulla ultima modifica</span></button>
+      <button type="button" class="btn" id="cols-reset" hidden data-i18n-attr="title|aria-label" title="Ripristina colonne: l'ordine e la larghezza di partenza" aria-label="Ripristina colonne"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M2.5 3.5h11v9h-11zM6.2 3.5v9M9.8 3.5v9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg><span class="tx" data-i18n>Colonne</span></button>
       <label class="wk" data-i18n-attr="title" title="Segno nelle colonne Servizi, Radio, Live, Tappeti, Grezzi, Interviste"><span data-i18n>Segno</span> <select id="segno"><option value="1">1</option><option value="x">×</option><option value="v">✓</option></select></label>
     </div>
     <span class="msg" id="msg" role="status" aria-live="polite"></span>
@@ -363,6 +410,7 @@ footer.doc .firma { font-size:13px; white-space:nowrap; }
     <div class="err" id="login-err" role="alert"></div>
   </form>
   <div id="doc" class="panel sheet"></div>
+  <div class="rmenu np" id="rmenu" role="menu" hidden></div>
 </div>
 
   </form>
@@ -388,7 +436,7 @@ var PAGE_FORM = "./" || APP_BASE;
 var PAGE_COLLAUDO = "./collaudo.html" || APP_BASE + "/collaudo";
 var PAGE_GESTIONE = "./gestione.html" || APP_BASE + "/gestione";
 var PAGE_MENSILE = "./mensile.html" || APP_BASE + "/mensile";
-var BUILD = "2026-11-13 18:38 UTC · af24318"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
+var BUILD = "2026-11-17 22:57 UTC · 0393c48"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
 // Every place the project lives (shown in the admin's header menu and on the Gestione page).
 var LINKS = [
   ["Pagine pubbliche", "https://rainycservizi.github.io/rainyc-servizi-app/", "GitHub Pages: il sito di prova principale"],
@@ -445,6 +493,10 @@ var I18N = { en: {
   "Data non di oggi": "Date is not today",
   "La data è {0}, non oggi ({1}). Vuoi registrare lo stesso?": "The date is {0}, not today ({1}). Record it anyway?",
   "Sì, registra su questa data": "Yes, record on this date",
+  "Controllo: già registrato?": "Checking: already recorded?", "Non registrato: era già nel collaudo.": "Not recorded: it was already in the collaudo.",
+  "Già registrato": "Already recorded", "Registra comunque": "Record anyway", "in invio": "sending",
+  "{0} di {1} è già registrato:": "{0} by {1} is already recorded:", "{0} di {1} è già registrato {2} volte:": "{0} by {1} is already recorded {2} times:",
+  "Se è lo stesso servizio, premi Annulla. Se è un altro servizio per la stessa edizione, registralo.": "If it is the same piece, press Cancel. If it is another piece for the same edition, record it.",
   "Giornalista": "Journalist", "Argomento / Titolo": "Topic / Title", "Rete": "Network",
   "Richiesta": "Request", "Richiedente": "Requester", "(edizione o programma; anche testo libero)": "(edition or programme; free text also allowed)",
   "(edizione; anche testo libero)": "(edition; free text also allowed)", "(programma; testo libero)": "(programme; free text)",
@@ -531,6 +583,14 @@ var I18N = { en: {
   // collaudo
   "Settimana precedente": "Previous week", "Settimana successiva": "Next week", "Settimana": "Week", "Vai": "Go",
   "Comprimi tutto": "Collapse all", "Espandi tutto": "Expand all", "Annulla ultima modifica": "Undo last change",
+  "Ripristina colonne": "Reset columns", "Colonne": "Columns", "Ripristina colonne: l'ordine e la larghezza di partenza": "Reset columns: the starting order and width", "Colonne ripristinate.": "Columns reset.",
+  "Vai alla riga con questo numero": "Go to the line with this number", "Numero di riga": "Line number", "Numero di riga non valido.": "Invalid line number.", "Ricerca…": "Searching…",
+  "Riga {0}: azioni": "Line {0}: actions", "Riga N. {0}": "Line No. {0}", "Numero {0} copiato.": "Number {0} copied.",
+  "Sposta al giorno prima ({0})": "Move to the day before ({0})", "Sposta al giorno dopo ({0})": "Move to the day after ({0})", "Sposta a un'altra data": "Move to another date", "Sposta": "Move",
+  "Modifica il titolo": "Edit the title", "Duplica la riga": "Duplicate the line", "Copia il numero": "Copy the number",
+  "Riga N. {0} spostata a {1}.": "Line No. {0} moved to {1}.", "Riga N. {0} spostata a {1} (settimana {2}).": "Line No. {0} moved to {1} (week {2}).",
+  "Riga duplicata: nuova riga N. {0}.": "Line duplicated: new line No. {0}.", "Riga duplicata annullata.": "Duplicated line cancelled.",
+  "La riga N. {0} è annullata: è nell'elenco in fondo.": "Line No. {0} is cancelled: it is in the list at the bottom.", "Riga N. {0}: {1}.": "Line No. {0}: {1}.",
   "Invia per e-mail": "Send by e-mail", "Stampa": "Print", "Accesso · collaudo settimanale": "Login · weekly report",
   "Sì": "Yes", "No": "No", "Destinatari": "Recipients", "aggiungi un indirizzo e-mail": "add an e-mail address",
   "Nuovo destinatario": "New recipient", "Aggiungi": "Add", "Invia": "Send", "Invia a {0}": "Send to {0}",
@@ -1185,6 +1245,12 @@ function todayNewYork(now) {
   return get("year") + "-" + get("month") + "-" + get("day");
 }
 
+/** The hour in New York, 0..23. */
+function hourNewYork(now) {
+  const h = new Intl.DateTimeFormat("en-US", { timeZone: "America/New_York", hour: "numeric", hour12: false }).format(now || new Date());
+  return parseInt(h, 10) % 24;
+}
+
 const MESI = ["gennaio", "febbraio", "marzo", "aprile", "maggio", "giugno", "luglio",
   "agosto", "settembre", "ottobre", "novembre", "dicembre"];
 const MESI_EN = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -1238,6 +1304,118 @@ function morningEdition(rich) {
   if (!m) return false;
   const h = Number(m[1]), min = Number(m[2] || 0);
   return h <= 14 && min < 60;
+}
+
+// ---- Rules shared by the form and the function (Marco, 2026-11-17) ----
+
+const LIVE_MEZZI = ["270", "268", "LiveU", "LiveU/270", "LiveU/268", "Eurovision"];
+/**
+ * The row's type as the database derives it: the form's switches first, then GR -> radio, a live link -> live, else pezzo.
+ * @param {{tappeto?: boolean, grezzo?: boolean, intervista?: boolean, rete?: string|null, mezzo?: string|null}} p
+ */
+function categoriaOf(p) {
+  if (p.tappeto) return "tappeto";
+  if (p.grezzo) return "grezzo";
+  if (p.intervista) return "intervista";
+  if (String(p.rete || "").toUpperCase().startsWith("GR")) return "radio";
+  return LIVE_MEZZI.includes(String(p.mezzo || "")) ? "live" : "pezzo";
+}
+
+/** "YYYY-MM-DD" plus n days. @param {string} ymd @param {number} n */
+function addDays(ymd, n) {
+  const d = new Date(ymd + "T12:00:00Z");
+  d.setUTCDate(d.getUTCDate() + n);
+  return d.toISOString().slice(0, 10);
+}
+
+const MESE_RE = "gennaio|febbraio|marzo|aprile|maggio|giugno|luglio|agosto|settembre|ottobre|novembre|dicembre";
+const DEL_RE = "(?:dell?|dall?)['’]?\\s*(\\d{1,2})(?:\\s*[\\/.\\- ]\\s*(\\d{1,2})(?!\\d)|\\s+(" + MESE_RE + "))?";
+const DEL_START = new RegExp("^" + DEL_RE + "(?:\\s*[-–:,]\\s*|\\s+)(?=\\S)", "i");
+const DEL_END = new RegExp("(?:\\s+[-–(]?\\s*)" + DEL_RE + "\\)?$", "i");
+/**
+ * «del 14/11», «dell 11 novembre», «dal 30» at the start or the end of a Titolo are the edition's day, not the title.
+ * Returns the title without them and the day they name, or null when the title has no such words. The words are
+ * read as a day only when they name the entry day or the day after it: an edition airs the same day or the next
+ * («Elezioni del 3 novembre» entered on 1/11 keeps its date; so does "dell'11 settembre" in March).
+ * @param {string} subject @param {string} data "YYYY-MM-DD"
+ * @returns {{subject: string, giorno: string}|null}
+ */
+function stripDel(subject, data) {
+  const text = String(subject == null ? "" : subject).trim();
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(String(data || ""))) return null;
+  const m = DEL_START.exec(text) || DEL_END.exec(text);
+  if (!m) return null;
+  const day = Number(m[1]);
+  const month = m[2] ? Number(m[2]) : m[3] ? MESI.indexOf(m[3].toLowerCase()) + 1 : 0;
+  let giorno = "";
+  for (let k = 0; k <= 1 && !giorno; k++) {
+    const c = addDays(data, k);
+    if (Number(c.slice(8, 10)) === day && (!month || Number(c.slice(5, 7)) === month)) giorno = c;
+  }
+  if (!giorno) return null;
+  const rest = (m.index === 0 ? text.slice(m[0].length) : text.slice(0, m.index)).trim();
+  return rest ? { subject: rest, giorno } : null;
+}
+
+/**
+ * Must this entry read «del <tomorrow>»? Yes for a morning edition (up to Ore 14 in Italy) entered after 12:00
+ * New York on its own day, or entered later for a past day: that day's edition had already aired. Never for a
+ * grezzo (no edition) or a live (a live is on air on its own day).
+ * @param {{delivery_date: string, richiedente?: string|null, rete?: string|null, mezzo?: string|null, tappeto?: boolean, grezzo?: boolean, intervista?: boolean}} p
+ * @param {string} today New York "YYYY-MM-DD" @param {number} hour New York hour 0..23
+ */
+function edizioneDomani(p, today, hour) {
+  if (!p.richiedente || !morningEdition(p.richiedente)) return false;
+  const cat = categoriaOf(p);
+  if (cat === "grezzo" || cat === "live") return false;
+  return p.delivery_date < today || (p.delivery_date === today && hour >= 12);
+}
+
+/**
+ * The entry as it is stored: the edition's day leaves the Titolo and goes to edizione_del, and a morning edition that
+ * needs «del» gets it even when the editor forgot the box (Marco, 2026-11-17). A day the editor set is never changed.
+ * @template {{delivery_date: string, subject: string, edizione_del?: string|null, richiedente?: string|null, grezzo?: boolean}} T
+ * @param {T} p @param {string} today @param {number} hour @returns {T}
+ */
+function applyEdizione(p, today, hour) {
+  if (p.grezzo) return p;
+  let subject = p.subject, del = p.edizione_del || null;
+  const s = stripDel(subject, p.delivery_date);
+  if (s) {
+    subject = s.subject;
+    if (!del && s.giorno > p.delivery_date) del = s.giorno;
+  }
+  if (!del && edizioneDomani(p, today, hour)) del = addDays(p.delivery_date, 1);
+  return { ...p, subject, edizione_del: del };
+}
+
+/**
+ * One edition, however it was typed: "Tg2 Ore 20:30", "Tg2 20.30" and "2030" are the same; so are "Tg3 Ore 12" and
+ * "Tg3 Ore 12 Milano". An edition without an hour ("Linea Notte", "Mattina") is compared by its letters.
+ * @param {unknown} rich
+ */
+function editionKey(rich) {
+  const s = String(rich == null ? "" : rich).trim().toLowerCase().replace(/^(tg\s*[123]|gr|ran|rai\s*[123])\s+/, "");
+  if (/^mezzanotte\b/.test(s)) return "t1440";
+  const m = /\bore\s*(\d{1,2})(?:[:.]?(\d{2}))?\b/.exec(s) || /^(\d{1,2})(?:[:.]?(\d{2}))?\b/.exec(s);
+  if (m) return "t" + (Number(m[1]) * 60 + Number(m[2] || 0));
+  return s.replace(/[^a-z0-9à-ÿ]+/g, "");
+}
+
+const squashText = (s) => String(s == null ? "" : s).toLowerCase().replace(/[^a-z0-9à-ÿ]+/g, "");
+/**
+ * Is `b` the piece `a` again? Same day on air, rete, edition, type and journalist. The Titolo is not compared: two
+ * editors name the same story differently («Traffico aereo», «Blocco aerei»). A grezzo has no edition, so there the
+ * Titolo decides. Both sides: {data, edizione_del, rete, richiedente, categoria, giornalista, titolo}.
+ * @param {Record<string, unknown>} a @param {Record<string, unknown>} b
+ */
+function samePiece(a, b) {
+  const air = (r) => String(r.edizione_del || r.data || "");
+  if (!air(a) || air(a) !== air(b)) return false;
+  if (squashText(a.rete) !== squashText(b.rete) || String(a.categoria) !== String(b.categoria)) return false;
+  if (squashText(a.giornalista) !== squashText(b.giornalista)) return false;
+  if (String(a.categoria) === "grezzo") return squashText(a.titolo) === squashText(b.titolo);
+  return editionKey(a.richiedente) === editionKey(b.richiedente);
 }
 
 // ---- end lib/week.js ----
@@ -1364,14 +1542,21 @@ const BAR_CATEGORIE = CATEGORIE.filter((c) => c !== "radio");
 const RETI = ["Rainews.it", "Tg1", "Tg2", "Tg3", "RAN", "Rai Sport", "GR", "TGR", "Altre"]; // TGR up top (Marco, 2026-10-30)
 const MARK = '<i class="mk"></i>'; // the tick in Servizi/Radio/Live/Tappeti/Grezzi: the page chooses 1, × or ✓ (CSS), the e-mail prints 1
 
-// Screen columns. The last five (assistenza, note, operatore, data, azioni) never print: the printed
-// sheet has exactly Rome's columns (PRINT_COLS), in this order. No Trasferta column (Marco, 2026-10-19):
-// who is in trasferta is named once in the day header.
-const COLS = ["Titolo", "Giornalista", "Richiedente", "Rete", "Durata",
+// Screen columns. The first (N., the permanent line number: Marco, 2026-11-17) and the last five (assistenza, note,
+// operatore, data, azioni) never print: the printed sheet has exactly Rome's columns (PRINT_COLS), in this order.
+// No Trasferta column (Marco, 2026-10-19): who is in trasferta is named once in the day header.
+const COLS = ["N.", "Titolo", "Giornalista", "Richiedente", "Rete", "Durata",
   "Servizi", "Radio", "Live", "Mezzo", "Tappeti", "Grezzi", "Interviste", "Ass. tecnica", "Note", "Operatore", "Data", ""];
 const CHECK_COLS = ["Servizi", "Radio", "Live", "Tappeti", "Grezzi", "Interviste", "Ass. tecnica"];
-const SCREEN_ONLY = ["Ass. tecnica", "Note", "Operatore", "Data", ""];
+const SCREEN_ONLY = ["N.", "Ass. tecnica", "Note", "Operatore", "Data", ""];
 const ROME_LABEL = { Titolo: "Titolo del servizio", Mezzo: "Mezzo di trasmissione" };
+// The tally columns hold one mark, so on screen their heading is three letters (the full word is the tooltip and the
+// print): the whole sheet fits the window without a sideways scroll (Marco, 2026-11-17).
+const SHORT_LABEL = { Servizi: "Srv", Radio: "Rad", Tappeti: "Tap", Grezzi: "Grz", Interviste: "Int", "Ass. tecnica": "Ass" };
+// One key per column, on every <th> and <td> (data-c): the page moves and sizes columns by it.
+const COL_KEYS = ["numero", "titolo", "giornalista", "richiedente", "rete", "durata",
+  "servizi", "radio", "live", "mezzo", "tappeti", "grezzi", "interviste", "ass", "note", "operatore", "data", "azioni"];
+const KEY_OF = Object.fromEntries(COLS.map((c, i) => [c, COL_KEYS[i]]));
 /** Column headings as printed, in Rome's order. */
 const PRINT_COLS = COLS.filter((c) => !SCREEN_ONLY.includes(c)).map((c) => ROME_LABEL[c] || c);
 
@@ -1419,8 +1604,9 @@ function selectOptions(names, current) {
   return out;
 }
 
-// Trailing cell of day/total rows: spans the screen-only columns (hidden in print).
-const NP_TAIL = `<td class="np" colspan="${COLS.length - PRINT_COLS.length}"></td>`;
+// Day, empty and total rows: an empty cell under N., and a trailing cell that spans the other screen-only columns.
+const NP_HEAD = '<td class="np" data-c="numero"></td>';
+const NP_TAIL = `<td class="np tail" colspan="${SCREEN_ONLY.length - 1}"></td>`;
 
 /** @param {string} rete @returns {string|null} */
 function reteBucket(rete) {
@@ -1619,10 +1805,10 @@ function renderCollaudo(w, rows, generated, trips = []) {
     const tripHead = tripsOn.length ? ` <span class="trip">Trasferta: ${esc(tripsOn.join(" · "))}</span>` : "";
     // One <tbody> per day: the page collapses a day by its data-day; the header button toggles it.
     const count = dayRows.length ? `<span class="dn scr">${dayRows.length}</span>` : "";
-    body.push(`<tr class="day"><td colspan="${PRINT_COLS.length}"><button type="button" class="dt" data-day="${d}" aria-expanded="true">` +
+    body.push(`<tr class="day">${NP_HEAD}<td colspan="${PRINT_COLS.length}"><button type="button" class="dt" data-day="${d}" aria-expanded="true">` +
       `${CHEVRON}<span class="dl">${esc(fmtDay(d))}</span>${count}</button>${tripHead}</td>${NP_TAIL}</tr>`);
     if (!dayRows.length) {
-      body.push(`<tr class="empty"><td colspan="${PRINT_COLS.length}">Nessuna registrazione</td>${NP_TAIL}</tr>`);
+      body.push(`<tr class="empty">${NP_HEAD}<td class="el" colspan="${PRINT_COLS.length}">Nessuna registrazione</td>${NP_TAIL}</tr>`);
       groups.push(`<tbody class="dg vuoto" data-day="${d}">\n${body.join("\n")}\n</tbody>`);
       continue;
     }
@@ -1630,10 +1816,14 @@ function renderCollaudo(w, rows, generated, trips = []) {
     for (const r of dayRows) {
       const cat = String(r.categoria || "").toLowerCase();
       if (cat in dayTot) dayTot[cat] += 1;
-      const k = (c) => `<td class="k">${cat === c ? MARK : ""}</td>`;
+      const k = (c, key) => `<td class="k" data-c="${key}">${cat === c ? MARK : ""}</td>`;
+      const KEY = { tappeto: "tappeti", grezzo: "grezzi", intervista: "interviste" };
       const ed = (col, cls, shown, value) =>
-        `<td class="ed${cls ? " " + cls : ""}" data-f="${EDIT_FIELDS[col].api}" data-v="${esc(value)}">${shown}</td>`;
-      body.push(`<tr class="r" data-id="${esc(r.record_id)}">` +
+        `<td class="ed${cls ? " " + cls : ""}" data-c="${KEY[col] || col}" data-f="${EDIT_FIELDS[col].api}" data-v="${esc(value)}">${shown}</td>`;
+      const num = r.numero == null ? "" : esc(r.numero);
+      body.push(`<tr class="r" data-id="${esc(r.record_id)}" data-n="${num}">` +
+        // The line number is also the row's menu (move to a date, duplicate, cancel): a button, so the keyboard reaches it.
+        `<td class="np nc" data-c="numero"><button type="button" class="nm" data-act="menu" title="Riga ${num}: azioni" aria-haspopup="menu">${num}</button></td>` +
         // Reads "Tappeto <Titolo>" from the cutover (titoloShown); edits start from the stored value.
         ed("titolo", "", esc(titoloShown(r)), r.titolo) +
         ed("giornalista", "nowrap", esc(r.giornalista), r.giornalista) +
@@ -1642,24 +1832,25 @@ function renderCollaudo(w, rows, generated, trips = []) {
         ed("richiedente", "", esc(richiedenteShown(r)), [r.richiedente, r.edizione_del ? delLabel(String(r.edizione_del)) : ""].filter(Boolean).join(" ")) +
         ed("rete", "nowrap", esc(r.rete), r.rete) +
         ed("durata", "nowrap", esc(formatDurata(r.durata)), formatDurata(r.durata)) +
-        k("pezzo") + k("radio") + k("live") +
+        k("pezzo", "servizi") + k("radio", "radio") + k("live", "live") +
         ed("mezzo", "nowrap", esc(r.mezzo), r.mezzo) +
         ed("tappeto", "k", cat === "tappeto" ? MARK : "", cat === "tappeto" ? "true" : "false") +
         ed("grezzo", "k", cat === "grezzo" ? MARK : "", cat === "grezzo" ? "true" : "false") +
         ed("intervista", "k", cat === "intervista" ? MARK : "", cat === "intervista" ? "true" : "false") +
-        `<td class="k np">X</td>` +
+        `<td class="k np" data-c="ass">X</td>` +
         ed("note", "np notec", esc(r.note), r.note == null ? "" : r.note) +
         ed("operatore", "nowrap np", esc(r.operatore), r.operatore) +
         ed("data", "nowrap np", esc(shortDate(String(r.data))), r.data) +
-        '<td class="np act"><button type="button" class="ic" data-act="void" title="Annulla registrazione" aria-label="Annulla registrazione">✕</button>' +
+        '<td class="np act" data-c="azioni"><button type="button" class="ic" data-act="void" title="Annulla registrazione" aria-label="Annulla registrazione">✕</button>' +
         '<span class="rowerr" role="alert"></span></td>' +
         "</tr>");
     }
     const dd = new Date(d + "T00:00:00Z");
-    body.push(`<tr class="tot"><td colspan="5">Totale ${esc(dayName((dd.getUTCDay() + 6) % 7).toLowerCase())} ${dd.getUTCDate()} ` +
+    body.push(`<tr class="tot">${NP_HEAD}<td class="tl" colspan="5">Totale ${esc(dayName((dd.getUTCDay() + 6) % 7).toLowerCase())} ${dd.getUTCDate()} ` +
       `(${dayRows.length} registrazioni)</td>` +
-      `<td class="k">${dayTot.pezzo}</td><td class="k">${dayTot.radio}</td><td class="k">${dayTot.live}</td>` +
-      `<td></td><td class="k">${dayTot.tappeto}</td><td class="k">${dayTot.grezzo}</td><td class="k">${dayTot.intervista}</td>${NP_TAIL}</tr>`);
+      `<td class="k" data-c="servizi">${dayTot.pezzo}</td><td class="k" data-c="radio">${dayTot.radio}</td><td class="k" data-c="live">${dayTot.live}</td>` +
+      `<td data-c="mezzo"></td><td class="k" data-c="tappeti">${dayTot.tappeto}</td><td class="k" data-c="grezzi">${dayTot.grezzo}</td>` +
+      `<td class="k" data-c="interviste">${dayTot.intervista}</td>${NP_TAIL}</tr>`);
     groups.push(`<tbody class="dg" data-day="${d}">\n${body.join("\n")}\n</tbody>`);
   }
 
@@ -1670,8 +1861,10 @@ function renderCollaudo(w, rows, generated, trips = []) {
   const extra = counter(t.trasferte, "Trasferte");
   const head = COLS.map((c) => {
     const cls = [CHECK_COLS.includes(c) ? "k" : "", SCREEN_ONLY.includes(c) ? "np" : ""].filter(Boolean).join(" ");
-    const label = ROME_LABEL[c] ? `<span class="scr">${c}</span><span class="prn">${ROME_LABEL[c]}</span>` : c;
-    return `<th${cls ? ` class="${cls}"` : ""}>${label}</th>`;
+    const scr = SHORT_LABEL[c] || c, prn = ROME_LABEL[c] || c;
+    const label = scr !== prn ? `<span class="scr">${scr}</span><span class="prn">${prn}</span>` : c;
+    const tip = SHORT_LABEL[c] ? ` title="${c}"` : c === "N." ? ' title="Numero di riga"' : "";
+    return `<th${cls ? ` class="${cls}"` : ""} data-c="${KEY_OF[c]}"${tip}>${label}</th>`;
   }).join("");
   const titleWeek = `Settimana ${w.week} (${fmtRange(days[0], days[6])})`;
   const g = new Date(generated + "T00:00:00Z");
@@ -1716,6 +1909,8 @@ ${groups.join("\n")}
   // The sticky table header sits right under the sticky header + tools block.
   function syncTop() { document.documentElement.style.setProperty("--toph", $("top").offsetHeight + "px"); }
   window.addEventListener("resize", syncTop);
+  // The tools bar can gain a line (a button appears, a long message): the sticky heading must follow it.
+  try { new ResizeObserver(syncTop).observe($("top")); } catch (e) { /* older browsers: the resize event above */ }
 
   function load(w, note) {
     current = w;
@@ -1766,11 +1961,12 @@ ${groups.join("\n")}
     var doc = $("doc"), all = function (sel, fn) { Array.prototype.forEach.call(doc.querySelectorAll(sel), fn); };
     all("thead th", function (th) {
       var sc = th.querySelector(".scr");
+      if (th.title) th.title = t(th.title);
       if (sc) { sc.textContent = t(sc.textContent); return; }
       if (th.classList.contains("np")) th.textContent = t(th.textContent); else both(th, t(th.textContent));
     });
-    all("tr.empty td:first-child", function (td) { both(td, t(td.textContent)); });
-    all("tr.tot td:first-child", function (td) {
+    all("tr.empty td.el", function (td) { both(td, t(td.textContent)); });
+    all("tr.tot td.tl", function (td) {
       var m = /^Totale (.+) \((\d+) registrazioni\)$/.exec(td.textContent);
       if (m) both(td, tf("Totale {0} ({1} registrazioni)", enDates(m[1]), m[2]));
     });
@@ -1787,6 +1983,7 @@ ${groups.join("\n")}
       if (m) both(el, tf("Generato il {0} dal sistema RAI NYC Servizi · fonte: database · {1} registrazioni · {2}", enDates(m[1]), m[2], m[3]));
     });
     all("button.ic", function (b) { b.title = t(b.title); b.setAttribute("aria-label", t(b.getAttribute("aria-label"))); });
+    all("button.nm", function (b) { b.title = tf("Riga {0}: azioni", b.textContent); });
     all("section.counters", function (el) { el.setAttribute("aria-label", t(el.getAttribute("aria-label"))); });
     // Stored in Italian. English on screen only; the print span keeps Telefono / Giornalista.
     all('td.ed[data-f="mezzo"], td.ed[data-f="operatore"]', function (td) {
@@ -1795,10 +1992,268 @@ ${groups.join("\n")}
     });
   }
   function paintSheet() {
+    closeMenu();
     $("doc").innerHTML = renderCollaudo(sheet.w, sheet.rows, sheet.gen, sheet.trips); // always Italian: the print is Rome's; localizeSheet adds the English screen copy
     localizeSheet();
+    if (!printing) applyCols(); // this browser's column order and widths: screen only
     $("doc").appendChild(paintAnnullate(sheet.annullate));
   }
+
+  // ---- columns: slim, resizable, movable (Marco, 2026-11-17) ----
+  // Each column has a share of the sheet's width; the shares always add up to the whole width, so the sheet never
+  // scrolls sideways. Drag a heading's right edge to resize (the next column gives or takes the space); drag a heading
+  // to move the column. Order and widths are saved in this browser (rainyc.collaudo.colonne); «Ripristina colonne»
+  // goes back to the defaults. renderCollaudo always gives Rome's order: applyCols moves the cells by their data-c.
+  var COL_W = { numero: 3.8, titolo: 18, giornalista: 8, richiedente: 11, rete: 6.5, durata: 7, servizi: 2.6, radio: 2.6, live: 2.8,
+    mezzo: 6.3, tappeti: 2.6, grezzi: 2.6, interviste: 2.6, ass: 2.6, note: 6, operatore: 8, data: 4.8, azioni: 2.9 };
+  var COL_MIN = 1.8, COLS_KEY = "rainyc.collaudo.colonne", printing = false;
+  function colState() {
+    var st = { o: COL_KEYS.slice(), w: Object.assign({}, COL_W), custom: false }, saved = null;
+    try { saved = JSON.parse(localStorage.getItem(COLS_KEY) || "null"); } catch (e) { saved = null; }
+    if (!saved || typeof saved !== "object") return st;
+    if (Array.isArray(saved.o) && saved.o.length === COL_KEYS.length && COL_KEYS.every(function (k) { return saved.o.indexOf(k) >= 0; })) st.o = saved.o.slice();
+    if (saved.w && typeof saved.w === "object") COL_KEYS.forEach(function (k) { var v = Number(saved.w[k]); if (v >= COL_MIN && v <= 60) st.w[k] = v; });
+    st.custom = true;
+    return st;
+  }
+  function colSave(st) { try { localStorage.setItem(COLS_KEY, JSON.stringify({ o: st.o, w: st.w })); } catch (e) { /* storage blocked: this view only */ } }
+  function sheetTable() { return $("doc").querySelector(".table-wrap > table"); }
+  function placeCells(tr, order) {
+    var by = {};
+    Array.prototype.forEach.call(tr.children, function (c) { by[c.getAttribute("data-c")] = c; });
+    order.forEach(function (k) { if (by[k]) tr.appendChild(by[k]); });
+  }
+  function applyCols() {
+    var tb = sheetTable(); if (!tb) return;
+    var st = colState(), sum = 0;
+    st.o.forEach(function (k) { sum += st.w[k]; });
+    var cg = document.createElement("colgroup");
+    st.o.forEach(function (k) { var c = document.createElement("col"); c.setAttribute("data-c", k); c.style.width = (st.w[k] / sum * 100).toFixed(3) + "%"; cg.appendChild(c); });
+    tb.insertBefore(cg, tb.firstChild);
+    var moved = st.o.join() !== COL_KEYS.join();
+    if (moved) {
+      placeCells(tb.querySelector("thead tr"), st.o);
+      Array.prototype.forEach.call(tb.querySelectorAll("tr.r"), function (tr) { placeCells(tr, st.o); });
+      // The day's total: its label spans Rome's first five columns. With the columns moved, the label sits under
+      // Titolo and each count under its own column.
+      Array.prototype.forEach.call(tb.querySelectorAll("tr.tot"), function (tr) {
+        var lab = tr.querySelector("td.tl"), tail = tr.querySelector("td.tail");
+        if (lab) { lab.removeAttribute("colspan"); lab.setAttribute("data-c", "titolo"); lab.title = lab.textContent; }
+        if (tail) tail.remove();
+        st.o.forEach(function (k) {
+          if (tr.querySelector('td[data-c="' + k + '"]')) return;
+          var td = document.createElement("td"); td.setAttribute("data-c", k);
+          if (["ass", "note", "operatore", "data", "azioni"].indexOf(k) >= 0) td.className = "np";
+          tr.appendChild(td);
+        });
+        placeCells(tr, st.o);
+      });
+    }
+    Array.prototype.forEach.call(tb.querySelectorAll("thead th"), function (th) {
+      var rz = document.createElement("span"); rz.className = "rz"; rz.setAttribute("aria-hidden", "true"); th.appendChild(rz);
+    });
+    // A cell cut with «…» says its full text on hover.
+    Array.prototype.forEach.call(tb.querySelectorAll("tr.r td.ed:not(.k)"), function (td) { var sc = td.querySelector(".scr"), tx = (sc || td).textContent; if (!td.title && tx) td.title = tx; });
+    $("cols-reset").hidden = !st.custom;
+  }
+  $("cols-reset").addEventListener("click", function () {
+    try { localStorage.removeItem(COLS_KEY); } catch (e) { /* ignore */ }
+    if (sheet && sheetTable()) { paintSheet(); applyFold(); }
+    setMsg("Colonne ripristinate.");
+  });
+  // One pointer gesture on a heading: from its right edge it resizes, from anywhere else it moves the column.
+  var colDrag = null;
+  $("doc").addEventListener("pointerdown", function (ev) {
+    if (ev.button !== 0 || !ev.target.closest) return;
+    var th = ev.target.closest(".table-wrap > table > thead th"); if (!th) return;
+    var tb = sheetTable(), key = th.getAttribute("data-c"), st = colState();
+    if (ev.target.classList.contains("rz")) {
+      var i = st.o.indexOf(key), other = st.o[i + 1] || st.o[i - 1], sum = 0;
+      st.o.forEach(function (k) { sum += st.w[k]; });
+      colDrag = { kind: "size", st: st, key: key, other: other, x: ev.clientX, a: st.w[key], b: st.w[other], sum: sum, width: tb.getBoundingClientRect().width, rz: ev.target, sign: st.o[i + 1] ? 1 : -1 };
+      ev.target.classList.add("on");
+    } else {
+      colDrag = { kind: "move", st: st, key: key, x: ev.clientX, th: th, on: false, to: null };
+    }
+    try { th.setPointerCapture(ev.pointerId); } catch (e) { /* older browsers */ }
+    ev.preventDefault();
+  });
+  function colAt(x) {
+    var ths = sheetTable().querySelectorAll("thead th"), hit = null;
+    Array.prototype.forEach.call(ths, function (th) {
+      var r = th.getBoundingClientRect();
+      if (x >= r.left && x < r.right) hit = { key: th.getAttribute("data-c"), th: th, after: x > r.left + r.width / 2 };
+    });
+    return hit;
+  }
+  function clearDrop() { Array.prototype.forEach.call($("doc").querySelectorAll("th.dropl, th.dropr"), function (th) { th.classList.remove("dropl", "dropr"); }); }
+  $("doc").addEventListener("pointermove", function (ev) {
+    var d = colDrag; if (!d) return;
+    if (d.kind === "size") {
+      var delta = (ev.clientX - d.x) / d.width * d.sum * d.sign, total = d.a + d.b;
+      var a = Math.min(Math.max(d.a + delta, COL_MIN), total - COL_MIN);
+      d.st.w[d.key] = a; d.st.w[d.other] = total - a;
+      [d.key, d.other].forEach(function (k) { var c = sheetTable().querySelector('col[data-c="' + k + '"]'); if (c) c.style.width = (d.st.w[k] / d.sum * 100).toFixed(3) + "%"; });
+      return;
+    }
+    if (!d.on && Math.abs(ev.clientX - d.x) < 8) return;
+    d.on = true; d.th.classList.add("drag"); clearDrop();
+    var hit = colAt(ev.clientX); d.to = hit && hit.key !== d.key ? hit : null;
+    if (d.to) d.to.th.classList.add(d.to.after ? "dropr" : "dropl");
+  });
+  function colEnd(ev) {
+    var d = colDrag; if (!d) return; colDrag = null;
+    if (d.kind === "size") { d.rz.classList.remove("on"); if (ev.type === "pointerup") { d.st.w[d.key] = Math.round(d.st.w[d.key] * 100) / 100; d.st.w[d.other] = Math.round(d.st.w[d.other] * 100) / 100; colSave(d.st); $("cols-reset").hidden = false; } else { paintSheet(); applyFold(); } return; }
+    d.th.classList.remove("drag"); clearDrop();
+    if (ev.type !== "pointerup" || !d.on || !d.to) return;
+    var o = d.st.o.filter(function (k) { return k !== d.key; });
+    o.splice(o.indexOf(d.to.key) + (d.to.after ? 1 : 0), 0, d.key);
+    d.st.o = o; colSave(d.st);
+    paintSheet(); applyFold();
+  }
+  $("doc").addEventListener("pointerup", colEnd);
+  $("doc").addEventListener("pointercancel", colEnd);
+  // Printing (the button, Ctrl+P, or a PDF): Rome's sheet, in Rome's order and widths. Back to this browser's
+  // columns when the print is done.
+  function setPrinting(on) {
+    if (printing === on) return; printing = on;
+    if (sheet && sheetTable()) { paintSheet(); applyFold(); }
+  }
+  window.addEventListener("beforeprint", function () { setPrinting(true); });
+  window.addEventListener("afterprint", function () { setPrinting(false); });
+  try { window.matchMedia("print").addEventListener("change", function (ev) { setPrinting(ev.matches); }); } catch (e) { /* older browsers: the two events above */ }
+
+  // ---- the row's menu: right-click a row, or click its number (Marco, 2026-11-17) ----
+  var menuId = null, menuY = 0;
+  function zoomNow() { return parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--z")) || 1; }
+  function dayDiff(a, b) { return Math.round((Date.parse(b + "T12:00:00Z") - Date.parse(a + "T12:00:00Z")) / 86400000); }
+  function dayShort(ymd) { var d = new Date(ymd + "T12:00:00Z"); return dayName((d.getUTCDay() + 6) % 7).toLowerCase() + " " + d.getUTCDate() + "/" + (d.getUTCMonth() + 1); }
+  function rowData(id) { return sheet ? sheet.rows.filter(function (r) { return r.record_id === id; })[0] : null; }
+  function closeMenu() {
+    var m = $("rmenu"); if (!m || m.hidden) return;
+    m.hidden = true; m.textContent = "";
+    var tr = menuId && rowOf(menuId); if (tr) tr.classList.remove("menu");
+    menuId = null;
+  }
+  function openMenu(tr, x, y) {
+    closeMenu();
+    var id = tr.getAttribute("data-id"), r = rowData(id); if (!r) return;
+    var m = $("rmenu"); menuId = id; menuY = window.pageYOffset; tr.classList.add("menu");
+    var hd = document.createElement("div"); hd.className = "hd";
+    var b = document.createElement("b"); b.textContent = "N. " + (r.numero == null ? "" : r.numero);
+    hd.appendChild(b); hd.appendChild(document.createTextNode(" · " + titoloShown(r))); m.appendChild(hd);
+    function item(label, fn, cls) {
+      var bt = document.createElement("button"); bt.type = "button"; bt.className = "mi" + (cls ? " " + cls : ""); bt.setAttribute("role", "menuitem"); bt.textContent = label;
+      bt.addEventListener("click", function () { closeMenu(); fn(); });
+      m.appendChild(bt); return bt;
+    }
+    function sep() { var s = document.createElement("div"); s.className = "sp"; m.appendChild(s); }
+    var prev = addDays(r.data, -1), next = addDays(r.data, 1);
+    var first = item(tf("Sposta al giorno prima ({0})", dayShort(prev)), function () { moveRow(id, prev); });
+    item(tf("Sposta al giorno dopo ({0})", dayShort(next)), function () { moveRow(id, next); });
+    var dt = document.createElement("div"); dt.className = "dt";
+    var inp = document.createElement("input"); inp.type = "date"; inp.value = r.data; inp.setAttribute("aria-label", t("Sposta a un'altra data"));
+    var go = document.createElement("button"); go.type = "button"; go.className = "btn"; go.textContent = t("Sposta");
+    function goDate() { var v = inp.value; closeMenu(); if (v) moveRow(id, v); }
+    go.addEventListener("click", goDate);
+    inp.addEventListener("keydown", function (ev) { if (ev.key === "Enter") { ev.preventDefault(); goDate(); } });
+    dt.appendChild(inp); dt.appendChild(go); m.appendChild(dt);
+    sep();
+    item(t("Modifica il titolo"), function () { var td = tr.querySelector('td[data-f="subject"]'); if (td) startEdit(td); });
+    item(t("Duplica la riga"), function () { duplicateRow(id); });
+    item(t("Copia il numero"), function () {
+      var n = String(r.numero == null ? "" : r.numero);
+      try { navigator.clipboard.writeText(n).then(function () { setMsg(function () { return tf("Numero {0} copiato.", n); }); }, function () { setMsg(function () { return tf("Riga N. {0}", n); }); }); } catch (e) { setMsg(function () { return tf("Riga N. {0}", n); }); }
+    });
+    sep();
+    item(t("Annulla registrazione"), function () { voidRow(tr); }, "bad");
+    m.hidden = false;
+    var z = zoomNow(), w = m.offsetWidth, h = m.offsetHeight, vw = window.innerWidth / z, vh = window.innerHeight / z;
+    m.style.left = Math.max(8, Math.min(x / z, vw - w - 8)) + "px";
+    m.style.top = Math.max(8, Math.min(y / z, vh - h - 8)) + "px";
+    first.focus();
+  }
+  $("doc").addEventListener("contextmenu", function (ev) {
+    if (!ev.target.closest || ev.target.closest(".edin")) return; // an open editor keeps the browser's own menu (paste)
+    var tr = ev.target.closest("tr.r"); if (!tr || busy) return;
+    ev.preventDefault();
+    openMenu(tr, ev.clientX, ev.clientY);
+  });
+  $("rmenu").addEventListener("keydown", function (ev) {
+    if (ev.key === "Escape") { ev.preventDefault(); var tr = menuId && rowOf(menuId), nb = tr && tr.querySelector("button.nm"); closeMenu(); if (nb) nb.focus(); return; }
+    if (ev.key !== "ArrowDown" && ev.key !== "ArrowUp") return;
+    if (ev.target.tagName === "INPUT") return;
+    var its = Array.prototype.slice.call(this.querySelectorAll("button.mi")), i = its.indexOf(document.activeElement);
+    ev.preventDefault();
+    its[(i + (ev.key === "ArrowDown" ? 1 : its.length - 1)) % its.length].focus();
+  });
+  document.addEventListener("pointerdown", function (ev) { if (!$("rmenu").hidden && !$("rmenu").contains(ev.target)) closeMenu(); }, true);
+  // The menu goes away when the page really moves (a scroll event that only reports the position it opened at does not count).
+  window.addEventListener("scroll", function () { if (Math.abs(window.pageYOffset - menuY) > 4) closeMenu(); }, { passive: true });
+  window.addEventListener("resize", closeMenu);
+
+  // Move a row to another day. Its «del GG/MM» moves by the same number of days, so "made the day before" stays true.
+  function moveRow(id, date) {
+    var r = rowData(id); if (!r || busy || !date || date === r.data) return;
+    var patch = { delivery_date: date }, back = { delivery_date: r.data };
+    if (r.edizione_del) { patch.edizione_del = addDays(String(r.edizione_del), dayDiff(String(r.data), date)); back.edizione_del = r.edizione_del; }
+    setBusy(true);
+    post("/api/update", { id: id, patch: patch }).then(function (res) {
+      setBusy(false);
+      if (!res) return;
+      if (res.status !== 200) { rowError(id, errText(res)); return; }
+      pushUndo({ kind: "patch", id: id, patch: back });
+      var n = r.numero, wk = formatWeek(isoWeekOf(date)), here = wk === formatWeek(current);
+      load(current, function () { return here ? tf("Riga N. {0} spostata a {1}.", n, dayShort(date)) : tf("Riga N. {0} spostata a {1} (settimana {2}).", n, dayShort(date), wk); })
+        .then(function () { if (here) flashRow(n); });
+    });
+  }
+  // A copy of the row with a new number: the same piece for another edition, then edit the Richiedente.
+  function newUuid() {
+    if (window.crypto && crypto.randomUUID) return crypto.randomUUID();
+    return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) { var v = Math.random() * 16 | 0; return (c === "x" ? v : (v & 3 | 8)).toString(16); });
+  }
+  function duplicateRow(id) {
+    var r = rowData(id); if (!r || busy) return;
+    var cat = String(r.categoria || "");
+    var body = { client_record_id: newUuid(), delivery_date: r.data, edizione_del: r.edizione_del || null, journalist: r.giornalista, subject: r.titolo, rete: r.rete,
+      richiedente: r.richiedente || null, duration_text: r.durata || null, mezzo: r.mezzo, operator: r.operatore, notes: r.note || null,
+      tappeto: cat === "tappeto", grezzo: cat === "grezzo", intervista: cat === "intervista", trasferta: false };
+    setBusy(true);
+    post("/api/submit", body).then(function (res) {
+      setBusy(false);
+      if (!res) return;
+      if (res.status !== 200) { rowError(id, errText(res)); return; }
+      pushUndo({ kind: "new", id: res.body.id });
+      var n = res.body.numero;
+      load(current, function () { return tf("Riga duplicata: nuova riga N. {0}.", n); }).then(function () { flashRow(n); });
+    });
+  }
+  // Bring a row under the header and light it for a moment.
+  function flashRow(n) {
+    var tr = $("doc").querySelector('tr.r[data-n="' + String(n).replace(/[^0-9]/g, "") + '"]'); if (!tr) return false;
+    var g = tr.closest("tbody.dg");
+    if (g && g.classList.contains("chiuso")) { g.classList.remove("chiuso"); var b = g.querySelector("button.dt"); if (b) b.setAttribute("aria-expanded", "true"); saveFold(); syncFoldBtn(); }
+    var y = tr.getBoundingClientRect().top + window.pageYOffset - $("top").offsetHeight - 90;
+    window.scrollTo({ top: Math.max(0, y), behavior: "smooth" });
+    tr.classList.remove("hit"); void tr.offsetWidth; tr.classList.add("hit");
+    return true;
+  }
+  // «N.» in the tools bar: a line number from any week. The page opens its week and lights the row.
+  function findNumero() {
+    var n = $("num").value.trim(); if (!n) return;
+    if (!/^\d{1,9}$/.test(n)) { setMsg("Numero di riga non valido.", true); return; }
+    setMsg("Ricerca…");
+    api("/api/find?numero=" + n).then(function (r) {
+      if (r.status !== 200) { setMsg((r.body && r.body.error) || "Errore.", true); return; }
+      var w = parseWeek(r.body.week), off = r.body.annullata;
+      load(w, function () { return off ? tf("La riga N. {0} è annullata: è nell'elenco in fondo.", n) : tf("Riga N. {0}: {1}.", n, dayShort(r.body.data)); }).then(function () {
+        if (!off) { flashRow(n); return; }
+        var a = $("doc").querySelector('tr[data-ann="' + r.body.record_id + '"]'); if (a) a.scrollIntoView({ block: "center", behavior: "smooth" });
+      });
+    }, function (e) { if (e.kind === "auth") { authLost(); return; } setMsg(e.message, true); });
+  }
+  $("num").addEventListener("keydown", function (ev) { if (ev.key === "Enter") { ev.preventDefault(); ev.stopPropagation(); findNumero(); } });
   // The week's voided rows under the sheet (screen only, never printed or e-mailed): who cancelled what, when, why,
   // and «Ripristina» on each (Marco, 2026-10-19: every input logged, every cancellation undoable).
   function paintAnnullate(list) {
@@ -1808,7 +2263,7 @@ ${groups.join("\n")}
     var hint = document.createElement("p"); hint.className = "hint"; hint.textContent = t("Niente viene cancellato: ogni annullamento resta nel registro e da qui si può ripristinare."); sec.appendChild(hint);
     if (!list.length) { var none = document.createElement("p"); none.className = "none"; none.textContent = t("Nessuna registrazione annullata in questa settimana."); sec.appendChild(none); return sec; }
     var tb = document.createElement("table"), thead = document.createElement("thead"), trh = document.createElement("tr");
-    [t("Data"), t("Giornalista"), t("Titolo"), t("Rete · Richiedente"), t("Annullata"), ""].forEach(function (x) { var th = document.createElement("th"); th.textContent = x; trh.appendChild(th); });
+    ["N.", t("Data"), t("Giornalista"), t("Titolo"), t("Rete · Richiedente"), t("Annullata"), ""].forEach(function (x) { var th = document.createElement("th"); th.textContent = x; trh.appendChild(th); });
     thead.appendChild(trh); tb.appendChild(thead);
     var body = document.createElement("tbody");
     list.forEach(function (r) {
@@ -1817,7 +2272,7 @@ ${groups.join("\n")}
       var whenTx = when ? String(when.getDate()).padStart(2, "0") + "/" + String(when.getMonth() + 1).padStart(2, "0") + " " + String(when.getHours()).padStart(2, "0") + ":" + String(when.getMinutes()).padStart(2, "0") : "";
       var who = (r.annullata_da || "").replace(/@rainyc\.nyc$/, "");
       var ann = whenTx + (who ? " · " + who : "") + (r.motivo ? " · " + r.motivo : "");
-      [[String(r.data || "").slice(8, 10) + "/" + String(r.data || "").slice(5, 7), ""], [r.giornalista, ""], [r.titolo, "tt"], [[r.rete, r.richiedente || (String(r.categoria || "") === "grezzo" ? "Grezzo" : "")].filter(Boolean).join(" · "), ""], [ann, ""]].forEach(function (c) {
+      [[r.numero == null ? "" : String(r.numero), "n"], [String(r.data || "").slice(8, 10) + "/" + String(r.data || "").slice(5, 7), ""], [r.giornalista, ""], [r.titolo, "tt"], [[r.rete, r.richiedente || (String(r.categoria || "") === "grezzo" ? "Grezzo" : "")].filter(Boolean).join(" · "), ""], [ann, ""]].forEach(function (c) {
         var td = document.createElement("td"); if (c[1]) td.className = c[1]; td.textContent = c[0] || ""; tr.appendChild(td);
       });
       var ta = document.createElement("td"); ta.className = "act";
@@ -2008,6 +2463,7 @@ ${groups.join("\n")}
     if (busy || !undoStack.length) return;
     var a = undoStack[undoStack.length - 1], req;
     if (a.kind === "void") req = post("/api/unvoid", { id: a.id });
+    else if (a.kind === "new") req = post("/api/void", { id: a.id, reason: "duplicato annullato dal collaudo" });
     else if (a.kind === "patch") req = post("/api/update", { id: a.id, patch: a.patch });
     else { var patch = {}; patch[a.field] = a.old; req = post("/api/update", { id: a.id, patch: patch }); }
     setBusy(true);
@@ -2016,7 +2472,7 @@ ${groups.join("\n")}
       if (!r) return;
       if (r.status !== 200) { setMsg(errText(r), true); return; }
       undoStack.pop(); syncUndo();
-      load(current, a.kind === "void" ? "Registrazione ripristinata." : "Modifica annullata.");
+      load(current, a.kind === "void" ? "Registrazione ripristinata." : a.kind === "new" ? "Riga duplicata annullata." : "Modifica annullata.");
     });
   }
 
@@ -2028,7 +2484,8 @@ ${groups.join("\n")}
     if (ev.target.closest("#retry")) { if (current) load(current); return; }
     var b = ev.target.closest("button[data-act]");
     if (b) {
-      if (b.getAttribute("data-act") === "void") voidRow(b.closest("tr.r"));
+      if (b.getAttribute("data-act") === "menu") { var br = b.getBoundingClientRect(); openMenu(b.closest("tr.r"), br.left, br.bottom + 2); }
+      else if (b.getAttribute("data-act") === "void") voidRow(b.closest("tr.r"));
       else if (b.getAttribute("data-act") === "restore") restoreRow(b.getAttribute("data-id"));
       return;
     }
@@ -2046,6 +2503,7 @@ ${groups.join("\n")}
 
   $("tools").addEventListener("submit", function (ev) {
     ev.preventDefault();
+    if (document.activeElement === $("num") && $("num").value.trim()) { findNumero(); return; }
     var w = parseWeek($("week").value);
     if (!w) { setMsg("Settimana non valida: usare la forma 2026-W41.", true); return; }
     load(w);

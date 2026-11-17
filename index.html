@@ -242,6 +242,13 @@ input:focus-visible, select:focus-visible { outline:none; border-color:var(--foc
 .mdl .ph { color:var(--bad); }
 .mdl p { margin:0 0 16px; font-size:16px; line-height:1.45; font-weight:600; }
 .mdl .row { display:flex; justify-content:flex-end; gap:8px; }
+/* «Già registrato»: the rows already filed for the same edition, then Annulla / Registra comunque. */
+.mdl.dup { max-width:min(560px, calc(100vw / var(--z, 1) - 32px)); }
+.mdl.dup .box { border-top-color:var(--warn); } .mdl.dup .ph { color:var(--warn); }
+.mdl.dup ul { list-style:none; margin:0 0 14px; padding:0; border:1px solid var(--line); border-radius:6px; max-height:min(40vh, 260px); overflow:auto; }
+.mdl.dup li { padding:8px 10px; border-bottom:1px solid var(--line); font-size:14px; line-height:1.4; } .mdl.dup li:last-child { border-bottom:0; }
+.mdl.dup li b { font-family:var(--mono); font-weight:700; } .mdl.dup li .who { display:block; color:var(--dim); font-size:12.5px; }
+.mdl.dup .q { font-size:14px; font-weight:500; color:var(--dim); margin:0 0 14px; }
 /* Confetti canvas: a short burst when an entry of this session reaches the server; removed when done. */
 .cfx { position:fixed; inset:0; z-index:70; pointer-events:none; }
 @media print { .mdl, .cfx, .drop { display:none !important; } }
@@ -405,7 +412,7 @@ kbd { font:600 11px/1 var(--mono); padding:2px 5px; border:1px solid var(--line2
 </head>
 <body>
 <header class="appbar">
-  <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-11-13 18:38 UTC · af24318"><span class="mk">Rai · NY</span><span id="t">RAI NYC Servizi</span><span class="pg" data-i18n>Registrazione</span></div>
+  <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-11-17 22:57 UTC · 0393c48"><span class="mk">Rai · NY</span><span id="t">RAI NYC Servizi</span><span class="pg" data-i18n>Registrazione</span></div>
   <nav class="hright" id="hright" aria-label="Pagine">
     <span class="pend" id="pend" hidden></span>
     <button type="button" class="icbtn lang" id="tour-btn" hidden data-i18n-attr="aria-label|title" aria-label="Tutorial: come si compila una registrazione" title="Tutorial: come si compila una registrazione">?</button>
@@ -568,6 +575,18 @@ kbd { font:600 11px/1 var(--mono); padding:2px 5px; border:1px solid var(--line2
     </div>
   </div>
 </dialog>
+<dialog class="mdl dup" id="dup" aria-labelledby="dup-h" aria-describedby="dup-p">
+  <div class="box">
+    <h3 class="ph" id="dup-h" data-i18n>Già registrato</h3>
+    <p id="dup-p"></p>
+    <ul id="dup-list"></ul>
+    <p class="q" data-i18n>Se è lo stesso servizio, premi Annulla. Se è un altro servizio per la stessa edizione, registralo.</p>
+    <div class="row">
+      <button type="button" class="btn pri" id="dup-no" data-i18n>Annulla</button>
+      <button type="button" class="btn" id="dup-yes" data-i18n>Registra comunque</button>
+    </div>
+  </div>
+</dialog>
 <dialog class="mdl" id="pastdate" aria-labelledby="pastdate-h" aria-describedby="pastdate-p">
   <div class="box">
     <h3 class="ph" id="pastdate-h" data-i18n>Data non di oggi</h3>
@@ -599,7 +618,7 @@ var PAGE_FORM = "./" || APP_BASE;
 var PAGE_COLLAUDO = "./collaudo.html" || APP_BASE + "/collaudo";
 var PAGE_GESTIONE = "./gestione.html" || APP_BASE + "/gestione";
 var PAGE_MENSILE = "./mensile.html" || APP_BASE + "/mensile";
-var BUILD = "2026-11-13 18:38 UTC · af24318"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
+var BUILD = "2026-11-17 22:57 UTC · 0393c48"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
 // Every place the project lives (shown in the admin's header menu and on the Gestione page).
 var LINKS = [
   ["Pagine pubbliche", "https://rainycservizi.github.io/rainyc-servizi-app/", "GitHub Pages: il sito di prova principale"],
@@ -656,6 +675,10 @@ var I18N = { en: {
   "Data non di oggi": "Date is not today",
   "La data è {0}, non oggi ({1}). Vuoi registrare lo stesso?": "The date is {0}, not today ({1}). Record it anyway?",
   "Sì, registra su questa data": "Yes, record on this date",
+  "Controllo: già registrato?": "Checking: already recorded?", "Non registrato: era già nel collaudo.": "Not recorded: it was already in the collaudo.",
+  "Già registrato": "Already recorded", "Registra comunque": "Record anyway", "in invio": "sending",
+  "{0} di {1} è già registrato:": "{0} by {1} is already recorded:", "{0} di {1} è già registrato {2} volte:": "{0} by {1} is already recorded {2} times:",
+  "Se è lo stesso servizio, premi Annulla. Se è un altro servizio per la stessa edizione, registralo.": "If it is the same piece, press Cancel. If it is another piece for the same edition, record it.",
   "Giornalista": "Journalist", "Argomento / Titolo": "Topic / Title", "Rete": "Network",
   "Richiesta": "Request", "Richiedente": "Requester", "(edizione o programma; anche testo libero)": "(edition or programme; free text also allowed)",
   "(edizione; anche testo libero)": "(edition; free text also allowed)", "(programma; testo libero)": "(programme; free text)",
@@ -742,6 +765,14 @@ var I18N = { en: {
   // collaudo
   "Settimana precedente": "Previous week", "Settimana successiva": "Next week", "Settimana": "Week", "Vai": "Go",
   "Comprimi tutto": "Collapse all", "Espandi tutto": "Expand all", "Annulla ultima modifica": "Undo last change",
+  "Ripristina colonne": "Reset columns", "Colonne": "Columns", "Ripristina colonne: l'ordine e la larghezza di partenza": "Reset columns: the starting order and width", "Colonne ripristinate.": "Columns reset.",
+  "Vai alla riga con questo numero": "Go to the line with this number", "Numero di riga": "Line number", "Numero di riga non valido.": "Invalid line number.", "Ricerca…": "Searching…",
+  "Riga {0}: azioni": "Line {0}: actions", "Riga N. {0}": "Line No. {0}", "Numero {0} copiato.": "Number {0} copied.",
+  "Sposta al giorno prima ({0})": "Move to the day before ({0})", "Sposta al giorno dopo ({0})": "Move to the day after ({0})", "Sposta a un'altra data": "Move to another date", "Sposta": "Move",
+  "Modifica il titolo": "Edit the title", "Duplica la riga": "Duplicate the line", "Copia il numero": "Copy the number",
+  "Riga N. {0} spostata a {1}.": "Line No. {0} moved to {1}.", "Riga N. {0} spostata a {1} (settimana {2}).": "Line No. {0} moved to {1} (week {2}).",
+  "Riga duplicata: nuova riga N. {0}.": "Line duplicated: new line No. {0}.", "Riga duplicata annullata.": "Duplicated line cancelled.",
+  "La riga N. {0} è annullata: è nell'elenco in fondo.": "Line No. {0} is cancelled: it is in the list at the bottom.", "Riga N. {0}: {1}.": "Line No. {0}: {1}.",
   "Invia per e-mail": "Send by e-mail", "Stampa": "Print", "Accesso · collaudo settimanale": "Login · weekly report",
   "Sì": "Yes", "No": "No", "Destinatari": "Recipients", "aggiungi un indirizzo e-mail": "add an e-mail address",
   "Nuovo destinatario": "New recipient", "Aggiungi": "Add", "Invia": "Send", "Invia a {0}": "Send to {0}",
@@ -1396,6 +1427,12 @@ function todayNewYork(now) {
   return get("year") + "-" + get("month") + "-" + get("day");
 }
 
+/** The hour in New York, 0..23. */
+function hourNewYork(now) {
+  const h = new Intl.DateTimeFormat("en-US", { timeZone: "America/New_York", hour: "numeric", hour12: false }).format(now || new Date());
+  return parseInt(h, 10) % 24;
+}
+
 const MESI = ["gennaio", "febbraio", "marzo", "aprile", "maggio", "giugno", "luglio",
   "agosto", "settembre", "ottobre", "novembre", "dicembre"];
 const MESI_EN = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -1449,6 +1486,118 @@ function morningEdition(rich) {
   if (!m) return false;
   const h = Number(m[1]), min = Number(m[2] || 0);
   return h <= 14 && min < 60;
+}
+
+// ---- Rules shared by the form and the function (Marco, 2026-11-17) ----
+
+const LIVE_MEZZI = ["270", "268", "LiveU", "LiveU/270", "LiveU/268", "Eurovision"];
+/**
+ * The row's type as the database derives it: the form's switches first, then GR -> radio, a live link -> live, else pezzo.
+ * @param {{tappeto?: boolean, grezzo?: boolean, intervista?: boolean, rete?: string|null, mezzo?: string|null}} p
+ */
+function categoriaOf(p) {
+  if (p.tappeto) return "tappeto";
+  if (p.grezzo) return "grezzo";
+  if (p.intervista) return "intervista";
+  if (String(p.rete || "").toUpperCase().startsWith("GR")) return "radio";
+  return LIVE_MEZZI.includes(String(p.mezzo || "")) ? "live" : "pezzo";
+}
+
+/** "YYYY-MM-DD" plus n days. @param {string} ymd @param {number} n */
+function addDays(ymd, n) {
+  const d = new Date(ymd + "T12:00:00Z");
+  d.setUTCDate(d.getUTCDate() + n);
+  return d.toISOString().slice(0, 10);
+}
+
+const MESE_RE = "gennaio|febbraio|marzo|aprile|maggio|giugno|luglio|agosto|settembre|ottobre|novembre|dicembre";
+const DEL_RE = "(?:dell?|dall?)['’]?\\s*(\\d{1,2})(?:\\s*[\\/.\\- ]\\s*(\\d{1,2})(?!\\d)|\\s+(" + MESE_RE + "))?";
+const DEL_START = new RegExp("^" + DEL_RE + "(?:\\s*[-–:,]\\s*|\\s+)(?=\\S)", "i");
+const DEL_END = new RegExp("(?:\\s+[-–(]?\\s*)" + DEL_RE + "\\)?$", "i");
+/**
+ * «del 14/11», «dell 11 novembre», «dal 30» at the start or the end of a Titolo are the edition's day, not the title.
+ * Returns the title without them and the day they name, or null when the title has no such words. The words are
+ * read as a day only when they name the entry day or the day after it: an edition airs the same day or the next
+ * («Elezioni del 3 novembre» entered on 1/11 keeps its date; so does "dell'11 settembre" in March).
+ * @param {string} subject @param {string} data "YYYY-MM-DD"
+ * @returns {{subject: string, giorno: string}|null}
+ */
+function stripDel(subject, data) {
+  const text = String(subject == null ? "" : subject).trim();
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(String(data || ""))) return null;
+  const m = DEL_START.exec(text) || DEL_END.exec(text);
+  if (!m) return null;
+  const day = Number(m[1]);
+  const month = m[2] ? Number(m[2]) : m[3] ? MESI.indexOf(m[3].toLowerCase()) + 1 : 0;
+  let giorno = "";
+  for (let k = 0; k <= 1 && !giorno; k++) {
+    const c = addDays(data, k);
+    if (Number(c.slice(8, 10)) === day && (!month || Number(c.slice(5, 7)) === month)) giorno = c;
+  }
+  if (!giorno) return null;
+  const rest = (m.index === 0 ? text.slice(m[0].length) : text.slice(0, m.index)).trim();
+  return rest ? { subject: rest, giorno } : null;
+}
+
+/**
+ * Must this entry read «del <tomorrow>»? Yes for a morning edition (up to Ore 14 in Italy) entered after 12:00
+ * New York on its own day, or entered later for a past day: that day's edition had already aired. Never for a
+ * grezzo (no edition) or a live (a live is on air on its own day).
+ * @param {{delivery_date: string, richiedente?: string|null, rete?: string|null, mezzo?: string|null, tappeto?: boolean, grezzo?: boolean, intervista?: boolean}} p
+ * @param {string} today New York "YYYY-MM-DD" @param {number} hour New York hour 0..23
+ */
+function edizioneDomani(p, today, hour) {
+  if (!p.richiedente || !morningEdition(p.richiedente)) return false;
+  const cat = categoriaOf(p);
+  if (cat === "grezzo" || cat === "live") return false;
+  return p.delivery_date < today || (p.delivery_date === today && hour >= 12);
+}
+
+/**
+ * The entry as it is stored: the edition's day leaves the Titolo and goes to edizione_del, and a morning edition that
+ * needs «del» gets it even when the editor forgot the box (Marco, 2026-11-17). A day the editor set is never changed.
+ * @template {{delivery_date: string, subject: string, edizione_del?: string|null, richiedente?: string|null, grezzo?: boolean}} T
+ * @param {T} p @param {string} today @param {number} hour @returns {T}
+ */
+function applyEdizione(p, today, hour) {
+  if (p.grezzo) return p;
+  let subject = p.subject, del = p.edizione_del || null;
+  const s = stripDel(subject, p.delivery_date);
+  if (s) {
+    subject = s.subject;
+    if (!del && s.giorno > p.delivery_date) del = s.giorno;
+  }
+  if (!del && edizioneDomani(p, today, hour)) del = addDays(p.delivery_date, 1);
+  return { ...p, subject, edizione_del: del };
+}
+
+/**
+ * One edition, however it was typed: "Tg2 Ore 20:30", "Tg2 20.30" and "2030" are the same; so are "Tg3 Ore 12" and
+ * "Tg3 Ore 12 Milano". An edition without an hour ("Linea Notte", "Mattina") is compared by its letters.
+ * @param {unknown} rich
+ */
+function editionKey(rich) {
+  const s = String(rich == null ? "" : rich).trim().toLowerCase().replace(/^(tg\s*[123]|gr|ran|rai\s*[123])\s+/, "");
+  if (/^mezzanotte\b/.test(s)) return "t1440";
+  const m = /\bore\s*(\d{1,2})(?:[:.]?(\d{2}))?\b/.exec(s) || /^(\d{1,2})(?:[:.]?(\d{2}))?\b/.exec(s);
+  if (m) return "t" + (Number(m[1]) * 60 + Number(m[2] || 0));
+  return s.replace(/[^a-z0-9à-ÿ]+/g, "");
+}
+
+const squashText = (s) => String(s == null ? "" : s).toLowerCase().replace(/[^a-z0-9à-ÿ]+/g, "");
+/**
+ * Is `b` the piece `a` again? Same day on air, rete, edition, type and journalist. The Titolo is not compared: two
+ * editors name the same story differently («Traffico aereo», «Blocco aerei»). A grezzo has no edition, so there the
+ * Titolo decides. Both sides: {data, edizione_del, rete, richiedente, categoria, giornalista, titolo}.
+ * @param {Record<string, unknown>} a @param {Record<string, unknown>} b
+ */
+function samePiece(a, b) {
+  const air = (r) => String(r.edizione_del || r.data || "");
+  if (!air(a) || air(a) !== air(b)) return false;
+  if (squashText(a.rete) !== squashText(b.rete) || String(a.categoria) !== String(b.categoria)) return false;
+  if (squashText(a.giornalista) !== squashText(b.giornalista)) return false;
+  if (String(a.categoria) === "grezzo") return squashText(a.titolo) === squashText(b.titolo);
+  return editionKey(a.richiedente) === editionKey(b.richiedente);
 }
 
 // ---- end lib/week.js ----
@@ -1832,10 +1981,10 @@ function parseToSeconds(s) {
   // chosen after 12:00 New York on today's date, because today's edition has already aired. The editor can change the
   // tick; a tick changed by hand holds for that entry only. «Mattina» has no hour: the editor ticks it.
   // morningEdition is in lib/week.js (it also reads "Tg1 8" and "Tg1 1330", as editors type them).
-  function nyHour() {
-    try { return parseInt(new Intl.DateTimeFormat("en-US", { timeZone: "America/New_York", hour: "numeric", hour12: false }).format(new Date()), 10) % 24; } catch (e) { return new Date().getHours(); }
-  }
-  function addDays(ymd, n) { var d = new Date(ymd + "T12:00:00Z"); d.setUTCDate(d.getUTCDate() + n); return d.toISOString().slice(0, 10); }
+  // From 2026-11-17 the server sets «del» by the same rule (lib/week.js edizioneDomani) when the box is empty:
+  // a morning edition entered after noon, or entered later for a past day, always reads «del <day after>».
+  // A live and a grezzo never do. addDays and hourNewYork are in lib/week.js too.
+  function nyHour() { try { return hourNewYork(); } catch (e) { return new Date().getHours(); } }
   var domTouched = false;
   // A past date is allowed only after a second click (Marco, 2026-11-04: a form left on yesterday was saved without asking).
   function paintDateHint() {
@@ -1860,7 +2009,7 @@ function parseToSeconds(s) {
     $("dom-wrap").hidden = grezzoOn(); // a grezzo has no edition
     $("dom-text").textContent = tf("Edizione di domani ({0})", parseInt(tom.slice(8, 10), 10) + "/" + parseInt(tom.slice(5, 7), 10));
     if (grezzoOn()) box.checked = false;
-    else if (!domTouched) box.checked = !!rich && d === today() && morningEdition(rich) && nyHour() >= 12;
+    else if (!domTouched) box.checked = edizioneDomani({ delivery_date: d, richiedente: rich, rete: checked("rete"), mezzo: checked("mezzo"), tappeto: tappetoOn(), intervista: intervistaOn() }, today(), nyHour());
     paintDateHint();
   }
 
@@ -2014,14 +2163,13 @@ function parseToSeconds(s) {
     // Marco (2026-10-16): the list must show day, edition (Tg1 Ore 20), time and operator; everything else that fits.
     var dm = function (d) { return d && d.length >= 10 ? d.slice(8, 10) + "/" + d.slice(5, 7) : ""; };
     // The edition as read: RAN's slots are stored bare and read "RAN Ore 19" (Marco, 2026-10-22); no edition -> the rete.
-    var edShown = function (rete, rich, del) { rich = (rich || "").trim(); var ed = !rich ? rete : rete === "RAN" && !/^ran\s/i.test(rich) ? "RAN " + rich : rich; return del ? ed + " " + delLabel(del) : ed; };
     var joinNE = function (parts) { return parts.filter(function (x) { return x; }).join(" \u00b7 "); };
     var items = local.map(function (e) {
       var p = e.payload, cat = categoria(p.rete, p.mezzo, p.tappeto, p.grezzo, p.intervista);
       return { ora: e.ora, giorno: dm(p.delivery_date), ed: edShown(p.rete, p.richiedente, p.edizione_del), op: p.operator, text: joinNE([p.journalist, p.subject, cat + (p.duration_text ? " " + formatDurata(p.duration_text) : ""), t(p.mezzo)]), stato: e.stato, err: e.errore, sort: e.creato };
     }).concat(serverRows.filter(function (r) { return !ids[r.record_id]; }).map(function (r) {
       var when = r.submitted_at ? new Date(r.submitted_at) : null;
-      return { ora: when ? String(when.getHours()).padStart(2, "0") + ":" + String(when.getMinutes()).padStart(2, "0") : "", giorno: dm(todayStr), ed: edShown(r.rete, r.richiedente, r.edizione_del), op: r.operatore, text: joinNE([r.giornalista, r.titolo, r.categoria + (r.durata ? " " + formatDurata(r.durata) : ""), t(r.mezzo)]), stato: "sincronizzato", sort: r.submitted_at || "" };
+      return { ora: when ? String(when.getHours()).padStart(2, "0") + ":" + String(when.getMinutes()).padStart(2, "0") : "", giorno: dm(todayStr), ed: edShown(r.rete, r.richiedente, r.edizione_del), op: r.operatore, text: joinNE([r.numero ? "N. " + r.numero : "", r.giornalista, r.titolo, r.categoria + (r.durata ? " " + formatDurata(r.durata) : ""), t(r.mezzo)]), stato: "sincronizzato", sort: r.submitted_at || "" };
     }));
     items.sort(function (a, b) { return a.sort < b.sort ? 1 : -1; });
     $("recent-n").textContent = items.length ? String(items.length) : "";
@@ -2073,6 +2221,9 @@ function parseToSeconds(s) {
       sending = false;
       if (r.status === 200) {
         e.stato = "sincronizzato"; e.server_id = r.body.id; delete e.errore; attempt = 0;
+        // The server may have moved «del 14/11» out of the Titolo and set the edition's day: show what is stored.
+        if (r.body.subject) e.payload.subject = r.body.subject;
+        if (r.body.edizione_del !== undefined) e.payload.edizione_del = r.body.edizione_del;
         if (e.group && voidedGroups[e.group]) {
           // The editor pressed Annulla on this grezzo while this network's row was still on its way: void it too.
           queue = queue.filter(function (x) { return x !== e; }); qsave(queue); renderPending(); renderRecent();
@@ -2370,7 +2521,90 @@ function parseToSeconds(s) {
       return;
     }
     if (v.delivery_date < today()) { askPast(v); return; }
-    commitEntry(v);
+    checkDup(v);
+  });
+
+  // ---- «Già registrato» (Marco, 2026-11-17): the same piece entered twice, often by two people ----
+  // Before an entry is filed the form asks the server which rows are the same piece: same day on air, rete, edition,
+  // type and journalist (lib/week.js samePiece), from any login. Rows of this browser still on their way count too.
+  // The editor sees them and chooses. It is a warning, never a block: two different stories for one edition are
+  // normal. Offline, or when the server does not answer in 4 seconds, the entry is filed without the question.
+  // The edition as read: "RAN Ore 19", "Tg1 Ore 8 del 14/11"; the rete alone when there is no edition (a grezzo).
+  function edShown(rete, rich, del) { rich = (rich || "").trim(); var ed = !rich ? rete : rete === "RAN" && !/^ran\s/i.test(rich) ? "RAN " + rich : rich; return del ? ed + " " + delLabel(del) : ed; }
+  var dupEntry = null, dupYes = false, dupBusy = false;
+  function pieces(v) {
+    var rs = v.grezzo ? reti() : [v.rete];
+    return rs.map(function (r) { return v.grezzo ? Object.assign({}, v, { rete: r, richiedente: null }) : v; });
+  }
+  function localDups(v) {
+    var out = [];
+    pieces(v).forEach(function (one) {
+      var a = applyEdizione(one, today(), nyHour());
+      var mine = { data: a.delivery_date, edizione_del: a.edizione_del, rete: a.rete, richiedente: a.richiedente, categoria: categoriaOf(a), giornalista: a.journalist, titolo: a.subject };
+      queue.forEach(function (e) {
+        if (e.stato === "sincronizzato") return; // the server already answers for these
+        var p = e.payload, b = { data: p.delivery_date, edizione_del: p.edizione_del, rete: p.rete, richiedente: p.richiedente, categoria: categoriaOf(p), giornalista: p.journalist, titolo: p.subject };
+        if (samePiece(mine, b)) out.push({ record_id: e.client_record_id, numero: null, data: p.delivery_date, edizione_del: p.edizione_del, titolo: p.subject, richiedente: p.richiedente, rete: p.rete, categoria: b.categoria, durata: p.duration_text, operatore: p.operator, submitted_at: e.creato });
+      });
+    });
+    return out;
+  }
+  function checkDup(v) {
+    if (dupBusy) return;
+    dupBusy = true; $("send").disabled = true;
+    setStatus("controllo", "Controllo: già registrato?"); // the line stops saying «Sincronizzato» about the entry before
+    var done = false, found = localDups(v);
+    function finish(rows) {
+      if (done) return; done = true;
+      dupBusy = false; $("send").disabled = false;
+      var seen = {}, all = found.concat(rows).filter(function (r) { if (seen[r.record_id]) return false; seen[r.record_id] = true; return true; });
+      if (all.length) askDup(v, all); else commitEntry(v);
+    }
+    var timer = setTimeout(function () { finish([]); }, 4000);
+    Promise.all(pieces(v).map(function (one) {
+      return api("/api/duplicates", { method: "POST", body: JSON.stringify(one) }).then(function (r) { return r.status === 200 && r.body && Array.isArray(r.body.rows) ? r.body.rows : []; }, function () { return []; });
+    })).then(function (lists) { clearTimeout(timer); finish([].concat.apply([], lists)); });
+  }
+  function dupLine(r) {
+    var when = r.submitted_at ? new Date(r.submitted_at) : null;
+    var hm = when ? String(when.getHours()).padStart(2, "0") + ":" + String(when.getMinutes()).padStart(2, "0") : "";
+    var li = document.createElement("li"), b = document.createElement("b"), who = document.createElement("span");
+    b.textContent = r.numero ? "N. " + r.numero : t("in invio");
+    li.appendChild(b);
+    li.appendChild(document.createTextNode(" · «" + (r.titolo || "") + "» · " + t(r.categoria || "") + (r.durata ? " " + formatDurata(r.durata) : "")));
+    who.className = "who";
+    who.textContent = [edShown(r.rete, r.richiedente, r.edizione_del) || r.rete, r.operatore, (r.data ? dmy(r.data) + " " : "") + hm].filter(function (x) { return x; }).join(" · ");
+    li.appendChild(who);
+    return li;
+  }
+  function askDup(v, rows) {
+    dupEntry = v; dupYes = false;
+    var what = v.grezzo ? t("grezzo") + " «" + v.subject + "»" : (edShown(v.rete, v.richiedente, applyEdizione(v, today(), nyHour()).edizione_del) || v.rete);
+    var text = tf(rows.length === 1 ? "{0} di {1} è già registrato:" : "{0} di {1} è già registrato {2} volte:", what, v.journalist, rows.length);
+    $("dup-p").textContent = text;
+    var ul = $("dup-list"); ul.textContent = "";
+    rows.forEach(function (r) { ul.appendChild(dupLine(r)); });
+    var dlg = $("dup");
+    if (typeof dlg.showModal !== "function") {
+      if (window.confirm(text + "\n" + rows.map(function (r) { return (r.numero ? "N. " + r.numero + " " : "") + (r.titolo || "") + " (" + (r.operatore || "") + ")"; }).join("\n") + "\n\n" + t("Registra comunque") + "?")) commitEntry(v);
+      dupEntry = null;
+      return;
+    }
+    if (!dlg.open) dlg.showModal();
+    buzz(); $("dup-no").focus();
+  }
+  $("dup-yes").addEventListener("click", function () { dupYes = true; $("dup").close(); });
+  $("dup-no").addEventListener("click", function () { $("dup").close(); });
+  $("dup").addEventListener("click", function (ev) { if (ev.target === this) this.close(); });
+  $("dup").addEventListener("keydown", function (ev) {
+    if (ev.key === "Escape") { ev.preventDefault(); ev.stopPropagation(); this.close(); }
+  });
+  $("dup").addEventListener("close", function () {
+    if (this.open) return; // a late close event of the time before: the dialog is open again for a new entry
+    var v = dupEntry; dupEntry = null;
+    if (dupYes && v) { dupYes = false; commitEntry(v); return; }
+    dupYes = false; $("titolo").focus();
+    if (pendingCount() === 0) setStatus("sincronizzato", "Non registrato: era già nel collaudo."); else schedule(0);
   });
 
   function commitEntry(v) {
@@ -2404,7 +2638,7 @@ function parseToSeconds(s) {
     $("pastdate-p").textContent = tf("La data è {0}, non oggi ({1}). Vuoi registrare lo stesso?", dmy(v.delivery_date), dmy(today()));
     var dlg = $("pastdate");
     if (typeof dlg.showModal !== "function") {
-      if (window.confirm($("pastdate-p").textContent)) commitEntry(v);
+      if (window.confirm($("pastdate-p").textContent)) checkDup(v);
       else $("data").focus();
       pastEntry = null;
       return;
@@ -2419,8 +2653,11 @@ function parseToSeconds(s) {
     if (ev.key === "Escape") { ev.preventDefault(); ev.stopPropagation(); this.close(); }
   });
   $("pastdate").addEventListener("close", function () {
+    // The close event comes a moment after close(). Annulla and then a fast second Invia opened the dialog again
+    // before the first event arrived, and that event threw the new entry away: «Sì» then saved nothing.
+    if (this.open) return;
     var v = pastEntry; pastEntry = null;
-    if (pastYes && v) { pastYes = false; commitEntry(v); return; }
+    if (pastYes && v) { pastYes = false; checkDup(v); return; }
     pastYes = false; $("data").focus();
   });
 
@@ -2432,7 +2669,7 @@ function parseToSeconds(s) {
     if (nm === "rete") { $("richiedente").value = ""; updateRichiedente(); }
     if (nm === "rete" || nm === "mezzo" || nm === "tappeto" || nm === "grezzo" || nm === "intervista") updateCategoria();
     if (nm === "rete" || nm === "tappeto" || nm === "grezzo" || nm === "intervista") updateReteNote();
-    if (nm === "rete" || nm === "tappeto" || nm === "grezzo" || nm === "intervista" || nm === "richiedente") applyAirDate();
+    if (nm === "rete" || nm === "mezzo" || nm === "tappeto" || nm === "grezzo" || nm === "intervista" || nm === "richiedente") applyAirDate();
     if (ev.target.id === "giornalista" || ev.target.id === "data") renderTrip();
   });
 
