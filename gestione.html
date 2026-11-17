@@ -217,7 +217,7 @@ td.dim { color:var(--dim); } tr.off td { color:var(--dim); } tr.off td:first-chi
 </head>
 <body data-gestione>
 <header class="appbar">
-  <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-11-17 22:57 UTC · 0393c48"><span class="mk">Rai · NY</span><span class="nm">RAI NYC Servizi</span><span class="pg" data-i18n>Gestione</span></div>
+  <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-11-17 23:05 UTC · f7012a6"><span class="mk">Rai · NY</span><span class="nm">RAI NYC Servizi</span><span class="pg" data-i18n>Gestione</span></div>
   <nav class="hright" id="hright" aria-label="Pagine">
     <button type="button" class="icbtn" id="theme" aria-label="Tema" title="Tema" aria-haspopup="menu" aria-expanded="false">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3a9 9 0 1 0 0 18c1.2 0 2-.9 2-2 0-.6-.2-1-.5-1.4-.3-.4-.5-.8-.5-1.3 0-1.1.9-2 2-2h2.2A4.8 4.8 0 0 0 22 9.6C22 5.8 17.5 3 12 3z"/><circle cx="7.5" cy="11.5" r="1.1"/><circle cx="10.5" cy="7.5" r="1.1"/><circle cx="15" cy="7.5" r="1.1"/><circle cx="17.5" cy="11.5" r="1.1"/></svg>
@@ -293,7 +293,7 @@ td.dim { color:var(--dim); } tr.off td { color:var(--dim); } tr.off td:first-chi
 # RAI NYC Servizi — STATE (repo copy)
 
 &gt; **Short read-only copy for agents with no vault access (cloud agents).**
-&gt; Source of truth: `~/vault/10 Work/12 KIMA Creative/12.01 Active Clients/gvg-global-vision-group/rai-nyc-servizi/STATE.md` (on the Mac). Vault STATE updated: 2026-11-17T18:30-05:00 by Claude Code (Fable 5.2) on MacBook.
+&gt; Source of truth: `~/vault/10 Work/12 KIMA Creative/12.01 Active Clients/gvg-global-vision-group/rai-nyc-servizi/STATE.md` (on the Mac). Vault STATE updated: 2026-11-17T17:58-05:00 by Claude Code (Fable 5.2) on MacBook.
 &gt; Cloud agents: read this; do not edit it. At END, put your end state (done / next / blockers) in the PR description.
 &gt; The next Mac session merges it into the vault STATE.md, then refreshes this copy.
 
@@ -301,6 +301,10 @@ td.dim { color:var(--dim); } tr.off td { color:var(--dim); } tr.off td:first-chi
 Marco's day job at RAI NY (GVG): a startup popup on the Avid edit machines NYC-EDIT-MC01/02/03 (C#, .NET 8, WPF) where editors log each tappeto or servizio. Supabase is the truth; the Google Sheet "2026 Report Rai NYC, Servizi Giornalistici" is a reporting mirror. The collaudo forms go to Rome for overtime and travel. Host `supervisor` (Linux Mint, user `rainyc`, Tailscale only). Owner account for everything: `rainyc.servizi@gmail.com`.
 
 ## Current goal
+**2026-11-17 18:05 (Marco: "never for a live shot do you add del"):** **Ruled and live.** A live never has «del»: the server clears it at submit whatever the box or the title says (`applyEdizione`), and the form does not offer the box for a live. Production had 0 lives with a «del», so no row changed. Deno 63/63, browser suite 291/291. Function redeployed, Pages and supervisor republished (see the commit after `405002a`). A hand edit of the Richiedente cell on the collaudo can still type «del» on a live; not blocked.
+
+**2026-11-17 17:58 (Marco: "commit and go, all six to sunday"):** **Live.** Branch `collaudo-numeri-del-layout` committed (`00ada02`) and pushed to `origin` and `supervisor`. Dump on supervisor 17:56 (`rai-nyc-servizi-2026-11-17.dump`). Migration `20261117_0018_numero.sql` applied on production: 6,754 rows numbered 1–6754, sequence at 6755, triggers enabled again, 0 audit rows and 0 `updated_at` changes from the numbering. Function `servizi` deployed (`/health` ok 22:57Z; `/api/duplicates` and `/api/find` answer 401 without a login). Pages `037222f` live (the Pages URL answers with the row menu and the «Già registrato» dialog). Supervisor rsync'd. `~/bin/mirror-sheet.sh` on supervisor replaced (old copy `mirror-sheet.sh.bak-20261117`); it runs tonight at 03:30 with the new «N.» column. **Data, audited (23 rows, 23 audit rows, `update_delivery`):** the six «Trump Intervista 60 minutes» rows (N. 6560–6565) are on Sunday 8/11 with «del 9/11», actor `corrections_2026-11-17 (Marco: Trump Intervista 60 minutes, tutte e sei sulla domenica 8/11, del 9/11)`; 17 morning-edition rows from 10/11 to 15/11 have «del &lt;day after&gt;» and five of them lost «dell 11 novembre» from the title, actor `corrections_2026-11-17 (Marco: «del» sempre nel Richiedente dal 9/11, via dal titolo)`. **Left as typed, waiting for Marco:** N. 6590 (Tg3 Ore 12, title «MI dell 11 novembre HEGSETH IMPEACHMENT») and N. 6591 (RAN, Richiedente «11 novembre»); both have «del 11/11» now. **Not answered by Marco, built as assumed:** no automatic «del» for a live. Editors must reload the form and the collaudo. Not verified: a real login in a Windows browser on the live site; a printed sheet. (The times in the entry below were written from a wrong clock: that work ended about 17:50.)
+
 **2026-11-17 18:30 (Marco: duplicate warning on the form; on the collaudo line numbers, «del» always in the Richiedente, no sideways scroll, resizable and movable columns, a right-click menu; move the «Trump Intervista 60 minutes» rows to Sunday 8/11):** **Built and tested on the local stack, branch `collaudo-numeri-del-layout`. NOT committed (no OK yet), NOT deployed, production data NOT changed.** Marco's answers: line number on screen only; «del» for morning editions only; clean rows from 9/11 only. Mid-run he confirmed: a live, a tappeto and a servizio for one edition are no problem; the problem is two people entering the same thing; two tappeti for one edition are rare but real.
 - **Line number.** Migration `20261117_0018_numero.sql`: column `numero`, a sequence, old rows numbered by day then entry time (triggers off for that one statement: no audit rows, `updated_at` untouched), unique, in `v_weekly_collaudo` last. First column «N.» on the collaudo, screen only; Rome's print and the e-mail do not change. A cancelled row keeps its number. «N.» box in the tools bar: `GET /api/find?numero=` opens the row's week and lights the row. The number is also in «Registrazioni di oggi», in the Annullate list and in the nightly sheet mirror (`mirror-sheet.sh`).
 - **«Del».** `lib/week.js`: `edizioneDomani`, `stripDel`, `applyEdizione`. `POST /api/submit` stores `edizione_del` itself: a morning edition (up to Ore 14) entered after 12:00 New York, or entered later for a past day, gets the day after even when the box is empty. «del 14/11», «dell 11 novembre», «dal 30» at the start or end of a Titolo move to `edizione_del` and leave the title. Never for a grezzo. **My assumption, flagged to Marco:** never forced for a live (a live is on air on its own day). The form's box follows the same rule.
@@ -453,7 +457,7 @@ Marco's day job at RAI NY (GVG): a startup popup on the Avid edit machines NYC-E
 4. (older) 2026-10-16 17:35–17:55 — Marco: caruso's recipient address = caruso@gvgusa.com; pages in English AND Italian with a button next to the theme toggle; wants the git site password-protected ("nothing exposed"); asks whether no certificate on supervisor is a problem; when caruso is logged in, Gestione + every link up top; tappeti must never count under a Tg (they don't); collaudo rows sorted by Tg and by time so tappeto and piece of the same edition sit together. Agent: IT/EN via a dictionary keyed by the Italian strings (sonnet subagent); reading order server-side; password gate = Cloudflare Pages + Access proposed (needs a Cloudflare account under rainyc.servizi); LAN http judged acceptable (auth and data go to Supabase over https). (Claude Code)
 
 ## Next 3 actions
-0. **Marco (2026-11-17)** — (a) OK to commit and push branch `collaudo-numeri-del-layout`; (b) "go" to publish (order in Current goal); (c) Trump 60 minutes: all six rows to 8/11 or which two; (d) is "no automatic «del» for a live" right; (e) the two odd De Marco rows of 10/11. Agent after the publish: CHANGELOG, OPERATIONS (line numbers, `/api/find`, `/api/duplicates`), test-plan.
+0. **Marco (2026-11-17)** — (a) tell the editors to reload the form and the collaudo; (b) look at week 46 and at Sunday 8/11 on the live collaudo; (c) answered 2026-11-17: never «del» for a live; (d) rows N. 6590 and N. 6591 of 10/11 (see Current goal); (e) "merge it" for `collaudo-numeri-del-layout` when he has seen it (the pre-check will stop on the `pages.ts` password strings, as before). Agent on the next "go": check the 03:30 mirror ran with the «N.» column; `docs/test-plan.md` still to update.
 1. Marco — tell the editors to reload the form once (an open form keeps the old date flip). Look at week 46 on the live collaudo: tappeti last in each day, «Tappeto» before each title, «del 10/11» after the morning editions. `return-feeds` is merged to `main` (2026-11-13); new work starts on a new branch.
 2. Agent — on the next "go": check that the 03:30 sheet mirror ran with the new «Edizione del» column (`~/backups/sheet/mirror.log` on supervisor), and run the read-only query for rows since 9/11 dated one day after their entry (a form not reloaded). Move any such morning-edition row back with `update_delivery` and say so.
 3. Agent — find why the browser check «confirmed past date is saved on that day» fails (it fails on the old code too; cause not found; production does hold rows entered a day late, so the form may be fine). Then the older follow-ups: short-screen grid, per-row revert, Gestione v2, supervisor cron.
@@ -495,7 +499,7 @@ var PAGE_FORM = "./" || APP_BASE;
 var PAGE_COLLAUDO = "./collaudo.html" || APP_BASE + "/collaudo";
 var PAGE_GESTIONE = "./gestione.html" || APP_BASE + "/gestione";
 var PAGE_MENSILE = "./mensile.html" || APP_BASE + "/mensile";
-var BUILD = "2026-11-17 22:57 UTC · 0393c48"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
+var BUILD = "2026-11-17 23:05 UTC · f7012a6"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
 // Every place the project lives (shown in the admin's header menu and on the Gestione page).
 var LINKS = [
   ["Pagine pubbliche", "https://rainycservizi.github.io/rainyc-servizi-app/", "GitHub Pages: il sito di prova principale"],
@@ -1445,6 +1449,8 @@ function applyEdizione(p, today, hour) {
     if (!del && s.giorno > p.delivery_date) del = s.giorno;
   }
   if (!del && edizioneDomani(p, today, hour)) del = addDays(p.delivery_date, 1);
+  // A live shot never reads «del» (Marco, 2026-11-17): it is on air on its own day, whatever the box or the title says.
+  if (categoriaOf(p) === "live") del = null;
   return { ...p, subject, edizione_del: del };
 }
 

@@ -412,7 +412,7 @@ kbd { font:600 11px/1 var(--mono); padding:2px 5px; border:1px solid var(--line2
 </head>
 <body>
 <header class="appbar">
-  <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-11-17 22:57 UTC · 0393c48"><span class="mk">Rai · NY</span><span id="t">RAI NYC Servizi</span><span class="pg" data-i18n>Registrazione</span></div>
+  <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-11-17 23:05 UTC · f7012a6"><span class="mk">Rai · NY</span><span id="t">RAI NYC Servizi</span><span class="pg" data-i18n>Registrazione</span></div>
   <nav class="hright" id="hright" aria-label="Pagine">
     <span class="pend" id="pend" hidden></span>
     <button type="button" class="icbtn lang" id="tour-btn" hidden data-i18n-attr="aria-label|title" aria-label="Tutorial: come si compila una registrazione" title="Tutorial: come si compila una registrazione">?</button>
@@ -618,7 +618,7 @@ var PAGE_FORM = "./" || APP_BASE;
 var PAGE_COLLAUDO = "./collaudo.html" || APP_BASE + "/collaudo";
 var PAGE_GESTIONE = "./gestione.html" || APP_BASE + "/gestione";
 var PAGE_MENSILE = "./mensile.html" || APP_BASE + "/mensile";
-var BUILD = "2026-11-17 22:57 UTC · 0393c48"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
+var BUILD = "2026-11-17 23:05 UTC · f7012a6"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
 // Every place the project lives (shown in the admin's header menu and on the Gestione page).
 var LINKS = [
   ["Pagine pubbliche", "https://rainycservizi.github.io/rainyc-servizi-app/", "GitHub Pages: il sito di prova principale"],
@@ -1568,6 +1568,8 @@ function applyEdizione(p, today, hour) {
     if (!del && s.giorno > p.delivery_date) del = s.giorno;
   }
   if (!del && edizioneDomani(p, today, hour)) del = addDays(p.delivery_date, 1);
+  // A live shot never reads «del» (Marco, 2026-11-17): it is on air on its own day, whatever the box or the title says.
+  if (categoriaOf(p) === "live") del = null;
   return { ...p, subject, edizione_del: del };
 }
 
@@ -2001,14 +2003,16 @@ function parseToSeconds(s) {
   // The edition's day for the payload: the day after the entry date when the box is ticked, else none.
   function edizioneDel() {
     var d = $("data").value;
-    return d && $("domani").checked && !grezzoOn() ? addDays(d, 1) : null;
+    return d && $("domani").checked && !grezzoOn() && !liveOn() ? addDays(d, 1) : null;
   }
+  // A live shot never reads «del» (Marco, 2026-11-17): the box is not offered for it.
+  function liveOn() { return categoriaOf({ rete: checked("rete"), mezzo: checked("mezzo"), tappeto: tappetoOn(), grezzo: grezzoOn(), intervista: intervistaOn() }) === "live"; }
   function applyAirDate() {
     var d = $("data").value || today(), tom = addDays(d, 1), box = $("domani");
     var rich = grezzoOn() ? "" : richiedenteValue();
-    $("dom-wrap").hidden = grezzoOn(); // a grezzo has no edition
+    $("dom-wrap").hidden = grezzoOn() || liveOn(); // a grezzo has no edition; a live is on air on its own day
     $("dom-text").textContent = tf("Edizione di domani ({0})", parseInt(tom.slice(8, 10), 10) + "/" + parseInt(tom.slice(5, 7), 10));
-    if (grezzoOn()) box.checked = false;
+    if (grezzoOn() || liveOn()) box.checked = false;
     else if (!domTouched) box.checked = edizioneDomani({ delivery_date: d, richiedente: rich, rete: checked("rete"), mezzo: checked("mezzo"), tappeto: tappetoOn(), intervista: intervistaOn() }, today(), nyHour());
     paintDateHint();
   }
