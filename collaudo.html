@@ -50,6 +50,7 @@
 .tpop .sw[data-sw=knicks] { background:linear-gradient(135deg, #006bb6 50%, #f58426 50%); }
 .tpop .sw[data-sw=steelers] { background:linear-gradient(135deg, #101820 50%, #ffb612 50%); }
 .tpop .sw[data-sw=juventus] { background:repeating-linear-gradient(90deg, #000 0 4px, #fff 4px 8px); }
+.tpop .sw[data-sw=roma] { background:linear-gradient(135deg, #8e1f2f 50%, #f0bc42 50%); }
 .tpop .sep { height:1px; margin:6px 4px; background:var(--line); }
 
 /* Skins whose buttons carry white ink: the keyboard hint on «Invia» goes light, not darker. */
@@ -94,6 +95,14 @@
 }
 :root[data-theme=juventus] body { background-image:repeating-linear-gradient(90deg, #0b0b0b 0 56px, #141414 56px 112px); }
 
+/* AS Roma: giallorosso. Pompeian red page, Roma gold accent, a gold and red band on top. */
+:root[data-theme=roma] {
+  --bg:#2b0b12; --panel:#3a121b; --raise:#461824; --input:#320e16; --hover:#521c2a; --line:#5a2230; --line2:#7d3646;
+  --fg:#fff7ec; --dim:#e3bfae; --accent:#f0bc42; --accent-ink:#2b0b12; --accent-text:#f5c95e; --accent-soft:#4a3014;
+  --focus:#f5c95e; --sw-off:#7d3646;
+  --zebra:#41141f; --band:#521b29; --rule:#8e1f2f; /* collaudo and mensile: day rows in red, not the dark base's navy */
+}
+:root[data-theme=roma] body { background-image:linear-gradient(180deg, #f0bc42 0, #f0bc42 4px, #8e1f2f 4px, #8e1f2f 8px, transparent 8px); background-repeat:no-repeat; }
 
 /* ---- end pages/skins.css ---- */
 * { box-sizing:border-box; }
@@ -365,7 +374,7 @@ tr.r.hit td { animation:hit 2.6s ease-out; }
 <body>
 <div class="top" id="top">
   <header class="appbar">
-    <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-11-17 23:05 UTC · f7012a6"><span class="mk">Rai · NY</span><span class="nm">RAI NYC Servizi</span><span class="pg" data-i18n>Collaudo</span></div>
+    <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-11-22 15:53 UTC · 0f92b57+"><span class="mk">Rai · NY</span><span class="nm">RAI NYC Servizi</span><span class="pg" data-i18n>Collaudo</span></div>
     <nav class="hright" id="hright" aria-label="Pagine">
       <button type="button" class="icbtn" id="theme" aria-label="Tema" title="Tema" aria-haspopup="menu" aria-expanded="false">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3a9 9 0 1 0 0 18c1.2 0 2-.9 2-2 0-.6-.2-1-.5-1.4-.3-.4-.5-.8-.5-1.3 0-1.1.9-2 2-2h2.2A4.8 4.8 0 0 0 22 9.6C22 5.8 17.5 3 12 3z"/><circle cx="7.5" cy="11.5" r="1.1"/><circle cx="10.5" cy="7.5" r="1.1"/><circle cx="15" cy="7.5" r="1.1"/><circle cx="17.5" cy="11.5" r="1.1"/></svg>
@@ -436,7 +445,7 @@ var PAGE_FORM = "./" || APP_BASE;
 var PAGE_COLLAUDO = "./collaudo.html" || APP_BASE + "/collaudo";
 var PAGE_GESTIONE = "./gestione.html" || APP_BASE + "/gestione";
 var PAGE_MENSILE = "./mensile.html" || APP_BASE + "/mensile";
-var BUILD = "2026-11-17 23:05 UTC · f7012a6"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
+var BUILD = "2026-11-22 15:53 UTC · 0f92b57+"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
 // Every place the project lives (shown in the admin's header menu and on the Gestione page).
 var LINKS = [
   ["Pagine pubbliche", "https://rainycservizi.github.io/rainyc-servizi-app/", "GitHub Pages: il sito di prova principale"],
@@ -909,7 +918,7 @@ var MODE_KEY = "rainyc.modo";
 var THEMES = [ // key, Italian label (translated through t()), mode
   ["light", "Chiaro", "light"], ["dark", "Scuro", "dark"],
   ["winter", "Inverno", "light"], ["redsox", "Boston Red Sox", "dark"], ["knicks", "New York Knicks", "dark"],
-  ["steelers", "Pittsburgh Steelers", "dark"], ["juventus", "Juventus", "dark"]
+  ["steelers", "Pittsburgh Steelers", "dark"], ["juventus", "Juventus", "dark"], ["roma", "AS Roma", "dark"]
 ];
 var themeBtn = null;
 var themeMenu = null;

@@ -50,6 +50,7 @@
 .tpop .sw[data-sw=knicks] { background:linear-gradient(135deg, #006bb6 50%, #f58426 50%); }
 .tpop .sw[data-sw=steelers] { background:linear-gradient(135deg, #101820 50%, #ffb612 50%); }
 .tpop .sw[data-sw=juventus] { background:repeating-linear-gradient(90deg, #000 0 4px, #fff 4px 8px); }
+.tpop .sw[data-sw=roma] { background:linear-gradient(135deg, #8e1f2f 50%, #f0bc42 50%); }
 .tpop .sep { height:1px; margin:6px 4px; background:var(--line); }
 
 /* Skins whose buttons carry white ink: the keyboard hint on «Invia» goes light, not darker. */
@@ -94,6 +95,14 @@
 }
 :root[data-theme=juventus] body { background-image:repeating-linear-gradient(90deg, #0b0b0b 0 56px, #141414 56px 112px); }
 
+/* AS Roma: giallorosso. Pompeian red page, Roma gold accent, a gold and red band on top. */
+:root[data-theme=roma] {
+  --bg:#2b0b12; --panel:#3a121b; --raise:#461824; --input:#320e16; --hover:#521c2a; --line:#5a2230; --line2:#7d3646;
+  --fg:#fff7ec; --dim:#e3bfae; --accent:#f0bc42; --accent-ink:#2b0b12; --accent-text:#f5c95e; --accent-soft:#4a3014;
+  --focus:#f5c95e; --sw-off:#7d3646;
+  --zebra:#41141f; --band:#521b29; --rule:#8e1f2f; /* collaudo and mensile: day rows in red, not the dark base's navy */
+}
+:root[data-theme=roma] body { background-image:linear-gradient(180deg, #f0bc42 0, #f0bc42 4px, #8e1f2f 4px, #8e1f2f 8px, transparent 8px); background-repeat:no-repeat; }
 
 /* ---- end pages/skins.css ---- */
 * { box-sizing:border-box; }
@@ -217,7 +226,7 @@ td.dim { color:var(--dim); } tr.off td { color:var(--dim); } tr.off td:first-chi
 </head>
 <body data-gestione>
 <header class="appbar">
-  <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-11-17 23:05 UTC · f7012a6"><span class="mk">Rai · NY</span><span class="nm">RAI NYC Servizi</span><span class="pg" data-i18n>Gestione</span></div>
+  <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-11-22 15:53 UTC · 0f92b57+"><span class="mk">Rai · NY</span><span class="nm">RAI NYC Servizi</span><span class="pg" data-i18n>Gestione</span></div>
   <nav class="hright" id="hright" aria-label="Pagine">
     <button type="button" class="icbtn" id="theme" aria-label="Tema" title="Tema" aria-haspopup="menu" aria-expanded="false">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3a9 9 0 1 0 0 18c1.2 0 2-.9 2-2 0-.6-.2-1-.5-1.4-.3-.4-.5-.8-.5-1.3 0-1.1.9-2 2-2h2.2A4.8 4.8 0 0 0 22 9.6C22 5.8 17.5 3 12 3z"/><circle cx="7.5" cy="11.5" r="1.1"/><circle cx="10.5" cy="7.5" r="1.1"/><circle cx="15" cy="7.5" r="1.1"/><circle cx="17.5" cy="11.5" r="1.1"/></svg>
@@ -293,7 +302,7 @@ td.dim { color:var(--dim); } tr.off td { color:var(--dim); } tr.off td:first-chi
 # RAI NYC Servizi — STATE (repo copy)
 
 &gt; **Short read-only copy for agents with no vault access (cloud agents).**
-&gt; Source of truth: `~/vault/10 Work/12 KIMA Creative/12.01 Active Clients/gvg-global-vision-group/rai-nyc-servizi/STATE.md` (on the Mac). Vault STATE updated: 2026-11-17T17:58-05:00 by Claude Code (Fable 5.2) on MacBook.
+&gt; Source of truth: `~/vault/10 Work/12 KIMA Creative/12.01 Active Clients/gvg-global-vision-group/rai-nyc-servizi/STATE.md` (on the Mac). Vault STATE updated: 2026-11-17T18:15-05:00 by Claude Code (Fable 5.2) on MacBook.
 &gt; Cloud agents: read this; do not edit it. At END, put your end state (done / next / blockers) in the PR description.
 &gt; The next Mac session merges it into the vault STATE.md, then refreshes this copy.
 
@@ -301,6 +310,12 @@ td.dim { color:var(--dim); } tr.off td { color:var(--dim); } tr.off td:first-chi
 Marco's day job at RAI NY (GVG): a startup popup on the Avid edit machines NYC-EDIT-MC01/02/03 (C#, .NET 8, WPF) where editors log each tappeto or servizio. Supabase is the truth; the Google Sheet "2026 Report Rai NYC, Servizi Giornalistici" is a reporting mirror. The collaudo forms go to Rome for overtime and travel. Host `supervisor` (Linux Mint, user `rainyc`, Tailscale only). Owner account for everything: `rainyc.servizi@gmail.com`.
 
 ## Current goal
+**2026-11-22 10:35 (Marco: "commit and merge anyway"):** **Merged.** Test fix and test plan committed (`a3ccea4`). Pre-check exit 2 again (the same four `pages.ts` login strings + Jev prod_config / secrets_or_keys); merged on Marco's "merge anyway": `main` = `a588b60` (`--no-ff`), pushed to origin, supervisor and nas; the tree is identical to the branch production already ran, so nothing was redeployed. Branch deleted on the Mac, origin and supervisor (nas never had it). Live: `/health` ok 15:33Z, Pages 200, supervisor `/collaudo` 200. The vault STATE is the only change after the merge.
+
+**2026-11-22 (Claude Code, "go"):** Sheet mirror checked on supervisor: it ran every night 18–22/11 at 03:30, «N.» is the first column, the last row is N. 6827 (entered 21/11). Full local run from a stopped stack: pages check ok, Deno 63/63, integration 291/291, layout 120/120. The two mensile dialog checks expected «Ottobre 2026» as a fixed string (a test bug, not a page bug); they now use the current month. `docs/test-plan.md` rewritten with these results. Committed and merged at 10:35 (see above).
+
+**2026-11-17 18:15 (Marco: "merge it", then "wrap up"):** **Not merged.** `check-merge-precheck.py` exited 2: four password-assignment lines in the bundled `pages.ts` (lines 5–8, the login page's own strings, the same flag as 30/10 and 13/11) and Jev flags on a truncated read (off task, prod config, deletes data, unfinished, secrets or keys, unrelated files). My own search of every added line for real key shapes found 0; the only trigger or delete-like SQL is `disable trigger user` / `enable trigger user` around the numbering in migration 0018. Marco did not say "merge anyway"; he said "wrap up". `main` is still `b07599b`. Production runs branch `collaudo-numeri-del-layout` (head `f7012a6` plus this STATE commit), pushed to `origin` and `supervisor`. Local stack left up; the local `functions serve` was stopped.
+
 **2026-11-17 18:05 (Marco: "never for a live shot do you add del"):** **Ruled and live.** A live never has «del»: the server clears it at submit whatever the box or the title says (`applyEdizione`), and the form does not offer the box for a live. Production had 0 lives with a «del», so no row changed. Deno 63/63, browser suite 291/291. Function redeployed, Pages and supervisor republished (see the commit after `405002a`). A hand edit of the Richiedente cell on the collaudo can still type «del» on a live; not blocked.
 
 **2026-11-17 17:58 (Marco: "commit and go, all six to sunday"):** **Live.** Branch `collaudo-numeri-del-layout` committed (`00ada02`) and pushed to `origin` and `supervisor`. Dump on supervisor 17:56 (`rai-nyc-servizi-2026-11-17.dump`). Migration `20261117_0018_numero.sql` applied on production: 6,754 rows numbered 1–6754, sequence at 6755, triggers enabled again, 0 audit rows and 0 `updated_at` changes from the numbering. Function `servizi` deployed (`/health` ok 22:57Z; `/api/duplicates` and `/api/find` answer 401 without a login). Pages `037222f` live (the Pages URL answers with the row menu and the «Già registrato» dialog). Supervisor rsync'd. `~/bin/mirror-sheet.sh` on supervisor replaced (old copy `mirror-sheet.sh.bak-20261117`); it runs tonight at 03:30 with the new «N.» column. **Data, audited (23 rows, 23 audit rows, `update_delivery`):** the six «Trump Intervista 60 minutes» rows (N. 6560–6565) are on Sunday 8/11 with «del 9/11», actor `corrections_2026-11-17 (Marco: Trump Intervista 60 minutes, tutte e sei sulla domenica 8/11, del 9/11)`; 17 morning-edition rows from 10/11 to 15/11 have «del &lt;day after&gt;» and five of them lost «dell 11 novembre» from the title, actor `corrections_2026-11-17 (Marco: «del» sempre nel Richiedente dal 9/11, via dal titolo)`. **Left as typed, waiting for Marco:** N. 6590 (Tg3 Ore 12, title «MI dell 11 novembre HEGSETH IMPEACHMENT») and N. 6591 (RAN, Richiedente «11 novembre»); both have «del 11/11» now. **Not answered by Marco, built as assumed:** no automatic «del» for a live. Editors must reload the form and the collaudo. Not verified: a real login in a Windows browser on the live site; a printed sheet. (The times in the entry below were written from a wrong clock: that work ended about 17:50.)
@@ -457,13 +472,12 @@ Marco's day job at RAI NY (GVG): a startup popup on the Avid edit machines NYC-E
 4. (older) 2026-10-16 17:35–17:55 — Marco: caruso's recipient address = caruso@gvgusa.com; pages in English AND Italian with a button next to the theme toggle; wants the git site password-protected ("nothing exposed"); asks whether no certificate on supervisor is a problem; when caruso is logged in, Gestione + every link up top; tappeti must never count under a Tg (they don't); collaudo rows sorted by Tg and by time so tappeto and piece of the same edition sit together. Agent: IT/EN via a dictionary keyed by the Italian strings (sonnet subagent); reading order server-side; password gate = Cloudflare Pages + Access proposed (needs a Cloudflare account under rainyc.servizi); LAN http judged acceptable (auth and data go to Supabase over https). (Claude Code)
 
 ## Next 3 actions
-0. **Marco (2026-11-17)** — (a) tell the editors to reload the form and the collaudo; (b) look at week 46 and at Sunday 8/11 on the live collaudo; (c) answered 2026-11-17: never «del» for a live; (d) rows N. 6590 and N. 6591 of 10/11 (see Current goal); (e) "merge it" for `collaudo-numeri-del-layout` when he has seen it (the pre-check will stop on the `pages.ts` password strings, as before). Agent on the next "go": check the 03:30 mirror ran with the «N.» column; `docs/test-plan.md` still to update.
-1. Marco — tell the editors to reload the form once (an open form keeps the old date flip). Look at week 46 on the live collaudo: tappeti last in each day, «Tappeto» before each title, «del 10/11» after the morning editions. `return-feeds` is merged to `main` (2026-11-13); new work starts on a new branch.
-2. Agent — on the next "go": check that the 03:30 sheet mirror ran with the new «Edizione del» column (`~/backups/sheet/mirror.log` on supervisor), and run the read-only query for rows since 9/11 dated one day after their entry (a form not reloaded). Move any such morning-edition row back with `update_delivery` and say so.
-3. Agent — find why the browser check «confirmed past date is saved on that day» fails (it fails on the old code too; cause not found; production does hold rows entered a day late, so the form may be fine). Then the older follow-ups: short-screen grid, per-row revert, Gestione v2, supervisor cron.
+0. **Marco** — (merged 2026-11-22.) Tell the editors to reload the form and the collaudo. Look at Sunday 8/11 and week 46 on the live collaudo. Decide rows N. 6590 (Tg3 Ore 12, title «MI dell 11 novembre HEGSETH IMPEACHMENT») and N. 6591 (RAN, Richiedente «11 novembre»). Ruled 2026-11-17: never «del» for a live.
+0. **Agent** — new work starts from `main` on a new branch. (Done 2026-11-22: mirror checked, test plan, merge.)
+1. Agent — older follow-ups, still open: short-screen grid, per-row revert, Gestione v2, supervisor cron. (Done 2026-11-17: the failing check «confirmed past date is saved on that day» was a late dialog `close` event; fixed in the form and in the test.)
 
 ## Blockers
-- Not verified after the 2026-11-13 publish: the live collaudo was not opened in a browser; the browser suite was not re-run after the last two edits (tappeti last, `delLabel`), Deno 57/57 was; the sheet mirror's first run with the new column is tonight. Known test failures not from that work: the past-date check, two mensile e-mail dialog checks, and week 46 at 390 px scrolls sideways (Annullate table suspected). The Oggi / Domani / Altra data question is dropped: the entry-day rule replaced it.
+- Not verified after the 2026-11-17 publish: the live pages were checked by curl only, not in a browser with a real login; no Windows browser; no printed sheet; (sheet mirror verified 2026-11-22; the two mensile layout failures were a fixed month in the test, fixed 2026-11-22). Not blocked: a hand edit on the collaudo can still type «del» on a live.
 - Not done: the Annulla path for a batch still in flight has no test. Group C (107 legacy «dal NN» rows, Aug–Oct) left on the work day on Marco's choice (weeks already sent to Rome). Per-row edit history with revert on the collaudo, Gestione v2 and the supervisor cron still open from before.
 - Marco — the two missing Tg3 Ore 19 entries of 30/10 (which machine; «Registrazioni di oggi» there); a look at Week 43 after the moves and adds; feedback on the tutorial, from Erika and Ippolito, design keep/change. Still pending: key-only SSH on supervisor, CLT update. UniFi key: leave it (Marco). WhatsApp images route: off (Marco).
 
@@ -499,7 +513,7 @@ var PAGE_FORM = "./" || APP_BASE;
 var PAGE_COLLAUDO = "./collaudo.html" || APP_BASE + "/collaudo";
 var PAGE_GESTIONE = "./gestione.html" || APP_BASE + "/gestione";
 var PAGE_MENSILE = "./mensile.html" || APP_BASE + "/mensile";
-var BUILD = "2026-11-17 23:05 UTC · f7012a6"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
+var BUILD = "2026-11-22 15:53 UTC · 0f92b57+"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
 // Every place the project lives (shown in the admin's header menu and on the Gestione page).
 var LINKS = [
   ["Pagine pubbliche", "https://rainycservizi.github.io/rainyc-servizi-app/", "GitHub Pages: il sito di prova principale"],
@@ -972,7 +986,7 @@ var MODE_KEY = "rainyc.modo";
 var THEMES = [ // key, Italian label (translated through t()), mode
   ["light", "Chiaro", "light"], ["dark", "Scuro", "dark"],
   ["winter", "Inverno", "light"], ["redsox", "Boston Red Sox", "dark"], ["knicks", "New York Knicks", "dark"],
-  ["steelers", "Pittsburgh Steelers", "dark"], ["juventus", "Juventus", "dark"]
+  ["steelers", "Pittsburgh Steelers", "dark"], ["juventus", "Juventus", "dark"], ["roma", "AS Roma", "dark"]
 ];
 var themeBtn = null;
 var themeMenu = null;
