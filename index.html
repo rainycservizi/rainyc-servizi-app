@@ -421,7 +421,7 @@ kbd { font:600 11px/1 var(--mono); padding:2px 5px; border:1px solid var(--line2
 </head>
 <body>
 <header class="appbar">
-  <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-11-22 15:53 UTC · 0f92b57+"><span class="mk">Rai · NY</span><span id="t">RAI NYC Servizi</span><span class="pg" data-i18n>Registrazione</span></div>
+  <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-11-22 16:07 UTC · e210cea"><span class="mk">Rai · NY</span><span id="t">RAI NYC Servizi</span><span class="pg" data-i18n>Registrazione</span></div>
   <nav class="hright" id="hright" aria-label="Pagine">
     <span class="pend" id="pend" hidden></span>
     <button type="button" class="icbtn lang" id="tour-btn" hidden data-i18n-attr="aria-label|title" aria-label="Tutorial: come si compila una registrazione" title="Tutorial: come si compila una registrazione">?</button>
@@ -627,7 +627,7 @@ var PAGE_FORM = "./" || APP_BASE;
 var PAGE_COLLAUDO = "./collaudo.html" || APP_BASE + "/collaudo";
 var PAGE_GESTIONE = "./gestione.html" || APP_BASE + "/gestione";
 var PAGE_MENSILE = "./mensile.html" || APP_BASE + "/mensile";
-var BUILD = "2026-11-22 15:53 UTC · 0f92b57+"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
+var BUILD = "2026-11-22 16:07 UTC · e210cea"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
 // Every place the project lives (shown in the admin's header menu and on the Gestione page).
 var LINKS = [
   ["Pagine pubbliche", "https://rainycservizi.github.io/rainyc-servizi-app/", "GitHub Pages: il sito di prova principale"],
@@ -646,6 +646,11 @@ var LINKS = [
 // the Italian original is remembered on the node / in data-i18n-it-<attr>, so toggling back restores it.
 // Page code re-renders its dynamic parts on the "rainyc:lang" event.
 var LANG_KEY = "rainyc.lingua";
+// A link with ?lingua=it (or =en) sets this browser's language before anything is drawn (Marco, 2026-11-22:
+// a link that always opens in Italian for Lo Prete, even where «EN» was clicked before).
+(function () {
+  try { var l = new URLSearchParams(location.search).get("lingua"); if (l === "it" || l === "en") localStorage.setItem(LANG_KEY, l); } catch (e) { /* storage blocked: the page is Italian anyway */ }
+})();
 var I18N = { en: {
   "Oggi": "Today", "Settimana corrente": "Current week", "Mese corrente": "Current month", "Comprimi sezione": "Collapse section", "Espandi sezione": "Expand section",
   // header, login, shared
