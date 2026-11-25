@@ -226,7 +226,7 @@ td.dim { color:var(--dim); } tr.off td { color:var(--dim); } tr.off td:first-chi
 </head>
 <body data-gestione>
 <header class="appbar">
-  <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-11-25 19:26 UTC · 5688aaa"><span class="mk">Rai · NY</span><span class="nm">RAI NYC Servizi</span><span class="pg" data-i18n>Gestione</span></div>
+  <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-11-25 21:55 UTC · 57676c4"><span class="mk">Rai · NY</span><span class="nm">RAI NYC Servizi</span><span class="pg" data-i18n>Gestione</span></div>
   <nav class="hright" id="hright" aria-label="Pagine">
     <button type="button" class="icbtn" id="theme" aria-label="Tema" title="Tema" aria-haspopup="menu" aria-expanded="false">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3a9 9 0 1 0 0 18c1.2 0 2-.9 2-2 0-.6-.2-1-.5-1.4-.3-.4-.5-.8-.5-1.3 0-1.1.9-2 2-2h2.2A4.8 4.8 0 0 0 22 9.6C22 5.8 17.5 3 12 3z"/><circle cx="7.5" cy="11.5" r="1.1"/><circle cx="10.5" cy="7.5" r="1.1"/><circle cx="15" cy="7.5" r="1.1"/><circle cx="17.5" cy="11.5" r="1.1"/></svg>
@@ -302,7 +302,7 @@ td.dim { color:var(--dim); } tr.off td { color:var(--dim); } tr.off td:first-chi
 # RAI NYC Servizi — STATE (repo copy)
 
 &gt; **Short read-only copy for agents with no vault access (cloud agents).**
-&gt; Source of truth: `~/vault/10 Work/12 KIMA Creative/12.01 Active Clients/gvg-global-vision-group/rai-nyc-servizi/STATE.md` (on the Mac). Vault STATE updated: 2026-11-25T14:00-05:00 by Cursor (Grok 4.7) on MacBook.
+&gt; Source of truth: `~/vault/10 Work/12 KIMA Creative/12.01 Active Clients/gvg-global-vision-group/rai-nyc-servizi/STATE.md` (on the Mac). Vault STATE updated: 2026-11-25T16:55-05:00 by Claude Code (Fable 5.2) on MacBook.
 &gt; Cloud agents: read this; do not edit it. At END, put your end state (done / next / blockers) in the PR description.
 &gt; The next Mac session merges it into the vault STATE.md, then refreshes this copy.
 
@@ -310,9 +310,22 @@ td.dim { color:var(--dim); } tr.off td { color:var(--dim); } tr.off td:first-chi
 Marco's day job at RAI NY (GVG): a startup popup on the Avid edit machines NYC-EDIT-MC01/02/03 (C#, .NET 8, WPF) where editors log each tappeto or servizio. Supabase is the truth; the Google Sheet "2026 Report Rai NYC, Servizi Giornalistici" is a reporting mirror. The collaudo forms go to Rome for overtime and travel. Host `supervisor` (Linux Mint, user `rainyc`, Tailscale only). Owner account for everything: `rainyc.servizi@gmail.com`.
 
 ## Current goal
-**2026-11-25 (Marco: "merge anyway"):** **Merged.** `collaudo-esporta` → `main` = `846a15d` (`--no-ff`), pushed to origin, supervisor and nas. Branch deleted on the Mac, origin and supervisor. Pre-check exit 2: four `pages.ts` lines are the login form's own password field; Jev flags on a truncated diff; a search of the added lines found no real keys. **Not published.** The live collaudo does not have «Esporta» until a go: function deploy, Pages, supervisor rsync. Tests before the merge: collaudo 21/21. Not checked in a browser.
+**2026-11-25 16:55 (Claude Code; Marco: "the export does not exclude anything from the day's work… all should export just as it is in the collaudo. keep the sorting options. all of it works but the combined export"):** **Built and tested on the local stack, branch `collaudo-esporta-tutto`. NOT committed, NOT published. Production still has the morning version.**
+- **Cause, proven in a browser on the local stack:** the morning export took lives and servizi only. On 13/10 it gave 6 of 11 rows, on 21/10 38 of 79. The two-day export itself ran (two days, two weeks, Excel and PDF).
+- **Fix.** A day goes out whole, as on the collaudo: tappeti, grezzi, interviste and radio too. The Live / Servizi tick boxes are gone (`filterExport` has no type filter). The four orders stay. «Come sul collaudo» keeps the order the server sent (the morning code sorted again with an empty edition list). The day on the form goes out with the added days when its date is not yet added (before: only added days, a trap after «Aggiungi giorno» → pick a second day → Excel). The count line «Pronte» ignores a late answer for a day picked before (found by the new test: it showed 10 for a day of 11).
+- **My assumptions, for Marco:** "combined export" = the whole day together, all types. The journalist / operator filter stays (default Tutti). The export columns stay (Data, N., Titolo, Giornalista, Richiedente, Rete, Durata, Tipo, Mezzo, Operatore); the trasferta note of the day is not in the export.
+- **Files:** `lib/collaudo.js`, `lib/collaudo_test.ts`, `pages/collaudo.html`, `pages/shared.js`, `pages.ts` (rebuilt), `tests/servizi.integration.js` (12 new export checks), `CHANGELOG.md`, `docs/test-plan.md`, `OPERATIONS.md`.
+- **Tests (local stack, `PW_CHANNEL=chrome`, `--quick`):** Deno 66/66, `deno check` clean, `build_pages.mjs --check` ok, integration 307/307, layout 120/120. Screenshot of the box checked.
+- **Publish order when Marco says go:** commit on `collaudo-esporta-tutto` → build and publish the pages (Pages + supervisor rsync) → curl both hosts → editors reload the collaudo. Page HTML only: no migration, no function deploy needed for the editors. Then "merge it" (expect pre-check exit 2 on the four `pages.ts` login lines, as every time).
+- **Records brought up to date for the whole day:** `CHANGELOG.md` had no entry after 17/11; it has the 25/11 entry now. `docs/test-plan.md` and `OPERATIONS.md` name the export. Local `functions serve` stopped after the run; the local stack is left up.
 
-**2026-11-25 (Marco: export one day of lives and servizi, by journalist or operator, Excel or PDF, then another day with its own order):** **On `main`, not live.** Button «Esporta» on the collaudo. Pick a day (the week opens on that day), Live and/or Servizi, one journalist or one operator (or Tutti), and an order (come sul collaudo, per giornalista, per operatore, per orario). Excel downloads that day. PDF is the print dialog of those rows only. «Aggiungi giorno» keeps the day; the next day can use the same filters or different ones; Excel and PDF then cover every added day, in the order they were added. Rome's «Stampa» is still the whole week.
+**2026-11-25 14:45 (Marco: "wrap up"):** Session closed. «Esporta» is live (Pages `5bade33`, supervisor rsync, code `main` `fa7dc1a`). This wrap's STATE commit is on `wrap-2026-11-25`, not merged. Not checked in a browser. Marco: invoice 20261031 was paid today, and every invoice sent so far is paid. Those two GVG RAI tasks are marked done. Still open on that list: the 1Password name for the MediaCentral root login.
+
+**2026-11-25 (Marco: "GO"):** **Live.** «Esporta» is on the collaudo. Pages repo `5bade33` (pushed to origin and nas). Supervisor `/var/www/rai-nyc-servizi/` rsync'd. Verified by curl: GitHub Pages and `https://supervisor.taild9eac5.ts.net/collaudo` both contain `id="export"` (Pages Last-Modified 19:27Z). Function not redeployed: the change is page HTML only, and the live editors use Pages and supervisor, not the function's HTML. `/health` still ok. Collaudo tests 21/21 before the build. Not checked in a browser. Editors must reload the collaudo.
+
+**2026-11-25 (Marco: "merge anyway"):** **Merged.** `collaudo-esporta` → `main` = `846a15d` (`--no-ff`), pushed to origin, supervisor and nas. Branch deleted on the Mac, origin and supervisor. Pre-check exit 2: four `pages.ts` lines are the login form's own password field; Jev flags on a truncated diff; a search of the added lines found no real keys. Tests before the merge: collaudo 21/21.
+
+**2026-11-25 (Marco: export one day of lives and servizi, by journalist or operator, Excel or PDF, then another day with its own order):** **Live.** Button «Esporta» on the collaudo. Pick a day (the week opens on that day), Live and/or Servizi, one journalist or one operator (or Tutti), and an order (come sul collaudo, per giornalista, per operatore, per orario). Excel downloads that day. PDF is the print dialog of those rows only. «Aggiungi giorno» keeps the day; the next day can use the same filters or different ones; Excel and PDF then cover every added day, in the order they were added. Rome's «Stampa» is still the whole week.
 
 **2026-11-22 11:35 (Marco: "wrap up"):** Production runs `main` (`a8ac356`); no feature branch open. Today, all live: sheet mirror verified, test plan + month-proof layout test, AS Roma theme, `?lingua=it` link, `build-static.sh` token on stdin. **"supervisor.gvgrai.net is down" (Marco at the office):** not down. Marco's Mac is on 192.168.1.x (cable en19 and Wi-Fi, router 192.168.1.1, a Synology at .23), a separate office network with no route to 192.168.2.x (traceroute: 192.168.1.1 → 169.254.3.1 → lost). Supervisor checked from inside: up 38 days, 192.168.2.229, nginx 200, GVGDC01 resolves the name, ufw allows 192.168.2.0/24 and 10.0.0.0/24; last office PC load 192.168.2.25 on 20/11 18:12 = 200. Nothing changed. Links that work from 192.168.1.x: Tailscale `https://supervisor.taild9eac5.ts.net/` and GitHub Pages.
 
@@ -485,8 +498,8 @@ Marco's day job at RAI NY (GVG): a startup popup on the Avid edit machines NYC-E
 
 ## Next 3 actions
 0. **Marco** — send Lo Prete the GitHub Pages link `https://rainycservizi.github.io/rainyc-servizi-app/?lingua=it` (works on every network; the `supervisor.gvgrai.net` link fails off 192.168.2.x). Decide whether 192.168.1.x should reach supervisor (a route between the two office networks + DNS from GVGDC01: office network change, Marco or GVG IT). Optional: red/black/white day rows for Steelers and Juventus too (now navy). Tell the editors to reload the form and the collaudo. Look at Sunday 8/11 and week 46 on the live collaudo. Decide rows N. 6590 (Tg3 Ore 12, title «MI dell 11 novembre HEGSETH IMPEACHMENT») and N. 6591 (RAN, Richiedente «11 novembre»). Ruled 2026-11-17: never «del» for a live.
-0. **Marco** — say go to publish «Esporta» (function, Pages, supervisor). It is on `main` `846a15d` and not on the live collaudo.
-0. **Agent** — new work starts from `main`. No feature branch open. (Done 2026-11-25: export merged on merge anyway, not published.)
+0. **Marco** — say "commit and publish" for the «Esporta» whole-day fix (branch `collaudo-esporta-tutto`, uncommitted, tested 2026-11-25 16:55). Until then the live «Esporta» still gives lives and servizi only. After the publish: tell the editors to reload the collaudo; try one day, then a second day, then Excel and PDF; then "merge it".
+0. **Agent** — on that go: commit, build and publish the pages (Pages + supervisor rsync), curl both hosts, push the branch to origin and supervisor. Also push `66d7ed6` (Pilot's Google Tasks block) with it. No function deploy needed.
 1. Agent — older follow-ups, still open: short-screen grid, per-row revert, Gestione v2, supervisor cron. (Done 2026-11-17: the failing check «confirmed past date is saved on that day» was a late dialog `close` event; fixed in the form and in the test.)
 
 ## Blockers
@@ -527,7 +540,7 @@ var PAGE_FORM = "./" || APP_BASE;
 var PAGE_COLLAUDO = "./collaudo.html" || APP_BASE + "/collaudo";
 var PAGE_GESTIONE = "./gestione.html" || APP_BASE + "/gestione";
 var PAGE_MENSILE = "./mensile.html" || APP_BASE + "/mensile";
-var BUILD = "2026-11-25 19:26 UTC · 5688aaa"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
+var BUILD = "2026-11-25 21:55 UTC · 57676c4"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
 // Every place the project lives (shown in the admin's header menu and on the Gestione page).
 var LINKS = [
   ["Pagine pubbliche", "https://rainycservizi.github.io/rainyc-servizi-app/", "GitHub Pages: il sito di prova principale"],
@@ -689,17 +702,18 @@ var I18N = { en: {
   "La riga N. {0} è annullata: è nell'elenco in fondo.": "Line No. {0} is cancelled: it is in the list at the bottom.", "Riga N. {0}: {1}.": "Line No. {0}: {1}.",
   "Invia per e-mail": "Send by e-mail", "Stampa": "Print", "Accesso · collaudo settimanale": "Login · weekly report",
   "Esporta": "Export",
-  "Un giorno, solo le live e i servizi di un giornalista o di un operatore. Esporta quel giorno, oppure aggiungi un altro giorno con lo stesso ordine o un ordine diverso.": "One day, only the lives and packages of one journalist or one operator. Export that day, or add another day with the same order or a different one.",
-  "Giorno": "Day", "Cosa": "What", "Chi": "Who", "Nome": "Name", "Tutti": "Everyone", "Ordine": "Order",
+  "Un giorno, tutto il lavoro come sul collaudo: di tutti, oppure di un giornalista o di un operatore. Esporta quel giorno, oppure aggiungi altri giorni, ognuno con il suo ordine.": "One day, all the work as on the weekly sheet: everyone, or one journalist or one operator. Export that day, or add more days, each with its own order.",
+  "Giorno": "Day", "Chi": "Who", "Nome": "Name", "Tutti": "Everyone", "Ordine": "Order",
   "Come sul collaudo": "As on the weekly sheet", "Per giornalista": "By journalist", "Per operatore": "By operator", "Per orario": "By time",
   "Aggiungi giorno": "Add day", "Excel": "Excel", "PDF": "PDF", "Excel ({0})": "Excel ({0})", "PDF ({0})": "PDF ({0})",
-  "Scegliere un giorno.": "Choose a day.", "Scegliere Live, Servizi, o entrambi.": "Choose Live, Packages, or both.",
+  "Scegliere un giorno.": "Choose a day.",
   "Nessuna registrazione con questi filtri.": "No entries with these filters.",
   "Giorno aggiunto.": "Day added.", "Giorno aggiornato.": "Day updated.", "Togli": "Remove",
   "Excel: {0} registrazioni.": "Excel: {0} entries.", "Pronte: {0}.": "Ready: {0}.",
-  "L'esportazione comprende i giorni aggiunti. Il giorno qui sopra entra solo se lo aggiungi.": "The export is the days you added. The day above is included only after you add it.",
+  "L'esportazione comprende i giorni aggiunti e il giorno qui sopra.": "The export is the days you added and the day above.",
+  "L'esportazione comprende i giorni aggiunti.": "The export is the days you added.",
   "L'esportazione comprende il giorno qui sopra.": "The export is the day above.",
-  "Live e servizi": "Lives and packages", "Solo live": "Lives only", "Solo servizi": "Packages only", "tutti": "everyone",
+  "tutti": "everyone",
   "Sì": "Yes", "No": "No", "Destinatari": "Recipients", "aggiungi un indirizzo e-mail": "add an e-mail address",
   "Nuovo destinatario": "New recipient", "Aggiungi": "Add", "Invia": "Send", "Invia a {0}": "Send to {0}",
   "Caricamento della settimana {0}…": "Loading week {0}…", "Errore.": "Error.", "Collaudo non disponibile: {0}": "Weekly report unavailable: {0}",

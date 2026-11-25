@@ -421,7 +421,7 @@ kbd { font:600 11px/1 var(--mono); padding:2px 5px; border:1px solid var(--line2
 </head>
 <body>
 <header class="appbar">
-  <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-11-25 19:26 UTC · 5688aaa"><span class="mk">Rai · NY</span><span id="t">RAI NYC Servizi</span><span class="pg" data-i18n>Registrazione</span></div>
+  <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-11-25 21:55 UTC · 57676c4"><span class="mk">Rai · NY</span><span id="t">RAI NYC Servizi</span><span class="pg" data-i18n>Registrazione</span></div>
   <nav class="hright" id="hright" aria-label="Pagine">
     <span class="pend" id="pend" hidden></span>
     <button type="button" class="icbtn lang" id="tour-btn" hidden data-i18n-attr="aria-label|title" aria-label="Tutorial: come si compila una registrazione" title="Tutorial: come si compila una registrazione">?</button>
@@ -627,7 +627,7 @@ var PAGE_FORM = "./" || APP_BASE;
 var PAGE_COLLAUDO = "./collaudo.html" || APP_BASE + "/collaudo";
 var PAGE_GESTIONE = "./gestione.html" || APP_BASE + "/gestione";
 var PAGE_MENSILE = "./mensile.html" || APP_BASE + "/mensile";
-var BUILD = "2026-11-25 19:26 UTC · 5688aaa"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
+var BUILD = "2026-11-25 21:55 UTC · 57676c4"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
 // Every place the project lives (shown in the admin's header menu and on the Gestione page).
 var LINKS = [
   ["Pagine pubbliche", "https://rainycservizi.github.io/rainyc-servizi-app/", "GitHub Pages: il sito di prova principale"],
@@ -789,17 +789,18 @@ var I18N = { en: {
   "La riga N. {0} è annullata: è nell'elenco in fondo.": "Line No. {0} is cancelled: it is in the list at the bottom.", "Riga N. {0}: {1}.": "Line No. {0}: {1}.",
   "Invia per e-mail": "Send by e-mail", "Stampa": "Print", "Accesso · collaudo settimanale": "Login · weekly report",
   "Esporta": "Export",
-  "Un giorno, solo le live e i servizi di un giornalista o di un operatore. Esporta quel giorno, oppure aggiungi un altro giorno con lo stesso ordine o un ordine diverso.": "One day, only the lives and packages of one journalist or one operator. Export that day, or add another day with the same order or a different one.",
-  "Giorno": "Day", "Cosa": "What", "Chi": "Who", "Nome": "Name", "Tutti": "Everyone", "Ordine": "Order",
+  "Un giorno, tutto il lavoro come sul collaudo: di tutti, oppure di un giornalista o di un operatore. Esporta quel giorno, oppure aggiungi altri giorni, ognuno con il suo ordine.": "One day, all the work as on the weekly sheet: everyone, or one journalist or one operator. Export that day, or add more days, each with its own order.",
+  "Giorno": "Day", "Chi": "Who", "Nome": "Name", "Tutti": "Everyone", "Ordine": "Order",
   "Come sul collaudo": "As on the weekly sheet", "Per giornalista": "By journalist", "Per operatore": "By operator", "Per orario": "By time",
   "Aggiungi giorno": "Add day", "Excel": "Excel", "PDF": "PDF", "Excel ({0})": "Excel ({0})", "PDF ({0})": "PDF ({0})",
-  "Scegliere un giorno.": "Choose a day.", "Scegliere Live, Servizi, o entrambi.": "Choose Live, Packages, or both.",
+  "Scegliere un giorno.": "Choose a day.",
   "Nessuna registrazione con questi filtri.": "No entries with these filters.",
   "Giorno aggiunto.": "Day added.", "Giorno aggiornato.": "Day updated.", "Togli": "Remove",
   "Excel: {0} registrazioni.": "Excel: {0} entries.", "Pronte: {0}.": "Ready: {0}.",
-  "L'esportazione comprende i giorni aggiunti. Il giorno qui sopra entra solo se lo aggiungi.": "The export is the days you added. The day above is included only after you add it.",
+  "L'esportazione comprende i giorni aggiunti e il giorno qui sopra.": "The export is the days you added and the day above.",
+  "L'esportazione comprende i giorni aggiunti.": "The export is the days you added.",
   "L'esportazione comprende il giorno qui sopra.": "The export is the day above.",
-  "Live e servizi": "Lives and packages", "Solo live": "Lives only", "Solo servizi": "Packages only", "tutti": "everyone",
+  "tutti": "everyone",
   "Sì": "Yes", "No": "No", "Destinatari": "Recipients", "aggiungi un indirizzo e-mail": "add an e-mail address",
   "Nuovo destinatario": "New recipient", "Aggiungi": "Add", "Invia": "Send", "Invia a {0}": "Send to {0}",
   "Caricamento della settimana {0}…": "Loading week {0}…", "Errore.": "Error.", "Collaudo non disponibile: {0}": "Weekly report unavailable: {0}",

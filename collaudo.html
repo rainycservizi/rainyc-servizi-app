@@ -260,8 +260,6 @@ footer.doc .firma { font-size:13px; white-space:nowrap; }
 .pop.export .lead { margin:0 0 12px; color:var(--dim); font-size:13px; line-height:1.4; }
 .pop.export .fld { margin:0 0 10px; }
 .pop.export select, .pop.export input[type=date] { width:100%; height:40px; margin:0; font-size:15px; }
-.pop.export .checks { display:flex; gap:16px; }
-.pop.export .checks label { display:flex; align-items:center; gap:8px; font-weight:600; cursor:pointer; }
 .pop.export .exdays { list-style:none; margin:8px 0; padding:0; }
 .pop.export .exdays:empty { display:none; }
 .pop.export .exdays li { display:flex; align-items:flex-start; gap:8px; justify-content:space-between; padding:8px 0; border-top:1px solid var(--line); font-size:13px; }
@@ -390,7 +388,7 @@ tr.r.hit td { animation:hit 2.6s ease-out; }
 <body>
 <div class="top" id="top">
   <header class="appbar">
-    <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-11-25 19:26 UTC · 5688aaa"><span class="mk">Rai · NY</span><span class="nm">RAI NYC Servizi</span><span class="pg" data-i18n>Collaudo</span></div>
+    <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-11-25 21:55 UTC · 57676c4"><span class="mk">Rai · NY</span><span class="nm">RAI NYC Servizi</span><span class="pg" data-i18n>Collaudo</span></div>
     <nav class="hright" id="hright" aria-label="Pagine">
       <button type="button" class="icbtn" id="theme" aria-label="Tema" title="Tema" aria-haspopup="menu" aria-expanded="false">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3a9 9 0 1 0 0 18c1.2 0 2-.9 2-2 0-.6-.2-1-.5-1.4-.3-.4-.5-.8-.5-1.3 0-1.1.9-2 2-2h2.2A4.8 4.8 0 0 0 22 9.6C22 5.8 17.5 3 12 3z"/><circle cx="7.5" cy="11.5" r="1.1"/><circle cx="10.5" cy="7.5" r="1.1"/><circle cx="15" cy="7.5" r="1.1"/><circle cx="17.5" cy="11.5" r="1.1"/></svg>
@@ -426,17 +424,10 @@ tr.r.hit td { animation:hit 2.6s ease-out; }
     <button type="button" class="btn pri" id="print" data-i18n><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 6V2h8v4M4 12H2.5V7h11v5H12M4.5 10h7v4h-7z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>Stampa</button>
   </form>
   <div class="pop export" id="export-pop" hidden>
-    <p class="lead" data-i18n>Un giorno, solo le live e i servizi di un giornalista o di un operatore. Esporta quel giorno, oppure aggiungi un altro giorno con lo stesso ordine o un ordine diverso.</p>
+    <p class="lead" data-i18n>Un giorno, tutto il lavoro come sul collaudo: di tutti, oppure di un giornalista o di un operatore. Esporta quel giorno, oppure aggiungi altri giorni, ognuno con il suo ordine.</p>
     <div class="fld">
       <label for="ex-data" data-i18n>Giorno</label>
       <input type="date" id="ex-data">
-    </div>
-    <div class="fld">
-      <div data-i18n>Cosa</div>
-      <div class="checks">
-        <label><input type="checkbox" id="ex-live" checked> <span data-i18n>Live</span></label>
-        <label><input type="checkbox" id="ex-pezzo" checked> <span data-i18n>Servizi</span></label>
-      </div>
     </div>
     <div class="row2">
       <div class="fld">
@@ -511,7 +502,7 @@ var PAGE_FORM = "./" || APP_BASE;
 var PAGE_COLLAUDO = "./collaudo.html" || APP_BASE + "/collaudo";
 var PAGE_GESTIONE = "./gestione.html" || APP_BASE + "/gestione";
 var PAGE_MENSILE = "./mensile.html" || APP_BASE + "/mensile";
-var BUILD = "2026-11-25 19:26 UTC · 5688aaa"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
+var BUILD = "2026-11-25 21:55 UTC · 57676c4"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
 // Every place the project lives (shown in the admin's header menu and on the Gestione page).
 var LINKS = [
   ["Pagine pubbliche", "https://rainycservizi.github.io/rainyc-servizi-app/", "GitHub Pages: il sito di prova principale"],
@@ -673,17 +664,18 @@ var I18N = { en: {
   "La riga N. {0} è annullata: è nell'elenco in fondo.": "Line No. {0} is cancelled: it is in the list at the bottom.", "Riga N. {0}: {1}.": "Line No. {0}: {1}.",
   "Invia per e-mail": "Send by e-mail", "Stampa": "Print", "Accesso · collaudo settimanale": "Login · weekly report",
   "Esporta": "Export",
-  "Un giorno, solo le live e i servizi di un giornalista o di un operatore. Esporta quel giorno, oppure aggiungi un altro giorno con lo stesso ordine o un ordine diverso.": "One day, only the lives and packages of one journalist or one operator. Export that day, or add another day with the same order or a different one.",
-  "Giorno": "Day", "Cosa": "What", "Chi": "Who", "Nome": "Name", "Tutti": "Everyone", "Ordine": "Order",
+  "Un giorno, tutto il lavoro come sul collaudo: di tutti, oppure di un giornalista o di un operatore. Esporta quel giorno, oppure aggiungi altri giorni, ognuno con il suo ordine.": "One day, all the work as on the weekly sheet: everyone, or one journalist or one operator. Export that day, or add more days, each with its own order.",
+  "Giorno": "Day", "Chi": "Who", "Nome": "Name", "Tutti": "Everyone", "Ordine": "Order",
   "Come sul collaudo": "As on the weekly sheet", "Per giornalista": "By journalist", "Per operatore": "By operator", "Per orario": "By time",
   "Aggiungi giorno": "Add day", "Excel": "Excel", "PDF": "PDF", "Excel ({0})": "Excel ({0})", "PDF ({0})": "PDF ({0})",
-  "Scegliere un giorno.": "Choose a day.", "Scegliere Live, Servizi, o entrambi.": "Choose Live, Packages, or both.",
+  "Scegliere un giorno.": "Choose a day.",
   "Nessuna registrazione con questi filtri.": "No entries with these filters.",
   "Giorno aggiunto.": "Day added.", "Giorno aggiornato.": "Day updated.", "Togli": "Remove",
   "Excel: {0} registrazioni.": "Excel: {0} entries.", "Pronte: {0}.": "Ready: {0}.",
-  "L'esportazione comprende i giorni aggiunti. Il giorno qui sopra entra solo se lo aggiungi.": "The export is the days you added. The day above is included only after you add it.",
+  "L'esportazione comprende i giorni aggiunti e il giorno qui sopra.": "The export is the days you added and the day above.",
+  "L'esportazione comprende i giorni aggiunti.": "The export is the days you added.",
   "L'esportazione comprende il giorno qui sopra.": "The export is the day above.",
-  "Live e servizi": "Lives and packages", "Solo live": "Lives only", "Solo servizi": "Packages only", "tutti": "everyone",
+  "tutti": "everyone",
   "Sì": "Yes", "No": "No", "Destinatari": "Recipients", "aggiungi un indirizzo e-mail": "add an e-mail address",
   "Nuovo destinatario": "New recipient", "Aggiungi": "Add", "Invia": "Send", "Invia a {0}": "Send to {0}",
   "Caricamento della settimana {0}…": "Loading week {0}…", "Errore.": "Error.", "Collaudo non disponibile: {0}": "Weekly report unavailable: {0}",
@@ -1986,27 +1978,25 @@ ${groups.join("\n")}
 </footer>`;
 }
 
-// An extract of one or more days (Marco, 2026-11-25): live shots and servizi of one journalist or one operator,
-// each day in its own order, then Excel or a print (PDF). Rome's weekly print is unchanged.
+// An extract of one or more days (Marco, 2026-11-25): everything the collaudo shows for that day (lives, servizi,
+// radio, tappeti, grezzi, interviste), for everyone or for one journalist or one operator, each day in its own
+// order, then Excel or a print (PDF). No type is ever left out. Rome's weekly print is unchanged.
 const EXPORT_SORTS = ["collaudo", "giornalista", "operatore", "ora"];
 const EXPORT_COLS = ["Data", "N.", "Titolo", "Giornalista", "Richiedente", "Rete", "Durata", "Tipo", "Mezzo", "Operatore"];
 const TIPO_LABEL = { pezzo: "Servizio", radio: "Radio", live: "Live", tappeto: "Tappeto", grezzo: "Grezzo", intervista: "Intervista" };
 const SORT_LABEL = { collaudo: "come sul collaudo", giornalista: "per giornalista", operatore: "per operatore", ora: "per orario" };
 
 /**
- * Rows of one day, only the chosen types, and only one journalist or one operator when a name is set.
+ * Every row of one day, whatever its type; only one journalist or one operator when a name is set.
  * @param {Array<Record<string, unknown>>} rows
- * @param {{data:string, tipi?:string[], chi?:string, nome?:string}} spec
+ * @param {{data:string, chi?:string, nome?:string}} spec
  */
 function filterExport(rows, spec) {
   const data = String(spec.data || "");
-  const tipi = (spec.tipi == null ? ["live", "pezzo"] : spec.tipi).map((s) => String(s).toLowerCase());
-  if (!tipi.length) return [];
   const chi = spec.chi === "operatore" || spec.chi === "giornalista" ? spec.chi : "";
   const nome = String(spec.nome || "").trim().toLowerCase();
   return rows.filter((r) => {
     if (String(r.data || "") !== data) return false;
-    if (!tipi.includes(String(r.categoria || "").toLowerCase())) return false;
     if (!nome) return true;
     if (chi) return String(r[chi] || "").trim().toLowerCase() === nome;
     const g = String(r.giornalista || "").trim().toLowerCase();
@@ -2017,12 +2007,13 @@ function filterExport(rows, spec) {
 
 /**
  * Order for one extract. `collaudo` is the sheet's reading order; the others keep that order as the tie-break.
+ * Without `slots` the rows are taken as already in the sheet's order (GET /api/collaudo sends them so), and stay so.
  * @param {Array<Record<string, unknown>>} rows
  * @param {string} sort
  * @param {Array<{parent:string|null, value:string, sort_order:number}>} [slots]
  */
 function sortExport(rows, sort, slots) {
-  const base = orderRows(rows, slots || []);
+  const base = slots ? orderRows(rows, slots) : rows.slice();
   const kind = EXPORT_SORTS.includes(sort) ? sort : "collaudo";
   if (kind === "collaudo") return base;
   const at = new Map(base.map((r, i) => [r, i]));
@@ -2037,10 +2028,6 @@ function sortExport(rows, sort, slots) {
 
 /** Italian heading for one day of the extract (the print and the PDF stay Italian). */
 function sliceTitle(spec, n) {
-  const tipi = spec.tipi == null ? ["live", "pezzo"] : spec.tipi;
-  const cosa = tipi.includes("live") && tipi.includes("pezzo") ? "Live e servizi"
-    : tipi.includes("live") ? "Solo live"
-    : tipi.includes("pezzo") ? "Solo servizi" : "";
   const chi = spec.nome
     ? (spec.chi === "operatore" ? "operatore " + spec.nome : "giornalista " + spec.nome)
     : "tutti";
@@ -2051,7 +2038,7 @@ function sliceTitle(spec, n) {
     const dow = (new Date(ms).getUTCDay() + 6) % 7;
     day = GIORNI[dow] + " " + Number(m[3]) + " " + MESI[+m[2] - 1] + " " + m[1];
   }
-  return `${day} · ${cosa} · ${chi} · ${SORT_LABEL[spec.sort] || SORT_LABEL.collaudo} · ${n}`;
+  return `${day} · ${chi} · ${SORT_LABEL[spec.sort] || SORT_LABEL.collaudo} · ${n}`;
 }
 
 /** One row of the extract, in EXPORT_COLS order. */
@@ -2098,7 +2085,7 @@ function exportWorkbook(slices) {
 
 /**
  * The print of the extract (Save as PDF from the print dialog). Italian, like Rome's sheet.
- * @param {Array<{data:string, tipi?:string[], chi?:string, nome?:string, sort?:string, rows: Array<Record<string, unknown>>}>} slices
+ * @param {Array<{data:string, chi?:string, nome?:string, sort?:string, rows: Array<Record<string, unknown>>}>} slices
  */
 function renderEstratto(slices) {
   const head = EXPORT_COLS.map((c) => `<th>${esc(c)}</th>`).join("");
@@ -2745,28 +2732,30 @@ function renderEstratto(slices) {
   });
   $("print").addEventListener("click", function () { extractOn = false; window.print(); });
 
-  // Extract: one day of lives and servizi, one journalist or operator, its own order; add more days, then Excel or PDF.
+  // Extract: one day, every row the collaudo shows (no type is left out), everyone or one journalist or operator,
+  // its own order; add more days, then Excel or PDF. The day on the form is exported too when it is not yet added.
   var basket = [];
   function setExErr(text) { $("ex-err").textContent = text ? t(text) : ""; }
   function formSpec() {
-    var tipi = [];
-    if ($("ex-live").checked) tipi.push("live");
-    if ($("ex-pezzo").checked) tipi.push("pezzo");
-    return { data: $("ex-data").value, tipi: tipi, chi: $("ex-chi").value, nome: $("ex-nome").value, sort: $("ex-sort").value };
+    return { data: $("ex-data").value, chi: $("ex-chi").value, nome: $("ex-nome").value, sort: $("ex-sort").value };
   }
   function sameSpec(a, b) {
-    return a.data === b.data && a.chi === b.chi && a.nome === b.nome && a.sort === b.sort && a.tipi.join(",") === b.tipi.join(",");
+    return a.data === b.data && a.chi === b.chi && a.nome === b.nome && a.sort === b.sort;
   }
   function screenSlice(spec, n) {
-    var cosa = spec.tipi.indexOf("live") >= 0 && spec.tipi.indexOf("pezzo") >= 0 ? t("Live e servizi")
-      : spec.tipi.indexOf("live") >= 0 ? t("Solo live") : spec.tipi.indexOf("pezzo") >= 0 ? t("Solo servizi") : "";
     var who = spec.nome ? t(spec.chi) + " " + (spec.chi === "operatore" ? t(spec.nome) : spec.nome) : t("tutti");
     var ord = t({ collaudo: "Come sul collaudo", giornalista: "Per giornalista", operatore: "Per operatore", ora: "Per orario" }[spec.sort] || "Come sul collaudo");
-    return fmtDay(spec.data) + " · " + cosa + " · " + who + " · " + ord + " · " + n;
+    return fmtDay(spec.data) + " · " + who + " · " + ord + " · " + n;
   }
   function rowsOf(spec) {
     var key = formatWeek(isoWeekOf(spec.data));
-    return sortExport(filterExport(weekCache[key] || [], spec), spec.sort, []);
+    return sortExport(filterExport(weekCache[key] || [], spec), spec.sort); // the server sent the week in the sheet's order
+  }
+  // What Excel and PDF take: the added days, then the day on the form when that date is not among them.
+  function exportSpecs() {
+    var specs = basket.slice(), f = formSpec();
+    if (/^\d{4}-\d{2}-\d{2}$/.test(f.data) && !specs.some(function (s) { return s.data === f.data; })) specs.push(f);
+    return specs;
   }
   function ensureWeek(date) {
     var key = formatWeek(isoWeekOf(date));
@@ -2804,18 +2793,20 @@ function renderEstratto(slices) {
       b.addEventListener("click", function () { basket.splice(i, 1); paintBasket(); });
       li.appendChild(b); ul.appendChild(li);
     });
-    $("ex-xls").textContent = basket.length ? tf("Excel ({0})", basket.length) : "Excel";
-    $("ex-pdf").textContent = basket.length ? tf("PDF ({0})", basket.length) : "PDF";
-    $("ex-scope").textContent = t(basket.length
-      ? "L'esportazione comprende i giorni aggiunti. Il giorno qui sopra entra solo se lo aggiungi."
-      : "L'esportazione comprende il giorno qui sopra.");
+    var n = exportSpecs().length;
+    $("ex-xls").textContent = basket.length ? tf("Excel ({0})", n) : "Excel";
+    $("ex-pdf").textContent = basket.length ? tf("PDF ({0})", n) : "PDF";
+    $("ex-scope").textContent = t(!basket.length ? "L'esportazione comprende il giorno qui sopra."
+      : n > basket.length ? "L'esportazione comprende i giorni aggiunti e il giorno qui sopra."
+      : "L'esportazione comprende i giorni aggiunti.");
   }
   function refreshCount() {
     var spec = formSpec();
     if (!/^\d{4}-\d{2}-\d{2}$/.test(spec.data)) { $("ex-count").textContent = ""; return; }
     ensureWeek(spec.data).then(function () {
+      if ($("ex-data").value !== spec.data) return; // an answer for a day picked before: the newer one paints
       fillNomi();
-      $("ex-count").textContent = tf("Pronte: {0}.", rowsOf(spec).length);
+      $("ex-count").textContent = tf("Pronte: {0}.", rowsOf(formSpec()).length);
       paintBasket();
     }, function () { $("ex-count").textContent = ""; });
   }
@@ -2838,7 +2829,7 @@ function renderEstratto(slices) {
     if (ev.key !== "Escape") return; ev.stopPropagation(); openExport(false);
   });
   $("ex-chi").addEventListener("change", refreshCount);
-  ["ex-live", "ex-pezzo", "ex-nome", "ex-sort"].forEach(function (id) { $(id).addEventListener("change", refreshCount); });
+  ["ex-nome", "ex-sort"].forEach(function (id) { $(id).addEventListener("change", refreshCount); });
   $("ex-data").addEventListener("change", function () {
     var d = $("ex-data").value;
     if (!/^\d{4}-\d{2}-\d{2}$/.test(d)) return;
@@ -2849,7 +2840,6 @@ function renderEstratto(slices) {
   $("ex-add").addEventListener("click", function () {
     var spec = formSpec();
     if (!/^\d{4}-\d{2}-\d{2}$/.test(spec.data)) { setExErr("Scegliere un giorno."); return; }
-    if (!spec.tipi.length) { setExErr("Scegliere Live, Servizi, o entrambi."); return; }
     ensureWeek(spec.data).then(function () {
       var i = -1; basket.forEach(function (s, n) { if (sameSpec(s, spec)) i = n; });
       if (i >= 0) basket[i] = spec; else basket.push(spec);
@@ -2859,11 +2849,10 @@ function renderEstratto(slices) {
     }, function (e) { setExErr(e.message || "Errore."); });
   });
   function runExport(kind) {
-    var specs = basket.length ? basket.slice() : [formSpec()];
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(specs[0].data)) { setExErr("Scegliere un giorno."); return; }
-    if (specs.some(function (s) { return !s.tipi.length; })) { setExErr("Scegliere Live, Servizi, o entrambi."); return; }
+    var specs = exportSpecs();
+    if (!specs.length) { setExErr("Scegliere un giorno."); return; }
     Promise.all(specs.map(function (s) { return ensureWeek(s.data); })).then(function () {
-      var slices = specs.map(function (s) { return { data: s.data, tipi: s.tipi, chi: s.chi, nome: s.nome, sort: s.sort, rows: rowsOf(s) }; });
+      var slices = specs.map(function (s) { return { data: s.data, chi: s.chi, nome: s.nome, sort: s.sort, rows: rowsOf(s) }; });
       var n = slices.reduce(function (a, s) { return a + s.rows.length; }, 0);
       if (!n) { setExErr("Nessuna registrazione con questi filtri."); return; }
       setExErr("");
