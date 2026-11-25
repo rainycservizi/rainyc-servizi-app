@@ -256,6 +256,17 @@ footer.doc .firma { font-size:13px; white-space:nowrap; }
 .pop .row .btn { flex:1; justify-content:center; height:40px; }
 /* ── e-mail: recipients to tick, one to add ── */
 .pop.mail { width:440px; top:70px; left:50%; transform:translateX(-50%); }
+.pop.export { width:480px; top:70px; left:50%; transform:translateX(-50%); max-height:calc(100vh / var(--z, 1) - 90px); overflow:auto; }
+.pop.export .lead { margin:0 0 12px; color:var(--dim); font-size:13px; line-height:1.4; }
+.pop.export .fld { margin:0 0 10px; }
+.pop.export select, .pop.export input[type=date] { width:100%; height:40px; margin:0; font-size:15px; }
+.pop.export .checks { display:flex; gap:16px; }
+.pop.export .checks label { display:flex; align-items:center; gap:8px; font-weight:600; cursor:pointer; }
+.pop.export .exdays { list-style:none; margin:8px 0; padding:0; }
+.pop.export .exdays:empty { display:none; }
+.pop.export .exdays li { display:flex; align-items:flex-start; gap:8px; justify-content:space-between; padding:8px 0; border-top:1px solid var(--line); font-size:13px; }
+.pop.export .exdays button { flex:none; }
+.pop.export .note { margin:0 0 8px; color:var(--dim); font-size:12px; }
 .rcp { list-style:none; margin:0 0 10px; padding:0; max-height:min(40vh, 320px); overflow:auto; border:1px solid var(--line); border-radius:6px; }
 .rcp li { display:flex; align-items:center; gap:10px; min-height:40px; padding:0 10px; border-bottom:1px solid var(--line); }
 .rcp li:last-child { border-bottom:0; }
@@ -345,6 +356,11 @@ tr.r.hit td { animation:hit 2.6s ease-out; }
   html, body { background:#fff; color:#111; } :root[data-theme] body { background:#fff; }
   body { font-size:11px; }
   .top, .tools, .np, .pop, .pop-pwd, #login { display:none !important; }
+  body.estratto #doc { display:none !important; }
+  body.estratto #estratto { display:block !important; }
+  #estratto table { width:100%; border-collapse:collapse; margin:0 0 16px; }
+  #estratto th, #estratto td { border-bottom:1px solid #ccc; text-align:left; padding:3px 5px; }
+  #estratto h2 { font-size:13px; margin:12px 0 4px; }
   .page { padding:0; }
   .panel { border:0; box-shadow:none; border-radius:0; }
   .sheet { max-width:none; padding:0; display:block; }
@@ -374,7 +390,7 @@ tr.r.hit td { animation:hit 2.6s ease-out; }
 <body>
 <div class="top" id="top">
   <header class="appbar">
-    <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-11-22 16:07 UTC · e210cea"><span class="mk">Rai · NY</span><span class="nm">RAI NYC Servizi</span><span class="pg" data-i18n>Collaudo</span></div>
+    <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-11-25 19:26 UTC · 5688aaa"><span class="mk">Rai · NY</span><span class="nm">RAI NYC Servizi</span><span class="pg" data-i18n>Collaudo</span></div>
     <nav class="hright" id="hright" aria-label="Pagine">
       <button type="button" class="icbtn" id="theme" aria-label="Tema" title="Tema" aria-haspopup="menu" aria-expanded="false">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3a9 9 0 1 0 0 18c1.2 0 2-.9 2-2 0-.6-.2-1-.5-1.4-.3-.4-.5-.8-.5-1.3 0-1.1.9-2 2-2h2.2A4.8 4.8 0 0 0 22 9.6C22 5.8 17.5 3 12 3z"/><circle cx="7.5" cy="11.5" r="1.1"/><circle cx="10.5" cy="7.5" r="1.1"/><circle cx="15" cy="7.5" r="1.1"/><circle cx="17.5" cy="11.5" r="1.1"/></svg>
@@ -406,8 +422,57 @@ tr.r.hit td { animation:hit 2.6s ease-out; }
     </div>
     <span class="msg" id="msg" role="status" aria-live="polite"></span>
     <button type="button" class="btn" id="email"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M2 4h12v8H2zM2.5 4.5L8 9l5.5-4.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg><span id="email-t" data-i18n>Invia per e-mail</span></button>
+    <button type="button" class="btn" id="export" aria-expanded="false" aria-controls="export-pop" data-i18n>Esporta</button>
     <button type="button" class="btn pri" id="print" data-i18n><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 6V2h8v4M4 12H2.5V7h11v5H12M4.5 10h7v4h-7z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>Stampa</button>
   </form>
+  <div class="pop export" id="export-pop" hidden>
+    <p class="lead" data-i18n>Un giorno, solo le live e i servizi di un giornalista o di un operatore. Esporta quel giorno, oppure aggiungi un altro giorno con lo stesso ordine o un ordine diverso.</p>
+    <div class="fld">
+      <label for="ex-data" data-i18n>Giorno</label>
+      <input type="date" id="ex-data">
+    </div>
+    <div class="fld">
+      <div data-i18n>Cosa</div>
+      <div class="checks">
+        <label><input type="checkbox" id="ex-live" checked> <span data-i18n>Live</span></label>
+        <label><input type="checkbox" id="ex-pezzo" checked> <span data-i18n>Servizi</span></label>
+      </div>
+    </div>
+    <div class="row2">
+      <div class="fld">
+        <label for="ex-chi" data-i18n>Chi</label>
+        <select id="ex-chi">
+          <option value="giornalista" data-i18n>Giornalista</option>
+          <option value="operatore" data-i18n>Operatore</option>
+        </select>
+      </div>
+      <div class="fld">
+        <label for="ex-nome" data-i18n>Nome</label>
+        <select id="ex-nome"><option value="">Tutti</option></select>
+      </div>
+    </div>
+    <div class="fld">
+      <label for="ex-sort" data-i18n>Ordine</label>
+      <select id="ex-sort">
+        <option value="collaudo" data-i18n>Come sul collaudo</option>
+        <option value="giornalista" data-i18n>Per giornalista</option>
+        <option value="operatore" data-i18n>Per operatore</option>
+        <option value="ora" data-i18n>Per orario</option>
+      </select>
+    </div>
+    <p class="note" id="ex-count"></p>
+    <ul class="exdays" id="ex-list"></ul>
+    <p class="note" id="ex-scope"></p>
+    <div class="row">
+      <button type="button" class="btn" id="ex-add" data-i18n>Aggiungi giorno</button>
+      <button type="button" class="btn" id="ex-close" data-i18n>Chiudi</button>
+    </div>
+    <div class="row">
+      <button type="button" class="btn" id="ex-xls">Excel</button>
+      <button type="button" class="btn pri" id="ex-pdf">PDF</button>
+    </div>
+    <div class="err" id="ex-err" role="alert"></div>
+  </div>
 </div>
 <div class="page">
   <form id="login" class="panel" hidden autocomplete="on">
@@ -419,6 +484,7 @@ tr.r.hit td { animation:hit 2.6s ease-out; }
     <div class="err" id="login-err" role="alert"></div>
   </form>
   <div id="doc" class="panel sheet"></div>
+  <div id="estratto" hidden></div>
   <div class="rmenu np" id="rmenu" role="menu" hidden></div>
 </div>
 
@@ -445,7 +511,7 @@ var PAGE_FORM = "./" || APP_BASE;
 var PAGE_COLLAUDO = "./collaudo.html" || APP_BASE + "/collaudo";
 var PAGE_GESTIONE = "./gestione.html" || APP_BASE + "/gestione";
 var PAGE_MENSILE = "./mensile.html" || APP_BASE + "/mensile";
-var BUILD = "2026-11-22 16:07 UTC · e210cea"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
+var BUILD = "2026-11-25 19:26 UTC · 5688aaa"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
 // Every place the project lives (shown in the admin's header menu and on the Gestione page).
 var LINKS = [
   ["Pagine pubbliche", "https://rainycservizi.github.io/rainyc-servizi-app/", "GitHub Pages: il sito di prova principale"],
@@ -606,6 +672,18 @@ var I18N = { en: {
   "Riga duplicata: nuova riga N. {0}.": "Line duplicated: new line No. {0}.", "Riga duplicata annullata.": "Duplicated line cancelled.",
   "La riga N. {0} è annullata: è nell'elenco in fondo.": "Line No. {0} is cancelled: it is in the list at the bottom.", "Riga N. {0}: {1}.": "Line No. {0}: {1}.",
   "Invia per e-mail": "Send by e-mail", "Stampa": "Print", "Accesso · collaudo settimanale": "Login · weekly report",
+  "Esporta": "Export",
+  "Un giorno, solo le live e i servizi di un giornalista o di un operatore. Esporta quel giorno, oppure aggiungi un altro giorno con lo stesso ordine o un ordine diverso.": "One day, only the lives and packages of one journalist or one operator. Export that day, or add another day with the same order or a different one.",
+  "Giorno": "Day", "Cosa": "What", "Chi": "Who", "Nome": "Name", "Tutti": "Everyone", "Ordine": "Order",
+  "Come sul collaudo": "As on the weekly sheet", "Per giornalista": "By journalist", "Per operatore": "By operator", "Per orario": "By time",
+  "Aggiungi giorno": "Add day", "Excel": "Excel", "PDF": "PDF", "Excel ({0})": "Excel ({0})", "PDF ({0})": "PDF ({0})",
+  "Scegliere un giorno.": "Choose a day.", "Scegliere Live, Servizi, o entrambi.": "Choose Live, Packages, or both.",
+  "Nessuna registrazione con questi filtri.": "No entries with these filters.",
+  "Giorno aggiunto.": "Day added.", "Giorno aggiornato.": "Day updated.", "Togli": "Remove",
+  "Excel: {0} registrazioni.": "Excel: {0} entries.", "Pronte: {0}.": "Ready: {0}.",
+  "L'esportazione comprende i giorni aggiunti. Il giorno qui sopra entra solo se lo aggiungi.": "The export is the days you added. The day above is included only after you add it.",
+  "L'esportazione comprende il giorno qui sopra.": "The export is the day above.",
+  "Live e servizi": "Lives and packages", "Solo live": "Lives only", "Solo servizi": "Packages only", "tutti": "everyone",
   "Sì": "Yes", "No": "No", "Destinatari": "Recipients", "aggiungi un indirizzo e-mail": "add an e-mail address",
   "Nuovo destinatario": "New recipient", "Aggiungi": "Add", "Invia": "Send", "Invia a {0}": "Send to {0}",
   "Caricamento della settimana {0}…": "Loading week {0}…", "Errore.": "Error.", "Collaudo non disponibile: {0}": "Weekly report unavailable: {0}",
@@ -1908,6 +1986,130 @@ ${groups.join("\n")}
 </footer>`;
 }
 
+// An extract of one or more days (Marco, 2026-11-25): live shots and servizi of one journalist or one operator,
+// each day in its own order, then Excel or a print (PDF). Rome's weekly print is unchanged.
+const EXPORT_SORTS = ["collaudo", "giornalista", "operatore", "ora"];
+const EXPORT_COLS = ["Data", "N.", "Titolo", "Giornalista", "Richiedente", "Rete", "Durata", "Tipo", "Mezzo", "Operatore"];
+const TIPO_LABEL = { pezzo: "Servizio", radio: "Radio", live: "Live", tappeto: "Tappeto", grezzo: "Grezzo", intervista: "Intervista" };
+const SORT_LABEL = { collaudo: "come sul collaudo", giornalista: "per giornalista", operatore: "per operatore", ora: "per orario" };
+
+/**
+ * Rows of one day, only the chosen types, and only one journalist or one operator when a name is set.
+ * @param {Array<Record<string, unknown>>} rows
+ * @param {{data:string, tipi?:string[], chi?:string, nome?:string}} spec
+ */
+function filterExport(rows, spec) {
+  const data = String(spec.data || "");
+  const tipi = (spec.tipi == null ? ["live", "pezzo"] : spec.tipi).map((s) => String(s).toLowerCase());
+  if (!tipi.length) return [];
+  const chi = spec.chi === "operatore" || spec.chi === "giornalista" ? spec.chi : "";
+  const nome = String(spec.nome || "").trim().toLowerCase();
+  return rows.filter((r) => {
+    if (String(r.data || "") !== data) return false;
+    if (!tipi.includes(String(r.categoria || "").toLowerCase())) return false;
+    if (!nome) return true;
+    if (chi) return String(r[chi] || "").trim().toLowerCase() === nome;
+    const g = String(r.giornalista || "").trim().toLowerCase();
+    const o = String(r.operatore || "").trim().toLowerCase();
+    return g === nome || o === nome;
+  });
+}
+
+/**
+ * Order for one extract. `collaudo` is the sheet's reading order; the others keep that order as the tie-break.
+ * @param {Array<Record<string, unknown>>} rows
+ * @param {string} sort
+ * @param {Array<{parent:string|null, value:string, sort_order:number}>} [slots]
+ */
+function sortExport(rows, sort, slots) {
+  const base = orderRows(rows, slots || []);
+  const kind = EXPORT_SORTS.includes(sort) ? sort : "collaudo";
+  if (kind === "collaudo") return base;
+  const at = new Map(base.map((r, i) => [r, i]));
+  const tie = (a, b) => at.get(a) - at.get(b);
+  const name = (r, k) => String(r[k] || "").toLocaleLowerCase("it");
+  const copy = base.slice();
+  if (kind === "giornalista") copy.sort((a, b) => name(a, "giornalista").localeCompare(name(b, "giornalista"), "it") || tie(a, b));
+  else if (kind === "operatore") copy.sort((a, b) => name(a, "operatore").localeCompare(name(b, "operatore"), "it") || tie(a, b));
+  else copy.sort((a, b) => slotMinutes(String(a.richiedente || "")) - slotMinutes(String(b.richiedente || "")) || tie(a, b));
+  return copy;
+}
+
+/** Italian heading for one day of the extract (the print and the PDF stay Italian). */
+function sliceTitle(spec, n) {
+  const tipi = spec.tipi == null ? ["live", "pezzo"] : spec.tipi;
+  const cosa = tipi.includes("live") && tipi.includes("pezzo") ? "Live e servizi"
+    : tipi.includes("live") ? "Solo live"
+    : tipi.includes("pezzo") ? "Solo servizi" : "";
+  const chi = spec.nome
+    ? (spec.chi === "operatore" ? "operatore " + spec.nome : "giornalista " + spec.nome)
+    : "tutti";
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(spec.data || ""));
+  let day = String(spec.data || "");
+  if (m) {
+    const ms = Date.UTC(+m[1], +m[2] - 1, +m[3]);
+    const dow = (new Date(ms).getUTCDay() + 6) % 7;
+    day = GIORNI[dow] + " " + Number(m[3]) + " " + MESI[+m[2] - 1] + " " + m[1];
+  }
+  return `${day} · ${cosa} · ${chi} · ${SORT_LABEL[spec.sort] || SORT_LABEL.collaudo} · ${n}`;
+}
+
+/** One row of the extract, in EXPORT_COLS order. */
+function exportCells(r) {
+  const cat = String(r.categoria || "").toLowerCase();
+  return [
+    String(r.data || ""),
+    r.numero == null || r.numero === "" ? "" : String(r.numero),
+    titoloShown(r),
+    String(r.giornalista || ""),
+    richiedenteShown(r),
+    String(r.rete || ""),
+    String(formatDurata(r.durata) || ""),
+    TIPO_LABEL[cat] || String(r.categoria || ""),
+    String(r.mezzo || ""),
+    String(r.operatore || ""),
+  ];
+}
+
+function xmlEsc(s) {
+  return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+
+/**
+ * Excel 2003 XML workbook (opens in Excel; no extra library). Slices stay in the order they were added.
+ * @param {Array<{rows: Array<Record<string, unknown>>}>} slices
+ */
+function exportWorkbook(slices) {
+  const head = "<Row>" + EXPORT_COLS.map((c) => `<Cell><Data ss:Type="String">${xmlEsc(c)}</Data></Cell>`).join("") + "</Row>";
+  const body = [];
+  for (const sl of slices) {
+    for (const r of sl.rows) {
+      const cells = exportCells(r).map((c, i) => {
+        const num = i === 1 && /^\d+$/.test(c);
+        return `<Cell><Data ss:Type="${num ? "Number" : "String"}">${xmlEsc(c)}</Data></Cell>`;
+      });
+      body.push("<Row>" + cells.join("") + "</Row>");
+    }
+  }
+  return `<?xml version="1.0" encoding="UTF-8"?>\n<?mso-application progid="Excel.Sheet"?>\n` +
+    `<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">\n` +
+    `<Worksheet ss:Name="Estratto"><Table>\n${head}\n${body.join("\n")}\n</Table></Worksheet>\n</Workbook>\n`;
+}
+
+/**
+ * The print of the extract (Save as PDF from the print dialog). Italian, like Rome's sheet.
+ * @param {Array<{data:string, tipi?:string[], chi?:string, nome?:string, sort?:string, rows: Array<Record<string, unknown>>}>} slices
+ */
+function renderEstratto(slices) {
+  const head = EXPORT_COLS.map((c) => `<th>${esc(c)}</th>`).join("");
+  const blocks = slices.map((sl) => {
+    const rows = sl.rows.map((r) => "<tr>" + exportCells(r).map((c) => `<td>${esc(c)}</td>`).join("") + "</tr>").join("");
+    const empty = `<tr><td colspan="${EXPORT_COLS.length}">Nessuna registrazione</td></tr>`;
+    return `<h2>${esc(sliceTitle(sl, sl.rows.length))}</h2><table><thead><tr>${head}</tr></thead><tbody>${rows || empty}</tbody></table>`;
+  }).join("\n");
+  return `<header class="doc"><div class="ente">RAI – Sede di corrispondenza di New York</div><h1>Estratto collaudo</h1></header>\n${blocks}`;
+}
+
 // ---- end lib/collaudo.js ----
 (function () {
   "use strict";
@@ -1941,6 +2143,7 @@ ${groups.join("\n")}
       $("doc").classList.remove("busy");
       if (r.status !== 200) { failState((r.body && r.body.error) || "Errore."); return; }
       sheet = { w: w, rows: r.body.rows, annullate: r.body.annullate || [], trips: r.body.trips || [], gen: todayNewYork() };
+      weekCache[formatWeek(w)] = sheet.rows;
       paintSheet();
       loadedOnce = true;
       applyFold();
@@ -1963,6 +2166,7 @@ ${groups.join("\n")}
   // The sheet is also the document that is printed (to Rome): in English every translated text is
   // <span class="scr">English</span><span class="prn">Italian</span>, so the print stays Italian.
   var sheet = null; // {w, rows, gen} of the week on screen
+  var weekCache = {}; // "2026-W48" -> that week's rows, so an extract can add a day from another week
   function bi(it, en) { return '<span class="scr">' + esc(en) + '</span><span class="prn">' + esc(it) + "</span>"; }
   function both(el, en) { var it = el.textContent; if (en !== it) el.innerHTML = bi(it, en); }
   // Italian month and day names -> English, for the screen copy only (Marco, 2026-10-17: the notes must be in English when the page is).
@@ -2131,7 +2335,10 @@ ${groups.join("\n")}
   $("doc").addEventListener("pointercancel", colEnd);
   // Printing (the button, Ctrl+P, or a PDF): Rome's sheet, in Rome's order and widths. Back to this browser's
   // columns when the print is done.
+  var extractOn = false;
   function setPrinting(on) {
+    if (on && extractOn) document.body.classList.add("estratto");
+    if (!on) { extractOn = false; document.body.classList.remove("estratto"); if ($("estratto")) $("estratto").hidden = true; }
     if (printing === on) return; printing = on;
     if (sheet && sheetTable()) { paintSheet(); applyFold(); }
   }
@@ -2536,7 +2743,148 @@ ${groups.join("\n")}
       window.scrollTo({ top: Math.max(0, y), behavior: "smooth" });
     });
   });
-  $("print").addEventListener("click", function () { window.print(); });
+  $("print").addEventListener("click", function () { extractOn = false; window.print(); });
+
+  // Extract: one day of lives and servizi, one journalist or operator, its own order; add more days, then Excel or PDF.
+  var basket = [];
+  function setExErr(text) { $("ex-err").textContent = text ? t(text) : ""; }
+  function formSpec() {
+    var tipi = [];
+    if ($("ex-live").checked) tipi.push("live");
+    if ($("ex-pezzo").checked) tipi.push("pezzo");
+    return { data: $("ex-data").value, tipi: tipi, chi: $("ex-chi").value, nome: $("ex-nome").value, sort: $("ex-sort").value };
+  }
+  function sameSpec(a, b) {
+    return a.data === b.data && a.chi === b.chi && a.nome === b.nome && a.sort === b.sort && a.tipi.join(",") === b.tipi.join(",");
+  }
+  function screenSlice(spec, n) {
+    var cosa = spec.tipi.indexOf("live") >= 0 && spec.tipi.indexOf("pezzo") >= 0 ? t("Live e servizi")
+      : spec.tipi.indexOf("live") >= 0 ? t("Solo live") : spec.tipi.indexOf("pezzo") >= 0 ? t("Solo servizi") : "";
+    var who = spec.nome ? t(spec.chi) + " " + (spec.chi === "operatore" ? t(spec.nome) : spec.nome) : t("tutti");
+    var ord = t({ collaudo: "Come sul collaudo", giornalista: "Per giornalista", operatore: "Per operatore", ora: "Per orario" }[spec.sort] || "Come sul collaudo");
+    return fmtDay(spec.data) + " · " + cosa + " · " + who + " · " + ord + " · " + n;
+  }
+  function rowsOf(spec) {
+    var key = formatWeek(isoWeekOf(spec.data));
+    return sortExport(filterExport(weekCache[key] || [], spec), spec.sort, []);
+  }
+  function ensureWeek(date) {
+    var key = formatWeek(isoWeekOf(date));
+    if (weekCache[key]) return Promise.resolve(weekCache[key]);
+    return api("/api/collaudo?week=" + key).then(function (r) {
+      if (r.status !== 200) throw new Error((r.body && r.body.error) || t("Errore."));
+      weekCache[key] = r.body.rows || [];
+      return weekCache[key];
+    });
+  }
+  function fillNomi() {
+    var chi = $("ex-chi").value, keep = $("ex-nome").value, names = {};
+    function add(n) { n = String(n || "").trim(); if (n) names[n.toLowerCase()] = n; }
+    if (lists) {
+      if (chi === "operatore") (lists.operatori || []).forEach(function (o) { add(o.display_name || o); });
+      else (lists.giornalisti || []).forEach(add);
+    }
+    Object.keys(weekCache).forEach(function (k) { (weekCache[k] || []).forEach(function (r) { add(r[chi]); }); });
+    var sel = $("ex-nome");
+    sel.innerHTML = "";
+    var all = document.createElement("option"); all.value = ""; all.textContent = t("Tutti"); sel.appendChild(all);
+    Object.keys(names).sort(function (a, b) { return names[a].localeCompare(names[b], "it"); }).forEach(function (k) {
+      var o = document.createElement("option"); o.value = names[k]; o.textContent = chi === "operatore" ? t(names[k]) : names[k]; sel.appendChild(o);
+    });
+    sel.value = names[String(keep).toLowerCase()] || "";
+  }
+  function paintBasket() {
+    var ul = $("ex-list");
+    ul.innerHTML = "";
+    basket.forEach(function (spec, i) {
+      var n = 0; try { n = rowsOf(spec).length; } catch (e) { n = 0; }
+      var li = document.createElement("li");
+      var tx = document.createElement("span"); tx.textContent = screenSlice(spec, n); li.appendChild(tx);
+      var b = document.createElement("button"); b.type = "button"; b.className = "btn"; b.textContent = t("Togli");
+      b.addEventListener("click", function () { basket.splice(i, 1); paintBasket(); });
+      li.appendChild(b); ul.appendChild(li);
+    });
+    $("ex-xls").textContent = basket.length ? tf("Excel ({0})", basket.length) : "Excel";
+    $("ex-pdf").textContent = basket.length ? tf("PDF ({0})", basket.length) : "PDF";
+    $("ex-scope").textContent = t(basket.length
+      ? "L'esportazione comprende i giorni aggiunti. Il giorno qui sopra entra solo se lo aggiungi."
+      : "L'esportazione comprende il giorno qui sopra.");
+  }
+  function refreshCount() {
+    var spec = formSpec();
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(spec.data)) { $("ex-count").textContent = ""; return; }
+    ensureWeek(spec.data).then(function () {
+      fillNomi();
+      $("ex-count").textContent = tf("Pronte: {0}.", rowsOf(spec).length);
+      paintBasket();
+    }, function () { $("ex-count").textContent = ""; });
+  }
+  function showDay(d) {
+    var g = $("doc").querySelector('tbody.dg[data-day="' + d + '"]'); if (!g) return;
+    if (g.classList.contains("chiuso")) { g.classList.remove("chiuso"); var b = g.querySelector("button.dt"); if (b) b.setAttribute("aria-expanded", "true"); saveFold(); syncFoldBtn(); }
+    var y = g.getBoundingClientRect().top + window.pageYOffset - $("top").offsetHeight - 44;
+    window.scrollTo({ top: Math.max(0, y), behavior: "smooth" });
+  }
+  function openExport(show) {
+    $("export-pop").hidden = !show;
+    $("export").setAttribute("aria-expanded", show ? "true" : "false");
+    if (!show) return;
+    if (!$("ex-data").value) $("ex-data").value = todayNewYork();
+    ensureLists().then(function () { fillNomi(); refreshCount(); });
+  }
+  $("export").addEventListener("click", function () { openExport($("export-pop").hidden); });
+  $("ex-close").addEventListener("click", function () { openExport(false); });
+  $("export-pop").addEventListener("keydown", function (ev) {
+    if (ev.key !== "Escape") return; ev.stopPropagation(); openExport(false);
+  });
+  $("ex-chi").addEventListener("change", refreshCount);
+  ["ex-live", "ex-pezzo", "ex-nome", "ex-sort"].forEach(function (id) { $(id).addEventListener("change", refreshCount); });
+  $("ex-data").addEventListener("change", function () {
+    var d = $("ex-data").value;
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(d)) return;
+    var w = isoWeekOf(d);
+    var go = function () { showDay(d); refreshCount(); };
+    if (!current || formatWeek(current) !== formatWeek(w)) load(w).then(go); else go();
+  });
+  $("ex-add").addEventListener("click", function () {
+    var spec = formSpec();
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(spec.data)) { setExErr("Scegliere un giorno."); return; }
+    if (!spec.tipi.length) { setExErr("Scegliere Live, Servizi, o entrambi."); return; }
+    ensureWeek(spec.data).then(function () {
+      var i = -1; basket.forEach(function (s, n) { if (sameSpec(s, spec)) i = n; });
+      if (i >= 0) basket[i] = spec; else basket.push(spec);
+      setExErr("");
+      paintBasket();
+      setMsg(i >= 0 ? "Giorno aggiornato." : "Giorno aggiunto.");
+    }, function (e) { setExErr(e.message || "Errore."); });
+  });
+  function runExport(kind) {
+    var specs = basket.length ? basket.slice() : [formSpec()];
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(specs[0].data)) { setExErr("Scegliere un giorno."); return; }
+    if (specs.some(function (s) { return !s.tipi.length; })) { setExErr("Scegliere Live, Servizi, o entrambi."); return; }
+    Promise.all(specs.map(function (s) { return ensureWeek(s.data); })).then(function () {
+      var slices = specs.map(function (s) { return { data: s.data, tipi: s.tipi, chi: s.chi, nome: s.nome, sort: s.sort, rows: rowsOf(s) }; });
+      var n = slices.reduce(function (a, s) { return a + s.rows.length; }, 0);
+      if (!n) { setExErr("Nessuna registrazione con questi filtri."); return; }
+      setExErr("");
+      if (kind === "xls") {
+        var days = specs.map(function (s) { return s.data; }).filter(function (d, i, all) { return all.indexOf(d) === i; });
+        var name = days.length === 1 ? "estratto-" + days[0] + ".xls" : days.length <= 3 ? "estratto-" + days.join("_") + ".xls" : "estratto.xls";
+        var blob = new Blob([exportWorkbook(slices)], { type: "application/vnd.ms-excel" });
+        var a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name;
+        document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(function () { URL.revokeObjectURL(a.href); }, 1500);
+        setMsg(function () { return tf("Excel: {0} registrazioni.", n); });
+      } else {
+        $("estratto").innerHTML = renderEstratto(slices);
+        $("estratto").hidden = false;
+        extractOn = true;
+        window.print();
+      }
+    }, function (e) { setExErr(e.message || "Errore."); });
+  }
+  $("ex-xls").addEventListener("click", function () { runExport("xls"); });
+  $("ex-pdf").addEventListener("click", function () { runExport("pdf"); });
   // E-mail the week: the dialog is shared (shared.js mountMail, POST /api/email-collaudo {week, to}); the server
   // decides who sees the button (GET /api/email-recipients).
   var mail = mountMail({
@@ -2552,6 +2900,7 @@ ${groups.join("\n")}
     if (current) document.title = tf("Collaudo {0} · RAI NYC Servizi", formatWeek(current));
     if (sheet && $("doc").querySelector("table")) { paintSheet(); applyFold(); } else syncFoldBtn();
     mail.refresh();
+    if (!$("export-pop").hidden) { fillNomi(); paintBasket(); refreshCount(); }
   });
 
   requireLogin(function () {

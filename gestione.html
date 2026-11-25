@@ -226,7 +226,7 @@ td.dim { color:var(--dim); } tr.off td { color:var(--dim); } tr.off td:first-chi
 </head>
 <body data-gestione>
 <header class="appbar">
-  <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-11-22 16:07 UTC · e210cea"><span class="mk">Rai · NY</span><span class="nm">RAI NYC Servizi</span><span class="pg" data-i18n>Gestione</span></div>
+  <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-11-25 19:26 UTC · 5688aaa"><span class="mk">Rai · NY</span><span class="nm">RAI NYC Servizi</span><span class="pg" data-i18n>Gestione</span></div>
   <nav class="hright" id="hright" aria-label="Pagine">
     <button type="button" class="icbtn" id="theme" aria-label="Tema" title="Tema" aria-haspopup="menu" aria-expanded="false">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3a9 9 0 1 0 0 18c1.2 0 2-.9 2-2 0-.6-.2-1-.5-1.4-.3-.4-.5-.8-.5-1.3 0-1.1.9-2 2-2h2.2A4.8 4.8 0 0 0 22 9.6C22 5.8 17.5 3 12 3z"/><circle cx="7.5" cy="11.5" r="1.1"/><circle cx="10.5" cy="7.5" r="1.1"/><circle cx="15" cy="7.5" r="1.1"/><circle cx="17.5" cy="11.5" r="1.1"/></svg>
@@ -302,7 +302,7 @@ td.dim { color:var(--dim); } tr.off td { color:var(--dim); } tr.off td:first-chi
 # RAI NYC Servizi — STATE (repo copy)
 
 &gt; **Short read-only copy for agents with no vault access (cloud agents).**
-&gt; Source of truth: `~/vault/10 Work/12 KIMA Creative/12.01 Active Clients/gvg-global-vision-group/rai-nyc-servizi/STATE.md` (on the Mac). Vault STATE updated: 2026-11-17T18:15-05:00 by Claude Code (Fable 5.2) on MacBook.
+&gt; Source of truth: `~/vault/10 Work/12 KIMA Creative/12.01 Active Clients/gvg-global-vision-group/rai-nyc-servizi/STATE.md` (on the Mac). Vault STATE updated: 2026-11-25T14:00-05:00 by Cursor (Grok 4.7) on MacBook.
 &gt; Cloud agents: read this; do not edit it. At END, put your end state (done / next / blockers) in the PR description.
 &gt; The next Mac session merges it into the vault STATE.md, then refreshes this copy.
 
@@ -310,6 +310,16 @@ td.dim { color:var(--dim); } tr.off td { color:var(--dim); } tr.off td:first-chi
 Marco's day job at RAI NY (GVG): a startup popup on the Avid edit machines NYC-EDIT-MC01/02/03 (C#, .NET 8, WPF) where editors log each tappeto or servizio. Supabase is the truth; the Google Sheet "2026 Report Rai NYC, Servizi Giornalistici" is a reporting mirror. The collaudo forms go to Rome for overtime and travel. Host `supervisor` (Linux Mint, user `rainyc`, Tailscale only). Owner account for everything: `rainyc.servizi@gmail.com`.
 
 ## Current goal
+**2026-11-25 (Marco: "merge anyway"):** **Merged.** `collaudo-esporta` → `main` = `846a15d` (`--no-ff`), pushed to origin, supervisor and nas. Branch deleted on the Mac, origin and supervisor. Pre-check exit 2: four `pages.ts` lines are the login form's own password field; Jev flags on a truncated diff; a search of the added lines found no real keys. **Not published.** The live collaudo does not have «Esporta» until a go: function deploy, Pages, supervisor rsync. Tests before the merge: collaudo 21/21. Not checked in a browser.
+
+**2026-11-25 (Marco: export one day of lives and servizi, by journalist or operator, Excel or PDF, then another day with its own order):** **On `main`, not live.** Button «Esporta» on the collaudo. Pick a day (the week opens on that day), Live and/or Servizi, one journalist or one operator (or Tutti), and an order (come sul collaudo, per giornalista, per operatore, per orario). Excel downloads that day. PDF is the print dialog of those rows only. «Aggiungi giorno» keeps the day; the next day can use the same filters or different ones; Excel and PDF then cover every added day, in the order they were added. Rome's «Stampa» is still the whole week.
+
+**2026-11-22 11:35 (Marco: "wrap up"):** Production runs `main` (`a8ac356`); no feature branch open. Today, all live: sheet mirror verified, test plan + month-proof layout test, AS Roma theme, `?lingua=it` link, `build-static.sh` token on stdin. **"supervisor.gvgrai.net is down" (Marco at the office):** not down. Marco's Mac is on 192.168.1.x (cable en19 and Wi-Fi, router 192.168.1.1, a Synology at .23), a separate office network with no route to 192.168.2.x (traceroute: 192.168.1.1 → 169.254.3.1 → lost). Supervisor checked from inside: up 38 days, 192.168.2.229, nginx 200, GVGDC01 resolves the name, ufw allows 192.168.2.0/24 and 10.0.0.0/24; last office PC load 192.168.2.25 on 20/11 18:12 = 200. Nothing changed. Links that work from 192.168.1.x: Tailscale `https://supervisor.taild9eac5.ts.net/` and GitHub Pages.
+
+**2026-11-22 11:16 (Marco: "merge anyway"):** **Merged.** `tema-roma` → `main` = `98fe16f` (`--no-ff`), pushed to origin, supervisor and nas; tree identical to what production runs, nothing redeployed. Branch deleted on the Mac, origin and supervisor. `/health` ok 16:15Z, Pages 200, supervisor 200. Production now runs `main`.
+
+**2026-11-22 11:10 (Marco: "merge it", then "make sure the page opens in italian for lo prete"):** **Merge held:** pre-check exit 2 on `tema-roma` (the same four `pages.ts` login lines + Jev flags, diff truncated); not merged, needs "merge anyway". **Italian for Lo Prete, live:** Italian was already the default; English only where «EN» was clicked (saved per browser in `rainyc.lingua`, not per person; Lo Prete is a journalist with no login). Marco chose a link: `?lingua=it` (or `=en`) on any page sets the browser's language before drawing (`shared.js`). Commit `e210cea` on `tema-roma`, Pages `6f38c94`, supervisor rsync'd; verified in the live HTML on both hosts. Integration 295/295 (three new language checks), layout 120/120, Deno 63/63. Links for him: `https://supervisor.gvgrai.net/?lingua=it` (office), `https://rainycservizi.github.io/rainyc-servizi-app/?lingua=it` (outside).
+
 **2026-11-22 (Marco: "can we create an AS ROMA theme?"):** **Live (Marco: "OK to commit and publish").** Commit `76cfef8` on branch `tema-roma` (pushed to origin and supervisor; NOT merged to main, waits for "merge it"). Pages repo `732001e`; supervisor rsync'd; verified live: «data-theme=roma» in the form, collaudo and mensile on GitHub Pages and on `https://supervisor.taild9eac5.ts.net/`; `/health` ok 15:54Z. Function not redeployed (it serves only the API; page CSS/JS only). Same commit: `scripts/build-static.sh` gives curl the access token on stdin, not on the command line. Was: built on branch `tema-roma` (from main `0f92b57`). Eighth theme «AS Roma» (key `roma`, dark base): Pompeian red page `#2b0b12`, Roma gold accent `#f0bc42` with dark ink, a gold and red band on top, swatch red/gold, no logos. Also sets `--zebra`/`--band`/`--rule` in red: collaudo and mensile hard-code those three dark tokens in navy, so without them the day rows were navy (Steelers and Juventus still have the navy rows). Files: `pages/skins.css`, `pages/shared.js` (THEMES), `pages.ts` rebuilt, `tests/servizi.integration.js` (eight themes + a Roma check), `OPERATIONS.md`. Deno 63/63, integration 292/292, layout 120/120; screenshots of the form, the menu and the collaudo checked.
 
 **2026-11-22 10:35 (Marco: "commit and merge anyway"):** **Merged.** Test fix and test plan committed (`a3ccea4`). Pre-check exit 2 again (the same four `pages.ts` login strings + Jev prod_config / secrets_or_keys); merged on Marco's "merge anyway": `main` = `a588b60` (`--no-ff`), pushed to origin, supervisor and nas; the tree is identical to the branch production already ran, so nothing was redeployed. Branch deleted on the Mac, origin and supervisor (nas never had it). Live: `/health` ok 15:33Z, Pages 200, supervisor `/collaudo` 200. The vault STATE is the only change after the merge.
@@ -474,8 +484,9 @@ Marco's day job at RAI NY (GVG): a startup popup on the Avid edit machines NYC-E
 4. (older) 2026-10-16 17:35–17:55 — Marco: caruso's recipient address = caruso@gvgusa.com; pages in English AND Italian with a button next to the theme toggle; wants the git site password-protected ("nothing exposed"); asks whether no certificate on supervisor is a problem; when caruso is logged in, Gestione + every link up top; tappeti must never count under a Tg (they don't); collaudo rows sorted by Tg and by time so tappeto and piece of the same edition sit together. Agent: IT/EN via a dictionary keyed by the Italian strings (sonnet subagent); reading order server-side; password gate = Cloudflare Pages + Access proposed (needs a Cloudflare account under rainyc.servizi); LAN http judged acceptable (auth and data go to Supabase over https). (Claude Code)
 
 ## Next 3 actions
-0. **Marco** — say "merge it" for branch `tema-roma` (AS Roma theme, live since 2026-11-22). Optional: red/black/white day rows for Steelers and Juventus too (now navy). Tell the editors to reload the form and the collaudo. Look at Sunday 8/11 and week 46 on the live collaudo. Decide rows N. 6590 (Tg3 Ore 12, title «MI dell 11 novembre HEGSETH IMPEACHMENT») and N. 6591 (RAN, Richiedente «11 novembre»). Ruled 2026-11-17: never «del» for a live.
-0. **Agent** — new work starts from `main` on a new branch. (Done 2026-11-22: mirror checked, test plan, merge.)
+0. **Marco** — send Lo Prete the GitHub Pages link `https://rainycservizi.github.io/rainyc-servizi-app/?lingua=it` (works on every network; the `supervisor.gvgrai.net` link fails off 192.168.2.x). Decide whether 192.168.1.x should reach supervisor (a route between the two office networks + DNS from GVGDC01: office network change, Marco or GVG IT). Optional: red/black/white day rows for Steelers and Juventus too (now navy). Tell the editors to reload the form and the collaudo. Look at Sunday 8/11 and week 46 on the live collaudo. Decide rows N. 6590 (Tg3 Ore 12, title «MI dell 11 novembre HEGSETH IMPEACHMENT») and N. 6591 (RAN, Richiedente «11 novembre»). Ruled 2026-11-17: never «del» for a live.
+0. **Marco** — say go to publish «Esporta» (function, Pages, supervisor). It is on `main` `846a15d` and not on the live collaudo.
+0. **Agent** — new work starts from `main`. No feature branch open. (Done 2026-11-25: export merged on merge anyway, not published.)
 1. Agent — older follow-ups, still open: short-screen grid, per-row revert, Gestione v2, supervisor cron. (Done 2026-11-17: the failing check «confirmed past date is saved on that day» was a late dialog `close` event; fixed in the form and in the test.)
 
 ## Blockers
@@ -484,6 +495,7 @@ Marco's day job at RAI NY (GVG): a startup popup on the Avid edit machines NYC-E
 - Marco — the two missing Tg3 Ore 19 entries of 30/10 (which machine; «Registrazioni di oggi» there); a look at Week 43 after the moves and adds; feedback on the tutorial, from Erika and Ippolito, design keep/change. Still pending: key-only SSH on supervisor, CLT update. UniFi key: leave it (Marco). WhatsApp images route: off (Marco).
 
 ## Live warnings
+- **2026-11-22 — two office networks.** 192.168.1.x (router 192.168.1.1; Marco's Mac by cable and Wi-Fi) has no route to the office LAN 192.168.2.x where supervisor and the DC are. `supervisor.gvgrai.net` works only on 192.168.2.x; give anyone else the GitHub Pages or Tailscale link.
 - **2026-10-27 — UniFi API key** (item "UniFi API RaiNY") was printed into a Cursor tool log. Marco, 2026-10-30: "LEAVE IT" — not rotated, on his word. Nothing on supervisor or in the repo uses it.
 - **No credentials in this file, the repo or chat.** 1Password item names only. The plan text held the Linux password in clear; the repo copy is redacted, the Desktop original is not.
 - The Mac's `gh`, Supabase CLI and Supabase MCP connector are Marco's PERSONAL accounts (brooklyn70's org). The RAI project is invisible from them. Never push, link or migrate from them.
@@ -515,7 +527,7 @@ var PAGE_FORM = "./" || APP_BASE;
 var PAGE_COLLAUDO = "./collaudo.html" || APP_BASE + "/collaudo";
 var PAGE_GESTIONE = "./gestione.html" || APP_BASE + "/gestione";
 var PAGE_MENSILE = "./mensile.html" || APP_BASE + "/mensile";
-var BUILD = "2026-11-22 16:07 UTC · e210cea"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
+var BUILD = "2026-11-25 19:26 UTC · 5688aaa"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
 // Every place the project lives (shown in the admin's header menu and on the Gestione page).
 var LINKS = [
   ["Pagine pubbliche", "https://rainycservizi.github.io/rainyc-servizi-app/", "GitHub Pages: il sito di prova principale"],
@@ -676,6 +688,18 @@ var I18N = { en: {
   "Riga duplicata: nuova riga N. {0}.": "Line duplicated: new line No. {0}.", "Riga duplicata annullata.": "Duplicated line cancelled.",
   "La riga N. {0} è annullata: è nell'elenco in fondo.": "Line No. {0} is cancelled: it is in the list at the bottom.", "Riga N. {0}: {1}.": "Line No. {0}: {1}.",
   "Invia per e-mail": "Send by e-mail", "Stampa": "Print", "Accesso · collaudo settimanale": "Login · weekly report",
+  "Esporta": "Export",
+  "Un giorno, solo le live e i servizi di un giornalista o di un operatore. Esporta quel giorno, oppure aggiungi un altro giorno con lo stesso ordine o un ordine diverso.": "One day, only the lives and packages of one journalist or one operator. Export that day, or add another day with the same order or a different one.",
+  "Giorno": "Day", "Cosa": "What", "Chi": "Who", "Nome": "Name", "Tutti": "Everyone", "Ordine": "Order",
+  "Come sul collaudo": "As on the weekly sheet", "Per giornalista": "By journalist", "Per operatore": "By operator", "Per orario": "By time",
+  "Aggiungi giorno": "Add day", "Excel": "Excel", "PDF": "PDF", "Excel ({0})": "Excel ({0})", "PDF ({0})": "PDF ({0})",
+  "Scegliere un giorno.": "Choose a day.", "Scegliere Live, Servizi, o entrambi.": "Choose Live, Packages, or both.",
+  "Nessuna registrazione con questi filtri.": "No entries with these filters.",
+  "Giorno aggiunto.": "Day added.", "Giorno aggiornato.": "Day updated.", "Togli": "Remove",
+  "Excel: {0} registrazioni.": "Excel: {0} entries.", "Pronte: {0}.": "Ready: {0}.",
+  "L'esportazione comprende i giorni aggiunti. Il giorno qui sopra entra solo se lo aggiungi.": "The export is the days you added. The day above is included only after you add it.",
+  "L'esportazione comprende il giorno qui sopra.": "The export is the day above.",
+  "Live e servizi": "Lives and packages", "Solo live": "Lives only", "Solo servizi": "Packages only", "tutti": "everyone",
   "Sì": "Yes", "No": "No", "Destinatari": "Recipients", "aggiungi un indirizzo e-mail": "add an e-mail address",
   "Nuovo destinatario": "New recipient", "Aggiungi": "Add", "Invia": "Send", "Invia a {0}": "Send to {0}",
   "Caricamento della settimana {0}…": "Loading week {0}…", "Errore.": "Error.", "Collaudo non disponibile: {0}": "Weekly report unavailable: {0}",
