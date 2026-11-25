@@ -226,7 +226,7 @@ td.dim { color:var(--dim); } tr.off td { color:var(--dim); } tr.off td:first-chi
 </head>
 <body data-gestione>
 <header class="appbar">
-  <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-11-25 21:55 UTC · 57676c4"><span class="mk">Rai · NY</span><span class="nm">RAI NYC Servizi</span><span class="pg" data-i18n>Gestione</span></div>
+  <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-11-25 21:56 UTC · 74419e2"><span class="mk">Rai · NY</span><span class="nm">RAI NYC Servizi</span><span class="pg" data-i18n>Gestione</span></div>
   <nav class="hright" id="hright" aria-label="Pagine">
     <button type="button" class="icbtn" id="theme" aria-label="Tema" title="Tema" aria-haspopup="menu" aria-expanded="false">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3a9 9 0 1 0 0 18c1.2 0 2-.9 2-2 0-.6-.2-1-.5-1.4-.3-.4-.5-.8-.5-1.3 0-1.1.9-2 2-2h2.2A4.8 4.8 0 0 0 22 9.6C22 5.8 17.5 3 12 3z"/><circle cx="7.5" cy="11.5" r="1.1"/><circle cx="10.5" cy="7.5" r="1.1"/><circle cx="15" cy="7.5" r="1.1"/><circle cx="17.5" cy="11.5" r="1.1"/></svg>
@@ -302,7 +302,7 @@ td.dim { color:var(--dim); } tr.off td { color:var(--dim); } tr.off td:first-chi
 # RAI NYC Servizi — STATE (repo copy)
 
 &gt; **Short read-only copy for agents with no vault access (cloud agents).**
-&gt; Source of truth: `~/vault/10 Work/12 KIMA Creative/12.01 Active Clients/gvg-global-vision-group/rai-nyc-servizi/STATE.md` (on the Mac). Vault STATE updated: 2026-11-25T16:55-05:00 by Claude Code (Fable 5.2) on MacBook.
+&gt; Source of truth: `~/vault/10 Work/12 KIMA Creative/12.01 Active Clients/gvg-global-vision-group/rai-nyc-servizi/STATE.md` (on the Mac). Vault STATE updated: 2026-11-25T16:56-05:00 by Claude Code (Fable 5.2) on MacBook.
 &gt; Cloud agents: read this; do not edit it. At END, put your end state (done / next / blockers) in the PR description.
 &gt; The next Mac session merges it into the vault STATE.md, then refreshes this copy.
 
@@ -310,14 +310,13 @@ td.dim { color:var(--dim); } tr.off td { color:var(--dim); } tr.off td:first-chi
 Marco's day job at RAI NY (GVG): a startup popup on the Avid edit machines NYC-EDIT-MC01/02/03 (C#, .NET 8, WPF) where editors log each tappeto or servizio. Supabase is the truth; the Google Sheet "2026 Report Rai NYC, Servizi Giornalistici" is a reporting mirror. The collaudo forms go to Rome for overtime and travel. Host `supervisor` (Linux Mint, user `rainyc`, Tailscale only). Owner account for everything: `rainyc.servizi@gmail.com`.
 
 ## Current goal
-**2026-11-25 16:55 (Claude Code; Marco: "the export does not exclude anything from the day's work… all should export just as it is in the collaudo. keep the sorting options. all of it works but the combined export"):** **Built and tested on the local stack, branch `collaudo-esporta-tutto`. NOT committed, NOT published. Production still has the morning version.**
-- **Cause, proven in a browser on the local stack:** the morning export took lives and servizi only. On 13/10 it gave 6 of 11 rows, on 21/10 38 of 79. The two-day export itself ran (two days, two weeks, Excel and PDF).
-- **Fix.** A day goes out whole, as on the collaudo: tappeti, grezzi, interviste and radio too. The Live / Servizi tick boxes are gone (`filterExport` has no type filter). The four orders stay. «Come sul collaudo» keeps the order the server sent (the morning code sorted again with an empty edition list). The day on the form goes out with the added days when its date is not yet added (before: only added days, a trap after «Aggiungi giorno» → pick a second day → Excel). The count line «Pronte» ignores a late answer for a day picked before (found by the new test: it showed 10 for a day of 11).
-- **My assumptions, for Marco:** "combined export" = the whole day together, all types. The journalist / operator filter stays (default Tutti). The export columns stay (Data, N., Titolo, Giornalista, Richiedente, Rete, Durata, Tipo, Mezzo, Operatore); the trasferta note of the day is not in the export.
-- **Files:** `lib/collaudo.js`, `lib/collaudo_test.ts`, `pages/collaudo.html`, `pages/shared.js`, `pages.ts` (rebuilt), `tests/servizi.integration.js` (12 new export checks), `CHANGELOG.md`, `docs/test-plan.md`, `OPERATIONS.md`.
-- **Tests (local stack, `PW_CHANNEL=chrome`, `--quick`):** Deno 66/66, `deno check` clean, `build_pages.mjs --check` ok, integration 307/307, layout 120/120. Screenshot of the box checked.
-- **Publish order when Marco says go:** commit on `collaudo-esporta-tutto` → build and publish the pages (Pages + supervisor rsync) → curl both hosts → editors reload the collaudo. Page HTML only: no migration, no function deploy needed for the editors. Then "merge it" (expect pre-check exit 2 on the four `pages.ts` login lines, as every time).
-- **Records brought up to date for the whole day:** `CHANGELOG.md` had no entry after 17/11; it has the 25/11 entry now. `docs/test-plan.md` and `OPERATIONS.md` name the export. Local `functions serve` stopped after the run; the local stack is left up.
+**2026-11-25 16:56 (Claude Code; Marco: "Commit and publish"; fourth name "Teleport RaiNews"):** **Live.** Production runs branch `collaudo-esporta-tutto` (`57676c4`), pushed to origin and supervisor, NOT merged to `main`.
+- **«Esporta», whole day (Marco: "the export does not exclude anything from the day's work… all should export just as it is in the collaudo. keep the sorting options").** The morning export took lives and servizi only: on the local stack 6 of 11 rows on 13/10 and 38 of 79 on 21/10. Now a day goes out whole, as on the collaudo: tappeti, grezzi, interviste and radio too. The Live / Servizi tick boxes are gone. The four orders stay. «Come sul collaudo» keeps the order the server sent (the morning code sorted again with an empty edition list). The day on the form goes out with the added days when its date is not yet added. The count line «Pronte» ignores a late answer for a day picked before.
+- **Four names in the Giornalista list (Marco: material sent straight to a station "has nothing to do with the journalist").** «Teleport Tg1», «Teleport Tg2», «Teleport Tg3», «Teleport RaiNews». Migration `20261125_0019_teleport.sql` applied on production 16:54 after a dry run: 17 active journalists, 4 audit rows, actor `migration_0019 (Marco 2026-11-25: Teleport nella lista Giornalista)`. No dump taken first (four added rows; the nightly dump runs 03:15). Marco chose «Teleport RaiNews» over a bare «RaiNews»: the V-Mover image reader (`findJournalist` in `lib/signiant.js`) looks for a journalist's name inside each file name.
+- **Published.** Pages repo `91082b4` (origin and nas). Supervisor rsync'd. Verified by curl at 16:56: GitHub Pages and `https://supervisor.taild9eac5.ts.net/collaudo` both hold the new text and `exportSpecs`, and no `ex-live` box. `/health` ok 21:55Z. Function NOT redeployed (page HTML only; the name list comes from the database). **Not checked:** the live pages in a browser with a real login; a real Excel file opened in Excel; a printed PDF.
+- **My assumptions, for Marco:** "combined export" = the whole day together, all types (the two-day export already ran in my test before the fix). The journalist / operator filter stays (default Tutti). The export columns stay (Data, N., Titolo, Giornalista, Richiedente, Rete, Durata, Tipo, Mezzo, Operatore); the day's trasferta note is not in the export. The Teleport names are plain journalist rows: they show in the mensile's journalist list and in the trip's «con» list.
+- **Tests (local stack, `PW_CHANNEL=chrome`, `--quick`):** Deno 66/66, `deno check` clean, `build_pages.mjs --check` ok, integration 308/308 (12 export checks and 1 Teleport check are new), layout 120/120.
+- **Records brought up to date for the whole day:** `CHANGELOG.md` had no entry after 17/11; it has the 25/11 entry. `docs/test-plan.md` and `OPERATIONS.md` name the export. Google Tasks list GVG RAI updated. Local `functions serve` stopped; the local stack is left up.
 
 **2026-11-25 14:45 (Marco: "wrap up"):** Session closed. «Esporta» is live (Pages `5bade33`, supervisor rsync, code `main` `fa7dc1a`). This wrap's STATE commit is on `wrap-2026-11-25`, not merged. Not checked in a browser. Marco: invoice 20261031 was paid today, and every invoice sent so far is paid. Those two GVG RAI tasks are marked done. Still open on that list: the 1Password name for the MediaCentral root login.
 
@@ -498,8 +497,8 @@ Marco's day job at RAI NY (GVG): a startup popup on the Avid edit machines NYC-E
 
 ## Next 3 actions
 0. **Marco** — send Lo Prete the GitHub Pages link `https://rainycservizi.github.io/rainyc-servizi-app/?lingua=it` (works on every network; the `supervisor.gvgrai.net` link fails off 192.168.2.x). Decide whether 192.168.1.x should reach supervisor (a route between the two office networks + DNS from GVGDC01: office network change, Marco or GVG IT). Optional: red/black/white day rows for Steelers and Juventus too (now navy). Tell the editors to reload the form and the collaudo. Look at Sunday 8/11 and week 46 on the live collaudo. Decide rows N. 6590 (Tg3 Ore 12, title «MI dell 11 novembre HEGSETH IMPEACHMENT») and N. 6591 (RAN, Richiedente «11 novembre»). Ruled 2026-11-17: never «del» for a live.
-0. **Marco** — say "commit and publish" for the «Esporta» whole-day fix (branch `collaudo-esporta-tutto`, uncommitted, tested 2026-11-25 16:55). Until then the live «Esporta» still gives lives and servizi only. After the publish: tell the editors to reload the collaudo; try one day, then a second day, then Excel and PDF; then "merge it".
-0. **Agent** — on that go: commit, build and publish the pages (Pages + supervisor rsync), curl both hosts, push the branch to origin and supervisor. Also push `66d7ed6` (Pilot's Google Tasks block) with it. No function deploy needed.
+0. **Marco** — tell the editors to reload the form and the collaudo (the new «Esporta» and the four Teleport names appear after a reload). Try «Esporta» with a real login: one day, then a second day, then Excel and PDF. Then say "merge it" for `collaudo-esporta-tutto`.
+0. **Agent** — on "merge it": pre-check (expect exit 2 on the four `pages.ts` login lines, as every time), merge to `main`, push origin, supervisor and nas, delete the branch and the old `wrap-2026-11-25`. No deploy needed: production already runs this code.
 1. Agent — older follow-ups, still open: short-screen grid, per-row revert, Gestione v2, supervisor cron. (Done 2026-11-17: the failing check «confirmed past date is saved on that day» was a late dialog `close` event; fixed in the form and in the test.)
 
 ## Blockers
@@ -540,7 +539,7 @@ var PAGE_FORM = "./" || APP_BASE;
 var PAGE_COLLAUDO = "./collaudo.html" || APP_BASE + "/collaudo";
 var PAGE_GESTIONE = "./gestione.html" || APP_BASE + "/gestione";
 var PAGE_MENSILE = "./mensile.html" || APP_BASE + "/mensile";
-var BUILD = "2026-11-25 21:55 UTC · 57676c4"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
+var BUILD = "2026-11-25 21:56 UTC · 74419e2"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
 // Every place the project lives (shown in the admin's header menu and on the Gestione page).
 var LINKS = [
   ["Pagine pubbliche", "https://rainycservizi.github.io/rainyc-servizi-app/", "GitHub Pages: il sito di prova principale"],
