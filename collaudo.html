@@ -385,6 +385,19 @@ tr.r.hit td { animation:hit 2.6s ease-out; }
   #estratto tr.hl-trasferta td { background:#CFE8FF; }
   #estratto tr.hl-both td { background:#CDEFC0; }
   #estratto p.hl { font-size:11px; margin:0 0 6px; line-height:1.5; }
+  /* Top Sheet for Rome (Esporta → «Top Sheet per Roma»): Rome's sheet, lilac header, «New York» down the side. */
+  #estratto .roma { font:13px/1.3 Arial, Helvetica, sans-serif; color:#000; }
+  #estratto .roma h1 { font-size:15px; margin:0 0 10px; }
+  #estratto .roma table { width:100%; border-collapse:collapse; margin:0; }
+  #estratto .roma th, #estratto .roma td { border:1px solid #444; padding:6px; text-align:right; }
+  #estratto .roma th { background:#8a85e6; font:700 13px/1.3 Arial, Helvetica, sans-serif; color:#000; text-transform:none; letter-spacing:normal; text-align:center; vertical-align:bottom; }
+  #estratto .roma .sl { display:block; font-size:8.5px; font-weight:400; margin-bottom:2px; }
+  #estratto .roma td.sede { background:#8a85e6; font-weight:700; vertical-align:bottom; text-align:left; width:70px; }
+  #estratto .roma td.mese { text-align:center; }
+  #estratto .roma tr.even td:not(.sede) { background:#e8e8fb; }
+  #estratto .roma td.b { font-weight:700; }
+  #estratto .roma p.foot { font-size:10px; margin:8px 0 0; color:#333; }
+  #estratto .roma, #estratto .roma * { -webkit-print-color-adjust:exact; print-color-adjust:exact; }
   #estratto .sw { display:inline-block; width:14px; height:10px; margin:0 4px 0 8px; border:1px solid #999; vertical-align:-1px; }
   .page { padding:0; }
   .panel { border:0; box-shadow:none; border-radius:0; }
@@ -415,7 +428,7 @@ tr.r.hit td { animation:hit 2.6s ease-out; }
 <body>
 <div class="top" id="top">
   <header class="appbar">
-    <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-11-27 20:23 UTC · 4105645"><span class="mk">Rai · NY</span><span class="nm">RAI NYC Servizi</span><span class="pg" data-i18n>Collaudo</span></div>
+    <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-11-27 22:08 UTC · 2739f7d"><span class="mk">Rai · NY</span><span class="nm">RAI NYC Servizi</span><span class="pg" data-i18n>Collaudo</span></div>
     <nav class="hright" id="hright" aria-label="Pagine">
       <button type="button" class="icbtn" id="theme" aria-label="Tema" title="Tema" aria-haspopup="menu" aria-expanded="false">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3a9 9 0 1 0 0 18c1.2 0 2-.9 2-2 0-.6-.2-1-.5-1.4-.3-.4-.5-.8-.5-1.3 0-1.1.9-2 2-2h2.2A4.8 4.8 0 0 0 22 9.6C22 5.8 17.5 3 12 3z"/><circle cx="7.5" cy="11.5" r="1.1"/><circle cx="10.5" cy="7.5" r="1.1"/><circle cx="15" cy="7.5" r="1.1"/><circle cx="17.5" cy="11.5" r="1.1"/></svg>
@@ -460,6 +473,7 @@ tr.r.hit td { animation:hit 2.6s ease-out; }
         <select id="ex-per">
           <option value="giorno" data-i18n>Un giorno</option>
           <option value="mese" data-i18n>Un mese intero</option>
+          <option value="roma" data-i18n>Top Sheet per Roma</option>
         </select>
       </div>
       <div class="fld" id="ex-giorno">
@@ -470,7 +484,13 @@ tr.r.hit td { animation:hit 2.6s ease-out; }
         <label for="ex-mese" data-i18n>Mese</label>
         <input type="month" id="ex-mese" min="2026-01">
       </div>
+      <div class="fld" id="ex-romabox" hidden>
+        <label for="ex-roma" data-i18n>Fino al mese</label>
+        <input type="month" id="ex-roma" min="2026-01">
+      </div>
     </div>
+    <p class="note" id="ex-romanote" hidden data-i18n>Il prospetto per Roma: le colonne di Roma, da Gennaio fino al mese scelto; i mesi dopo restano vuoti.</p>
+    <div id="ex-filtri">
     <div class="row2">
       <div class="fld">
         <label for="ex-chi" data-i18n>Chi</label>
@@ -526,6 +546,7 @@ tr.r.hit td { animation:hit 2.6s ease-out; }
         <option value="ora" data-i18n>Per orario</option>
       </select>
     </div>
+    </div>
     <p class="note" id="ex-count"></p>
     <ul class="exdays" id="ex-list"></ul>
     <p class="note" id="ex-scope"></p>
@@ -577,7 +598,7 @@ var PAGE_FORM = "./" || APP_BASE;
 var PAGE_COLLAUDO = "./collaudo.html" || APP_BASE + "/collaudo";
 var PAGE_GESTIONE = "./gestione.html" || APP_BASE + "/gestione";
 var PAGE_MENSILE = "./mensile.html" || APP_BASE + "/mensile";
-var BUILD = "2026-11-27 20:23 UTC · 4105645"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
+var BUILD = "2026-11-27 22:08 UTC · 2739f7d"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
 // Every place the project lives (shown in the admin's header menu and on the Gestione page).
 var LINKS = [
   ["Pagine pubbliche", "https://rainycservizi.github.io/rainyc-servizi-app/", "GitHub Pages: il sito di prova principale"],
@@ -661,7 +682,7 @@ var I18N = { en: {
   "Rete dell'intervista": "Interview network",
   "Intervista: il servizio è un'intervista; toccare anche la rete a cui è destinata": "Interview: this is an interview; also tap the network it is for",
   "Modifica salvata: la riga N. {0} ora è {1}.": "Saved: line {0} is now {1}.", "Modifica salvata: la riga N. {0} non è più {1}.": "Saved: line {0} is no longer {1}.",
-  "Modifica salvata: riga N. {0}.": "Saved: line {0}.", "Periodo": "Period", "Evidenzia una rete": "Highlight a network", "Mese": "Month", "Vista": "View", "Mese precedente": "Previous month", "Mese successivo": "Next month", "Mese corrente": "This month", "Caricamento del mese {0}…": "Loading month {0}…", "Collaudo mensile": "Monthly collaudo", "Nessuna spunta: tutti. Più spunte: solo quelli scelti.": "No tick: all of them. Several ticks: only the ones chosen.", "Da completare: {0}.": "To complete: {0}.", "Completa sul collaudo": "Complete it on the collaudo", "Riga completata.": "Line marked complete.", "titolo": "title", "durata": "duration", "edizione": "edition", "Nessuna": "None", "Evidenzia la trasferta": "Highlight travel", "Tutto il giorno": "The whole day", "Solo le righe in trasferta": "Only the rows on travel", "Evidenziate: {0}.": "Highlighted: {0}.", "Un giorno": "One day", "Un mese intero": "A whole month", "Tipo": "Type", "Scegliere un mese.": "Choose a month.", "un tappeto": "a tappeto", "un grezzo": "raw footage", "un'intervista": "an interview",
+  "Modifica salvata: riga N. {0}.": "Saved: line {0}.", "Periodo": "Period", "Top Sheet per Roma": "Top Sheet for Rome", "Fino al mese": "Up to month", "Il prospetto per Roma: le colonne di Roma, da Gennaio fino al mese scelto; i mesi dopo restano vuoti.": "The sheet for Rome: Rome's columns, from January up to the month you pick; later months stay empty.", "Excel: {0}.": "Excel: {0}.", "Evidenzia una rete": "Highlight a network", "Mese": "Month", "Vista": "View", "Mese precedente": "Previous month", "Mese successivo": "Next month", "Mese corrente": "This month", "Caricamento del mese {0}…": "Loading month {0}…", "Collaudo mensile": "Monthly collaudo", "Nessuna spunta: tutti. Più spunte: solo quelli scelti.": "No tick: all of them. Several ticks: only the ones chosen.", "Da completare: {0}.": "To complete: {0}.", "Completa sul collaudo": "Complete it on the collaudo", "Riga completata.": "Line marked complete.", "titolo": "title", "durata": "duration", "edizione": "edition", "Nessuna": "None", "Evidenzia la trasferta": "Highlight travel", "Tutto il giorno": "The whole day", "Solo le righe in trasferta": "Only the rows on travel", "Evidenziate: {0}.": "Highlighted: {0}.", "Un giorno": "One day", "Un mese intero": "A whole month", "Tipo": "Type", "Scegliere un mese.": "Choose a month.", "un tappeto": "a tappeto", "un grezzo": "raw footage", "un'intervista": "an interview",
   "(non si applica al grezzo)": "(not used for raw footage)", "Registrazioni annullate.": "Entries cancelled.", "Registrazioni ripristinate.": "Entries restored.",
   "Grezzo: materiale grezzo mandato a più reti. Toccare «Grezzo» e poi tutte le reti a cui va: una registrazione per rete. Anche qui non si tocca.": "Raw footage: raw material sent to several networks. Click «Grezzo», then every network it goes to: one entry per network. Not for this story either.",
   "Mezzo": "Delivery means", "Telefono": "Telephone", "Trasferta": "Travel",
@@ -2338,6 +2359,257 @@ function renderEstratto(slices, hl) {
 }
 
 // ---- end lib/collaudo.js ----
+// ---- lib/mensile.js ----
+// Monthly page and Top Sheet (the report Rome receives at month end). Plain JS: Deno tests, the function and
+// (inlined) the browser page share it. The numbers come from public.v_monthly_topsheet (one row per month,
+// voided rows excluded); the page never recomputes them. Gennaio–Luglio 2026 are the figures already sent to
+// Rome, frozen on Marco's word (2026-10-15: "we start in August, the rest is history").
+
+/** Keys: video radio live | tg1 tg2 tg3 rnews altre tot_video | gr1 gr2 gr3 tot_radio (tappeti and grezzi were not reported). */
+const LEGACY_TOPSHEET = {
+  "2026-01": { video: 253, radio: 123, live: 255, tg1: 167, tg2: 123, tg3: 83, rnews: 113, altre: 7, tot_video: 493, gr1: 123, gr2: 126, gr3: 126, tot_radio: 375 },
+  "2026-02": { video: 150, radio: 52, live: 168, tg1: 98, tg2: 82, tg3: 72, rnews: 58, altre: 6, tot_video: 316, gr1: 52, gr2: 52, gr3: 52, tot_radio: 156 },
+  "2026-03": { video: 196, radio: 62, live: 270, tg1: 137, tg2: 117, tg3: 97, rnews: 104, altre: 11, tot_video: 466, gr1: 62, gr2: 62, gr3: 62, tot_radio: 186 },
+  "2026-04": { video: 212, radio: 88, live: 283, tg1: 153, tg2: 112, tg3: 88, rnews: 124, altre: 4, tot_video: 481, gr1: 88, gr2: 88, gr3: 88, tot_radio: 264 },
+  "2026-05": { video: 200, radio: 50, live: 204, tg1: 133, tg2: 93, tg3: 73, rnews: 93, altre: 6, tot_video: 398, gr1: 50, gr2: 50, gr3: 50, tot_radio: 150 },
+  "2026-06": { video: 191, radio: 69, live: 201, tg1: 128, tg2: 101, tg3: 66, rnews: 77, altre: 10, tot_video: 382, gr1: 69, gr2: 69, gr3: 69, tot_radio: 207 },
+  "2026-07": { video: 224, radio: 62, live: 214, tg1: 142, tg2: 114, tg3: 71, rnews: 88, altre: 0, tot_video: 415, gr1: 62, gr2: 62, gr3: 62, tot_radio: 186 },
+};
+/** Top Sheet columns in Rome's order: [key, heading]. */
+const TOPSHEET_COLS = [
+  ["video", "Servizi video"], ["radio", "Servizi radio"], ["live", "Live"], ["tappeti", "Tappeti"], ["grezzi", "Grezzi"],
+  ["tg1", "TG1"], ["tg2", "TG2"], ["tg3", "TG3"], ["rnews", "RNEWS"], ["altre", "ALTRE"], ["tot_video", "Totale video"],
+  ["gr1", "Radio GR 1"], ["gr2", "Radio GR 2"], ["gr3", "Radio GR 3"], ["tot_radio", "Totale radio"],
+];
+/** Small line printed above a heading (Marco, 2026-11-27): these columns count servizi and live only (migration 0020). */
+const TOPSHEET_SUB = { tg1: "Servizi/Live", tg2: "Servizi/Live", tg3: "Servizi/Live", rnews: "Servizi/Live" };
+const KEYS = TOPSHEET_COLS.map((c) => c[0]);
+
+/** "2026-10" -> {year, month} | null */
+function parseMonth(text) {
+  const m = /^(\d{4})-(\d{1,2})$/.exec(String(text || "").trim());
+  if (!m) return null;
+  const year = Number(m[1]), month = Number(m[2]);
+  if (year < 2000 || year > 2100 || month < 1 || month > 12) return null;
+  return { year, month };
+}
+function formatMonth(m) { return `${m.year}-${String(m.month).padStart(2, "0")}`; }
+function shiftMonth(m, delta) {
+  const n = m.year * 12 + (m.month - 1) + delta;
+  return { year: Math.floor(n / 12), month: (n % 12) + 1 };
+}
+/** First and last day of the month, "YYYY-MM-DD". */
+function monthRange(m) {
+  const last = new Date(Date.UTC(m.year, m.month, 0)).getUTCDate();
+  return { from: `${formatMonth(m)}-01`, to: `${formatMonth(m)}-${String(last).padStart(2, "0")}` };
+}
+/** "Ottobre 2026" */
+function monthLabel(m) { const n = MESI[m.month - 1]; return n.charAt(0).toUpperCase() + n.slice(1) + " " + m.year; }
+function monthOf(date) { return { year: Number(date.slice(0, 4)), month: Number(date.slice(5, 7)) }; }
+
+/**
+ * One Top Sheet row from a v_monthly_topsheet row. Legacy convention kept: the radio count goes to GR 1, 2 and 3
+ * alike (the database has one rete "GR"); Totale radio = three times the radio count.
+ */
+function topsheetRow(v) {
+  const radio = Number(v.radio || 0);
+  return {
+    ym: String(v.anno_mese), source: "db",
+    video: Number(v.pezzi || 0), radio, live: Number(v.live || 0), tappeti: Number(v.tappeti || 0), grezzi: Number(v.grezzi || 0), interviste: Number(v.interviste || 0),
+    tg1: Number(v.tg1 || 0), tg2: Number(v.tg2 || 0), tg3: Number(v.tg3 || 0), rnews: Number(v.ran || 0), altre: Number(v.altre || 0),
+    tot_video: Number(v.totale_video || 0), gr1: radio, gr2: radio, gr3: radio, tot_radio: radio * 3,
+  };
+}
+function emptyRow(ym, source) {
+  const r = { ym, source };
+  for (const k of KEYS) r[k] = 0;
+  return r;
+}
+/**
+ * The year's Top Sheet: twelve rows (frozen legacy figures win over the database; months without rows are zeros)
+ * plus a "Totale" row. `viewRows` = v_monthly_topsheet rows of that year.
+ * @param {Array<Record<string, unknown>>} viewRows @param {number} year
+ */
+function yearTable(viewRows, year) {
+  const byYm = new Map((viewRows || []).map((v) => [String(v.anno_mese), v]));
+  const rows = [];
+  for (let month = 1; month <= 12; month++) {
+    const ym = formatMonth({ year, month });
+    const legacy = LEGACY_TOPSHEET[ym];
+    let r;
+    if (legacy) { r = emptyRow(ym, "storico"); for (const k of KEYS) if (k in legacy) r[k] = legacy[k]; r.tappeti = null; r.grezzi = null; }
+    else if (byYm.has(ym)) r = topsheetRow(byYm.get(ym));
+    else r = emptyRow(ym, "vuoto");
+    r.mese = monthLabel({ year, month });
+    rows.push(r);
+  }
+  const tot = emptyRow(`${year}`, "totale"); tot.mese = `Totale ${year}`;
+  for (const k of KEYS) tot[k] = rows.reduce((a, r) => a + (r[k] == null ? 0 : r[k]), 0);
+  return { rows, total: tot };
+}
+
+function bucket() { return { pezzi: 0, radio: 0, live: 0, tappeti: 0, grezzi: 0, interviste: 0, trasferte: 0, righe: 0 }; }
+function add(b, r) {
+  b.righe += 1;
+  const c = String(r.categoria || "");
+  if (c === "pezzo") b.pezzi += 1; else if (c === "radio") b.radio += 1; else if (c === "live") b.live += 1; else if (c === "tappeto") b.tappeti += 1; else if (c === "grezzo") b.grezzi += 1; else if (c === "intervista") b.interviste += 1;
+  if (r.trasferta === true) b.trasferte += 1;
+}
+/**
+ * The ISO weeks that touch the month, with the month's rows counted per week (rows outside the month belong to
+ * the neighbouring month's page). `rows` = v_weekly_collaudo rows with data inside the month.
+ */
+function weeksOf(rows, m) {
+  const { from, to } = monthRange(m);
+  const weeks = new Map();
+  for (let d = new Date(from + "T00:00:00Z"); d.toISOString().slice(0, 10) <= to; d.setUTCDate(d.getUTCDate() + 1)) {
+    const w = isoWeekOf(d.toISOString().slice(0, 10));
+    const key = formatWeek(w);
+    if (!weeks.has(key)) { const days = weekDays(w); weeks.set(key, Object.assign({ week: key, from: days[0], to: days[6] }, bucket())); }
+  }
+  for (const r of rows || []) {
+    const key = formatWeek(isoWeekOf(String(r.data)));
+    if (weeks.has(key)) add(weeks.get(key), r);
+  }
+  return Array.from(weeks.values());
+}
+/** Per journalist, most rows first. */
+function journalistsOf(rows) {
+  const by = new Map();
+  for (const r of rows || []) {
+    const name = String(r.giornalista || "?");
+    if (!by.has(name)) by.set(name, Object.assign({ giornalista: name }, bucket()));
+    add(by.get(name), r);
+  }
+  return Array.from(by.values()).sort((a, b) => b.righe - a.righe || a.giornalista.localeCompare(b.giornalista));
+}
+
+// ── Top Sheet for Rome as a file (Marco, 2026-11-27: "export the page to Roma, the PDF and Excel as we did today,
+// just up to October, without the bozza"). Rome's own 12 columns, Gennaio up to the chosen month; the later months
+// stay as empty rows, like the sheet Rome keeps. Same look as the draft of 2026-11-27, without the BOZZA line.
+/** Rome's columns after Sede and Mese: [key, small line, heading]. */
+const ROMA_COLS = [
+  ["tg1", "Servizi/Live", "TG1"], ["tg2", "Servizi/Live", "TG2"], ["tg3", "Servizi/Live", "TG3"], ["rnews", "Servizi/Live", "RNEWS"], ["altre", "", "ALTRE"],
+  ["tot_video", "", "Totale Video"], ["gr1", "", "Radio GR 1"], ["gr2", "", "Radio GR 2"], ["gr3", "", "Radio GR 3"], ["tot_radio", "", "Totale Radio"],
+];
+const ROMA_BOLD = ["tot_video", "tot_radio"];
+const ROMA_HEAD = "#8A85E6", ROMA_BAND = "#E8E8FB";
+function meseNome(month) { const n = MESI[month - 1]; return n.charAt(0).toUpperCase() + n.slice(1); }
+function romaEsc(s) { return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); }
+/**
+ * Twelve rows {mese, vals}: `vals` = the numbers in ROMA_COLS order up to `upTo`, null after it.
+ * @param {Array<Record<string, unknown>>} yearRows yearTable(...).rows @param {{year:number, month:number}} upTo
+ */
+function romaRows(yearRows, upTo) {
+  const byYm = new Map((yearRows || []).map((r) => [String(r.ym), r]));
+  const out = [];
+  for (let month = 1; month <= 12; month++) {
+    const r = byYm.get(formatMonth({ year: upTo.year, month }));
+    const vals = month <= upTo.month && r ? ROMA_COLS.map((c) => (r[c[0]] == null ? 0 : Number(r[c[0]]))) : null;
+    out.push({ month, mese: meseNome(month), vals, source: r ? String(r.source) : "vuoto" });
+  }
+  return out;
+}
+/** "Gennaio–Luglio: cifre già inviate a Roma. Agosto–Ottobre: dal database RAI NYC Servizi. Radio GR 1, 2, 3 …" */
+function romaNote(rows) {
+  const span = (list) => (list.length === 1 ? list[0].mese : `${list[0].mese}–${list[list.length - 1].mese}`);
+  const filled = rows.filter((r) => r.vals);
+  const sent = filled.filter((r) => r.source === "storico"), db = filled.filter((r) => r.source !== "storico");
+  const parts = [];
+  if (sent.length) parts.push(`${span(sent)}: cifre già inviate a Roma.`);
+  if (db.length) parts.push(`${span(db)}: dal database RAI NYC Servizi.`);
+  parts.push("Radio GR 1, 2, 3 ripetono il conteggio radio, come nel foglio.");
+  return parts.join(" ");
+}
+/** "RAI NY Top Sheet Roma 2026 Gen-Ott" (file name without the extension). */
+function romaFileName(upTo) {
+  const ab = (m) => meseNome(m).slice(0, 3);
+  return `RAI NY Top Sheet Roma ${upTo.year} ${upTo.month === 1 ? "Gen" : "Gen-" + ab(upTo.month)}`;
+}
+function romaTitle(year) { return `RAI – Sede di corrispondenza di New York · Report mensile ${year}`; }
+/** The print (Save as PDF): Rome's sheet, US Letter landscape. Styles live in collaudo.html (#estratto .roma). */
+function renderTopsheetRoma(yearRows, upTo) {
+  const rows = romaRows(yearRows, upTo);
+  const sub = ROMA_COLS.slice(0, 5).map((c) => `<th>${c[1] ? `<span class="sl">${romaEsc(c[1])}</span>` : ""}${romaEsc(c[2])}</th>`).join("");
+  const right = ROMA_COLS.slice(5).map((c) => `<th rowspan="2">${romaEsc(c[2]).replace(" ", "<br>")}</th>`).join("");
+  const body = rows.map((r, i) => {
+    const cells = r.vals ? r.vals.map((v, k) => `<td${ROMA_BOLD.includes(ROMA_COLS[k][0]) ? ' class="b"' : ""}>${v}</td>`).join("") : "<td></td>".repeat(ROMA_COLS.length);
+    const sede = i === 0 ? `<td class="sede" rowspan="12">New York</td>` : "";
+    return `<tr class="${i % 2 ? "even" : "odd"}">${sede}<td class="mese">${romaEsc(r.mese)}</td>${cells}</tr>`;
+  }).join("");
+  return `<div class="roma"><h1>${romaEsc(romaTitle(upTo.year))}</h1>` +
+    `<table><thead><tr><th rowspan="2">Sede</th><th>Y${upTo.year}</th><th colspan="5"></th>${right}</tr><tr><th>Mese</th>${sub}</tr></thead>` +
+    `<tbody>${body}</tbody></table><p class="foot">${romaEsc(romaNote(rows))}</p></div>`;
+}
+// A real .xlsx (like the draft of 2026-11-27), built by hand: a few XML parts in a zip without compression, so the
+// browser and the supervisor job need no library. Excel opens it without the "format does not match" warning.
+const CRC_TABLE = (() => { const t = []; for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; t.push(c >>> 0); } return t; })();
+function crc32(bytes) { let c = 0xFFFFFFFF; for (const b of bytes) c = CRC_TABLE[(c ^ b) & 0xFF] ^ (c >>> 8); return (c ^ 0xFFFFFFFF) >>> 0; }
+/** Zip (stored) of [name, text] pairs -> Uint8Array. */
+function zipStored(files) {
+  const enc = new TextEncoder(), parts = [], central = [];
+  let off = 0;
+  const u16 = (v) => [v & 0xFF, (v >>> 8) & 0xFF], u32 = (v) => [v & 0xFF, (v >>> 8) & 0xFF, (v >>> 16) & 0xFF, (v >>> 24) & 0xFF];
+  for (const [name, text] of files) {
+    const nb = enc.encode(name), data = enc.encode(text), crc = crc32(data);
+    const common = [...u16(20), ...u16(0x0800), ...u16(0), ...u16(0), ...u16(0x21), ...u32(crc), ...u32(data.length), ...u32(data.length), ...u16(nb.length), ...u16(0)];
+    const local = new Uint8Array([...u32(0x04034b50), ...common, ...nb]);
+    central.push(new Uint8Array([...u32(0x02014b50), ...u16(20), ...common, ...u16(0), ...u16(0), ...u16(0), ...u32(0), ...u32(off), ...nb]));
+    parts.push(local, data); off += local.length + data.length;
+  }
+  const cdSize = central.reduce((a, c) => a + c.length, 0);
+  const end = new Uint8Array([...u32(0x06054b50), ...u16(0), ...u16(0), ...u16(files.length), ...u16(files.length), ...u32(cdSize), ...u32(off), ...u16(0)]);
+  const all = parts.concat(central, [end]), out = new Uint8Array(all.reduce((a, p) => a + p.length, 0));
+  let at = 0; for (const p of all) { out.set(p, at); at += p.length; }
+  return out;
+}
+/** The Top Sheet for Rome as .xlsx bytes: same sheet as the print, «New York» merged down, Letter landscape on one page. */
+function topsheetRomaXlsx(yearRows, upTo) {
+  const rows = romaRows(yearRows, upTo), x = romaEsc;
+  const col = (i) => String.fromCharCode(65 + i);
+  const c = (ref, style, v) => v === "" || v == null ? `<c r="${ref}" s="${style}"/>`
+    : typeof v === "number" ? `<c r="${ref}" s="${style}"><v>${v}</v></c>` : `<c r="${ref}" s="${style}" t="inlineStr"><is><t>${x(v)}</t></is></c>`;
+  const heads = ["Sede", "Mese"].concat(ROMA_COLS.map((k) => (k[1] ? k[1] + " " : "") + k[2]));
+  const xr = [];
+  xr.push(`<row r="1">${c("A1", 1, romaTitle(upTo.year))}</row>`);
+  xr.push(`<row r="3" ht="32" customHeight="1">${heads.map((h, i) => c(col(i) + "3", 3, h)).join("")}</row>`);
+  rows.forEach((r, i) => {
+    const n = 4 + i, bd = i % 2 ? 1 : 0;
+    const cells = [c("A" + n, 4, i === 0 ? "New York" : ""), c("B" + n, 5 + bd, r.mese)]
+      .concat(ROMA_COLS.map((k, j) => c(col(2 + j) + n, (ROMA_BOLD.includes(k[0]) ? 9 : 7) + bd, r.vals ? r.vals[j] : "")));
+    xr.push(`<row r="${n}">${cells.join("")}</row>`);
+  });
+  xr.push(`<row r="17">${c("A17", 2, romaNote(rows))}</row>`);
+  const widths = [12, 12, 11, 11, 11, 12, 9, 10, 9, 9, 9, 10].map((w, i) => `<col min="${i + 1}" max="${i + 1}" width="${w}" customWidth="1"/>`).join("");
+  const NS = 'xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"';
+  const sheet = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<worksheet ${NS} xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">` +
+    `<sheetPr><pageSetUpPr fitToPage="1"/></sheetPr><dimension ref="A1:L17"/><sheetViews><sheetView workbookViewId="0"/></sheetViews><sheetFormatPr defaultRowHeight="15"/>` +
+    `<cols>${widths}</cols><sheetData>${xr.join("")}</sheetData><mergeCells count="1"><mergeCell ref="A4:A15"/></mergeCells>` +
+    `<pageMargins left="0.5" right="0.5" top="0.5" bottom="0.5" header="0.3" footer="0.3"/><pageSetup paperSize="1" orientation="landscape" fitToWidth="1" fitToHeight="1"/></worksheet>`;
+  const bd = '<border><left style="thin"><color rgb="FF444444"/></left><right style="thin"><color rgb="FF444444"/></right><top style="thin"><color rgb="FF444444"/></top><bottom style="thin"><color rgb="FF444444"/></bottom><diagonal/></border>';
+  const xf = (font, fill, border, align) => `<xf numFmtId="0" fontId="${font}" fillId="${fill}" borderId="${border}" applyFont="1" applyFill="1" applyBorder="1"${align ? ` applyAlignment="1">${align}</xf>` : "/>"}`;
+  const styles = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<styleSheet ${NS}>` +
+    '<fonts count="4"><font><sz val="11"/><color rgb="FF000000"/><name val="Arial"/></font><font><b/><sz val="11"/><color rgb="FF000000"/><name val="Arial"/></font><font><b/><sz val="13"/><color rgb="FF000000"/><name val="Arial"/></font><font><sz val="9"/><color rgb="FF333333"/><name val="Arial"/></font></fonts>' +
+    `<fills count="4"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill><fill><patternFill patternType="solid"><fgColor rgb="FF${ROMA_HEAD.slice(1)}"/></patternFill></fill><fill><patternFill patternType="solid"><fgColor rgb="FF${ROMA_BAND.slice(1)}"/></patternFill></fill></fills>` +
+    `<borders count="2"><border><left/><right/><top/><bottom/><diagonal/></border>${bd}</borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs>` +
+    '<cellXfs count="11">' + [
+      xf(0, 0, 0), xf(2, 0, 0), xf(3, 0, 0),
+      xf(1, 2, 1, '<alignment horizontal="center" vertical="bottom" wrapText="1"/>'), xf(1, 2, 1, '<alignment vertical="bottom"/>'),
+      xf(0, 0, 1, '<alignment horizontal="center"/>'), xf(0, 3, 1, '<alignment horizontal="center"/>'),
+      xf(0, 0, 1), xf(0, 3, 1), xf(1, 0, 1), xf(1, 3, 1),
+    ].join("") + '</cellXfs><cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>';
+  const R = "http://schemas.openxmlformats.org/officeDocument/2006/relationships";
+  return zipStored([
+    ["[Content_Types].xml", '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/><Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/></Types>'],
+    ["_rels/.rels", `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="${R}/officeDocument" Target="xl/workbook.xml"/></Relationships>`],
+    ["xl/workbook.xml", `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<workbook ${NS} xmlns:r="${R}"><sheets><sheet name="Top Sheet ${upTo.year}" sheetId="1" r:id="rId1"/></sheets></workbook>`],
+    ["xl/_rels/workbook.xml.rels", `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="${R}/worksheet" Target="worksheets/sheet1.xml"/><Relationship Id="rId2" Type="${R}/styles" Target="styles.xml"/></Relationships>`],
+    ["xl/styles.xml", styles],
+    ["xl/worksheets/sheet1.xml", sheet],
+  ]);
+}
+
+// ---- end lib/mensile.js ----
 (function () {
   "use strict";
   var $ = function (id) { return document.getElementById(id); };
@@ -3152,6 +3424,7 @@ function renderEstratto(slices, hl) {
   // A whole month (Marco, 2026-11-27): the weeks that touch it are fetched, then every day of the month is filtered
   // and ordered like a day extract, in one table.
   function monthMode() { return $("ex-per").value === "mese"; }
+  function romaMode() { return $("ex-per").value === "roma"; }
   function monthSpec() { var f = formSpec(); return { mese: $("ex-mese").value, chi: f.chi, nome: f.nome, tipo: f.tipo, reti: f.reti, sort: f.sort }; }
   function weeksOfMonth(ym) {
     var seen = {}, out = [];
@@ -3165,15 +3438,18 @@ function renderEstratto(slices, hl) {
     return monthExport(all, spec);
   }
   function setPeriod() {
-    var m = monthMode();
-    $("ex-giorno").hidden = m; $("ex-mesebox").hidden = !m;
-    ["ex-add", "ex-list", "ex-scope"].forEach(function (id) { $(id).hidden = m; });
+    var m = monthMode(), ro = romaMode();
+    $("ex-giorno").hidden = m || ro; $("ex-mesebox").hidden = !m;
+    $("ex-romabox").hidden = !ro; $("ex-romanote").hidden = !ro; $("ex-filtri").hidden = ro;
+    ["ex-add", "ex-list", "ex-scope"].forEach(function (id) { $(id).hidden = m || ro; });
     if (m && !$("ex-mese").value) $("ex-mese").value = ($("ex-data").value || todayNewYork()).slice(0, 7);
+    if (ro && !$("ex-roma").value) $("ex-roma").value = shiftMonth(todayNewYork().slice(0, 7), -1); // the last closed month (page shiftMonth: "YYYY-MM")
     $("ex-xls").textContent = "Excel"; $("ex-pdf").textContent = "PDF";
     if (!m) paintBasket();
     refreshCount();
   }
   function refreshCount() {
+    if (romaMode()) { $("ex-count").textContent = ""; return; }
     if (monthMode()) {
       var ms = monthSpec();
       if (!/^\d{4}-\d{2}$/.test(ms.mese)) { $("ex-count").textContent = ""; return; }
@@ -3214,7 +3490,7 @@ function renderEstratto(slices, hl) {
     if (ev.key !== "Escape") return; ev.stopPropagation(); openExport(false);
   });
   $("ex-chi").addEventListener("change", refreshCount);
-  ["ex-nome", "ex-sort", "ex-tipi", "ex-reti", "ex-mese", "ex-hl-rete", "ex-hl-tr"].forEach(function (id) { $(id).addEventListener("change", refreshCount); });
+  ["ex-nome", "ex-sort", "ex-tipi", "ex-reti", "ex-mese", "ex-roma", "ex-hl-rete", "ex-hl-tr"].forEach(function (id) { $(id).addEventListener("change", refreshCount); });
   $("ex-per").addEventListener("change", setPeriod);
   $("ex-data").addEventListener("change", function () {
     var d = $("ex-data").value;
@@ -3258,7 +3534,32 @@ function renderEstratto(slices, hl) {
       }
     }, function (e) { setExErr(e.message || "Errore."); });
   }
+  // Top Sheet for Rome (Marco, 2026-11-27): the year from /api/mensile, Gennaio up to the chosen month, no BOZZA.
+  function runRoma(kind) {
+    var upTo = parseMonth($("ex-roma").value);
+    if (!upTo) { setExErr("Scegliere un mese."); return; }
+    setExErr("");
+    api("/api/mensile?month=" + formatMonth(upTo)).then(function (r) {
+      if (r.status !== 200 || !r.body || !r.body.year) { setExErr((r.body && r.body.error) || "Errore."); return; }
+      var rows = r.body.year.rows, name = romaFileName(upTo);
+      if (kind === "xls") {
+        var blob = new Blob([topsheetRomaXlsx(rows, upTo)], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+        var a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name + ".xlsx";
+        document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(function () { URL.revokeObjectURL(a.href); }, 1500);
+        setMsg(function () { return tf("Excel: {0}.", name); });
+      } else {
+        $("estratto").innerHTML = renderTopsheetRoma(rows, upTo);
+        $("estratto").hidden = false;
+        extractOn = true;
+        var keep = document.title; document.title = name; // the PDF's file name in «Salva come PDF»
+        window.print();
+        setTimeout(function () { document.title = keep; }, 1000);
+      }
+    }, function (e) { if (e && e.kind === "auth") { authLost(); return; } setExErr((e && e.message) || "Errore."); });
+  }
   function runExport(kind) {
+    if (romaMode()) { runRoma(kind); return; }
     if (monthMode()) { runMonth(kind); return; }
     var specs = exportSpecs();
     if (!specs.length) { setExErr("Scegliere un giorno."); return; }
