@@ -239,6 +239,15 @@ td.notec { max-width:16em; overflow:hidden; text-overflow:ellipsis; white-space:
 button.ic { border:0; background:transparent; color:var(--dim); width:28px; height:28px; line-height:1; padding:0; cursor:pointer; border-radius:4px; font-size:14px; }
 button.ic:hover, button.ic:focus-visible { background:var(--raise); color:var(--fg); }
 button.ic[data-act=void]:hover { color:var(--bad); }
+/* Da completare (Marco, 2026-11-27): orange row, the missing cells outlined; screen only, Rome's print stays plain */
+@media screen {
+  tr.r.dacomp > td { background:#fdf0dc; }
+  :root[data-mode=dark] tr.r.dacomp > td { background:#33260f; }
+  tr.r.dacomp > td.manca { box-shadow:inset 0 0 0 2px #e8820c; }
+  tr.r.dacomp > td.manca:empty::after, tr.r.dacomp > td.manca.ed:empty::after { content:"?"; color:#b86200; font-weight:700; }
+}
+button.ic[data-act=completa] { color:#b86200; font-weight:700; }
+button.ic[data-act=completa]:hover { color:var(--ok); }
 .rowerr { display:block; color:var(--bad); font-weight:600; font-size:12px; white-space:normal; text-align:right; }
 .rowerr:empty { display:none; }
 .nowrap { white-space:nowrap; }
@@ -260,6 +269,13 @@ footer.doc .firma { font-size:13px; white-space:nowrap; }
 .pop.export .lead { margin:0 0 12px; color:var(--dim); font-size:13px; line-height:1.4; }
 .pop.export .fld { margin:0 0 10px; }
 .pop.export select, .pop.export input[type=date] { width:100%; height:40px; margin:0; font-size:15px; }
+.pop.export .fld .lbl { display:block; font-weight:600; font-size:13px; margin:0 0 6px; }
+/* several types / networks at once (Marco, 2026-11-27) */
+.pop.export .picks { display:flex; flex-wrap:wrap; gap:6px; }
+.pop.export .picks label { display:inline-flex; align-items:center; gap:6px; margin:0; padding:6px 10px; border:1px solid var(--line2); border-radius:999px; font-weight:400; font-size:14px; cursor:pointer; }
+.pop.export .picks label:has(input:checked) { background:var(--accent-soft); border-color:var(--accent); color:var(--fg); font-weight:650; }
+.pop.export .picks input { width:16px; height:16px; margin:0; }
+.pop.export .fld .note { margin:6px 0 0; color:var(--dim); font-size:12px; }
 .pop.export .exdays { list-style:none; margin:8px 0; padding:0; }
 .pop.export .exdays:empty { display:none; }
 .pop.export .exdays li { display:flex; align-items:flex-start; gap:8px; justify-content:space-between; padding:8px 0; border-top:1px solid var(--line); font-size:13px; }
@@ -360,6 +376,13 @@ tr.r.hit td { animation:hit 2.6s ease-out; }
   #estratto th, #estratto td { border-bottom:1px solid #ccc; text-align:left; padding:3px 5px; }
   #estratto h2 { font-size:13px; margin:12px 0 4px; }
   #estratto p.gaps { font-size:11px; margin:0 0 6px; }
+  /* highlight (Marco, 2026-11-27): browsers drop backgrounds in print unless told to keep them */
+  #estratto tr[class^="hl-"] td, #estratto .sw { -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  #estratto tr.hl-rete td { background:#FFF2A8; }
+  #estratto tr.hl-trasferta td { background:#CFE8FF; }
+  #estratto tr.hl-both td { background:#CDEFC0; }
+  #estratto p.hl { font-size:11px; margin:0 0 6px; line-height:1.5; }
+  #estratto .sw { display:inline-block; width:14px; height:10px; margin:0 4px 0 8px; border:1px solid #999; vertical-align:-1px; }
   .page { padding:0; }
   .panel { border:0; box-shadow:none; border-radius:0; }
   .sheet { max-width:none; padding:0; display:block; }
@@ -389,7 +412,7 @@ tr.r.hit td { animation:hit 2.6s ease-out; }
 <body>
 <div class="top" id="top">
   <header class="appbar">
-    <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-11-27 18:09 UTC · a26a1af"><span class="mk">Rai · NY</span><span class="nm">RAI NYC Servizi</span><span class="pg" data-i18n>Collaudo</span></div>
+    <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-11-27 19:40 UTC · 17714d2"><span class="mk">Rai · NY</span><span class="nm">RAI NYC Servizi</span><span class="pg" data-i18n>Collaudo</span></div>
     <nav class="hright" id="hright" aria-label="Pagine">
       <button type="button" class="icbtn" id="theme" aria-label="Tema" title="Tema" aria-haspopup="menu" aria-expanded="false">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3a9 9 0 1 0 0 18c1.2 0 2-.9 2-2 0-.6-.2-1-.5-1.4-.3-.4-.5-.8-.5-1.3 0-1.1.9-2 2-2h2.2A4.8 4.8 0 0 0 22 9.6C22 5.8 17.5 3 12 3z"/><circle cx="7.5" cy="11.5" r="1.1"/><circle cx="10.5" cy="7.5" r="1.1"/><circle cx="15" cy="7.5" r="1.1"/><circle cx="17.5" cy="11.5" r="1.1"/></svg>
@@ -457,15 +480,37 @@ tr.r.hit td { animation:hit 2.6s ease-out; }
       </div>
     </div>
     <div class="fld">
-      <label for="ex-tipo" data-i18n>Tipo</label>
-      <select id="ex-tipo">
-        <option value="" data-i18n>Tutti</option>
-        <option value="pezzo" data-i18n>Servizi</option>
-        <option value="radio" data-i18n>Radio</option>
-        <option value="live" data-i18n>Live</option>
-        <option value="tappeto" data-i18n>Tappeti</option>
-        <option value="grezzo" data-i18n>Grezzi</option>
-      </select>
+      <span class="lbl" data-i18n>Tipo</span>
+      <div class="picks" id="ex-tipi" role="group" aria-label="Tipo"><label><input type="checkbox" value="pezzo"> <span data-i18n>Servizi</span></label><label><input type="checkbox" value="live"> <span data-i18n>Live</span></label><label><input type="checkbox" value="radio"> <span data-i18n>Radio</span></label><label><input type="checkbox" value="tappeto"> <span data-i18n>Tappeti</span></label><label><input type="checkbox" value="grezzo"> <span data-i18n>Grezzi</span></label></div>
+    </div>
+    <div class="fld">
+      <span class="lbl" data-i18n>Rete</span>
+      <div class="picks" id="ex-reti" role="group" aria-label="Rete"><label><input type="checkbox" value="Tg1"> <span>Tg1</span></label><label><input type="checkbox" value="Tg2"> <span>Tg2</span></label><label><input type="checkbox" value="Tg3"> <span>Tg3</span></label><label><input type="checkbox" value="RAN"> <span>RAN</span></label><label><input type="checkbox" value="Rainews.it"> <span>Rainews.it</span></label><label><input type="checkbox" value="GR"> <span>GR 1,2,3</span></label><label><input type="checkbox" value="Rai Sport"> <span>Rai Sport</span></label><label><input type="checkbox" value="TGR"> <span>TGR</span></label><label><input type="checkbox" value="Altre"> <span>Altre</span></label></div>
+      <p class="note" data-i18n>Nessuna spunta: tutti. Più spunte: solo quelli scelti.</p>
+    </div>
+    <div class="row2">
+      <div class="fld">
+        <label for="ex-hl-rete" data-i18n>Evidenzia una rete</label>
+        <select id="ex-hl-rete">
+          <option value="" data-i18n>Nessuna</option>
+          <option value="GR">GR 1,2,3</option>
+          <option value="Tg1">Tg1</option>
+          <option value="Tg2">Tg2</option>
+          <option value="Tg3">Tg3</option>
+          <option value="RAN">RAN</option>
+          <option value="Rainews.it">Rainews.it</option>
+          <option value="Rai Sport">Rai Sport</option>
+          <option value="TGR">TGR</option>
+        </select>
+      </div>
+      <div class="fld">
+        <label for="ex-hl-tr" data-i18n>Evidenzia la trasferta</label>
+        <select id="ex-hl-tr">
+          <option value="" data-i18n>No</option>
+          <option value="giorno" data-i18n>Tutto il giorno</option>
+          <option value="righe" data-i18n>Solo le righe in trasferta</option>
+        </select>
+      </div>
     </div>
     <div class="fld">
       <label for="ex-sort" data-i18n>Ordine</label>
@@ -527,7 +572,7 @@ var PAGE_FORM = "./" || APP_BASE;
 var PAGE_COLLAUDO = "./collaudo.html" || APP_BASE + "/collaudo";
 var PAGE_GESTIONE = "./gestione.html" || APP_BASE + "/gestione";
 var PAGE_MENSILE = "./mensile.html" || APP_BASE + "/mensile";
-var BUILD = "2026-11-27 18:09 UTC · a26a1af"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
+var BUILD = "2026-11-27 19:40 UTC · 17714d2"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
 // Every place the project lives (shown in the admin's header menu and on the Gestione page).
 var LINKS = [
   ["Pagine pubbliche", "https://rainycservizi.github.io/rainyc-servizi-app/", "GitHub Pages: il sito di prova principale"],
@@ -611,7 +656,7 @@ var I18N = { en: {
   "Rete dell'intervista": "Interview network",
   "Intervista: il servizio è un'intervista; toccare anche la rete a cui è destinata": "Interview: this is an interview; also tap the network it is for",
   "Modifica salvata: la riga N. {0} ora è {1}.": "Saved: line {0} is now {1}.", "Modifica salvata: la riga N. {0} non è più {1}.": "Saved: line {0} is no longer {1}.",
-  "Modifica salvata: riga N. {0}.": "Saved: line {0}.", "Periodo": "Period", "Un giorno": "One day", "Un mese intero": "A whole month", "Tipo": "Type", "Scegliere un mese.": "Choose a month.", "un tappeto": "a tappeto", "un grezzo": "raw footage", "un'intervista": "an interview",
+  "Modifica salvata: riga N. {0}.": "Saved: line {0}.", "Periodo": "Period", "Evidenzia una rete": "Highlight a network", "Nessuna spunta: tutti. Più spunte: solo quelli scelti.": "No tick: all of them. Several ticks: only the ones chosen.", "Da completare: {0}.": "To complete: {0}.", "Completa sul collaudo": "Complete it on the collaudo", "Riga completata.": "Line marked complete.", "titolo": "title", "durata": "duration", "edizione": "edition", "Nessuna": "None", "Evidenzia la trasferta": "Highlight travel", "Tutto il giorno": "The whole day", "Solo le righe in trasferta": "Only the rows on travel", "Evidenziate: {0}.": "Highlighted: {0}.", "Un giorno": "One day", "Un mese intero": "A whole month", "Tipo": "Type", "Scegliere un mese.": "Choose a month.", "un tappeto": "a tappeto", "un grezzo": "raw footage", "un'intervista": "an interview",
   "(non si applica al grezzo)": "(not used for raw footage)", "Registrazioni annullate.": "Entries cancelled.", "Registrazioni ripristinate.": "Entries restored.",
   "Grezzo: materiale grezzo mandato a più reti. Toccare «Grezzo» e poi tutte le reti a cui va: una registrazione per rete. Anche qui non si tocca.": "Raw footage: raw material sent to several networks. Click «Grezzo», then every network it goes to: one entry per network. Not for this story either.",
   "Mezzo": "Delivery means", "Telefono": "Telephone", "Trasferta": "Travel",
@@ -1941,10 +1986,12 @@ function renderCollaudo(w, rows, generated, trips = []) {
       if (cat in dayTot) dayTot[cat] += 1;
       const k = (c, key) => `<td class="k" data-c="${key}">${cat === c ? MARK : ""}</td>`;
       const KEY = { tappeto: "tappeti", grezzo: "grezzi", intervista: "interviste" };
+      // Da completare (Marco, 2026-11-27): the fields a producer still has to fill in are marked on screen (never in print).
+      const miss = new Set((Array.isArray(r.da_completare) ? r.da_completare : []).map((f) => f === "edizione" ? "richiedente" : f));
       const ed = (col, cls, shown, value) =>
-        `<td class="ed${cls ? " " + cls : ""}" data-c="${KEY[col] || col}" data-f="${EDIT_FIELDS[col].api}" data-v="${esc(value)}">${shown}</td>`;
+        `<td class="ed${cls ? " " + cls : ""}${miss.has(col) ? " manca" : ""}" data-c="${KEY[col] || col}" data-f="${EDIT_FIELDS[col].api}" data-v="${esc(value)}">${shown}</td>`;
       const num = r.numero == null ? "" : esc(r.numero);
-      body.push(`<tr class="r" data-id="${esc(r.record_id)}" data-n="${num}">` +
+      body.push(`<tr class="r${miss.size ? " dacomp" : ""}" data-id="${esc(r.record_id)}" data-n="${num}">` +
         // The line number is also the row's menu (move to a date, duplicate, cancel): a button, so the keyboard reaches it.
         `<td class="np nc" data-c="numero"><button type="button" class="nm" data-act="menu" title="Riga ${num}: azioni" aria-haspopup="menu">${num}</button></td>` +
         // Reads "Tappeto <Titolo>" from the cutover (titoloShown); edits start from the stored value.
@@ -1963,7 +2010,9 @@ function renderCollaudo(w, rows, generated, trips = []) {
         ed("note", "np notec", esc(r.note), r.note == null ? "" : r.note) +
         ed("operatore", "nowrap np", esc(r.operatore), r.operatore) +
         ed("data", "nowrap np", esc(shortDate(String(r.data))), r.data) +
-        '<td class="np act" data-c="azioni"><button type="button" class="ic" data-act="void" title="Annulla registrazione" aria-label="Annulla registrazione">✕</button>' +
+        '<td class="np act" data-c="azioni">' +
+        (miss.size ? '<button type="button" class="ic" data-act="completa" title="Da completare: controllati, segna completa" aria-label="Segna completa">✓</button>' : "") +
+        '<button type="button" class="ic" data-act="void" title="Annulla registrazione" aria-label="Annulla registrazione">✕</button>' +
         '<span class="rowerr" role="alert"></span></td>' +
         "</tr>");
     }
@@ -2030,10 +2079,12 @@ function filterExport(rows, spec) {
   const data = String(spec.data || "");
   const chi = spec.chi === "operatore" || spec.chi === "giornalista" ? spec.chi : "";
   const nome = String(spec.nome || "").trim().toLowerCase();
-  const tipo = CATEGORIE.includes(String(spec.tipo || "")) ? String(spec.tipo) : "";
+  const tipi = listOf(spec.tipo).filter((x) => CATEGORIE.includes(x));
+  const reti = listOf(spec.reti).filter((x) => RETI.includes(x));
   return rows.filter((r) => {
     if (String(r.data || "") !== data) return false;
-    if (tipo && String(r.categoria || "") !== tipo) return false;
+    if (tipi.length && !tipi.includes(String(r.categoria || ""))) return false;
+    if (reti.length && !reti.includes(String(reteBucket(String(r.rete || ""))))) return false;
     if (!nome) return true;
     if (chi) return String(r[chi] || "").trim().toLowerCase() === nome;
     const g = String(r.giornalista || "").trim().toLowerCase();
@@ -2083,8 +2134,20 @@ function sliceTitle(spec, n) {
     const dow = (new Date(ms).getUTCDay() + 6) % 7;
     day = GIORNI[dow] + " " + Number(m[3]) + " " + MESI[+m[2] - 1] + " " + m[1];
   }
-  const tipo = TIPO_PLURALE[String(spec.tipo || "")];
-  return `${day} · ${chi}${tipo ? " · " + tipo : ""} · ${SORT_LABEL[spec.sort] || SORT_LABEL.collaudo} · ${n}`;
+  return `${day} · ${chi}${pickLabel(spec)} · ${SORT_LABEL[spec.sort] || SORT_LABEL.collaudo} · ${n}`;
+}
+// Several types and several networks at once (Marco, 2026-11-27: "lo prete, october, tg1, servizi and live"). A string
+// is one choice; an empty list is every type / every network.
+/** @param {unknown} v @returns {string[]} */
+function listOf(v) {
+  if (Array.isArray(v)) return v.map(String).filter(Boolean);
+  return v ? [String(v)] : [];
+}
+/** " · Tg1, Tg2 · servizi + live" (empty when nothing is chosen). */
+function pickLabel(spec) {
+  const reti = listOf(spec.reti).map((k) => k === "GR" ? "GR 1,2,3" : k);
+  const tipi = listOf(spec.tipo).map((k) => TIPO_PLURALE[k] || k);
+  return (reti.length ? " · " + reti.join(", ") : "") + (tipi.length ? " · " + tipi.join(" + ") : "");
 }
 const TIPO_PLURALE = { pezzo: "servizi", radio: "radio", live: "live", tappeto: "tappeti", grezzo: "grezzi" };
 
@@ -2116,17 +2179,20 @@ function monthTitle(spec, n) {
   const m = /^(\d{4})-(\d{2})$/.exec(String(spec.mese || ""));
   const mese = m ? MESI[+m[2] - 1].charAt(0).toUpperCase() + MESI[+m[2] - 1].slice(1) + " " + m[1] : String(spec.mese || "");
   const chi = spec.nome ? (spec.chi === "operatore" ? "operatore " + spec.nome : "giornalista " + spec.nome) : "tutti";
-  const tipo = TIPO_PLURALE[String(spec.tipo || "")];
-  return `${mese} · ${chi}${tipo ? " · " + tipo : ""} · ${n}`;
+  return `${mese} · ${chi}${pickLabel(spec)} · ${n}`;
 }
-/** The month's print (Save as PDF): the title, the days with nothing listed, one table. */
-function renderEstrattoMese(spec, list, today) {
+/**
+ * The month's print (Save as PDF): the title, the days with nothing listed, the highlight legend, one table.
+ * @param {{mese:string, chi?:string, nome?:string, tipo?:string}} spec @param {Array<Record<string, unknown>>} list
+ * @param {string} [today] @param {{rete?:string, trasferta?:boolean|string, days?:Record<string, string[]>}|null} [hl]
+ */
+function renderEstrattoMese(spec, list, today, hl) {
   const head = EXPORT_COLS.map((c) => `<th>${esc(c)}</th>`).join("");
-  const rows = list.map((r) => "<tr>" + exportCells(r).map((c) => `<td>${esc(c)}</td>`).join("") + "</tr>").join("");
+  const rows = list.map((r) => trOpen(r, hl, spec.nome) + exportCells(r).map((c) => `<td>${esc(c)}</td>`).join("") + "</tr>").join("");
   const gaps = emptyDays(list, spec.mese, today);
   const gapLine = `<p class="gaps">${gaps.length ? "Giorni senza registrazioni: " + esc(gaps.join(", ")) : "Nessun giorno senza registrazioni."}</p>`;
   return `<header class="doc"><div class="ente">RAI – Sede di corrispondenza di New York</div><h1>Estratto del mese</h1></header>\n` +
-    `<h2>${esc(monthTitle(spec, list.length))}</h2>${gapLine}<table><thead><tr>${head}</tr></thead><tbody>${rows || `<tr><td colspan="${EXPORT_COLS.length}">Nessuna registrazione</td></tr>`}</tbody></table>`;
+    `<h2>${esc(monthTitle(spec, list.length))}</h2>${gapLine}${hlLegend(hl)}<table><thead><tr>${head}</tr></thead><tbody>${rows || `<tr><td colspan="${EXPORT_COLS.length}">Nessuna registrazione</td></tr>`}</tbody></table>`;
 }
 
 /** One row of the extract, in EXPORT_COLS order. */
@@ -2146,43 +2212,111 @@ function exportCells(r) {
   ];
 }
 
+// Highlight in the extract (Marco, 2026-11-27: "October with GR highlighted; September with trasferta days and GR").
+// One setting for the whole export, not per day: one network (by its bucket, so GR = GR 1,2,3) and/or the days
+// someone is in trasferta. With a name chosen, only that person's trips count. Nothing chosen = the plain extract.
+const HL_COLOR = { rete: "#FFF2A8", trasferta: "#CFE8FF", both: "#CDEFC0" };
+/** Key of one (day, name) pair in `hl.days`. */
+function tripKey(day, nome) { return String(day || "") + "|" + String(nome || "").trim().toLowerCase(); }
+/**
+ * The trips of `day` for the extract: from the week's rows and trips, as on the collaudo; with a name, only the
+ * trips where that person travels (operatore or journalist).
+ * @param {string} day @param {Array<Record<string, unknown>>} rows @param {Array<Record<string, unknown>>} trips @param {string} [nome]
+ */
+function tripsFor(day, rows, trips, nome) {
+  const n = String(nome || "").trim().toLowerCase();
+  const is = (v) => String(v || "").trim().toLowerCase() === n;
+  const r2 = n ? (rows || []).filter((r) => r.trasferta === true && (r.trasferta_dal
+    ? is(r.trasferta_persona) || is(r.trasferta_con)
+    : is(r.giornalista) || is(r.operatore))) : rows || [];
+  const t2 = n ? (trips || []).filter((t) => is(t.operatore) || is(t.con)) : trips || [];
+  return trasferteOn(day, r2, t2);
+}
+/**
+ * "", "rete", "trasferta" or "both" for one row.
+ * @param {Record<string, unknown>} r
+ * @param {{rete?:string, trasferta?:boolean|string, days?:Record<string, string[]>}|null|undefined} hl
+ * @param {string} [nome] the name the row was exported for
+ */
+function rowMark(r, hl, nome) {
+  if (!hl) return "";
+  const a = !!hl.rete && reteBucket(String(r.rete || "")) === hl.rete;
+  // trasferta: "giorno" (or true) = every row of a day with a trip; "righe" = only the rows flagged trasferta (Marco, 2026-11-27).
+  const b = hl.trasferta === "righe" ? r.trasferta === true
+    : !!hl.trasferta && ((hl.days || {})[tripKey(String(r.data || ""), nome)] || []).length > 0;
+  return a && b ? "both" : a ? "rete" : b ? "trasferta" : "";
+}
+/** Is any highlight chosen? */
+function hlOn(hl) { return !!(hl && (hl.rete || hl.trasferta)); }
+function reteLabel(k) { return k === "GR" ? "GR 1,2,3" : k; }
+/** The print's legend: the colours, then every trip of the extract once. */
+function hlLegend(hl) {
+  if (!hlOn(hl)) return "";
+  const sw = (k, text) => `<span class="sw" style="background:${HL_COLOR[k]}"></span>${esc(text)}`;
+  const parts = [];
+  if (hl.rete) parts.push(sw("rete", reteLabel(hl.rete)));
+  if (hl.trasferta) parts.push(sw("trasferta", hl.trasferta === "righe" ? "righe in trasferta" : "giorni di trasferta"));
+  if (hl.rete && hl.trasferta) parts.push(sw("both", reteLabel(hl.rete) + " in trasferta"));
+  const lines = [...new Set(Object.values(hl.days || {}).flat())];
+  const trips = hl.trasferta ? `<br>Trasferte: ${lines.length ? esc(lines.join(" · ")) : "nessuna in questo periodo."}` : "";
+  return `<p class="hl">Evidenziati: ${parts.join(" ")}${trips}</p>`;
+}
+const trOpen = (r, hl, nome) => { const m = rowMark(r, hl, nome); return m ? `<tr class="hl-${m}">` : "<tr>"; };
+/** "GR 1,2,3", "Trasferta" or "GR 1,2,3 + trasferta": the Excel's last column when a highlight is on. */
+function markWord(m, hl) {
+  if (m === "rete") return reteLabel(hl.rete);
+  if (m === "both") return reteLabel(hl.rete) + " + trasferta";
+  return m === "trasferta" ? "Trasferta" : "";
+}
+
 function xmlEsc(s) {
   return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 }
 
 /**
  * Excel 2003 XML workbook (opens in Excel; no extra library). Slices stay in the order they were added.
- * @param {Array<{rows: Array<Record<string, unknown>>}>} slices
+ * With a highlight, the marked rows are coloured and a last column «Evidenza» names why (it can be filtered).
+ * @param {Array<{nome?:string, rows: Array<Record<string, unknown>>}>} slices
+ * @param {{rete?:string, trasferta?:boolean|string, days?:Record<string, string[]>}|null} [hl]
  */
-function exportWorkbook(slices) {
-  const head = "<Row>" + EXPORT_COLS.map((c) => `<Cell><Data ss:Type="String">${xmlEsc(c)}</Data></Cell>`).join("") + "</Row>";
+function exportWorkbook(slices, hl) {
+  const on = hlOn(hl);
+  const cols = on ? EXPORT_COLS.concat(["Evidenza"]) : EXPORT_COLS;
+  const head = "<Row>" + cols.map((c) => `<Cell><Data ss:Type="String">${xmlEsc(c)}</Data></Cell>`).join("") + "</Row>";
   const body = [];
   for (const sl of slices) {
     for (const r of sl.rows) {
-      const cells = exportCells(r).map((c, i) => {
+      const m = on ? rowMark(r, hl, sl.nome) : "";
+      const st = m ? ` ss:StyleID="hl${m}"` : "";
+      const vals = on ? exportCells(r).concat([markWord(m, hl)]) : exportCells(r);
+      const cells = vals.map((c, i) => {
         const num = i === 1 && /^\d+$/.test(c);
-        return `<Cell><Data ss:Type="${num ? "Number" : "String"}">${xmlEsc(c)}</Data></Cell>`;
+        return `<Cell${st}><Data ss:Type="${num ? "Number" : "String"}">${xmlEsc(c)}</Data></Cell>`;
       });
       body.push("<Row>" + cells.join("") + "</Row>");
     }
   }
+  const styles = on
+    ? "<Styles>" + Object.keys(HL_COLOR).map((k) => `<Style ss:ID="hl${k}"><Interior ss:Color="${HL_COLOR[k]}" ss:Pattern="Solid"/></Style>`).join("") + "</Styles>\n"
+    : "";
   return `<?xml version="1.0" encoding="UTF-8"?>\n<?mso-application progid="Excel.Sheet"?>\n` +
     `<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">\n` +
-    `<Worksheet ss:Name="Estratto"><Table>\n${head}\n${body.join("\n")}\n</Table></Worksheet>\n</Workbook>\n`;
+    `${styles}<Worksheet ss:Name="Estratto"><Table>\n${head}\n${body.join("\n")}\n</Table></Worksheet>\n</Workbook>\n`;
 }
 
 /**
  * The print of the extract (Save as PDF from the print dialog). Italian, like Rome's sheet.
  * @param {Array<{data:string, chi?:string, nome?:string, sort?:string, rows: Array<Record<string, unknown>>}>} slices
+ * @param {{rete?:string, trasferta?:boolean|string, days?:Record<string, string[]>}|null} [hl] the highlight, when one is chosen
  */
-function renderEstratto(slices) {
+function renderEstratto(slices, hl) {
   const head = EXPORT_COLS.map((c) => `<th>${esc(c)}</th>`).join("");
   const blocks = slices.map((sl) => {
-    const rows = sl.rows.map((r) => "<tr>" + exportCells(r).map((c) => `<td>${esc(c)}</td>`).join("") + "</tr>").join("");
+    const rows = sl.rows.map((r) => trOpen(r, hl, sl.nome) + exportCells(r).map((c) => `<td>${esc(c)}</td>`).join("") + "</tr>").join("");
     const empty = `<tr><td colspan="${EXPORT_COLS.length}">Nessuna registrazione</td></tr>`;
     return `<h2>${esc(sliceTitle(sl, sl.rows.length))}</h2><table><thead><tr>${head}</tr></thead><tbody>${rows || empty}</tbody></table>`;
   }).join("\n");
-  return `<header class="doc"><div class="ente">RAI – Sede di corrispondenza di New York</div><h1>Estratto collaudo</h1></header>\n${blocks}`;
+  return `<header class="doc"><div class="ente">RAI – Sede di corrispondenza di New York</div><h1>Estratto collaudo</h1></header>\n${hlLegend(hl)}${blocks}`;
 }
 
 // ---- end lib/collaudo.js ----
@@ -2219,6 +2353,7 @@ function renderEstratto(slices) {
       if (r.status !== 200) { failState((r.body && r.body.error) || "Errore."); return; }
       sheet = { w: w, rows: r.body.rows, annullate: r.body.annullate || [], trips: r.body.trips || [], gen: todayNewYork() };
       weekCache[formatWeek(w)] = sheet.rows;
+      tripCache[formatWeek(w)] = sheet.trips;
       paintSheet();
       loadedOnce = true;
       applyFold();
@@ -2242,6 +2377,7 @@ function renderEstratto(slices) {
   // <span class="scr">English</span><span class="prn">Italian</span>, so the print stays Italian.
   var sheet = null; // {w, rows, gen} of the week on screen
   var weekCache = {}; // "2026-W48" -> that week's rows, so an extract can add a day from another week
+  var tripCache = {}; // "2026-W48" -> that week's trips (the trasferta highlight of an extract)
   function bi(it, en) { return '<span class="scr">' + esc(en) + '</span><span class="prn">' + esc(it) + "</span>"; }
   function both(el, en) { var it = el.textContent; if (en !== it) el.innerHTML = bi(it, en); }
   // Italian month and day names -> English, for the screen copy only (Marco, 2026-10-17: the notes must be in English when the page is).
@@ -2299,8 +2435,8 @@ function renderEstratto(slices) {
   // scrolls sideways. Drag a heading's right edge to resize (the next column gives or takes the space); drag a heading
   // to move the column. Order and widths are saved in this browser (rainyc.collaudo.colonne); «Ripristina colonne»
   // goes back to the defaults. renderCollaudo always gives Rome's order: applyCols moves the cells by their data-c.
-  var COL_W = { numero: 3.8, titolo: 18, giornalista: 8, richiedente: 11, rete: 6.5, durata: 7, servizi: 2.6, radio: 2.6, live: 2.8,
-    mezzo: 6.3, tappeti: 2.6, grezzi: 2.6, ass: 2.6, note: 6, operatore: 8, data: 4.8, azioni: 2.9 };
+  var COL_W = { numero: 3.8, titolo: 16.5, giornalista: 8, richiedente: 11, rete: 6.5, durata: 7, servizi: 2.6, radio: 2.6, live: 2.8,
+    mezzo: 6.3, tappeti: 2.6, grezzi: 2.6, ass: 2.6, note: 6, operatore: 8, data: 4.8, azioni: 4.4 }; // azioni holds ✓ and ✕ on a row «da completare» (2026-11-27)
   var COL_MIN = 1.8, COLS_KEY = "rainyc.collaudo.colonne", printing = false;
   function colState() {
     var st = { o: COL_KEYS.slice(), w: Object.assign({}, COL_W), custom: false }, saved = null;
@@ -2753,6 +2889,18 @@ function renderEstratto(slices) {
   var MOVES = { tappeto: "tipo", grezzo: "tipo", intervista: "tipo", rete: "pos", richiedente: "pos", delivery_date: "pos" };
   var TIPO_NOW = { tappeto: "un tappeto", grezzo: "un grezzo", intervista: "un'intervista" };
 
+  // «Segna completa»: the values shown are right; the row leaves the «da completare» list (POST /api/completa, audited).
+  function completaRow(tr) {
+    if (busy) return;
+    var id = tr.getAttribute("data-id");
+    setBusy(true);
+    post("/api/completa", { id: id }).then(function (r) {
+      setBusy(false);
+      if (!r) return;
+      if (r.status !== 200) { rowError(id, errText(r)); return; }
+      load(current, "Riga completata.");
+    });
+  }
   function voidRow(tr) {
     if (busy || !window.confirm(t("Annullare questa registrazione?"))) return;
     var id = tr.getAttribute("data-id");
@@ -2793,6 +2941,7 @@ function renderEstratto(slices) {
     if (b) {
       if (b.getAttribute("data-act") === "menu") { var br = b.getBoundingClientRect(); openMenu(b.closest("tr.r"), br.left, br.bottom + 2); }
       else if (b.getAttribute("data-act") === "void") voidRow(b.closest("tr.r"));
+      else if (b.getAttribute("data-act") === "completa") completaRow(b.closest("tr.r"));
       else if (b.getAttribute("data-act") === "restore") restoreRow(b.getAttribute("data-id"));
       return;
     }
@@ -2834,15 +2983,20 @@ function renderEstratto(slices) {
   var basket = [];
   function setExErr(text) { $("ex-err").textContent = text ? t(text) : ""; }
   function formSpec() {
-    return { data: $("ex-data").value, chi: $("ex-chi").value, nome: $("ex-nome").value, sort: $("ex-sort").value, tipo: $("ex-tipo").value };
+    return { data: $("ex-data").value, chi: $("ex-chi").value, nome: $("ex-nome").value, sort: $("ex-sort").value, tipo: picked("ex-tipi"), reti: picked("ex-reti") };
   }
   function sameSpec(a, b) {
-    return a.data === b.data && a.chi === b.chi && a.nome === b.nome && a.sort === b.sort && a.tipo === b.tipo;
+    return a.data === b.data && a.chi === b.chi && a.nome === b.nome && a.sort === b.sort &&
+      listOf(a.tipo).join() === listOf(b.tipo).join() && listOf(a.reti).join() === listOf(b.reti).join();
+  }
+  function picked(id) {
+    return Array.prototype.map.call($(id).querySelectorAll("input:checked"), function (i) { return i.value; });
   }
   function screenSlice(spec, n) {
     var who = spec.nome ? t(spec.chi) + " " + (spec.chi === "operatore" ? t(spec.nome) : spec.nome) : t("tutti");
     var ord = t({ collaudo: "Come sul collaudo", giornalista: "Per giornalista", operatore: "Per operatore", ora: "Per orario" }[spec.sort] || "Come sul collaudo");
-    return fmtDay(spec.data) + " · " + who + " · " + ord + " · " + n;
+    var pick = listOf(spec.reti).concat(listOf(spec.tipo).map(function (k) { return t({ pezzo: "Servizi", radio: "Radio", live: "Live", tappeto: "Tappeti", grezzo: "Grezzi" }[k] || k); })).join(", ");
+    return fmtDay(spec.data) + " · " + who + (pick ? " · " + pick : "") + " · " + ord + " · " + n;
   }
   function rowsOf(spec) {
     var key = formatWeek(isoWeekOf(spec.data));
@@ -2856,13 +3010,33 @@ function renderEstratto(slices) {
   }
   function ensureWeek(date) {
     var key = formatWeek(isoWeekOf(date));
-    if (weekCache[key]) return Promise.resolve(weekCache[key]);
+    if (weekCache[key] && tripCache[key]) return Promise.resolve(weekCache[key]);
     return api("/api/collaudo?week=" + key).then(function (r) {
       if (r.status !== 200) throw new Error((r.body && r.body.error) || t("Errore."));
       weekCache[key] = r.body.rows || [];
+      tripCache[key] = r.body.trips || [];
       return weekCache[key];
     });
   }
+  // Highlight (Marco, 2026-11-27): one setting for the whole export. Trips are read from the whole week (rows and
+  // trips), before any filter, so a radio-only extract still sees a trip filed on a TV row.
+  function hlSetting() { return { rete: $("ex-hl-rete").value, trasferta: $("ex-hl-tr").value }; }
+  function buildHl(pairs) {
+    var h = hlSetting();
+    if (!h.rete && !h.trasferta) return null;
+    h.days = {};
+    if (h.trasferta) pairs.forEach(function (p) {
+      var key = formatWeek(isoWeekOf(p[0]));
+      h.days[tripKey(p[0], p[1])] = tripsFor(p[0], weekCache[key] || [], tripCache[key] || [], p[1]);
+    });
+    return h;
+  }
+  function hlCount(list, hl, nome) {
+    if (!hl) return "";
+    return " " + tf("Evidenziate: {0}.", list.filter(function (r) { return rowMark(r, hl, nome); }).length);
+  }
+  function dayPairs(specs) { return specs.map(function (s) { return [s.data, s.nome]; }); }
+  function monthPairs(spec) { return daysOfMonth(spec.mese).map(function (d) { return [d, spec.nome]; }); }
   function fillNomi() {
     var chi = $("ex-chi").value, keep = $("ex-nome").value, names = {};
     function add(n) { n = String(n || "").trim(); if (n) names[n.toLowerCase()] = n; }
@@ -2900,7 +3074,7 @@ function renderEstratto(slices) {
   // A whole month (Marco, 2026-11-27): the weeks that touch it are fetched, then every day of the month is filtered
   // and ordered like a day extract, in one table.
   function monthMode() { return $("ex-per").value === "mese"; }
-  function monthSpec() { var f = formSpec(); return { mese: $("ex-mese").value, chi: f.chi, nome: f.nome, tipo: f.tipo, sort: f.sort }; }
+  function monthSpec() { var f = formSpec(); return { mese: $("ex-mese").value, chi: f.chi, nome: f.nome, tipo: f.tipo, reti: f.reti, sort: f.sort }; }
   function weeksOfMonth(ym) {
     var seen = {}, out = [];
     daysOfMonth(ym).forEach(function (d) { var k = formatWeek(isoWeekOf(d)); if (!seen[k]) { seen[k] = 1; out.push(d); } });
@@ -2928,7 +3102,8 @@ function renderEstratto(slices) {
       ensureMonth(ms.mese).then(function () {
         if ($("ex-mese").value !== ms.mese || !monthMode()) return;
         fillNomi();
-        $("ex-count").textContent = tf("Pronte: {0}.", monthRowsNow(monthSpec()).length);
+        var s2 = monthSpec(), l2 = monthRowsNow(s2);
+        $("ex-count").textContent = tf("Pronte: {0}.", l2.length) + hlCount(l2, buildHl(monthPairs(s2)), s2.nome);
       }, function () { $("ex-count").textContent = ""; });
       return;
     }
@@ -2937,7 +3112,8 @@ function renderEstratto(slices) {
     ensureWeek(spec.data).then(function () {
       if ($("ex-data").value !== spec.data) return; // an answer for a day picked before: the newer one paints
       fillNomi();
-      $("ex-count").textContent = tf("Pronte: {0}.", rowsOf(formSpec()).length);
+      var f2 = formSpec(), l2 = rowsOf(f2);
+      $("ex-count").textContent = tf("Pronte: {0}.", l2.length) + hlCount(l2, buildHl(dayPairs([f2])), f2.nome);
       paintBasket();
     }, function () { $("ex-count").textContent = ""; });
   }
@@ -2960,7 +3136,7 @@ function renderEstratto(slices) {
     if (ev.key !== "Escape") return; ev.stopPropagation(); openExport(false);
   });
   $("ex-chi").addEventListener("change", refreshCount);
-  ["ex-nome", "ex-sort", "ex-tipo", "ex-mese"].forEach(function (id) { $(id).addEventListener("change", refreshCount); });
+  ["ex-nome", "ex-sort", "ex-tipi", "ex-reti", "ex-mese", "ex-hl-rete", "ex-hl-tr"].forEach(function (id) { $(id).addEventListener("change", refreshCount); });
   $("ex-per").addEventListener("change", setPeriod);
   $("ex-data").addEventListener("change", function () {
     var d = $("ex-data").value;
@@ -2987,15 +3163,16 @@ function renderEstratto(slices) {
       var list = monthRowsNow(spec);
       if (!list.length) { setExErr("Nessuna registrazione con questi filtri."); return; }
       setExErr("");
+      var hl = buildHl(monthPairs(spec));
       if (kind === "xls") {
-        var blob = new Blob([exportWorkbook([{ rows: list }])], { type: "application/vnd.ms-excel" });
+        var blob = new Blob([exportWorkbook([{ nome: spec.nome, rows: list }], hl)], { type: "application/vnd.ms-excel" });
         var a = document.createElement("a"); a.href = URL.createObjectURL(blob);
-        a.download = "estratto-" + spec.mese + (spec.nome ? "-" + spec.nome.replace(/[^A-Za-z0-9]+/g, "_") : "") + (spec.tipo ? "-" + spec.tipo : "") + ".xls";
+        a.download = "estratto-" + spec.mese + (spec.nome ? "-" + spec.nome.replace(/[^A-Za-z0-9]+/g, "_") : "") + (spec.reti.length ? "-" + spec.reti.join("-").replace(/[^A-Za-z0-9-]+/g, "") : "") + (spec.tipo.length ? "-" + spec.tipo.join("-") : "") + ".xls";
         document.body.appendChild(a); a.click(); a.remove();
         setTimeout(function () { URL.revokeObjectURL(a.href); }, 1500);
         setMsg(function () { return tf("Excel: {0} registrazioni.", list.length); });
       } else {
-        $("estratto").innerHTML = renderEstrattoMese(spec, list, todayNewYork());
+        $("estratto").innerHTML = renderEstrattoMese(spec, list, todayNewYork(), hl);
         $("estratto").hidden = false;
         extractOn = true;
         window.print();
@@ -3007,20 +3184,21 @@ function renderEstratto(slices) {
     var specs = exportSpecs();
     if (!specs.length) { setExErr("Scegliere un giorno."); return; }
     Promise.all(specs.map(function (s) { return ensureWeek(s.data); })).then(function () {
-      var slices = specs.map(function (s) { return { data: s.data, chi: s.chi, nome: s.nome, sort: s.sort, rows: rowsOf(s) }; });
+      var slices = specs.map(function (s) { return { data: s.data, chi: s.chi, nome: s.nome, sort: s.sort, tipo: s.tipo, reti: s.reti, rows: rowsOf(s) }; });
       var n = slices.reduce(function (a, s) { return a + s.rows.length; }, 0);
       if (!n) { setExErr("Nessuna registrazione con questi filtri."); return; }
       setExErr("");
+      var hl = buildHl(dayPairs(specs));
       if (kind === "xls") {
         var days = specs.map(function (s) { return s.data; }).filter(function (d, i, all) { return all.indexOf(d) === i; });
         var name = days.length === 1 ? "estratto-" + days[0] + ".xls" : days.length <= 3 ? "estratto-" + days.join("_") + ".xls" : "estratto.xls";
-        var blob = new Blob([exportWorkbook(slices)], { type: "application/vnd.ms-excel" });
+        var blob = new Blob([exportWorkbook(slices, hl)], { type: "application/vnd.ms-excel" });
         var a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name;
         document.body.appendChild(a); a.click(); a.remove();
         setTimeout(function () { URL.revokeObjectURL(a.href); }, 1500);
         setMsg(function () { return tf("Excel: {0} registrazioni.", n); });
       } else {
-        $("estratto").innerHTML = renderEstratto(slices);
+        $("estratto").innerHTML = renderEstratto(slices, hl);
         $("estratto").hidden = false;
         extractOn = true;
         window.print();
@@ -3052,8 +3230,11 @@ function renderEstratto(slices) {
     syncTop();
     mountPassword($("hright")); mountLogout($("hright"));
     mail.load();
-    var w = parseWeek(new URLSearchParams(location.search).get("week") || "") || isoWeekOf(todayNewYork());
-    load(w);
+    var qs = new URLSearchParams(location.search);
+    var w = parseWeek(qs.get("week") || "") || isoWeekOf(todayNewYork());
+    var n0 = (qs.get("n") || "").replace(/[^0-9]/g, ""); // «Completa sul collaudo» from the form: light that row
+    var p0 = load(w);
+    if (n0 && p0 && p0.then) p0.then(function () { flashRow(n0); });
   });
   // Mark in the tally columns: 1 / × / ✓, remembered per browser (rainyc.segno); 1 by default (Marco, 2026-10-30).
   (function () { var sel = $("segno"); var v = null; try { v = localStorage.getItem("rainyc.segno"); } catch (e) { /* blocked */ } if (v !== "x" && v !== "v") v = "1"; document.documentElement.setAttribute("data-segno", v); sel.value = v; sel.addEventListener("change", function () { document.documentElement.setAttribute("data-segno", sel.value); try { localStorage.setItem("rainyc.segno", sel.value); } catch (e) { /* blocked */ } }); })();

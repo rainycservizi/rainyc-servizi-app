@@ -260,7 +260,7 @@ input:focus-visible, select:focus-visible { outline:none; border-color:var(--foc
 .mdl.dup .q { font-size:14px; font-weight:500; color:var(--dim); margin:0 0 14px; }
 /* Confetti canvas: a short burst when an entry of this session reaches the server; removed when done. */
 .cfx { position:fixed; inset:0; z-index:70; pointer-events:none; }
-@media print { .mdl, .cfx, .drop { display:none !important; } }
+@media print { .mdl, .cfx { display:none !important; } }
 
 /* ── actions ── */
 .actions { display:grid; grid-template-columns:auto minmax(0,1fr); gap:10px 18px; align-items:center; }
@@ -295,6 +295,10 @@ kbd { font:600 11px/1 var(--mono); padding:2px 5px; border:1px solid var(--line2
 .side li { padding:7px 6px; border-bottom:1px solid var(--line); display:grid; grid-template-columns:minmax(0,1fr) auto; gap:2px 10px; align-items:center; border-radius:4px; transition:background .12s ease; }
 .side li:hover { background:var(--hover); }
 .side li:last-child { border-bottom:0; }
+/* Da completare (Marco, 2026-11-27): a row with missing data stays orange until a producer fills it in on the collaudo */
+.side li.dacomp { background:var(--warn-bg); box-shadow:inset 3px 0 0 #e8820c; }
+.side li .dc { grid-column:1 / -1; color:var(--warn); font-size:12px; font-weight:650; }
+.side li .dc a { color:inherit; margin-left:6px; }
 /* line 1: time · day · edition (Tg1 Ore 20) · operator; line 2: journalist · title · kind and duration · means */
 .side li .o { grid-column:1 / -1; font:600 12px/1.4 var(--mono); color:var(--dim); min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .side li .o b { color:var(--fg); font-weight:700; }
@@ -304,22 +308,6 @@ kbd { font:600 11px/1 var(--mono); padding:2px 5px; border:1px solid var(--line2
 .s.salvato { color:var(--accent-text); background:var(--accent-soft); } .s.attesa { color:var(--warn); background:var(--warn-bg); }
 .s.sincronizzato { color:var(--ok); background:var(--ok-bg); } .s.errore { color:var(--bad); background:var(--bad-bg); }
 .side li.vuoto { display:block; color:var(--dim); font-size:14px; text-align:center; padding:28px 6px; border:1px dashed var(--line2); border-radius:6px; margin:0 6px; }
-.drop { display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:4px; margin:0 0 10px; padding:16px 14px; border:1.5px dashed var(--line2); border-radius:12px; background:var(--raise); color:var(--dim); font-size:13px; line-height:1.35; cursor:pointer; }
-.drop-ico { width:40px; height:40px; color:var(--accent); }
-.drop strong { color:var(--fg); font-weight:700; font-size:15px; }
-.drop .drop-note { font-size:12px; }
-.drop.over { border-color:var(--accent); background:var(--accent-soft); color:var(--fg); }
-.drop.over .drop-ico { color:var(--accent); }
-.drop.busy { opacity:.6; pointer-events:none; }
-.mdl.read { max-width:min(980px, calc(100vw / var(--z, 1) - 24px)); }
-.mdl.read .box { border-top-color:var(--accent); max-height:calc(100vh / var(--z, 1) - 48px); overflow:auto; }
-.mdl.read .ph { color:var(--fg); }
-.rd { display:grid; grid-template-columns:auto 9.2em minmax(7em,9em) minmax(8em,1.4fr) 4.6em minmax(7em,1fr) 4.6em auto; gap:6px; align-items:center; padding:8px 0; border-bottom:1px solid var(--line); }
-.rd input[type="text"], .rd input[type="date"], .rd select { width:100%; height:34px; }
-.rd .src { grid-column:1 / -1; margin:0; font:12px/1.35 var(--mono); color:var(--dim); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-.rd .dup { grid-column:1 / -1; margin:0; color:var(--warn); font-size:12px; font-weight:650; }
-.rd.need { background:var(--bad-bg); }
-@media (max-width:1099px) { .rd { grid-template-columns:1fr 1fr; } .rd .src, .rd .dup { grid-column:1 / -1; } }
 
 /* ── login, boot, password ── */
 .card { max-width:400px; margin:9vh auto 0; }
@@ -371,7 +359,6 @@ kbd { font:600 11px/1 var(--mono); padding:2px 5px; border:1px solid var(--line2
   .panel { padding:10px 14px 12px; } .ph { margin-bottom:10px; } .fld { margin-bottom:8px; }
   input[type=text], input[type=date], input[type=email], input[type=password], select, .chips span { height:40px; min-height:40px; }
   .side { max-height:calc(100vh / var(--z, 1) - 52px - 24px); top:12px; }
-  .drop { padding:10px 12px; gap:2px; } .drop-ico { width:28px; height:28px; } .drop strong { font-size:14px; }
   .keys { display:none; }
 }
 /* Shorter still (1536×~720 at 125 % scaling, 1366×700 laptops): smaller chips, three rete columns, no scroll. */
@@ -421,7 +408,7 @@ kbd { font:600 11px/1 var(--mono); padding:2px 5px; border:1px solid var(--line2
 </head>
 <body>
 <header class="appbar">
-  <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-11-27 18:09 UTC · a26a1af"><span class="mk">Rai · NY</span><span id="t">RAI NYC Servizi</span><span class="pg" data-i18n>Registrazione</span></div>
+  <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-11-27 19:40 UTC · 17714d2"><span class="mk">Rai · NY</span><span id="t">RAI NYC Servizi</span><span class="pg" data-i18n>Registrazione</span></div>
   <nav class="hright" id="hright" aria-label="Pagine">
     <span class="pend" id="pend" hidden></span>
     <button type="button" class="icbtn lang" id="tour-btn" hidden data-i18n-attr="aria-label|title" aria-label="Tutorial: come si compila una registrazione" title="Tutorial: come si compila una registrazione">?</button>
@@ -554,14 +541,7 @@ kbd { font:600 11px/1 var(--mono); padding:2px 5px; border:1px solid var(--line2
 
     <aside class="panel side" id="recent-box" hidden aria-labelledby="h-oggi">
       <h2 class="ph" id="h-oggi" data-i18n>Registrazioni di oggi <span class="aside" id="recent-n"></span></h2>
-      <div class="drop" id="drop" tabindex="0" role="button">
-        <svg class="drop-ico" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 6v20M15 18l9 9 9-9" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 28v8a4 4 0 0 0 4 4h20a4 4 0 0 0 4-4v-8" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
-        <strong data-i18n>Trascina qui la cattura di V-Mover.</strong>
-        <span data-i18n>Usa una cattura dello schermo, non una foto del telefono. Il testo si legge meglio.</span>
-        <span class="drop-note" data-i18n>Tutti i nomi dei file devono essere visibili. La durata si scrive a mano.</span>
-      </div>
       <ol id="recent"></ol>
-      <input type="file" id="drop-file" accept="image/png,image/jpeg,image/webp,image/gif" hidden>
     </aside>
   </div>
 </main>
@@ -570,18 +550,6 @@ kbd { font:600 11px/1 var(--mono); padding:2px 5px; border:1px solid var(--line2
     <h3 class="ph" id="miss-h" data-i18n>Registrazione non inviata</h3>
     <p id="miss-p"></p>
     <div class="row"><button type="button" class="btn pri" id="miss-ok" data-i18n>Ho capito</button></div>
-  </div>
-</dialog>
-<dialog class="mdl read" id="read" aria-labelledby="read-h" aria-describedby="read-note">
-  <div class="box">
-    <h3 class="ph" id="read-h" data-i18n>Servizi letti dall'immagine</h3>
-    <p id="read-note"></p>
-    <div id="read-rows"></div>
-    <div class="err" id="read-err" role="alert"></div>
-    <div class="row">
-      <button type="button" class="btn" id="read-cancel" data-i18n>Annulla</button>
-      <button type="button" class="btn pri" id="read-send" data-i18n>Registra le righe scelte</button>
-    </div>
   </div>
 </dialog>
 <dialog class="mdl dup" id="dup" aria-labelledby="dup-h" aria-describedby="dup-p">
@@ -627,7 +595,7 @@ var PAGE_FORM = "./" || APP_BASE;
 var PAGE_COLLAUDO = "./collaudo.html" || APP_BASE + "/collaudo";
 var PAGE_GESTIONE = "./gestione.html" || APP_BASE + "/gestione";
 var PAGE_MENSILE = "./mensile.html" || APP_BASE + "/mensile";
-var BUILD = "2026-11-27 18:09 UTC · a26a1af"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
+var BUILD = "2026-11-27 19:40 UTC · 17714d2"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
 // Every place the project lives (shown in the admin's header menu and on the Gestione page).
 var LINKS = [
   ["Pagine pubbliche", "https://rainycservizi.github.io/rainyc-servizi-app/", "GitHub Pages: il sito di prova principale"],
@@ -711,7 +679,7 @@ var I18N = { en: {
   "Rete dell'intervista": "Interview network",
   "Intervista: il servizio è un'intervista; toccare anche la rete a cui è destinata": "Interview: this is an interview; also tap the network it is for",
   "Modifica salvata: la riga N. {0} ora è {1}.": "Saved: line {0} is now {1}.", "Modifica salvata: la riga N. {0} non è più {1}.": "Saved: line {0} is no longer {1}.",
-  "Modifica salvata: riga N. {0}.": "Saved: line {0}.", "Periodo": "Period", "Un giorno": "One day", "Un mese intero": "A whole month", "Tipo": "Type", "Scegliere un mese.": "Choose a month.", "un tappeto": "a tappeto", "un grezzo": "raw footage", "un'intervista": "an interview",
+  "Modifica salvata: riga N. {0}.": "Saved: line {0}.", "Periodo": "Period", "Evidenzia una rete": "Highlight a network", "Nessuna spunta: tutti. Più spunte: solo quelli scelti.": "No tick: all of them. Several ticks: only the ones chosen.", "Da completare: {0}.": "To complete: {0}.", "Completa sul collaudo": "Complete it on the collaudo", "Riga completata.": "Line marked complete.", "titolo": "title", "durata": "duration", "edizione": "edition", "Nessuna": "None", "Evidenzia la trasferta": "Highlight travel", "Tutto il giorno": "The whole day", "Solo le righe in trasferta": "Only the rows on travel", "Evidenziate: {0}.": "Highlighted: {0}.", "Un giorno": "One day", "Un mese intero": "A whole month", "Tipo": "Type", "Scegliere un mese.": "Choose a month.", "un tappeto": "a tappeto", "un grezzo": "raw footage", "un'intervista": "an interview",
   "(non si applica al grezzo)": "(not used for raw footage)", "Registrazioni annullate.": "Entries cancelled.", "Registrazioni ripristinate.": "Entries restored.",
   "Grezzo: materiale grezzo mandato a più reti. Toccare «Grezzo» e poi tutte le reti a cui va: una registrazione per rete. Anche qui non si tocca.": "Raw footage: raw material sent to several networks. Click «Grezzo», then every network it goes to: one entry per network. Not for this story either.",
   "Mezzo": "Delivery means", "Telefono": "Telephone", "Trasferta": "Travel",
@@ -2183,21 +2151,24 @@ function parseToSeconds(s) {
     var n = pendingCount(); var p = $("pend");
     p.hidden = n === 0; p.textContent = tf("{0} in attesa", n);
   }
+  var DC_LABEL = { titolo: "titolo", durata: "durata", operatore: "operatore", giornalista: "giornalista", edizione: "edizione" };
   function renderRecent() {
     var ol = $("recent"); ol.textContent = "";
     var todayStr = today();
     var local = queue.filter(function (e) { return e.payload.delivery_date === todayStr || e.stato !== "sincronizzato"; });
     var ids = {}; local.forEach(function (e) { if (e.server_id) ids[e.server_id] = true; });
+    var byId = {}; serverRows.forEach(function (r) { byId[r.record_id] = r; });
     // Marco (2026-10-16): the list must show day, edition (Tg1 Ore 20), time and operator; everything else that fits.
     var dm = function (d) { return d && d.length >= 10 ? d.slice(8, 10) + "/" + d.slice(5, 7) : ""; };
     // The edition as read: RAN's slots are stored bare and read "RAN Ore 19" (Marco, 2026-10-22); no edition -> the rete.
     var joinNE = function (parts) { return parts.filter(function (x) { return x; }).join(" \u00b7 "); };
     var items = local.map(function (e) {
       var p = e.payload, cat = categoria(p.rete, p.mezzo, p.tappeto, p.grezzo, p.intervista);
-      return { ora: e.ora, giorno: dm(p.delivery_date), ed: edShown(p.rete, p.richiedente, p.edizione_del), op: p.operator, text: joinNE([p.journalist, p.subject, cat + (p.duration_text ? " " + formatDurata(p.duration_text) : ""), t(p.mezzo)]), stato: e.stato, err: e.errore, sort: e.creato };
+      var sr = e.server_id ? byId[e.server_id] : null;
+      return { ora: e.ora, giorno: dm(p.delivery_date), ed: edShown(p.rete, p.richiedente, p.edizione_del), op: p.operator, text: joinNE([p.journalist, p.subject, cat + (p.duration_text ? " " + formatDurata(p.duration_text) : ""), t(p.mezzo)]), stato: e.stato, err: e.errore, sort: e.creato, manca: sr ? sr.da_completare : null, n: sr ? sr.numero : null };
     }).concat(serverRows.filter(function (r) { return !ids[r.record_id]; }).map(function (r) {
       var when = r.submitted_at ? new Date(r.submitted_at) : null;
-      return { ora: when ? String(when.getHours()).padStart(2, "0") + ":" + String(when.getMinutes()).padStart(2, "0") : "", giorno: dm(todayStr), ed: edShown(r.rete, r.richiedente, r.edizione_del), op: r.operatore, text: joinNE([r.numero ? "N. " + r.numero : "", r.giornalista, r.titolo, r.categoria + (r.durata ? " " + formatDurata(r.durata) : ""), t(r.mezzo)]), stato: "sincronizzato", sort: r.submitted_at || "" };
+      return { ora: when ? String(when.getHours()).padStart(2, "0") + ":" + String(when.getMinutes()).padStart(2, "0") : "", giorno: dm(todayStr), ed: edShown(r.rete, r.richiedente, r.edizione_del), op: r.operatore, text: joinNE([r.numero ? "N. " + r.numero : "", r.giornalista, r.titolo, r.categoria + (r.durata ? " " + formatDurata(r.durata) : ""), t(r.mezzo)]), stato: "sincronizzato", sort: r.submitted_at || "", manca: r.da_completare, n: r.numero };
     }));
     items.sort(function (a, b) { return a.sort < b.sort ? 1 : -1; });
     $("recent-n").textContent = items.length ? String(items.length) : "";
@@ -2212,6 +2183,14 @@ function parseToSeconds(s) {
       var s = document.createElement("span"); s.className = "s " + it.stato; s.textContent = t(LABEL[it.stato]);
       li.appendChild(o); li.appendChild(tx); li.appendChild(s);
       if (it.err) { var e = document.createElement("span"); e.className = "e"; e.textContent = it.err; li.appendChild(e); }
+      if (it.manca && it.manca.length) {
+        li.classList.add("dacomp");
+        var dc = document.createElement("span"); dc.className = "dc";
+        dc.textContent = tf("Da completare: {0}.", it.manca.map(function (f) { return t(DC_LABEL[f] || f); }).join(", "));
+        var a = document.createElement("a"); a.textContent = t("Completa sul collaudo");
+        a.href = PAGE_COLLAUDO + "?week=" + formatWeek(isoWeekOf(todayStr)) + (it.n ? "&n=" + it.n : "");
+        dc.appendChild(a); li.appendChild(dc);
+      }
       ol.appendChild(li);
     });
   }
@@ -2271,7 +2250,7 @@ function parseToSeconds(s) {
         e.stato = "errore"; e.errore = (r.body && r.body.error) || t("Dati non validi.");
         qsave(queue); renderPending(); renderRecent();
         setStatus("errore", function () { return tf("Non accettata: {0}", e.errore); });
-        if (!e.image) restore(e);
+        restore(e);
         schedule(50);
       }
     }, function (err) {
@@ -2955,185 +2934,6 @@ function parseToSeconds(s) {
   document.addEventListener("rainyc:lang", function () { if (tour) { tourPaint(); tourPlace(); } });
   $("tour-btn").addEventListener("click", function () { tourStart(); });
   MENU_ACTIONS.push({ label: "Tutorial", run: function () { tourStart(); } });
-
-  // ---- V-Mover screenshot: drafts only, then the normal queue ----
-  var dropEl = $("drop"), dropFile = $("drop-file");
-  function prepareImage(file) {
-    return new Promise(function (resolve, reject) {
-      var url = URL.createObjectURL(file);
-      var img = new Image();
-      img.onload = function () {
-        URL.revokeObjectURL(url);
-        var max = 2000, w = img.naturalWidth || 1, h = img.naturalHeight || 1;
-        var scale = Math.min(1, max / Math.max(w, h));
-        var c = document.createElement("canvas");
-        c.width = Math.max(1, Math.round(w * scale));
-        c.height = Math.max(1, Math.round(h * scale));
-        var ctx = c.getContext("2d");
-        if (!ctx) { reject(new Error("bad")); return; }
-        ctx.fillStyle = "#fff"; ctx.fillRect(0, 0, c.width, c.height); ctx.drawImage(img, 0, 0, c.width, c.height);
-        c.toBlob(function (blob) {
-          if (!blob) { reject(new Error("bad")); return; }
-          var fr = new FileReader();
-          fr.onload = function () {
-            var data = String(fr.result || "");
-            var comma = data.indexOf(",");
-            resolve(comma >= 0 ? data.slice(comma + 1) : "");
-          };
-          fr.onerror = function () { reject(new Error("bad")); };
-          fr.readAsDataURL(blob);
-        }, "image/jpeg", 0.85);
-      };
-      img.onerror = function () { URL.revokeObjectURL(url); reject(new Error("bad")); };
-      img.src = url;
-    });
-  }
-  function readImageFile(file) {
-    if (!file || tour) return;
-    if (!/^image\/(png|jpeg|webp|gif)$/.test(file.type)) { setStatus("errore", "Usa un'immagine PNG, JPEG o WebP."); return; }
-    if (file.size > 12 * 1024 * 1024) { setStatus("errore", "L'immagine è troppo grande (massimo 6 MB)."); return; }
-    dropEl.classList.add("busy");
-    prepareImage(file).then(function (b64) {
-      if (!b64) throw new Error("bad");
-      return api("/api/read-image", { method: "POST", body: JSON.stringify({ image: b64, media_type: "image/jpeg" }) });
-    }).then(function (r) {
-      dropEl.classList.remove("busy");
-      if (r.status !== 200) { setStatus("errore", (r.body && r.body.error) || "Google Vision non ha letto l'immagine. Controlla la fatturazione e riprova."); return; }
-      openRead(r.body || {});
-    }, function (err) {
-      dropEl.classList.remove("busy");
-      if (err && err.kind === "auth") { authLost(); return; }
-      setStatus("errore", (err && err.message) || "Usa un'immagine PNG, JPEG o WebP.");
-    });
-  }
-  dropEl.addEventListener("click", function () { if (!tour) dropFile.click(); });
-  dropEl.addEventListener("keydown", function (ev) {
-    if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); if (!tour) dropFile.click(); }
-  });
-  dropFile.addEventListener("change", function () {
-    var f = dropFile.files && dropFile.files[0];
-    dropFile.value = "";
-    readImageFile(f);
-  });
-  ["dragenter", "dragover"].forEach(function (name) {
-    $("recent-box").addEventListener(name, function (ev) { ev.preventDefault(); dropEl.classList.add("over"); });
-  });
-  $("recent-box").addEventListener("dragleave", function (ev) { if (ev.target === $("recent-box")) dropEl.classList.remove("over"); });
-  $("recent-box").addEventListener("drop", function (ev) {
-    ev.preventDefault(); dropEl.classList.remove("over");
-    var f = ev.dataTransfer && ev.dataTransfer.files && ev.dataTransfer.files[0];
-    readImageFile(f);
-  });
-
-  function readInput(cls, type, value) {
-    var el = document.createElement("input");
-    el.className = cls; el.type = type;
-    if (value) el.value = value;
-    return el;
-  }
-  function openRead(body) {
-    var rows = body.rows || [];
-    var box = $("read-rows"); box.textContent = "";
-    $("read-err").textContent = "";
-    var note = !rows.length
-      ? "Nessun nome di file letto. La cattura deve mostrare tutti i nomi."
-      : body.already
-        ? "Questa immagine era già stata letta. Controlla i doppioni prima di registrare."
-        : "Scrivi la durata su ogni riga scelta. Un tappeto e un servizio non hanno la durata nell'immagine.";
-    L($("read-note"), note);
-    rows.forEach(function (row) {
-      var wrap = document.createElement("div"); wrap.className = "rd";
-      var inc = readInput("inc", "checkbox", "");
-      inc.checked = !row.duplicate;
-      // Entry-day rule: a file named "DEL 14 11" read on the 13th is filed on the 13th and reads "del 14/11".
-      var later = row.delivery_date && row.delivery_date > today() ? row.delivery_date : "";
-      var date = readInput("d", "date", later ? today() : (row.delivery_date || ""));
-      if (later) wrap.setAttribute("data-del", later);
-      var jour = readInput("j", "text", row.journalist || "");
-      jour.setAttribute("list", "l-giornalisti"); jour.maxLength = 100;
-      var subj = readInput("s", "text", row.subject || ""); subj.maxLength = 500;
-      var rete = document.createElement("select"); rete.className = "r";
-      var blank = document.createElement("option"); blank.value = ""; blank.textContent = "—"; rete.appendChild(blank);
-      (lists && lists.reti ? lists.reti : []).forEach(function (name) {
-        var o = document.createElement("option"); o.value = name; o.textContent = name; rete.appendChild(o);
-      });
-      if (row.rete && !Array.prototype.some.call(rete.options, function (o) { return o.value === row.rete; })) {
-        var extra = document.createElement("option"); extra.value = row.rete; extra.textContent = row.rete; rete.appendChild(extra);
-      }
-      rete.value = row.rete || "";
-      var rich = readInput("q", "text", row.richiedente || ""); rich.maxLength = 200;
-      var dur = readInput("u", "text", ""); dur.setAttribute("placeholder", "1:20"); dur.setAttribute("inputmode", "decimal");
-      var tapLab = document.createElement("label");
-      var tap = readInput("p", "checkbox", ""); tap.checked = !!row.tappeto;
-      tapLab.appendChild(tap); tapLab.appendChild(document.createTextNode(" "));
-      var tapWord = document.createElement("span"); L(tapWord, "Tappeto"); tapLab.appendChild(tapWord);
-      var src = document.createElement("p"); src.className = "src"; src.textContent = (later ? delLabel(later) + " \u00b7 " : "") + (row.source_line || ""); src.title = row.source_line || "";
-      wrap.appendChild(inc); wrap.appendChild(date); wrap.appendChild(jour); wrap.appendChild(subj);
-      wrap.appendChild(rete); wrap.appendChild(rich); wrap.appendChild(dur); wrap.appendChild(tapLab); wrap.appendChild(src);
-      if (row.duplicate) {
-        var dup = document.createElement("p"); dup.className = "dup";
-        L(dup, "Possibile doppione: la spunta è vuota. Segnala solo se non è già nel collaudo.");
-        wrap.appendChild(dup);
-      }
-      box.appendChild(wrap);
-    });
-    var dlg = $("read");
-    if (typeof dlg.showModal === "function") { if (!dlg.open) dlg.showModal(); }
-    else $("read-err").textContent = note;
-  }
-  function closeRead() { var dlg = $("read"); if (dlg.open) dlg.close(); }
-  $("read-cancel").addEventListener("click", closeRead);
-  $("read").addEventListener("click", function (ev) { if (ev.target === this) closeRead(); });
-  $("read-send").addEventListener("click", function () {
-    var op = $("operatore").value;
-    if (!op) { $("read-err").textContent = t("Manca l'operatore nel modulo."); return; }
-    var chosen = [], bad = false;
-    Array.prototype.forEach.call($("read-rows").querySelectorAll(".rd"), function (wrap) {
-      if (!wrap.querySelector(".inc").checked) { wrap.classList.remove("need"); return; }
-      var date = wrap.querySelector(".d").value;
-      var g = wrap.querySelector(".j").value.trim();
-      var names = (lists && lists.giornalisti) || [];
-      var gMatch = names.filter(function (n) { return n.toLowerCase() === g.toLowerCase(); })[0];
-      var subj = wrap.querySelector(".s").value.trim();
-      var rete = wrap.querySelector(".r").value;
-      var rich = wrap.querySelector(".q").value.trim();
-      var dur = formatDurata(wrap.querySelector(".u").value.trim());
-      var tap = wrap.querySelector(".p").checked;
-      if (!date || !gMatch || !subj || !rete || !rich || !dur) { wrap.classList.add("need"); bad = true; return; }
-      wrap.classList.remove("need");
-      wrap.querySelector(".u").value = dur;
-      chosen.push({
-        client_record_id: newUuid(),
-        delivery_date: date,
-        edizione_del: (wrap.getAttribute("data-del") || "") > date ? wrap.getAttribute("data-del") : null,
-        journalist: gMatch,
-        subject: subj,
-        rete: rete,
-        tappeto: tap,
-        grezzo: false,
-        intervista: false,
-        group_id: null,
-        richiedente: rich,
-        duration_text: dur,
-        mezzo: "V-Mover",
-        trasferta: false, trasferta_journalist: null, trasferta_luogo: null, trasferta_dal: null, trasferta_al: null,
-        operator: op,
-        notes: null
-      });
-    });
-    if (bad) { $("read-err").textContent = t("Scrivi la durata su ogni riga scelta. Un tappeto e un servizio non hanno la durata nell'immagine."); return; }
-    if (!chosen.length) { $("read-err").textContent = t("Nessuna riga scelta."); return; }
-    var now = new Date(), ora = String(now.getHours()).padStart(2, "0") + ":" + String(now.getMinutes()).padStart(2, "0");
-    chosen.forEach(function (v, k) {
-      queue.push({ client_record_id: v.client_record_id, payload: v, stato: "salvato", creato: new Date(now.getTime() + k).toISOString(), ora: ora, image: true });
-      if (k === 0) freshIds[v.client_record_id] = true;
-    });
-    qsave(queue); renderPending(); renderRecent();
-    setStatus("salvato", function () { return tf("{0} righe in invio. Controlla «Registrazioni di oggi».", chosen.length); });
-    try { localStorage.setItem("rainyc.operatore", op); } catch (e) { /* ignore */ }
-    closeRead();
-    schedule(0);
-  });
 
   // ---- start ----
   requireLogin(function () {
