@@ -388,7 +388,7 @@ tr.r.hit td { animation:hit 2.6s ease-out; }
 <body>
 <div class="top" id="top">
   <header class="appbar">
-    <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-11-25 22:22 UTC · 5fe7959"><span class="mk">Rai · NY</span><span class="nm">RAI NYC Servizi</span><span class="pg" data-i18n>Collaudo</span></div>
+    <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-11-27 17:42 UTC · db6d775"><span class="mk">Rai · NY</span><span class="nm">RAI NYC Servizi</span><span class="pg" data-i18n>Collaudo</span></div>
     <nav class="hright" id="hright" aria-label="Pagine">
       <button type="button" class="icbtn" id="theme" aria-label="Tema" title="Tema" aria-haspopup="menu" aria-expanded="false">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3a9 9 0 1 0 0 18c1.2 0 2-.9 2-2 0-.6-.2-1-.5-1.4-.3-.4-.5-.8-.5-1.3 0-1.1.9-2 2-2h2.2A4.8 4.8 0 0 0 22 9.6C22 5.8 17.5 3 12 3z"/><circle cx="7.5" cy="11.5" r="1.1"/><circle cx="10.5" cy="7.5" r="1.1"/><circle cx="15" cy="7.5" r="1.1"/><circle cx="17.5" cy="11.5" r="1.1"/></svg>
@@ -416,7 +416,7 @@ tr.r.hit td { animation:hit 2.6s ease-out; }
       <button type="button" class="btn" id="fold" aria-controls="doc"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="fold-t">Comprimi tutto</span></button>
       <button type="button" class="btn" id="undo" disabled title="Ctrl+Z"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M5 4L2 7l3 3M2.5 7H10a4 4 0 0 1 0 8H8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="tx" data-i18n>Annulla ultima modifica</span></button>
       <button type="button" class="btn" id="cols-reset" hidden data-i18n-attr="title|aria-label" title="Ripristina colonne: l'ordine e la larghezza di partenza" aria-label="Ripristina colonne"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M2.5 3.5h11v9h-11zM6.2 3.5v9M9.8 3.5v9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg><span class="tx" data-i18n>Colonne</span></button>
-      <label class="wk" data-i18n-attr="title" title="Segno nelle colonne Servizi, Radio, Live, Tappeti, Grezzi, Interviste"><span data-i18n>Segno</span> <select id="segno"><option value="1">1</option><option value="x">×</option><option value="v">✓</option></select></label>
+      <label class="wk" data-i18n-attr="title" title="Segno nelle colonne Servizi, Radio, Live, Tappeti, Grezzi"><span data-i18n>Segno</span> <select id="segno"><option value="1">1</option><option value="x">×</option><option value="v">✓</option></select></label>
     </div>
     <span class="msg" id="msg" role="status" aria-live="polite"></span>
     <button type="button" class="btn" id="email"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M2 4h12v8H2zM2.5 4.5L8 9l5.5-4.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg><span id="email-t" data-i18n>Invia per e-mail</span></button>
@@ -445,8 +445,8 @@ tr.r.hit td { animation:hit 2.6s ease-out; }
     <div class="fld">
       <label for="ex-sort" data-i18n>Ordine</label>
       <select id="ex-sort">
+        <option value="giornalista" selected data-i18n>Per giornalista</option>
         <option value="collaudo" data-i18n>Come sul collaudo</option>
-        <option value="giornalista" data-i18n>Per giornalista</option>
         <option value="operatore" data-i18n>Per operatore</option>
         <option value="ora" data-i18n>Per orario</option>
       </select>
@@ -502,7 +502,7 @@ var PAGE_FORM = "./" || APP_BASE;
 var PAGE_COLLAUDO = "./collaudo.html" || APP_BASE + "/collaudo";
 var PAGE_GESTIONE = "./gestione.html" || APP_BASE + "/gestione";
 var PAGE_MENSILE = "./mensile.html" || APP_BASE + "/mensile";
-var BUILD = "2026-11-25 22:22 UTC · 5fe7959"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
+var BUILD = "2026-11-27 17:42 UTC · db6d775"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
 // Every place the project lives (shown in the admin's header menu and on the Gestione page).
 var LINKS = [
   ["Pagine pubbliche", "https://rainycservizi.github.io/rainyc-servizi-app/", "GitHub Pages: il sito di prova principale"],
@@ -585,7 +585,8 @@ var I18N = { en: {
   "Intervista per {0}": "Interview for {0}", "Intervista: toccare la rete a cui è destinata": "Interview: tap the network it is for",
   "Rete dell'intervista": "Interview network",
   "Intervista: il servizio è un'intervista; toccare anche la rete a cui è destinata": "Interview: this is an interview; also tap the network it is for",
-  "Segno nelle colonne Servizi, Radio, Live, Tappeti, Grezzi, Interviste": "Mark in the Packages, Radio, Live, Tappeti, Raw footage, Interviews columns",
+  "Modifica salvata: la riga N. {0} ora è {1}.": "Saved: line {0} is now {1}.", "Modifica salvata: la riga N. {0} non è più {1}.": "Saved: line {0} is no longer {1}.",
+  "Modifica salvata: riga N. {0}.": "Saved: line {0}.", "un tappeto": "a tappeto", "un grezzo": "raw footage", "un'intervista": "an interview",
   "(non si applica al grezzo)": "(not used for raw footage)", "Registrazioni annullate.": "Entries cancelled.", "Registrazioni ripristinate.": "Entries restored.",
   "Grezzo: materiale grezzo mandato a più reti. Toccare «Grezzo» e poi tutte le reti a cui va: una registrazione per rete. Anche qui non si tocca.": "Raw footage: raw material sent to several networks. Click «Grezzo», then every network it goes to: one entry per network. Not for this story either.",
   "Mezzo": "Delivery means", "Telefono": "Telephone", "Trasferta": "Travel",
@@ -1622,7 +1623,7 @@ const CATEGORIE = ["pezzo", "radio", "live", "tappeto", "grezzo", "intervista"];
 const CAT_LABEL = { pezzo: "Servizi", radio: "Radio", live: "Live", tappeto: "Tappeti", grezzo: "Grezzi", intervista: "Interviste" };
 // Top-bar counters: Radio is not repeated as a category, "GR 1,2,3" in the rete group is the one radio tally
 // (Marco, 2026-10-30: "why both? I would just put GR 1,2,3 and tally them altogether").
-const BAR_CATEGORIE = CATEGORIE.filter((c) => c !== "radio");
+const BAR_CATEGORIE = CATEGORIE.filter((c) => c !== "radio" && c !== "intervista"); // no Interviste (Marco, 2026-11-27)
 // Per-rete counters in the sheet's order. Tappeto rows count only under Tappeti; a grezzo counts as a service for
 // every network it went to (Marco, 2026-10-21), so its rows count per rete like pezzi.
 const RETI = ["Rainews.it", "Tg1", "Tg2", "Tg3", "RAN", "Rai Sport", "GR", "TGR", "Altre"]; // TGR up top (Marco, 2026-10-30)
@@ -1632,16 +1633,17 @@ const MARK = '<i class="mk"></i>'; // the tick in Servizi/Radio/Live/Tappeti/Gre
 // operatore, data, azioni) never print: the printed sheet has exactly Rome's columns (PRINT_COLS), in this order.
 // No Trasferta column (Marco, 2026-10-19): who is in trasferta is named once in the day header.
 const COLS = ["N.", "Titolo", "Giornalista", "Richiedente", "Rete", "Durata",
-  "Servizi", "Radio", "Live", "Mezzo", "Tappeti", "Grezzi", "Interviste", "Ass. tecnica", "Note", "Operatore", "Data", ""];
-const CHECK_COLS = ["Servizi", "Radio", "Live", "Tappeti", "Grezzi", "Interviste", "Ass. tecnica"];
+  "Servizi", "Radio", "Live", "Mezzo", "Tappeti", "Grezzi", "Ass. tecnica", "Note", "Operatore", "Data", ""];
+// No Interviste column on screen or in print (Marco, 2026-11-27: "take it out").
+const CHECK_COLS = ["Servizi", "Radio", "Live", "Tappeti", "Grezzi", "Ass. tecnica"];
 const SCREEN_ONLY = ["N.", "Ass. tecnica", "Note", "Operatore", "Data", ""];
 const ROME_LABEL = { Titolo: "Titolo del servizio", Mezzo: "Mezzo di trasmissione" };
 // The tally columns hold one mark, so on screen their heading is three letters (the full word is the tooltip and the
 // print): the whole sheet fits the window without a sideways scroll (Marco, 2026-11-17).
-const SHORT_LABEL = { Servizi: "Srv", Radio: "Rad", Tappeti: "Tap", Grezzi: "Grz", Interviste: "Int", "Ass. tecnica": "Ass" };
+const SHORT_LABEL = { Servizi: "Srv", Radio: "Rad", Tappeti: "Tap", Grezzi: "Grz", "Ass. tecnica": "Ass" };
 // One key per column, on every <th> and <td> (data-c): the page moves and sizes columns by it.
 const COL_KEYS = ["numero", "titolo", "giornalista", "richiedente", "rete", "durata",
-  "servizi", "radio", "live", "mezzo", "tappeti", "grezzi", "interviste", "ass", "note", "operatore", "data", "azioni"];
+  "servizi", "radio", "live", "mezzo", "tappeti", "grezzi", "ass", "note", "operatore", "data", "azioni"];
 const KEY_OF = Object.fromEntries(COLS.map((c, i) => [c, COL_KEYS[i]]));
 /** Column headings as printed, in Rome's order. */
 const PRINT_COLS = COLS.filter((c) => !SCREEN_ONLY.includes(c)).map((c) => ROME_LABEL[c] || c);
@@ -1656,7 +1658,6 @@ const EDIT_FIELDS = {
   mezzo: { api: "mezzo", kind: "select" },
   tappeto: { api: "tappeto", kind: "bool" }, // the Tappeti tick: Sì files the row as a tappeto of its rete, No re-derives the categoria
   grezzo: { api: "grezzo", kind: "bool" }, // the Grezzi tick: same, categoria grezzo
-  intervista: { api: "intervista", kind: "bool" }, // the Interviste tick: categoria intervista, still of its rete
   note: { api: "notes", kind: "text" }, // screen only (never printed, never e-mailed)
   operatore: { api: "operator", kind: "select" },
   data: { api: "delivery_date", kind: "date" },
@@ -1804,6 +1805,17 @@ function esc(s) {
     .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
 }
 
+// From week 48 (Monday 2026-11-23, the first week not yet sent to Rome) the network counters take servizi, live and
+// radio only: a grezzo is neither (Marco, 2026-11-27: "keep the numbers but from now on grezzi sent will not be
+// counted"). Before it, every type but tappeto, as already sent.
+const RETE_CUTOVER = "2026-11-23";
+/** Does this row count under its network's counter? @param {{categoria:string, data?:string}} r */
+function countsForRete(r) {
+  const c = String(r.categoria || "");
+  if (c === "tappeto") return false;
+  if (String(r.data || "") < RETE_CUTOVER) return true;
+  return c === "pezzo" || c === "live" || c === "radio";
+}
 /**
  * Totals for a set of rows (one ISO week).
  * @param {Array<{categoria:string, rete:string, trasferta:boolean}>} rows
@@ -1814,7 +1826,7 @@ function totals(rows) {
   let trasferte = 0;
   for (const r of rows) {
     if (r.categoria in cat) cat[r.categoria] += 1;
-    const b = r.categoria === "tappeto" ? null : reteBucket(r.rete);
+    const b = countsForRete(r) ? reteBucket(r.rete) : null;
     if (b) rete[b] += 1;
     if (r.trasferta === true) trasferte += 1;
   }
@@ -1922,7 +1934,6 @@ function renderCollaudo(w, rows, generated, trips = []) {
         ed("mezzo", "nowrap", esc(r.mezzo), r.mezzo) +
         ed("tappeto", "k", cat === "tappeto" ? MARK : "", cat === "tappeto" ? "true" : "false") +
         ed("grezzo", "k", cat === "grezzo" ? MARK : "", cat === "grezzo" ? "true" : "false") +
-        ed("intervista", "k", cat === "intervista" ? MARK : "", cat === "intervista" ? "true" : "false") +
         `<td class="k np" data-c="ass">X</td>` +
         ed("note", "np notec", esc(r.note), r.note == null ? "" : r.note) +
         ed("operatore", "nowrap np", esc(r.operatore), r.operatore) +
@@ -1935,8 +1946,7 @@ function renderCollaudo(w, rows, generated, trips = []) {
     body.push(`<tr class="tot">${NP_HEAD}<td class="tl" colspan="5">Totale ${esc(dayName((dd.getUTCDay() + 6) % 7).toLowerCase())} ${dd.getUTCDate()} ` +
       `(${dayRows.length} registrazioni)</td>` +
       `<td class="k" data-c="servizi">${dayTot.pezzo}</td><td class="k" data-c="radio">${dayTot.radio}</td><td class="k" data-c="live">${dayTot.live}</td>` +
-      `<td data-c="mezzo"></td><td class="k" data-c="tappeti">${dayTot.tappeto}</td><td class="k" data-c="grezzi">${dayTot.grezzo}</td>` +
-      `<td class="k" data-c="interviste">${dayTot.intervista}</td>${NP_TAIL}</tr>`);
+      `<td data-c="mezzo"></td><td class="k" data-c="tappeti">${dayTot.tappeto}</td><td class="k" data-c="grezzi">${dayTot.grezzo}</td>${NP_TAIL}</tr>`);
     groups.push(`<tbody class="dg" data-day="${d}">\n${body.join("\n")}\n</tbody>`);
   }
 
@@ -2005,6 +2015,14 @@ function filterExport(rows, spec) {
   });
 }
 
+// "Per giornalista" puts these names first, in this order; everyone else follows A–Z (Marco, 2026-11-27: "All Lo Prete
+// first, then the next and the next").
+const FIRST_GIORNALISTI = ["Lo Prete"];
+function firstRank(r) {
+  const i = FIRST_GIORNALISTI.findIndex((n) => n.toLocaleLowerCase("it") === String(r.giornalista || "").trim().toLocaleLowerCase("it"));
+  return i < 0 ? FIRST_GIORNALISTI.length : i;
+}
+
 /**
  * Order for one extract. `collaudo` is the sheet's reading order; the others keep that order as the tie-break.
  * Without `slots` the rows are taken as already in the sheet's order (GET /api/collaudo sends them so), and stay so.
@@ -2020,7 +2038,7 @@ function sortExport(rows, sort, slots) {
   const tie = (a, b) => at.get(a) - at.get(b);
   const name = (r, k) => String(r[k] || "").toLocaleLowerCase("it");
   const copy = base.slice();
-  if (kind === "giornalista") copy.sort((a, b) => name(a, "giornalista").localeCompare(name(b, "giornalista"), "it") || tie(a, b));
+  if (kind === "giornalista") copy.sort((a, b) => firstRank(a) - firstRank(b) || name(a, "giornalista").localeCompare(name(b, "giornalista"), "it") || tie(a, b));
   else if (kind === "operatore") copy.sort((a, b) => name(a, "operatore").localeCompare(name(b, "operatore"), "it") || tie(a, b));
   else copy.sort((a, b) => slotMinutes(String(a.richiedente || "")) - slotMinutes(String(b.richiedente || "")) || tie(a, b));
   return copy;
@@ -2212,7 +2230,7 @@ function renderEstratto(slices) {
   // to move the column. Order and widths are saved in this browser (rainyc.collaudo.colonne); «Ripristina colonne»
   // goes back to the defaults. renderCollaudo always gives Rome's order: applyCols moves the cells by their data-c.
   var COL_W = { numero: 3.8, titolo: 18, giornalista: 8, richiedente: 11, rete: 6.5, durata: 7, servizi: 2.6, radio: 2.6, live: 2.8,
-    mezzo: 6.3, tappeti: 2.6, grezzi: 2.6, interviste: 2.6, ass: 2.6, note: 6, operatore: 8, data: 4.8, azioni: 2.9 };
+    mezzo: 6.3, tappeti: 2.6, grezzi: 2.6, ass: 2.6, note: 6, operatore: 8, data: 4.8, azioni: 2.9 };
   var COL_MIN = 1.8, COLS_KEY = "rainyc.collaudo.colonne", printing = false;
   function colState() {
     var st = { o: COL_KEYS.slice(), w: Object.assign({}, COL_W), custom: false }, saved = null;
@@ -2652,9 +2670,18 @@ function renderEstratto(slices) {
       if (!r) return;
       if (r.status !== 200) { rowError(id, errText(r)); return; }
       pushUndo(back);
-      load(current, "Modifica salvata.");
+      // A type, network, edition or date change can move the row (a new tappeto goes to the end of its day): the page
+      // follows it and lights it, so the change is seen (Marco, 2026-11-27: "when i click yes, it does not update").
+      var n = td.parentNode.getAttribute("data-n");
+      if (!MOVES[field] || !n) { load(current, "Modifica salvata."); return; }
+      var on = raw === "true";
+      var note = MOVES[field] === "tipo" ? (on ? tf("Modifica salvata: la riga N. {0} ora è {1}.", n, t(TIPO_NOW[field]))
+        : tf("Modifica salvata: la riga N. {0} non è più {1}.", n, t(TIPO_NOW[field]))) : tf("Modifica salvata: riga N. {0}.", n);
+      load(current, function () { return note; }).then(function () { flashRow(n); });
     });
   }
+  var MOVES = { tappeto: "tipo", grezzo: "tipo", intervista: "tipo", rete: "pos", richiedente: "pos", delivery_date: "pos" };
+  var TIPO_NOW = { tappeto: "un tappeto", grezzo: "un grezzo", intervista: "un'intervista" };
 
   function voidRow(tr) {
     if (busy || !window.confirm(t("Annullare questa registrazione?"))) return;

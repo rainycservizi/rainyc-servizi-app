@@ -421,7 +421,7 @@ kbd { font:600 11px/1 var(--mono); padding:2px 5px; border:1px solid var(--line2
 </head>
 <body>
 <header class="appbar">
-  <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-11-25 22:22 UTC · 5fe7959"><span class="mk">Rai · NY</span><span id="t">RAI NYC Servizi</span><span class="pg" data-i18n>Registrazione</span></div>
+  <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-11-27 17:42 UTC · db6d775"><span class="mk">Rai · NY</span><span id="t">RAI NYC Servizi</span><span class="pg" data-i18n>Registrazione</span></div>
   <nav class="hright" id="hright" aria-label="Pagine">
     <span class="pend" id="pend" hidden></span>
     <button type="button" class="icbtn lang" id="tour-btn" hidden data-i18n-attr="aria-label|title" aria-label="Tutorial: come si compila una registrazione" title="Tutorial: come si compila una registrazione">?</button>
@@ -627,7 +627,7 @@ var PAGE_FORM = "./" || APP_BASE;
 var PAGE_COLLAUDO = "./collaudo.html" || APP_BASE + "/collaudo";
 var PAGE_GESTIONE = "./gestione.html" || APP_BASE + "/gestione";
 var PAGE_MENSILE = "./mensile.html" || APP_BASE + "/mensile";
-var BUILD = "2026-11-25 22:22 UTC · 5fe7959"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
+var BUILD = "2026-11-27 17:42 UTC · db6d775"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
 // Every place the project lives (shown in the admin's header menu and on the Gestione page).
 var LINKS = [
   ["Pagine pubbliche", "https://rainycservizi.github.io/rainyc-servizi-app/", "GitHub Pages: il sito di prova principale"],
@@ -710,7 +710,8 @@ var I18N = { en: {
   "Intervista per {0}": "Interview for {0}", "Intervista: toccare la rete a cui è destinata": "Interview: tap the network it is for",
   "Rete dell'intervista": "Interview network",
   "Intervista: il servizio è un'intervista; toccare anche la rete a cui è destinata": "Interview: this is an interview; also tap the network it is for",
-  "Segno nelle colonne Servizi, Radio, Live, Tappeti, Grezzi, Interviste": "Mark in the Packages, Radio, Live, Tappeti, Raw footage, Interviews columns",
+  "Modifica salvata: la riga N. {0} ora è {1}.": "Saved: line {0} is now {1}.", "Modifica salvata: la riga N. {0} non è più {1}.": "Saved: line {0} is no longer {1}.",
+  "Modifica salvata: riga N. {0}.": "Saved: line {0}.", "un tappeto": "a tappeto", "un grezzo": "raw footage", "un'intervista": "an interview",
   "(non si applica al grezzo)": "(not used for raw footage)", "Registrazioni annullate.": "Entries cancelled.", "Registrazioni ripristinate.": "Entries restored.",
   "Grezzo: materiale grezzo mandato a più reti. Toccare «Grezzo» e poi tutte le reti a cui va: una registrazione per rete. Anche qui non si tocca.": "Raw footage: raw material sent to several networks. Click «Grezzo», then every network it goes to: one entry per network. Not for this story either.",
   "Mezzo": "Delivery means", "Telefono": "Telephone", "Trasferta": "Travel",
@@ -1811,11 +1812,7 @@ function parseToSeconds(s) {
       var gi = document.createElement("input"); gi.type = "checkbox"; gi.name = "grezzo"; gi.id = "grezzo"; gi.value = "true";
       var gs = document.createElement("span"); gs.textContent = "Grezzo"; gs.title = t("Grezzo: materiale grezzo inviato a una o più reti; toccare tutte le reti a cui è destinato");
       gl.appendChild(gi); gl.appendChild(gs); box.appendChild(gl);
-      // The Interviste switch (Marco, 2026-11-07): an interview is its own line in this grid. One network, categoria intervista.
-      var il = document.createElement("label"); il.setAttribute("data-rete", "Interviste"); il.className = "tap";
-      var ii = document.createElement("input"); ii.type = "checkbox"; ii.name = "intervista"; ii.id = "intervista"; ii.value = "true";
-      var is = document.createElement("span"); is.textContent = "Interviste"; is.title = t("Intervista: il servizio è un'intervista; toccare anche la rete a cui è destinata");
-      il.appendChild(ii); il.appendChild(is); box.appendChild(il);
+      // No Interviste switch (Marco, 2026-11-27: "take it out"); intervistaOn() reads false without it.
     }
   }
   // Grezzo on: the rete chips become checkboxes (as many networks as apply); off: radios again, first pick kept.
@@ -2154,7 +2151,7 @@ function parseToSeconds(s) {
   function resetAll() {
     form.reset();
     $("data").value = today(); domTouched = false; $("domani").checked = false; $("data-hint").hidden = true;
-    $("grezzo").checked = false; $("intervista").checked = false; setReteMode();
+    $("grezzo").checked = false; setReteMode();
     setRadio("rete", ""); applyAirDate();
     setRadio("mezzo", "V-Mover");
     $("richiedente").value = "";
@@ -2356,7 +2353,7 @@ function parseToSeconds(s) {
     queue = queue.filter(function (x) { return x !== e; }); qsave(queue);
     $("data").value = p.delivery_date; $("giornalista").value = p.journalist; $("titolo").value = p.subject;
     $("domani").checked = !!p.edizione_del; domTouched = true; // the entry's own choice, not the clock's
-    $("tappeto").checked = !!p.tappeto; $("grezzo").checked = !!p.grezzo; $("intervista").checked = !!p.intervista; setReteMode();
+    $("tappeto").checked = !!p.tappeto; $("grezzo").checked = !!p.grezzo; setReteMode();
     setRadio("rete", p.rete); updateRichiedente();
     $("richiedente").value = PREFIXED.indexOf(p.rete) >= 0 ? stripPrefix(p.rete, p.richiedente || "") : (p.richiedente || "");
     $("durata").value = p.duration_text ? formatDurata(p.duration_text) : ""; setRadio("mezzo", p.mezzo);
@@ -2653,7 +2650,7 @@ function parseToSeconds(s) {
     setStatus("salvato", function () { return tf("Salvato: {0}", v.subject + (v.grezzo ? " (" + t("grezzo") + " " + rs.join(", ") + ")" : "")); });
     try { localStorage.setItem("rainyc.operatore", v.operator); } catch (e) { /* ignore */ }
     // Keep date, journalist, title and operator for the next entry of the same story.
-    $("grezzo").checked = false; $("intervista").checked = false; setReteMode();
+    $("grezzo").checked = false; setReteMode();
     setRadio("rete", ""); $("tappeto").checked = false; $("durata").value = ""; $("richiedente").value = ""; $("note").value = "";
     setRadio("mezzo", "V-Mover");
     domTouched = false; // the tick belongs to the entry just sent, not to the next one
@@ -2694,9 +2691,8 @@ function parseToSeconds(s) {
 
   form.addEventListener("change", function (ev) {
     var nm = ev.target.name;
-    if (nm === "grezzo") { if (ev.target.checked) { $("tappeto").checked = false; $("intervista").checked = false; } setReteMode(); $("richiedente").value = ""; updateRichiedente(); }
-    if (nm === "tappeto" && ev.target.checked) { $("intervista").checked = false; if (grezzoOn()) { $("grezzo").checked = false; setReteMode(); updateRichiedente(); } }
-    if (nm === "intervista" && ev.target.checked) { $("tappeto").checked = false; if (grezzoOn()) { $("grezzo").checked = false; setReteMode(); updateRichiedente(); } }
+    if (nm === "grezzo") { if (ev.target.checked) { $("tappeto").checked = false; } setReteMode(); $("richiedente").value = ""; updateRichiedente(); }
+    if (nm === "tappeto" && ev.target.checked) { if (grezzoOn()) { $("grezzo").checked = false; setReteMode(); updateRichiedente(); } }
     if (nm === "rete") { $("richiedente").value = ""; updateRichiedente(); }
     if (nm === "rete" || nm === "mezzo" || nm === "tappeto" || nm === "grezzo" || nm === "intervista") updateCategoria();
     if (nm === "rete" || nm === "tappeto" || nm === "grezzo" || nm === "intervista") updateReteNote();
