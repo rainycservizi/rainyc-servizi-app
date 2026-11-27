@@ -359,6 +359,7 @@ tr.r.hit td { animation:hit 2.6s ease-out; }
   #estratto table { width:100%; border-collapse:collapse; margin:0 0 16px; }
   #estratto th, #estratto td { border-bottom:1px solid #ccc; text-align:left; padding:3px 5px; }
   #estratto h2 { font-size:13px; margin:12px 0 4px; }
+  #estratto p.gaps { font-size:11px; margin:0 0 6px; }
   .page { padding:0; }
   .panel { border:0; box-shadow:none; border-radius:0; }
   .sheet { max-width:none; padding:0; display:block; }
@@ -388,7 +389,7 @@ tr.r.hit td { animation:hit 2.6s ease-out; }
 <body>
 <div class="top" id="top">
   <header class="appbar">
-    <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-11-27 17:42 UTC · db6d775"><span class="mk">Rai · NY</span><span class="nm">RAI NYC Servizi</span><span class="pg" data-i18n>Collaudo</span></div>
+    <div class="brand" id="brand" title="Built by Caruso · pagina costruita 2026-11-27 18:09 UTC · a26a1af"><span class="mk">Rai · NY</span><span class="nm">RAI NYC Servizi</span><span class="pg" data-i18n>Collaudo</span></div>
     <nav class="hright" id="hright" aria-label="Pagine">
       <button type="button" class="icbtn" id="theme" aria-label="Tema" title="Tema" aria-haspopup="menu" aria-expanded="false">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3a9 9 0 1 0 0 18c1.2 0 2-.9 2-2 0-.6-.2-1-.5-1.4-.3-.4-.5-.8-.5-1.3 0-1.1.9-2 2-2h2.2A4.8 4.8 0 0 0 22 9.6C22 5.8 17.5 3 12 3z"/><circle cx="7.5" cy="11.5" r="1.1"/><circle cx="10.5" cy="7.5" r="1.1"/><circle cx="15" cy="7.5" r="1.1"/><circle cx="17.5" cy="11.5" r="1.1"/></svg>
@@ -425,9 +426,22 @@ tr.r.hit td { animation:hit 2.6s ease-out; }
   </form>
   <div class="pop export" id="export-pop" hidden>
     <p class="lead" data-i18n>Un giorno, tutto il lavoro come sul collaudo: di tutti, oppure di un giornalista o di un operatore. Esporta quel giorno, oppure aggiungi altri giorni, ognuno con il suo ordine.</p>
-    <div class="fld">
-      <label for="ex-data" data-i18n>Giorno</label>
-      <input type="date" id="ex-data">
+    <div class="row2">
+      <div class="fld">
+        <label for="ex-per" data-i18n>Periodo</label>
+        <select id="ex-per">
+          <option value="giorno" data-i18n>Un giorno</option>
+          <option value="mese" data-i18n>Un mese intero</option>
+        </select>
+      </div>
+      <div class="fld" id="ex-giorno">
+        <label for="ex-data" data-i18n>Giorno</label>
+        <input type="date" id="ex-data">
+      </div>
+      <div class="fld" id="ex-mesebox" hidden>
+        <label for="ex-mese" data-i18n>Mese</label>
+        <input type="month" id="ex-mese" min="2026-01">
+      </div>
     </div>
     <div class="row2">
       <div class="fld">
@@ -441,6 +455,17 @@ tr.r.hit td { animation:hit 2.6s ease-out; }
         <label for="ex-nome" data-i18n>Nome</label>
         <select id="ex-nome"><option value="">Tutti</option></select>
       </div>
+    </div>
+    <div class="fld">
+      <label for="ex-tipo" data-i18n>Tipo</label>
+      <select id="ex-tipo">
+        <option value="" data-i18n>Tutti</option>
+        <option value="pezzo" data-i18n>Servizi</option>
+        <option value="radio" data-i18n>Radio</option>
+        <option value="live" data-i18n>Live</option>
+        <option value="tappeto" data-i18n>Tappeti</option>
+        <option value="grezzo" data-i18n>Grezzi</option>
+      </select>
     </div>
     <div class="fld">
       <label for="ex-sort" data-i18n>Ordine</label>
@@ -502,7 +527,7 @@ var PAGE_FORM = "./" || APP_BASE;
 var PAGE_COLLAUDO = "./collaudo.html" || APP_BASE + "/collaudo";
 var PAGE_GESTIONE = "./gestione.html" || APP_BASE + "/gestione";
 var PAGE_MENSILE = "./mensile.html" || APP_BASE + "/mensile";
-var BUILD = "2026-11-27 17:42 UTC · db6d775"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
+var BUILD = "2026-11-27 18:09 UTC · a26a1af"; // static build: "YYYY-MM-DD HH:MM UTC · <commit>"; served by the function: empty
 // Every place the project lives (shown in the admin's header menu and on the Gestione page).
 var LINKS = [
   ["Pagine pubbliche", "https://rainycservizi.github.io/rainyc-servizi-app/", "GitHub Pages: il sito di prova principale"],
@@ -586,7 +611,7 @@ var I18N = { en: {
   "Rete dell'intervista": "Interview network",
   "Intervista: il servizio è un'intervista; toccare anche la rete a cui è destinata": "Interview: this is an interview; also tap the network it is for",
   "Modifica salvata: la riga N. {0} ora è {1}.": "Saved: line {0} is now {1}.", "Modifica salvata: la riga N. {0} non è più {1}.": "Saved: line {0} is no longer {1}.",
-  "Modifica salvata: riga N. {0}.": "Saved: line {0}.", "un tappeto": "a tappeto", "un grezzo": "raw footage", "un'intervista": "an interview",
+  "Modifica salvata: riga N. {0}.": "Saved: line {0}.", "Periodo": "Period", "Un giorno": "One day", "Un mese intero": "A whole month", "Tipo": "Type", "Scegliere un mese.": "Choose a month.", "un tappeto": "a tappeto", "un grezzo": "raw footage", "un'intervista": "an interview",
   "(non si applica al grezzo)": "(not used for raw footage)", "Registrazioni annullate.": "Entries cancelled.", "Registrazioni ripristinate.": "Entries restored.",
   "Grezzo: materiale grezzo mandato a più reti. Toccare «Grezzo» e poi tutte le reti a cui va: una registrazione per rete. Anche qui non si tocca.": "Raw footage: raw material sent to several networks. Click «Grezzo», then every network it goes to: one entry per network. Not for this story either.",
   "Mezzo": "Delivery means", "Telefono": "Telephone", "Trasferta": "Travel",
@@ -2005,8 +2030,10 @@ function filterExport(rows, spec) {
   const data = String(spec.data || "");
   const chi = spec.chi === "operatore" || spec.chi === "giornalista" ? spec.chi : "";
   const nome = String(spec.nome || "").trim().toLowerCase();
+  const tipo = CATEGORIE.includes(String(spec.tipo || "")) ? String(spec.tipo) : "";
   return rows.filter((r) => {
     if (String(r.data || "") !== data) return false;
+    if (tipo && String(r.categoria || "") !== tipo) return false;
     if (!nome) return true;
     if (chi) return String(r[chi] || "").trim().toLowerCase() === nome;
     const g = String(r.giornalista || "").trim().toLowerCase();
@@ -2056,7 +2083,50 @@ function sliceTitle(spec, n) {
     const dow = (new Date(ms).getUTCDay() + 6) % 7;
     day = GIORNI[dow] + " " + Number(m[3]) + " " + MESI[+m[2] - 1] + " " + m[1];
   }
-  return `${day} · ${chi} · ${SORT_LABEL[spec.sort] || SORT_LABEL.collaudo} · ${n}`;
+  const tipo = TIPO_PLURALE[String(spec.tipo || "")];
+  return `${day} · ${chi}${tipo ? " · " + tipo : ""} · ${SORT_LABEL[spec.sort] || SORT_LABEL.collaudo} · ${n}`;
+}
+const TIPO_PLURALE = { pezzo: "servizi", radio: "radio", live: "live", tappeto: "tappeti", grezzo: "grezzi" };
+
+// A whole month in one extract (Marco, 2026-11-27: "export by month when we need a monthly recap"; Lo Prete counts
+// his radio for October): every day of the month, the same filters as a day (who, type, order), one table, and the
+// days with nothing listed so a missing entry shows.
+/** "2026-10" -> ["2026-10-01", …, "2026-10-31"] (empty for a bad month). @param {string} ym */
+function daysOfMonth(ym) {
+  const m = /^(\d{4})-(\d{2})$/.exec(String(ym || ""));
+  if (!m || +m[2] < 1 || +m[2] > 12) return [];
+  const last = new Date(Date.UTC(+m[1], +m[2], 0)).getUTCDate();
+  return Array.from({ length: last }, (_, i) => `${ym}-${String(i + 1).padStart(2, "0")}`);
+}
+/**
+ * The month's rows: day by day (oldest first), each day filtered and ordered like a day extract.
+ * @param {Array<Record<string, unknown>>} rows the weeks that touch the month, each in the sheet's order
+ * @param {{mese:string, chi?:string, nome?:string, tipo?:string, sort?:string}} spec
+ */
+function monthExport(rows, spec) {
+  return daysOfMonth(spec.mese).flatMap((d) => sortExport(filterExport(rows, Object.assign({}, spec, { data: d })), spec.sort || "giornalista"));
+}
+/** Day numbers of the month with no row in `list` (only days up to `today`, when given). */
+function emptyDays(list, ym, today) {
+  const have = new Set(list.map((r) => String(r.data || "")));
+  return daysOfMonth(ym).filter((d) => !have.has(d) && (!today || d <= today)).map((d) => Number(d.slice(8)));
+}
+/** "Ottobre 2026 · giornalista Lo Prete · radio · 29" */
+function monthTitle(spec, n) {
+  const m = /^(\d{4})-(\d{2})$/.exec(String(spec.mese || ""));
+  const mese = m ? MESI[+m[2] - 1].charAt(0).toUpperCase() + MESI[+m[2] - 1].slice(1) + " " + m[1] : String(spec.mese || "");
+  const chi = spec.nome ? (spec.chi === "operatore" ? "operatore " + spec.nome : "giornalista " + spec.nome) : "tutti";
+  const tipo = TIPO_PLURALE[String(spec.tipo || "")];
+  return `${mese} · ${chi}${tipo ? " · " + tipo : ""} · ${n}`;
+}
+/** The month's print (Save as PDF): the title, the days with nothing listed, one table. */
+function renderEstrattoMese(spec, list, today) {
+  const head = EXPORT_COLS.map((c) => `<th>${esc(c)}</th>`).join("");
+  const rows = list.map((r) => "<tr>" + exportCells(r).map((c) => `<td>${esc(c)}</td>`).join("") + "</tr>").join("");
+  const gaps = emptyDays(list, spec.mese, today);
+  const gapLine = `<p class="gaps">${gaps.length ? "Giorni senza registrazioni: " + esc(gaps.join(", ")) : "Nessun giorno senza registrazioni."}</p>`;
+  return `<header class="doc"><div class="ente">RAI – Sede di corrispondenza di New York</div><h1>Estratto del mese</h1></header>\n` +
+    `<h2>${esc(monthTitle(spec, list.length))}</h2>${gapLine}<table><thead><tr>${head}</tr></thead><tbody>${rows || `<tr><td colspan="${EXPORT_COLS.length}">Nessuna registrazione</td></tr>`}</tbody></table>`;
 }
 
 /** One row of the extract, in EXPORT_COLS order. */
@@ -2764,10 +2834,10 @@ function renderEstratto(slices) {
   var basket = [];
   function setExErr(text) { $("ex-err").textContent = text ? t(text) : ""; }
   function formSpec() {
-    return { data: $("ex-data").value, chi: $("ex-chi").value, nome: $("ex-nome").value, sort: $("ex-sort").value };
+    return { data: $("ex-data").value, chi: $("ex-chi").value, nome: $("ex-nome").value, sort: $("ex-sort").value, tipo: $("ex-tipo").value };
   }
   function sameSpec(a, b) {
-    return a.data === b.data && a.chi === b.chi && a.nome === b.nome && a.sort === b.sort;
+    return a.data === b.data && a.chi === b.chi && a.nome === b.nome && a.sort === b.sort && a.tipo === b.tipo;
   }
   function screenSlice(spec, n) {
     var who = spec.nome ? t(spec.chi) + " " + (spec.chi === "operatore" ? t(spec.nome) : spec.nome) : t("tutti");
@@ -2827,7 +2897,41 @@ function renderEstratto(slices) {
       : n > basket.length ? "L'esportazione comprende i giorni aggiunti e il giorno qui sopra."
       : "L'esportazione comprende i giorni aggiunti.");
   }
+  // A whole month (Marco, 2026-11-27): the weeks that touch it are fetched, then every day of the month is filtered
+  // and ordered like a day extract, in one table.
+  function monthMode() { return $("ex-per").value === "mese"; }
+  function monthSpec() { var f = formSpec(); return { mese: $("ex-mese").value, chi: f.chi, nome: f.nome, tipo: f.tipo, sort: f.sort }; }
+  function weeksOfMonth(ym) {
+    var seen = {}, out = [];
+    daysOfMonth(ym).forEach(function (d) { var k = formatWeek(isoWeekOf(d)); if (!seen[k]) { seen[k] = 1; out.push(d); } });
+    return out; // one day per week
+  }
+  function ensureMonth(ym) { return Promise.all(weeksOfMonth(ym).map(ensureWeek)); }
+  function monthRowsNow(spec) {
+    var all = [];
+    weeksOfMonth(spec.mese).forEach(function (d) { all = all.concat(weekCache[formatWeek(isoWeekOf(d))] || []); });
+    return monthExport(all, spec);
+  }
+  function setPeriod() {
+    var m = monthMode();
+    $("ex-giorno").hidden = m; $("ex-mesebox").hidden = !m;
+    ["ex-add", "ex-list", "ex-scope"].forEach(function (id) { $(id).hidden = m; });
+    if (m && !$("ex-mese").value) $("ex-mese").value = ($("ex-data").value || todayNewYork()).slice(0, 7);
+    $("ex-xls").textContent = "Excel"; $("ex-pdf").textContent = "PDF";
+    if (!m) paintBasket();
+    refreshCount();
+  }
   function refreshCount() {
+    if (monthMode()) {
+      var ms = monthSpec();
+      if (!/^\d{4}-\d{2}$/.test(ms.mese)) { $("ex-count").textContent = ""; return; }
+      ensureMonth(ms.mese).then(function () {
+        if ($("ex-mese").value !== ms.mese || !monthMode()) return;
+        fillNomi();
+        $("ex-count").textContent = tf("Pronte: {0}.", monthRowsNow(monthSpec()).length);
+      }, function () { $("ex-count").textContent = ""; });
+      return;
+    }
     var spec = formSpec();
     if (!/^\d{4}-\d{2}-\d{2}$/.test(spec.data)) { $("ex-count").textContent = ""; return; }
     ensureWeek(spec.data).then(function () {
@@ -2856,7 +2960,8 @@ function renderEstratto(slices) {
     if (ev.key !== "Escape") return; ev.stopPropagation(); openExport(false);
   });
   $("ex-chi").addEventListener("change", refreshCount);
-  ["ex-nome", "ex-sort"].forEach(function (id) { $(id).addEventListener("change", refreshCount); });
+  ["ex-nome", "ex-sort", "ex-tipo", "ex-mese"].forEach(function (id) { $(id).addEventListener("change", refreshCount); });
+  $("ex-per").addEventListener("change", setPeriod);
   $("ex-data").addEventListener("change", function () {
     var d = $("ex-data").value;
     if (!/^\d{4}-\d{2}-\d{2}$/.test(d)) return;
@@ -2875,7 +2980,30 @@ function renderEstratto(slices) {
       setMsg(i >= 0 ? "Giorno aggiornato." : "Giorno aggiunto.");
     }, function (e) { setExErr(e.message || "Errore."); });
   });
+  function runMonth(kind) {
+    var spec = monthSpec();
+    if (!/^\d{4}-\d{2}$/.test(spec.mese)) { setExErr("Scegliere un mese."); return; }
+    ensureMonth(spec.mese).then(function () {
+      var list = monthRowsNow(spec);
+      if (!list.length) { setExErr("Nessuna registrazione con questi filtri."); return; }
+      setExErr("");
+      if (kind === "xls") {
+        var blob = new Blob([exportWorkbook([{ rows: list }])], { type: "application/vnd.ms-excel" });
+        var a = document.createElement("a"); a.href = URL.createObjectURL(blob);
+        a.download = "estratto-" + spec.mese + (spec.nome ? "-" + spec.nome.replace(/[^A-Za-z0-9]+/g, "_") : "") + (spec.tipo ? "-" + spec.tipo : "") + ".xls";
+        document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(function () { URL.revokeObjectURL(a.href); }, 1500);
+        setMsg(function () { return tf("Excel: {0} registrazioni.", list.length); });
+      } else {
+        $("estratto").innerHTML = renderEstrattoMese(spec, list, todayNewYork());
+        $("estratto").hidden = false;
+        extractOn = true;
+        window.print();
+      }
+    }, function (e) { setExErr(e.message || "Errore."); });
+  }
   function runExport(kind) {
+    if (monthMode()) { runMonth(kind); return; }
     var specs = exportSpecs();
     if (!specs.length) { setExErr("Scegliere un giorno."); return; }
     Promise.all(specs.map(function (s) { return ensureWeek(s.data); })).then(function () {
